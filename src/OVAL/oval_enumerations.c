@@ -152,7 +152,7 @@ static const struct oscap_string_map OVAL_DATETIME_FORMAT_MAP[] = {
 };
 
 oval_datetime_format_t oval_datetime_format_parse(xmlTextReaderPtr reader,
-						  char *attname, oval_arithmetic_operation_t defval)
+						  char *attname, oval_datetime_format_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_DATETIME_FORMAT_MAP, defval);
 }
@@ -372,16 +372,23 @@ const char *oval_component_type_get_text(oval_component_type_t type)
 
 static const struct oscap_string_map OVAL_FAMILY_MAP[] = {
 	{OVAL_FAMILY_AIX, "aix"},
+	{OVAL_FAMILY_ANDROID, "android"},
 	{OVAL_FAMILY_APACHE, "apache"},
+	{OVAL_FAMILY_APPLE_IOS, "apple_ios"},
+	{OVAL_FAMILY_ASA, "asa"},
 	{OVAL_FAMILY_CATOS, "catos"},
 	{OVAL_FAMILY_ESX, "esx"},
 	{OVAL_FAMILY_FREEBSD, "freebsd"},
 	{OVAL_FAMILY_HPUX, "hpux"},
 	{OVAL_FAMILY_INDEPENDENT, "independent"},
 	{OVAL_FAMILY_IOS, "ios"},
+	{OVAL_FAMILY_IOS_XE, "iosxe"},
+	{OVAL_FAMILY_JUNOS, "junos"},
 	{OVAL_FAMILY_LINUX, "linux"},
 	{OVAL_FAMILY_MACOS, "macos"},
+	{OVAL_FAMILY_NETCONF, "netconf"},
 	{OVAL_FAMILY_PIXOS, "pixos"},
+	{OVAL_FAMILY_SHAREPOINT, "sharepoint"},
 	{OVAL_FAMILY_SOLARIS, "solaris"},
 	{OVAL_FAMILY_UNIX, "unix"},
 	{OVAL_FAMILY_WINDOWS, "windows"},
@@ -436,6 +443,25 @@ static const struct oscap_string_map OVAL_SUBTYPE_AIX_MAP[] = {
 	{OVAL_AIX_FILESET, "fileset"},
 	{OVAL_AIX_FIX, "fix"},
 	{OVAL_AIX_OSLEVEL, "oslevel"},
+	{OVAL_AIX_INTERIM_FIX, "interim_fix"},
+	{OVAL_AIX_NO, "no"},
+	{OVAL_SUBTYPE_UNKNOWN, NULL}
+};
+
+static const struct oscap_string_map OVAL_SUBTYPE_ANDROID_MAP[] = {
+	{OVAL_ANDROID_APPMANAGER, "appmanager"},
+	{OVAL_ANDROID_BLUETOOTH, "bluetooth"},
+	{OVAL_ANDROID_CAMERA, "camera"},
+	{OVAL_ANDROID_CERTIFICATE, "certificate"},
+	{OVAL_ANDROID_DEVICE_SETTINGS, "devicesettings"},
+	{OVAL_ANDROID_ENCRYPTION, "encryption"},
+	{OVAL_ANDROID_LOCATION_SERVICE, "locationservice"},
+	{OVAL_ANDROID_NETWORK, "network"},
+	{OVAL_ANDROID_PASSWORD, "password"},
+	{OVAL_ANDROID_SYSTEM_DETAILS, "systemdetails"},
+	{OVAL_ANDROID_WIFI, "wifi"},
+	{OVAL_ANDROID_WIFI_NETWORK, "wifinetwork"},
+	{OVAL_ANDROID_TELEPHONY, "telephony"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -444,6 +470,29 @@ static const struct oscap_string_map OVAL_SUBTYPE_APACHE_MAP[] = {
 	{OVAL_APACHE_VERSION, "version"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
+
+static const struct oscap_string_map OVAL_SUBTYPE_APPLE_IOS_MAP[] = {
+	{OVAL_APPLE_IOS_GLOBAL_RESTRICTIONS, "globalrestrictions"},
+	{OVAL_APPLE_IOS_PASSCODE_POLICY, "passcodepolicy"},
+	{OVAL_APPLE_IOS_PROFILE, "profile"},
+	{OVAL_SUBTYPE_UNKNOWN, NULL}
+};
+
+static const struct oscap_string_map OVAL_SUBTYPE_ASA_MAP[] = {
+	{OVAL_ASA_ACL, "acl"},
+	{OVAL_ASA_CLASS_MAP, "classmap"},
+	{OVAL_ASA_INTERFACE, "interface"},
+	{OVAL_ASA_LINE, "line"},
+	{OVAL_ASA_POLICY_MAP, "policymap"},
+	{OVAL_ASA_SERVICE_POLICY, "servicepolicy"},
+	{OVAL_ASA_SNMP_HOST, "snmphost"},
+	{OVAL_ASA_SNMP_USER, "snmpuser"},
+	{OVAL_ASA_SNMP_GROUP, "snmpgroup"},
+	{OVAL_ASA_TCP_MAP, "tcpmap"},
+	{OVAL_ASA_VERSION, "version"},
+	{OVAL_SUBTYPE_UNKNOWN, NULL}
+};
+
 
 static const struct oscap_string_map OVAL_SUBTYPE_CATOS_MAP[] = {
 	{OVAL_CATOS_LINE, "line"},
@@ -506,6 +555,43 @@ static const struct oscap_string_map OVAL_SUBTYPE_IOS_MAP[] = {
 	{OVAL_IOS_SNMP, "snmp"},
 	{OVAL_IOS_TCLSH, "tclsh"},
 	{OVAL_IOS_VERSION_55, "version55"},
+	{OVAL_IOS_ACL, "acl"},
+	{OVAL_IOS_BGP_NEIGHBOR, "bgpneighbor"},
+	{OVAL_IOS_ROUTER, "router"},
+	{OVAL_IOS_ROUTING_PROTOCOL_AUTH_INTF, "routingprotocolauthintf"},
+	{OVAL_IOS_SECTION, "section"},
+	{OVAL_IOS_VERSION, "version"},
+	{OVAL_IOS_SNMP_COMMUNITY, "snmpcommunity"},
+	{OVAL_IOS_SNMP_GROUP, "snmpgroup"},
+	{OVAL_IOS_SNMP_HOST, "snmphost"},
+	{OVAL_IOS_SNMP_USER, "snmpuser"},
+	{OVAL_IOS_SNMP_VIEW, "snmpview"},
+	{OVAL_SUBTYPE_UNKNOWN, NULL}
+};
+
+static const struct oscap_string_map OVAL_SUBTYPE_IOS_XE_MAP[] = {
+	{OVAL_IOS_XE_GLOBAL, "global"},
+	{OVAL_IOS_XE_INTERFACE, "interface"},
+	{OVAL_IOS_XE_LINE, "line"},
+	{OVAL_IOS_XE_ACL, "acl"},
+	{OVAL_IOS_XE_BGP_NEIGHBOR, "bgpneighbor"},
+	{OVAL_IOS_XE_ROUTER, "router"},
+	{OVAL_IOS_XE_ROUTING_PROTOCOL_AUTH_INTF, "routingprotocolauthintf"},
+	{OVAL_IOS_XE_SECTION, "section"},
+	{OVAL_IOS_XE_VERSION, "version"},
+	{OVAL_IOS_XE_SNMP_COMMUNITY, "snmpcommunity"},
+	{OVAL_IOS_XE_SNMP_GROUP, "snmpgroup"},
+	{OVAL_IOS_XE_SNMP_HOST, "snmphost"},
+	{OVAL_IOS_XE_SNMP_USER, "snmpuser"},
+	{OVAL_IOS_XE_SNMP_VIEW, "snmpview"},
+	{OVAL_SUBTYPE_UNKNOWN, NULL}
+};
+
+static const struct oscap_string_map OVAL_SUBTYPE_JUNOS_MAP[] = {
+	{OVAL_JUNOS_XML_CONFIG, "xml_config"},
+	{OVAL_JUNOS_SHOW, "show"},
+	{OVAL_JUNOS_VERSION, "version"},
+	{OVAL_JUNOS_XML_SHOW, "xml_show"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -532,6 +618,47 @@ static const struct oscap_string_map OVAL_SUBTYPE_MACOS_MAP[] = {
 	{OVAL_MACOS_INET_LISTENING_SERVERS, "inetlisteningservers"},
 	{OVAL_MACOS_NVRAM_INFO, "nvraminfo"},
 	{OVAL_MACOS_PWPOLICY, "pwpolicy"},
+	{OVAL_MACOS_AUTHORIZATION_DB, "authorizationdb"},
+	{OVAL_MACOS_CORE_STORAGE, "corestorage"},
+	{OVAL_MACOS_DISKUTIL, "diskutil"},
+	{OVAL_MACOS_GATEKEEPER, "gatekeeper"},
+	{OVAL_MACOS_INET_LISTENING_SERVER_510, "inetlisteningserver510"},
+	{OVAL_MACOS_KEYCHAIN, "keychain"},
+	{OVAL_MACOS_LAUNCHD, "launchd"},
+	{OVAL_MACOS_NVRAM, "nvram"},
+	{OVAL_MACOS_PLIST, "plist"},
+	{OVAL_MACOS_PLIST510, "plist510"},
+	{OVAL_MACOS_PLIST511, "plist511"},
+	{OVAL_MACOS_PWPOLICY59, "pwpolicy59"},
+	{OVAL_MACOS_RLIMIT, "rlimit"},
+	{OVAL_MACOS_SOFTWARE_UPDATE, "softwareupdate"},
+	{OVAL_MACOS_SYSTEM_PROFILER, "systemprofiler"},
+	{OVAL_MACOS_SYSTEM_SETUP, "systemsetup"},
+	{OVAL_SUBTYPE_UNKNOWN, NULL}
+};
+
+static const struct oscap_string_map OVAL_SUBTYPE_NETCONF_MAP[] = {
+	{OVAL_NETCONF_CONFIG, "config"},
+	{OVAL_SUBTYPE_UNKNOWN, NULL}
+};
+
+static const struct oscap_string_map OVAL_SUBTYPE_SHAREPOINT_MAP[] = {
+	{OVAL_SHAREPOINT_SPWEBAPPLICATION, "spwebapplication"},
+	{OVAL_SHAREPOINT_SPGROUP, "spgroup"},
+	{OVAL_SHAREPOINT_SPWEB, "spweb"},
+	{OVAL_SHAREPOINT_SPLIST, "splist"},
+	{OVAL_SHAREPOINT_SPANTIVIRUSSETTINGS, "spantivirussettings"},
+	{OVAL_SHAREPOINT_SPSITEADMINISTRATION, "spsiteadministration"},
+	{OVAL_SHAREPOINT_SPSITE, "spsite"},
+	{OVAL_SHAREPOINT_SPCRAWLRULE, "spcrawlrule"},
+	{OVAL_SHAREPOINT_SPJOBDEFINITION, "spjobdefinition"},
+	{OVAL_SHAREPOINT_SPJOBDEFINITION510, "spjobdefinition510"},
+	{OVAL_SHAREPOINT_BESTBET, "bestbet"},
+	{OVAL_SHAREPOINT_INFOPOLICYCOLL, "infopolicycoll"},
+	{OVAL_SHAREPOINT_SPDIAGNOSTICSSERVICE, "spdiagnosticsservice"},
+	{OVAL_SHAREPOINT_SPDIAGNOSTICSLEVEL, "spdiagnosticslevel"},
+	{OVAL_SHAREPOINT_SPPOLICYFEATURE, "sppolicyfeature"},
+	{OVAL_SHAREPOINT_SPPOLICY, "sppolicy"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -549,6 +676,15 @@ static const struct oscap_string_map OVAL_SUBTYPE_SOLARIS_MAP[] = {
 	{OVAL_SOLARIS_SMF, "smf"},
 	{OVAL_SOLARIS_NDD, "ndd"},
 	{OVAL_SOLARIS_PACKAGECHECK, "packagecheck"},
+	{OVAL_SOLARIS_FACET, "facet"},
+	{OVAL_SOLARIS_IMAGE, "image"},
+	{OVAL_SOLARIS_PACKAGE511, "package511"},
+	{OVAL_SOLARIS_PACKAGEAVOIDLIST, "packageavoidlist"},
+	{OVAL_SOLARIS_PACKAGEFREEZELIST, "packagefreezelist"},
+	{OVAL_SOLARIS_PACKAGEPUBLISHER, "packagepublisher"},
+	{OVAL_SOLARIS_SMFPROPERTY, "smfproperty"},
+	{OVAL_SOLARIS_VARIANT, "variant"},
+	{OVAL_SOLARIS_VIRTUALIZATIONINFO, "virtualizationinfo"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -621,6 +757,7 @@ static const struct oscap_string_map OVAL_SUBTYPE_WINDOWS_MAP[] = {
 	{OVAL_WINDOWS_SYSTEM_METRIC, "systemmetric"},
 	{OVAL_WINDOWS_USER_RIGHT, "userright"},
 	{OVAL_WINDOWS_WMI_57, "wmi57"},
+	{OVAL_WINDOWS_JUNCTION, "junction"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -631,8 +768,17 @@ static const struct oscap_string_map *get_map_for_family(oval_family_t family)
 	case OVAL_FAMILY_AIX:
 		map = OVAL_SUBTYPE_AIX_MAP;
 		break;
+	case OVAL_FAMILY_ANDROID:
+		map = OVAL_SUBTYPE_ANDROID_MAP;
+		break;
 	case OVAL_FAMILY_APACHE:
 		map = OVAL_SUBTYPE_APACHE_MAP;
+		break;
+	case OVAL_FAMILY_APPLE_IOS:
+		map = OVAL_SUBTYPE_APPLE_IOS_MAP;
+		break;
+	case OVAL_FAMILY_ASA:
+		map = OVAL_SUBTYPE_ASA_MAP;
 		break;
 	case OVAL_FAMILY_CATOS:
 		map = OVAL_SUBTYPE_CATOS_MAP;
@@ -652,14 +798,26 @@ static const struct oscap_string_map *get_map_for_family(oval_family_t family)
 	case OVAL_FAMILY_IOS:
 		map = OVAL_SUBTYPE_IOS_MAP;
 		break;
+	case OVAL_FAMILY_IOS_XE:
+		map = OVAL_SUBTYPE_IOS_XE_MAP;
+		break;
+	case OVAL_FAMILY_JUNOS:
+		map = OVAL_SUBTYPE_JUNOS_MAP;
+		break;
 	case OVAL_FAMILY_LINUX:
 		map = OVAL_SUBTYPE_LINUX_MAP;
 		break;
 	case OVAL_FAMILY_MACOS:
 		map = OVAL_SUBTYPE_MACOS_MAP;
 		break;
+	case OVAL_FAMILY_NETCONF:
+		map = OVAL_SUBTYPE_NETCONF_MAP;
+		break;
 	case OVAL_FAMILY_PIXOS:
 		map = OVAL_SUBTYPE_PIXOS_MAP;
+		break;
+	case OVAL_FAMILY_SHAREPOINT:
+		map = OVAL_SUBTYPE_SHAREPOINT_MAP;
 		break;
 	case OVAL_FAMILY_SOLARIS:
 		map = OVAL_SUBTYPE_SOLARIS_MAP;
@@ -697,7 +855,7 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 
 	subtype = oscap_string_to_enum(map, tagname);
 	if (subtype == OVAL_SUBTYPE_UNKNOWN) {
-		dW("Unknown OVAL family subtype: %s", tagname);
+		dI("Unknown OVAL family subtype: %s", tagname);
 	}
 
  cleanup:

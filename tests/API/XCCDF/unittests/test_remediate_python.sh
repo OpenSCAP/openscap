@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -14,7 +14,7 @@ rm -f test_file
 $OSCAP xccdf remediate --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 [ -f test_file ]; rm test_file
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 2 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result'

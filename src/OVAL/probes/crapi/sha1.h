@@ -25,11 +25,15 @@
 
 #include <stddef.h>
 
+#ifdef OPENSCAP_ENABLE_SHA1
+
 void *crapi_sha1_init (void *dst, void *size);
 int   crapi_sha1_update (void *ctxp, void *bptr, size_t blen);
 int   crapi_sha1_fini (void *ctxp);
 void  crapi_sha1_free (void *ctxp);
 
 int crapi_sha1_fd (int fd, void *dst, size_t *size);
+
+#endif /* OPENSCAP_ENABLE_SHA1 */
 
 #endif /* CRAPI_SHA1_H */

@@ -27,3 +27,177 @@
    fun:curl_global_init
    ...
 }
+
+{
+   dl_init
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:_dl_init
+   ...
+}
+
+{
+   curl_multi_perform
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:curl_multi_perform
+   ...
+}
+
+{
+   SEXP_list_sort
+   Memcheck:Addr8
+   ...
+   fun:SEXP_list_sort
+   fun:probe_worker_runfn
+   fun:start_thread
+   fun:clone
+}
+
+{
+   process_file
+   Memcheck:Addr2
+   ...
+   fun:process_file
+   fun:xmlfilecontent_probe_main
+   ...
+}
+{
+   process_file_with_compiler_optimization
+   Memcheck:Addr2
+   ...
+   fun:process_file.isra.0
+   fun:xmlfilecontent_probe_main
+   ...
+}
+
+{
+   xmlDictFree
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:xmlDictFree
+   fun:oscap_source_free
+   ...
+}
+
+{
+   xmlGetGlobalState
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:xmlGetGlobalState
+   ...
+}
+
+{
+   curl_cond
+   Memcheck:Cond
+   ...
+   fun:buffered_vfprintf
+   fun:__vfprintf_internal
+   fun:__oscap_dlprintf
+   fun:_curl_trace
+   ...
+   fun:curl_multi_perform
+   fun:curl_easy_perform
+}
+
+{
+   curl_addr1
+   Memcheck:Addr1
+   ...
+   fun:buffered_vfprintf
+   fun:__vfprintf_internal
+   fun:__oscap_dlprintf
+   fun:_curl_trace
+   ...
+   fun:curl_multi_perform
+   fun:curl_easy_perform
+}
+
+{
+   driver_name_cond
+   Memcheck:Cond
+   ...
+   fun:driver_name
+   fun:dev_to_tty
+   fun:read_process
+   fun:process58_probe_main
+   fun:probe_worker
+   fun:probe_worker_runfn
+   fun:start_thread
+   fun:clone
+}
+
+{
+   driver_name_addr1
+   Memcheck:Addr1
+   ...
+   fun:driver_name
+   fun:dev_to_tty
+   fun:read_process
+   fun:process58_probe_main
+   fun:probe_worker
+   fun:probe_worker_runfn
+   fun:start_thread
+   fun:clone
+}
+
+{
+   driver_name_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:load_drivers
+   fun:driver_name
+   fun:dev_to_tty
+   fun:read_process
+   fun:process58_probe_main
+   fun:probe_worker
+   fun:probe_worker_runfn
+   fun:start_thread
+   fun:clone
+}
+
+{
+   rpmReadConfigFiles
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:realloc
+   fun:rrealloc
+   fun:rstrscat
+   fun:rpmReadConfigFiles
+   fun:rpmverify_probe_init
+   fun:probe_common_main
+   fun:start_thread
+   fun:clone
+}
+
+{
+   headerFormat
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   fun:rrealloc
+   fun:headerFormat
+   fun:rpmverify_collect
+   fun:rpmverify_probe_main
+   fun:probe_worker
+   fun:probe_worker_runfn
+   fun:start_thread
+   fun:clone
+}
+
+{
+   connect_dbus
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:connect_dbus
+   fun:systemdunitdependency_probe_main
+   ...
+}

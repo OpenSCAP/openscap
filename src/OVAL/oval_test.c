@@ -384,18 +384,17 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 	struct oval_definition_model *model = context->definition_model;
 
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-        if (id == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Found test element without id attribute.");
-		return -1;
+	if (id == NULL) {
+		dW("Found test element without id attribute. Ignoring");
+		return 1;
 	}
 	struct oval_test *test = oval_definition_model_get_new_test(model, id);
 
 	oval_subtype_t subtype = oval_subtype_parse(reader);
-        if ( subtype == OVAL_SUBTYPE_UNKNOWN) {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown test type %s.", id);
-		ret = -1;
-		goto cleanup;
-        }
+	if (subtype == OVAL_SUBTYPE_UNKNOWN) {
+		dI("Unknown test type %s, using independent/unknown", id);
+		subtype = OVAL_INDEPENDENT_UNKNOWN;
+	}
 	oval_test_set_subtype(test, subtype);
 
 	oval_operator_t ste_operator = oval_operator_parse(reader, "state_operator", OVAL_OPERATOR_AND);
@@ -431,7 +430,6 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 
 	ret = oval_parser_parse_tag(reader, context, &_oval_test_parse_tag, test);
 
-cleanup:
 	free(version);
 	free(comm);
 	free(id);
@@ -445,8 +443,8 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 
 	/* skip unknown test */
 	oval_subtype_t subtype = oval_test_get_subtype(test);
-	if ( subtype == OVAL_SUBTYPE_UNKNOWN ) {
-		dE("Unknown Test %s.", oval_test_get_id(test));
+	if (subtype == OVAL_SUBTYPE_UNKNOWN) {
+		dW("Unable to convert unknown test %s, skipping", oval_test_get_id(test));
 		return test_node;
 	}
 

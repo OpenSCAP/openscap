@@ -31,6 +31,8 @@
 #endif
 
 #include <probe-api.h>
+#include <probe/probe.h>
+
 #include "probe/entcmp.h"
 #include "systemdshared.h"
 #include "common/list.h"
@@ -210,6 +212,11 @@ static int unit_callback(const char *unit, void *cbarg)
 	return 0;
 }
 
+int systemdunitdependency_probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_OWN;
+}
+
 int systemdunitdependency_probe_main(probe_ctx *ctx, void *probe_arg)
 {
 	SEXP_t *unit_entity, *probe_in;
@@ -232,7 +239,7 @@ int systemdunitdependency_probe_main(probe_ctx *ctx, void *probe_arg)
 	if (dbus_conn == NULL) {
 		dbus_error_free(&dbus_error);
 		SEXP_t *msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_INFO, "DBus connection failed, could not identify systemd units.");
-		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), ctx->offline_mode == PROBE_OFFLINE_NONE ? SYSCHAR_FLAG_ERROR : SYSCHAR_FLAG_NOT_COLLECTED);
 		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
 		return 0;

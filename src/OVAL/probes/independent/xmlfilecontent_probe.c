@@ -61,6 +61,10 @@
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
+#include <libxslt/xslt.h>
+#include <libxslt/xsltInternals.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
 
 #include "_seap.h"
 #include <probe-api.h>
@@ -104,12 +108,47 @@ void xmlfilecontent_probe_fini(void *arg)
 	xmlCleanupParser();
 }
 
+static xmlDocPtr strip_ns(xmlDocPtr doc)
+{
+	const char template[] = 
+	"<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
+	"    <xsl:template match=\"*\">"
+	"        <xsl:element name=\"{local-name()}\">"
+	"            <xsl:apply-templates select=\"node()|@*\"/>"
+	"        </xsl:element>"
+	"    </xsl:template>"
+	"    <xsl:template match=\"@*\">"
+	"        <xsl:attribute name=\"{local-name()}\">"
+	"            <xsl:value-of select=\".\"/>"
+	"        </xsl:attribute>"
+	"    </xsl:template>"
+	"</xsl:stylesheet>";
+	xmlDocPtr stylesheet_doc = xmlParseMemory(template, strlen(template));
+	if (stylesheet_doc == NULL) {
+		fprintf(stderr, "Can't parse the XSLT template\n");
+		return NULL;
+	}
+	xsltStylesheetPtr stylesheet = xsltParseStylesheetDoc(stylesheet_doc);
+	if (stylesheet == NULL) {
+		fprintf(stderr, "Can't parse the XSLT stylesheet\n");
+		xmlFreeDoc(stylesheet_doc);
+		return NULL;
+	}
+	xmlDocPtr result = xsltApplyStylesheet(stylesheet, doc, NULL);
+	if (result == NULL) {
+		fprintf(stderr, "Can't apply XSLT on the document\n");
+	}
+	xsltFreeStylesheet(stylesheet);
+	return result;
+}
+
 static int process_file(const char *prefix, const char *path, const char *filename, void *arg)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
 	int ret = 0, path_len, filename_len;
 	char *whole_path = NULL;
 	xmlDoc *doc = NULL;
+	xmlDoc *doc_no_ns = NULL;
 	xmlXPathContext *xpath_ctx = NULL;
 	xmlXPathObject *xpath_obj = NULL;
 	SEXP_t *item = NULL;
@@ -151,8 +190,25 @@ static int process_file(const char *prefix, const char *path, const char *filena
 		goto cleanup;
 	}
 
+	/* Remove the namespace from the examined document. The XPath expressions
+	 * will be evaluated as if the namespace is ignored. Even though the
+	 * xmlfilecontent should use standardized XPath, existing content expects
+	 * this behavior.
+	 */
+	doc_no_ns = strip_ns(doc);
+	if (doc_no_ns == NULL) {
+		SEXP_t *msg;
+		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+			"Can't remove namespaces from '%s'.", whole_path);
+		probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
+		ret = -1;
+		goto cleanup;
+	}
+
 	/* evaluate xpath */
-	xpath_ctx = xmlXPathNewContext(doc);
+	xpath_ctx = xmlXPathNewContext(doc_no_ns);
 	if (xpath_ctx == NULL) {
                 SEXP_t *msg;
                 msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "xmlXPathNewContext() error.");
@@ -280,6 +336,8 @@ static int process_file(const char *prefix, const char *path, const char *filena
 		xmlXPathFreeContext(xpath_ctx);
 	if (doc != NULL)
 		xmlFreeDoc(doc);
+	if (doc_no_ns != NULL)
+		xmlFreeDoc(doc_no_ns);
 	if (whole_path != NULL)
 		free(whole_path);
 

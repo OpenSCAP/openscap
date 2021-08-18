@@ -84,6 +84,7 @@
 #cmakedefine HAVE_UIO_H
 #cmakedefine HAVE_ATTR_XATTR_H
 #cmakedefine HAVE_SYS_XATTR_H
+#cmakedefine HAVE_SYS_EXTATTR_H
 
 #cmakedefine HAVE_STRSEP
 #cmakedefine HAVE_FLOCK
@@ -138,6 +139,9 @@
 #cmakedefine PREFERRED_PYTHON_PATH "@PREFERRED_PYTHON_PATH@"
 #cmakedefine PYTHON2_PATH "@PYTHON2_PATH@"
 #cmakedefine PYTHON3_PATH "@PYTHON3_PATH@"
+
+#cmakedefine OPENSCAP_ENABLE_SHA1
+#cmakedefine OPENSCAP_ENABLE_MD5
 
 #include "oscap_platforms.h"
 #include "compat.h"

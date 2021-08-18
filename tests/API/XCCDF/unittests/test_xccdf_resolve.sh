@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 ########################################################################
@@ -20,7 +20,7 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 
 $OSCAP xccdf resolve --output $result $srcdir/${name}.xccdf.xml > $stdout
-$OSCAP xccdf validate $result >> $stdout
+$OSCAP xccdf validate --skip-schematron $result >> $stdout
 
 assert_exists 1 '//Benchmark[@resolved="1"]' 
 

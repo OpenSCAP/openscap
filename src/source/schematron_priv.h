@@ -30,6 +30,6 @@
 #include "source/public/oscap_source.h"
 
 
-int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_document_type_t scap_type, const char *version, const char *outfile);
+int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_document_type_t scap_type, const char *version, FILE *outfile_fd);
 
 #endif

@@ -310,7 +310,7 @@
 <axsl:template match="xccdf:Benchmark[not(xccdf:platform)]" priority="1000" mode="M38">
 
 		<!--ASSERT -->
-<axsl:choose><axsl:when test="false()"/><axsl:otherwise>Warning: The 'Benchmark' element has no platform specified, which implies the benchmark applies to all platforms. Applicable platforms should be indicate if possible. See the XCCDF 1.2.1 specification, Section 6.2.5.<axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M38"/></axsl:template><axsl:template match="text()" priority="-1" mode="M38"/><axsl:template match="@*|node()" priority="-2" mode="M38"><axsl:apply-templates select="@*|*" mode="M38"/></axsl:template>
+<axsl:choose><axsl:when test="false()"/><axsl:otherwise>Warning: The 'Benchmark' element has no platform specified, which implies the benchmark applies to all platforms. Applicable platforms should be indicated if possible. See the XCCDF 1.2.1 specification, Section 6.2.5.<axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M38"/></axsl:template><axsl:template match="text()" priority="-1" mode="M38"/><axsl:template match="@*|node()" priority="-2" mode="M38"><axsl:apply-templates select="@*|*" mode="M38"/></axsl:template>
 
 <!--PATTERN benchmark_description_exists-->
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8...3.19)
 
 # Inspired and referenced from https://blog.kitware.com/cmake-and-the-default-build-type
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -10,8 +10,8 @@ endif()
 
 project("openscap")
 set(OPENSCAP_VERSION_MAJOR "1")
-set(OPENSCAP_VERSION_MINOR "4")
-set(OPENSCAP_VERSION_PATCH "0")
+set(OPENSCAP_VERSION_MINOR "3")
+set(OPENSCAP_VERS
 
 if(OPENSCAP_VERSION_SUFFIX)
 	set(OPENSCAP_VERSION "${OPENSCAP_VERSION_MAJOR}.${OPENSCAP_VERSION_MINOR}.${OPENSCAP_VERSION_PATCH}_${OPENSCAP_VERSION_SUFFIX}")
@@ -23,7 +23,7 @@ endif()
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-set(LT_CURRENT 26)
+set(LT_CURRENT 29)
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
 set(LT_REVISION 0)
@@ -31,7 +31,7 @@ set(LT_REVISION 0)
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
 ## precedence over adding, so set to 0 if both happened.
-set(LT_AGE 1)
+set(LT_AGE 4)
 
 math(EXPR LT_CURRENT_MINUS_AGE "${LT_CURRENT} - ${LT_AGE}")
 
@@ -75,6 +75,7 @@ include(FindPkgConfig)
 include(CheckLibraryExists)
 include(CheckFunctionExists)
 include(CheckIncludeFile)
+include(CheckIncludeFiles)
 include(CheckCSourceCompiles)
 include(CMakeDependentOption)
 
@@ -100,7 +101,7 @@ if(CAP_FOUND)
 endif()
 
 find_package(CURL)
-find_package(DBus)
+find_package(DBUS)
 find_package(Doxygen)
 find_package(GConf)
 find_package(Ldap)
@@ -143,11 +144,23 @@ find_package(SELinux)
 find_package(SWIG)
 find_package(LibXml2 REQUIRED)
 find_package(LibXslt REQUIRED)
+find_package(XMLSEC REQUIRED)
+if (APPLE)
+	set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl/")
+endif()
+find_package(OpenSSL REQUIRED)
+add_definitions(${XMLSEC_DEFINITIONS})
+if (WIN32)
+	add_compile_definitions("XMLSEC_CRYPTO_OPENSSL")
+endif()
 find_package(BZip2)
 
 # PThread
 if (WIN32)
 	find_package(ZLIB REQUIRED)
+endif()
+
+if (WIN32 AND NOT MINGW)
 	find_package(pthread CONFIG REQUIRED)
 	set(CMAKE_THREAD_LIBS_INIT ${PThreads4W_LIBRARY})
 else()
@@ -198,6 +211,7 @@ check_include_file(sys/mman.h HAVE_MMAN_H)
 check_include_file(sys/uio.h HAVE_UIO_H)
 check_include_file(sys/xattr.h HAVE_SYS_XATTR_H)
 check_include_file(attr/xattr.h HAVE_ATTR_XATTR_H)
+check_include_files("sys/types.h;sys/extattr.h" HAVE_SYS_EXTATTR_H)
 
 # HAVE_ATOMIC_BUILTINS
 check_c_source_compiles("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
@@ -247,11 +261,14 @@ if (WIN32)
 endif()
 cmake_dependent_option(ENABLE_PROBES_WINDOWS "build OVAL probes for the Windows OVAL tests" ${IS_WIN32} "ENABLE_PROBES" OFF)
 
+option(OPENSCAP_ENABLE_SHA1 "Enable using the SHA-1 algorithm" ON)
+option(OPENSCAP_ENABLE_MD5 "Enable using the MD5 algorithm" ON)
+
 # INDEPENDENT PROBES
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE "Independent environmentvariable probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE58 "Independent environmentvariable58 probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_FAMILY "Independent family probe" ON "ENABLE_PROBES_INDEPENDENT" OFF)
-cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_FILEHASH "Independent filehash probe" ON "ENABLE_PROBES_INDEPENDENT; CRYPTO_FOUND; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_FILEHASH "Independent filehash probe" ON "ENABLE_PROBES_INDEPENDENT; CRYPTO_FOUND; OPENSCAP_ENABLE_SHA1; OPENSCAP_ENABLE_MD5; NOT WIN32" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_FILEHASH58 "Independent filehash58 probe" ON "ENABLE_PROBES_INDEPENDENT; CRYPTO_FOUND; NOT WIN32" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_SQL "Independent sql probe" ON "ENABLE_PROBES_INDEPENDENT; OPENDBX_FOUND; NOT WIN32" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_SQL57 "Independent sql57 probe" ON "ENABLE_PROBES_INDEPENDENT; OPENDBX_FOUND; NOT WIN32" OFF)
@@ -265,7 +282,7 @@ cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT "Independent y
 # UNIX PROBES
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_DNSCACHE "Unix dnscache probe" ON "ENABLE_PROBES_UNIX" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_FILE "Unix file probe" ON "ENABLE_PROBES_UNIX" OFF)
-cmake_dependent_option(OPENSCAP_PROBE_UNIX_FILEEXTENDEDATTRIBUTE "Unix fileextendedattribute probe" ON "ENABLE_PROBES_UNIX; HAVE_SYS_XATTR_H OR HAVE_ATTR_XATTR_H" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_FILEEXTENDEDATTRIBUTE "Unix fileextendedattribute probe" ON "ENABLE_PROBES_UNIX; HAVE_SYS_XATTR_H OR HAVE_ATTR_XATTR_H OR HAVE_SYS_EXTATTR_H" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_GCONF "Unix gconf probe" ON "ENABLE_PROBES_UNIX; GCONF_FOUND" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_INTERFACE "Unix interface probe" ON "ENABLE_PROBES_UNIX" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_PASSWORD "Unix password probe" ON "ENABLE_PROBES_UNIX" OFF)
@@ -323,6 +340,7 @@ cmake_dependent_option(ENABLE_OSCAP_UTIL_SSH "enables the oscap-ssh utility, thi
 cmake_dependent_option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this lets you scan VMs and VM storage images" ON "NOT WIN32" OFF)
 cmake_dependent_option(ENABLE_OSCAP_UTIL_PODMAN "enables the oscap-podman utility, this lets you scan Podman containers and container images" ON "NOT WIN32" OFF)
 cmake_dependent_option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this lets you scan entire chroots using offline scanning" ON "NOT WIN32" OFF)
+option(ENABLE_OSCAP_UTIL_AUTOTAILOR "enables the autotailor utility that is able to perform command-line tailoring" TRUE)
 
 # ---------- TEST-SUITE SWITCHES
 
@@ -372,6 +390,8 @@ message(STATUS " ")
 message(STATUS "OVAL:")
 message(STATUS "base probe support: ${ENABLE_PROBES}")
 message(STATUS "SEAP msgid bit-size: ${SEAP_MSGID_BITS}")
+message(STATUS "SHA-1: ${OPENSCAP_ENABLE_SHA1}")
+message(STATUS "MD5: ${OPENSCAP_ENABLE_MD5}")
 
 message(STATUS "")
 message(STATUS "Independent probes: ${ENABLE_PROBES_INDEPENDENT}")
@@ -381,7 +401,7 @@ message(STATUS "  Independent variable probe: ${OPENSCAP_PROBE_INDEPENDENT_VARIA
 
 message(STATUS "")
 message(STATUS "Independent probes incompatible with WIN32 (WIN32 status: ${IS_WIN32})")
-message(STATUS "  Independent environmentvariable probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE}") 
+message(STATUS "  Independent environmentvariable probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE}")
 message(STATUS "  Independent environmentvariable58 probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE58}")
 message(STATUS "  Independent filehash probe: ${OPENSCAP_PROBE_INDEPENDENT_FILEHASH}")
 message(STATUS "  Independent filehash58 probe: ${OPENSCAP_PROBE_INDEPENDENT_FILEHASH58}")
@@ -460,6 +480,7 @@ message(STATUS "oscap-ssh: ${ENABLE_OSCAP_UTIL_SSH}")
 message(STATUS "oscap-vm: ${ENABLE_OSCAP_UTIL_VM}")
 message(STATUS "oscap-podman: ${ENABLE_OSCAP_UTIL_PODMAN}")
 message(STATUS "oscap-chroot: ${ENABLE_OSCAP_UTIL_CHROOT}")
+message(STATUS "autotailor: ${ENABLE_OSCAP_UTIL_AUTOTAILOR}")
 message(STATUS " ")
 
 message(STATUS "Testing:")
@@ -492,25 +513,7 @@ else()
 endif()
 set(OSCAP_TEMP_DIR "/tmp" CACHE STRING "use different temporary directory to execute sce scripts (default=/tmp)")
 
-# ---------- RPATHS for linking
 
-# see https://cmake.org/Wiki/CMake_RPATH_handling
-
-# use, i.e. don't skip the full RPATH for the build tree
-set(CMAKE_SKIP_BUILD_RPATH FALSE)
-
-# when building, don't use the install RPATH already
-# (but later on when installing)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-
-set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR})
-
-# add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# Turn on RPATH for OSX for policy warning
-set(CMAKE_MACOSX_RPATH ON)
 # ---------- CONFIGURATION
 
 configure_file("config.h.in" "config.h")
@@ -534,7 +537,13 @@ if (MSVC)
 endif()
 
 if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -std=c99")
+endif()
+if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+	add_link_options(-lkvm -lm -lprocstat)
+else()
+	# We do not define this on FreeBSD as it causes required functionality to not be exposed, e.g. getprogname() and u_<types>
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_POSIX_C_SOURCE=200112L")
 endif()
 if(${CMAKE_SYSTEM_NAME} EQUAL "Solaris")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__EXTENSIONS__")
@@ -569,9 +578,12 @@ include_directories(
 	"src/XCCDF/public/"
 	"src/XCCDF_POLICY/"
 	"src/XCCDF_POLICY/public/"
-	"yaml-filter"
+	"yaml-filter/src/"
 	${CMAKE_BINARY_DIR} # config.h is generated to build directory
 	${LIBXML2_INCLUDE_DIR}
+	${XMLSEC_INCLUDE_DIRS}
+	${OPENSSL_INCLUDE_DIR}
+	${PCRE_INCLUDE_DIRS}
 )
 
 # Honor visibility properties for all target types
@@ -593,7 +605,7 @@ function(set_oscap_generic_properties TARGET_OBJECT)
 endfunction()
 
 if(OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT)
-	add_library(yamlfilter_object OBJECT yaml-filter/yaml-path.c yaml-filter/yaml-path.h)
+	add_library(yamlfilter_object OBJECT yaml-filter/src/yaml-path.c yaml-filter/src/yaml-path.h)
 	set_oscap_generic_properties(yamlfilter_object)
 endif()
 

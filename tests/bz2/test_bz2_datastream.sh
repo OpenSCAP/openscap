@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright 2014 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
 
 set -e -o pipefail
-set -x
+
+. $builddir/tests/test_common.sh
 
 name=$(basename $0 .sh)
 dir=$(mktemp -d -t ${name}.XXXXXX)
@@ -23,7 +24,7 @@ bzip2 $xccdf
 $OSCAP info "${xccdf}.bz2" 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]
 
-$OSCAP xccdf validate "${xccdf}.bz2" > $stderr
+$OSCAP xccdf validate --skip-schematron "${xccdf}.bz2" > $stderr
 [ ! -s $stderr ]
 bash $builddir/run ./test_bz2_memory_source "${xccdf}.bz2" | grep 'XCCDF Checklist'
 
@@ -66,6 +67,6 @@ $OSCAP xccdf generate report --output $report "${arf}.bz2" 2> $stderr
 [ -f $report ]
 bash $builddir/run ./test_bz2_memory_source "${arf}.bz2" | grep 'ARF Result Datastream'
 
-grep 'OVAL test results details' $report
+grep -q 'OVAL test results details' $report
 rm $stderr
 rm -rf $dir

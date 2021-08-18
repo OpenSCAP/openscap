@@ -159,6 +159,8 @@ struct oscap_action {
 	int doctype;
 	int force;
 	int validate;
+	int validate_signature;
+	int enforce_signature;
 	int schematron;
 	int remote_resources;
 	int progress;
@@ -172,6 +174,7 @@ struct oscap_action {
         int list_dynamic;
 	char *verbosity_level;
 	char *fix_type;
+	char *local_files;
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);

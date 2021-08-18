@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Check that variables have their values recorded in the OVAL results.
 # This test verifies that different flavours of variable which are

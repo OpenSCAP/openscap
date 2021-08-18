@@ -11,7 +11,7 @@
 . $builddir/tests/test_common.sh
 
 CPE_URIS=(`grep "cpe:" $srcdir/dict.xml | \
-    sed 's/^.*cpe:/cpe:/g' | sed 's/".*$//g' | tr '\n' ' '`)
+    xsed 's/^.*cpe:/cpe:/g' | xsed 's/".*$//g' | tr '\n' ' '`)
 
 # Test cases.
 
@@ -44,9 +44,18 @@ function test_api_cpe_uri_create {
 	./test_api_cpe_uri --parsing  $URI parsing.out > parsing.out.1
 	if [ $? -eq 0 ]; then
 	    if [ "`cat  parsing.out`X" == "${URI}X" ]; then
-		sed 's/^\s*//g' parsing.out.1 > parsing.out.sed-tmp ; mv parsing.out.sed-tmp parsing.out.1
-		sed 's/(null)//g' parsing.out.1 > parsing.out.sed-tmp ; mv parsing.out.sed-tmp parsing.out.1
-		cat parsing.out.1 | xargs -d '\n' ./test_api_cpe_uri --creation > creation.out
+		xsed 's/^\s*//g' parsing.out.1 > parsing.out.sed-tmp ; mv parsing.out.sed-tmp parsing.out.1
+		xsed 's/(null)//g' parsing.out.1 > parsing.out.sed-tmp ; mv parsing.out.sed-tmp parsing.out.1
+
+		case $(uname) in
+			FreeBSD)
+				cat parsing.out.1 | gxargs -d '\n' ./test_api_cpe_uri --creation > creation.out
+				;;
+			*)
+				cat parsing.out.1 | xargs -d '\n' ./test_api_cpe_uri --creation > creation.out
+				;;
+		esac
+
  		if [ ! $? -eq 0 ] || [ "${URI}X" != "`cat creation.out`X" ]; then
 		    echo "${URI}X != `cat creation.out`X"
 		    ret_val=1; 
@@ -70,8 +79,8 @@ function test_api_cpe_uri_match {
 	./test_api_cpe_uri --parsing $URI parsing.out
 	if [ $? -eq 0 ]; then
 	    if [ "`cat parsing.out`X" == "${URI}X" ]; then
-		CPE=(`cat parsing.out | sed 's/(null)//g' | \
-		    sed 's/^\s*//g' | tr '\n' ' '`)
+		CPE=(`cat parsing.out | xsed 's/(null)//g' | \
+		    xsed 's/^\s*//g' | tr '\n' ' '`)
 		./test_api_cpe_uri --matching $URI " " >matching.out
 		if [ ! $? -eq 0 ] || ! grep "Mismatch" matching.out > /dev/null; then
 		    echo "Cannot match URI \"$URI\"!"

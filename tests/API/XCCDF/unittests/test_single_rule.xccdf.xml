@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_com.example.www_benchmark_dummy" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="false" xml:lang="en-US">
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://purl.org/dc/elements/1.1/" id="xccdf_com.example.www_benchmark_dummy" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="false" xml:lang="en-US">
   <status>accepted</status>
   <version>1.0</version>
 
@@ -26,6 +26,14 @@
   </Value>
   <Rule selected="true" id="xccdf_com.example.www_rule_test-pass">
     <title>This rule always pass</title>
+    <reference>Clever book, page 18, section 3</reference>
+    <reference>
+      <dc:title>Test reference without href attribute</dc:title>
+      <dc:publisher>OpenSCAP Project</dc:publisher>
+      <dc:type>Dummy reference</dc:type>
+      <dc:subject>Random subject</dc:subject>
+      <dc:identifier>12345</dc:identifier>
+    </reference>
     <reference href="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">RHEL-07-040800</reference>
     <reference href="http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx">SV-86937r1_rule</reference>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">

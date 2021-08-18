@@ -32,6 +32,18 @@
 #include <pthread.h>
 #include <errno.h>
 
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
+#if defined(OS_OSX)
+/* XXX: please see https://github.com/OpenSCAP/openscap/pull/1626 for the
+ *      reason of explicitly defining an external here instead of simply
+ *      including the unistd.h header file.
+ */
+extern int chroot(const char *);
+#endif
+
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "entcmp.h"
@@ -992,7 +1004,16 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 
 		} else if (probe->supported_offline_mode & PROBE_OFFLINE_CHROOT) {
 			probe->real_root_fd = open("/", O_RDONLY);
+			if (probe->real_root_fd == -1) {
+				dE("open(\"/\") failed: %s", strerror(errno));
+				return NULL;
+			}
 			probe->real_cwd_fd = open(".", O_RDONLY);
+			if (probe->real_cwd_fd == -1) {
+				close(probe->real_root_fd);
+				dE("open(\".\") failed: %s", strerror(errno));
+				return NULL;
+			}
 			if (chdir(rootdir) != 0) {
 				dE("chdir failed: %s", strerror(errno));
 			}

@@ -1,7 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Test basic usage of OVAL Directives. OVAL Directives here are used to exclude
 # <definitions> element from the resulting OVAL Results file.
+
+. $builddir/tests/test_common.sh
 
 set -e -o pipefail
 

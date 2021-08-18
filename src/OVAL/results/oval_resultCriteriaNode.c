@@ -234,8 +234,10 @@ void oval_result_criteria_node_free(struct oval_result_criteria_node *node)
 	free(node);
 }
 
-struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node
-    (struct oval_result_system *sys, struct oval_criteria_node *oval_node, int variable_instance) {
+struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node(
+		struct oval_result_system *sys, struct oval_criteria_node *oval_node,
+		struct oscap_list *visited_definitions, int variable_instance)
+{
 	struct oval_result_criteria_node *rslt_node = NULL;
 	if (oval_node) {
 		oval_criteria_node_type_t type = oval_criteria_node_get_type(oval_node);
@@ -255,7 +257,12 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 					struct oval_criteria_node *oval_subnode
 					    = oval_criteria_node_iterator_next(oval_subnodes);
 					struct oval_result_criteria_node *rslt_subnode
-					    = make_result_criteria_node_from_oval_criteria_node(sys, oval_subnode, variable_instance);
+						= make_result_criteria_node_from_oval_criteria_node(sys, oval_subnode, visited_definitions, variable_instance);
+					if (rslt_subnode == NULL) {
+						oval_criteria_node_iterator_free(oval_subnodes);
+						oval_result_criteria_node_free(rslt_node);
+						return NULL;
+					}
 					oval_result_criteria_node_add_subnode(rslt_node, rslt_subnode);
 				}
 				oval_criteria_node_iterator_free(oval_subnodes);
@@ -272,7 +279,9 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 		case OVAL_NODETYPE_EXTENDDEF:{
 				struct oval_definition *oval_definition = oval_criteria_node_get_definition(oval_node);
 				struct oval_result_definition *rslt_definition
-				    = oval_result_system_get_new_definition(sys, oval_definition, variable_instance);
+					= oval_result_system_get_new_definition_with_check(sys, oval_definition, visited_definitions, variable_instance);
+				if (rslt_definition == NULL)
+					return NULL;
 				rslt_node = oval_result_criteria_node_new(sys,
 									  type,
 									  negate,

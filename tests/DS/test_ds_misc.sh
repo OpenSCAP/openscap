@@ -162,6 +162,7 @@ function test_eval_complex()
 	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second"]'
 	assert_exists 1 '//rule-result/result'
 	assert_exists 1 '//rule-result/result[text()="pass"]'
+	assert_exists 1 '//TestResult/benchmark[@href="#scap_org.open-scap_comp_second-xccdf.xml2"]'
 	rm $arf
 }
 
@@ -183,15 +184,30 @@ function test_oval_eval_id {
     echo "$OUT" | grep $4 > /dev/null
 }
 
-function test_sds_external_xccdf {
-    local SDS_FILE="${srcdir}/$2"
-    local XCCDF="$3"
-    local PROFILE="$4"
-    local result="${1}-${PROFILE}.xml"
+function test_sds_external_xccdf_in_ds {
+    local SDS_FILE="${srcdir}/sds_external_xccdf/sds.ds.xml"
+    local XCCDF="scap_org.open-scap_cref_xccdf.xml"
+    local PROFILE="xccdf_external_profile_datastream_1"
+    local result="$(mktemp)"
 
-    $OSCAP xccdf eval --xccdf-id "$XCCDF" --profile "$PROFILE" --results "$result" "$SDS_FILE"
+    $OSCAP xccdf eval --xccdf-id "$XCCDF" --profile "$PROFILE" --results-arf "$result" "$SDS_FILE"
 
     assert_exists 1 '//rule-result/result[text()="pass"]'
+    assert_exists 1 '//TestResult/benchmark[@href="file:xccdf.sds.xml#scap_1_comp_xccdf.xml"]'
+
+    rm -f "$result"
+}
+
+function test_sds_external_xccdf {
+    local SDS_FILE="${srcdir}/sds_external_xccdf/sds.ds.xml"
+    local XCCDF="scap_org.open-scap_cref_xccdf-file.xml"
+    local PROFILE="xccdf_external_profile_file_1"
+    local result="$(mktemp)"
+
+    $OSCAP xccdf eval --xccdf-id "$XCCDF" --profile "$PROFILE" --results-arf "$result" "$SDS_FILE"
+
+    assert_exists 1 '//rule-result/result[text()="pass"]'
+    assert_exists 1 '//TestResult/benchmark[@href="file:xccdf.xml"]'
 
     rm -f "$result"
 }
@@ -234,12 +250,23 @@ function test_ds_continue_without_remote_resources() {
 	rm -f "$result" "$oval_result"
 }
 
+function test_source_date_epoch() {
+	local xccdf="$srcdir/sds_multiple_oval/multiple-oval-xccdf.xml"
+	local result="$(mktemp)"
+	local timestamp="2020-03-05T12:09:37"
+	export SOURCE_DATE_EPOCH="1583410177"
+	export TZ=UTC
+	$OSCAP ds sds-compose "$xccdf" "$result"
+	assert_exists 3 '//ds:component[@timestamp="'$timestamp'"]'
+	rm -f "$result"
+}
+
 
 # Testing.
 test_init
 
-test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_external_xccdf/sds.ds.xml scap_org.open-scap_cref_xccdf.xml xccdf_external_profile_datastream_1
-test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_external_xccdf/sds.ds.xml scap_org.open-scap_cref_xccdf-file.xml xccdf_external_profile_file_1
+test_run "sds_external_xccdf_in_ds" test_sds_external_xccdf_in_ds
+test_run "sds_external_xccdf" test_sds_external_xccdf
 test_run "sds_tailoring" test_sds_tailoring sds_tailoring sds_tailoring/sds.ds.xml scap_com.example_datastream_with_tailoring xccdf_com.example_cref_tailoring_01 xccdf_com.example_profile_tailoring
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
@@ -260,6 +287,7 @@ test_run "test_eval_complex" test_eval_complex
 test_run "sds_add_multiple_oval_twice_in_row" sds_add_multiple_twice
 test_run "test_ds_1_2_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.2.ds.xml xccdf_com.example.www_profile_test_remote_res
 test_run "test_ds_1_3_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.3.ds.xml xccdf_com.example.www_profile_test_remote_res
+test_run "test_source_date_epoch" test_source_date_epoch
 
 test_exit
 

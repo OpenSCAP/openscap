@@ -77,7 +77,7 @@ function test_probes_file_filenames {
 	# some of files maybe weren't successfully created
 	# (possibly not supported filenames by filesystem)
 	# get real count of them
-	filesCount=$(find "$files_dir" -type f | wc -l)
+	filesCount=$(find "$files_dir" -type f | wc -l | xargs)
 
 	assert_exists 1 '//results//criterion' || ret_val=1
 	assert_exists 1 '//results//criterion[@result="true"]' || ret_val=1

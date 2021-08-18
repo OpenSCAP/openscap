@@ -262,6 +262,19 @@
       </criteria>
     </definition>
 
+    <definition class="compliance" version="1" id="oval:0:def:26">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:26"/>
+        <criterion comment="comment" test_ref="oval:0:tst:27"/>
+        <criterion comment="comment" test_ref="oval:0:tst:28"/>
+        <criterion comment="comment" test_ref="oval:0:tst:29"/>
+      </criteria>
+    </definition>
+
   </definitions>
 
   <tests>
@@ -364,6 +377,21 @@
       <ind-def:object object_ref="oval:0:obj:25"/>
     </ind-def:yamlfilecontent_test>
 
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:26" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:26"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:27" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:27"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:28" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:28"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:29" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:29"/>
+    </ind-def:yamlfilecontent_test>
   </tests>
 
   <objects>
@@ -516,6 +544,30 @@
       <ind-def:path>/tmp</ind-def:path>
       <ind-def:filename>types.yaml</ind-def:filename>
       <ind-def:yamlpath>.float_error_cast</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:26">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.null_1</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:27">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.null_2</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:28">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.null_3</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:29">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.string_null</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
   </objects>
 

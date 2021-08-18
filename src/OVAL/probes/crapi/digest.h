@@ -27,16 +27,18 @@
 #include <stddef.h>
 
 typedef enum {
+#ifdef OPENSCAP_ENABLE_MD5
         CRAPI_DIGEST_MD5    = 0x01,
+#endif
+#ifdef OPENSCAP_ENABLE_SHA1
         CRAPI_DIGEST_SHA1   = 0x02,
+#endif
         CRAPI_DIGEST_SHA256 = 0x04,
         CRAPI_DIGEST_SHA512 = 0x08,
         CRAPI_DIGEST_RMD160 = 0x10,
         CRAPI_DIGEST_SHA224 = 0x20,
         CRAPI_DIGEST_SHA384 = 0x40
 } crapi_alg_t;
-
-#define CRAPI_DIGEST_CNT 7
 
 #include "md5.h"
 #include "sha1.h"

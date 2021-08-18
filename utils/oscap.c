@@ -133,10 +133,11 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 
 static int print_versions(const struct oscap_action *action)
 {
-	printf("OpenSCAP command line tool (oscap) %s\n" "Copyright 2009--2018 Red Hat Inc., Durham, North Carolina.\n\n",
+	printf("OpenSCAP command line tool (oscap) %s\n" "Copyright 2009--2021 Red Hat Inc., Durham, North Carolina.\n\n",
 		oscap_get_version());
 
 	printf("==== Supported specifications ====\n");
+	printf("SCAP Version: 1.3\n");
 	printf("XCCDF Version: %s\n", xccdf_benchmark_supported());
 	printf("OVAL Version: %s\n", oval_definition_model_supported());
 	printf("CPE Version: %s\n", cpe_dict_model_supported());

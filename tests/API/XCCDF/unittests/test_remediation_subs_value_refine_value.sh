@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -18,7 +18,7 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 '//Value'
 assert_exists 4 '//Value/value'
@@ -37,7 +37,7 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 \
 	--remediate --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 '//Value'
 assert_exists 4 '//Value/value'

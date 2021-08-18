@@ -59,7 +59,7 @@ class OscapDockerScan(object):
         if self.is_image:
             self.image_name, self.config = self._get_image_name_and_config(target)
             if self.image_name:
-                print("Runing given image in a temporary container ...")
+                print("Running given image in a temporary container ...")
                 self.container_name = "tmp_oscap_" + str(uuid.uuid1())
 
                 try:

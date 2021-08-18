@@ -169,6 +169,8 @@ const char *oscap_document_type_to_string(oscap_document_type_t type)
 		return "CVE NVD Feed";
 	case OSCAP_DOCUMENT_CVRF_FEED:
 		return "CVRF Feed";
+	case OSCAP_DOCUMENT_OCIL:
+		return "OCIL Questionnaire";
 	default:
 		return NULL;
 	}

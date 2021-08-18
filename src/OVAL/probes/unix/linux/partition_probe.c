@@ -139,11 +139,15 @@ static const char *correct_fstype(char *type)
 	return "";
 }
 
-static void add_mnt_opt(char ***mnt_opts, uint8_t mnt_ocnt, char *opt)
+static uint8_t add_mnt_opt(char ***mnt_opts, uint8_t mnt_ocnt, char *opt)
 {
-	*mnt_opts = realloc(*mnt_opts, sizeof(char *) * (mnt_ocnt + 1));
-	(*mnt_opts)[mnt_ocnt - 1] = opt;
-	(*mnt_opts)[mnt_ocnt] = NULL;
+	void *new_mnt_opts = realloc(*mnt_opts, sizeof(char *) * (mnt_ocnt + 2));
+	if (new_mnt_opts == NULL)
+		return mnt_ocnt;
+	*mnt_opts = new_mnt_opts;
+	(*mnt_opts)[mnt_ocnt] = opt;
+	(*mnt_opts)[mnt_ocnt + 1] = NULL;
+	return mnt_ocnt + 1;
 }
 
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
@@ -154,14 +158,19 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
 {
         SEXP_t *item;
         char   *uuid = "", *tok, *save = NULL, **mnt_opts = NULL;
+        char path[PATH_MAX];
         uint8_t mnt_ocnt;
         struct statvfs stvfs;
 
         /*
          * Get FS stats
          */
-        if (statvfs(mnt_ent->mnt_dir, &stvfs) != 0)
+        const char *prefix = getenv("OSCAP_PROBE_ROOT");
+        snprintf(path, PATH_MAX, "%s%s", prefix ? prefix : "", mnt_ent->mnt_dir);
+        if (statvfs(path, &stvfs) != 0) {
+                dE("Can't statvfs %s: errno=%d, %s.", path, errno, strerror(errno));
                 return (-1);
+        }
 
         /*
          * Get UUID
@@ -169,7 +178,7 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
         uuid = blkid_get_tag_value(blkcache, "UUID", mnt_ent->mnt_fsname);
         if (uuid == NULL) {
-	        uuid = "";
+		uuid = strdup("");
         }
 #endif
         /*
@@ -180,7 +189,7 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
         tok = strtok_r(mnt_ent->mnt_opts, ",", &save);
 
         do {
-            add_mnt_opt(&mnt_opts, ++mnt_ocnt, tok);
+            mnt_ocnt = add_mnt_opt(&mnt_opts, mnt_ocnt, tok);
         } while ((tok = strtok_r(NULL, ",", &save)) != NULL);
 
         /*
@@ -189,16 +198,16 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
          * we must use flags got by statvfs().
          */
         if (stvfs.f_flag & MS_REMOUNT) {
-            add_mnt_opt(&mnt_opts, ++mnt_ocnt, "remount");
+            mnt_ocnt = add_mnt_opt(&mnt_opts, mnt_ocnt, "remount");
         }
         if (stvfs.f_flag & MS_BIND) {
-            add_mnt_opt(&mnt_opts, ++mnt_ocnt, "bind");
+            mnt_ocnt = add_mnt_opt(&mnt_opts, mnt_ocnt, "bind");
         }
         if (stvfs.f_flag & MS_MOVE) {
-            add_mnt_opt(&mnt_opts, ++mnt_ocnt, "move");
+            mnt_ocnt = add_mnt_opt(&mnt_opts, mnt_ocnt, "move");
         }
 
-        dD("mnt_ocnt = %d, mnt_opts[mnt_ocnt]=%p", mnt_ocnt, mnt_opts[mnt_ocnt]);
+        dD("mnt_ocnt = %d, mnt_opts[mnt_ocnt]=%p", mnt_ocnt, mnt_opts == NULL ? NULL : mnt_opts[mnt_ocnt]);
 
 	/*
 	 * "Correct" the type (this won't be (hopefully) needed in a later version
@@ -236,6 +245,7 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
         if (strcmp(uuid, "") == 0) {
 	        probe_itement_setstatus(item, "uuid", 1, SYSCHAR_STATUS_DOES_NOT_EXIST);
         }
+	free(uuid);
 #else
 	/* Compiled without blkid library, we don't collect UUID */
 	probe_itement_setstatus(item, "uuid", 1, SYSCHAR_STATUS_NOT_COLLECTED);
@@ -247,9 +257,9 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
         return (0);
 }
 
-void *partition_probe_init(void)
+int patition_probe_offline_mode_supported(void)
 {
-	return (NULL);
+        return PROBE_OFFLINE_OWN;
 }
 
 int partition_probe_main(probe_ctx *ctx, void *probe_arg)
@@ -260,37 +270,48 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         oval_operation_t mnt_op;
         FILE *mnt_fp;
         oval_schema_version_t obj_over;
+
+        const char *prefix = getenv("OSCAP_PROBE_ROOT");
+        snprintf(mnt_path, PATH_MAX, "%s"MTAB_PATH, prefix ? prefix : "");
+
 #if defined(PROC_CHECK) && defined(OS_LINUX)
         int   mnt_fd;
         struct statfs stfs;
 
-        mnt_fd = open(MTAB_PATH, O_RDONLY);
+        mnt_fd = open(mnt_path, O_RDONLY);
 
-        if (mnt_fd < 0)
-                return (PROBE_ESYSTEM);
+        if (mnt_fd < 0) {
+                if (!prefix)
+                        dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
+        }
 
         if (fstatfs(mnt_fd, &stfs) != 0) {
                 close(mnt_fd);
-                return (PROBE_ESYSTEM);
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
         }
 
         if (stfs.f_type != PROC_SUPER_MAGIC) {
                 close(mnt_fd);
-                return (PROBE_EFATAL);
+                return (prefix ? PROBE_ESUCCESS : PROBE_EFATAL);
         }
 
         mnt_fp = fdopen(mnt_fd, "r");
 
         if (mnt_fp == NULL) {
                 close(mnt_fd);
-                return (PROBE_ESYSTEM);
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
         }
 #else
-        mnt_fp = fopen(MTAB_PATH, "r");
+        mnt_fp = fopen(mnt_path, "r");
 
-        if (mnt_fp == NULL)
-                return (PROBE_ESYSTEM);
+        if (mnt_fp == NULL) {
+                if (!prefix)
+                        dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
+        }
 #endif
+
         probe_in   = probe_ctx_getobject(ctx);
         obj_over   = probe_obj_get_platform_schema_version(probe_in);
         mnt_entity = probe_obj_getent(probe_in, "mount_point", 1);
@@ -341,6 +362,9 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
 
                         if (re == NULL) {
                                 endmntent(mnt_fp);
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+                                blkid_put_cache(blkcache);
+#endif
                                 return (PROBE_EINVAL);
                         }
                 }
@@ -395,6 +419,9 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
 
                 if (mnt_op == OVAL_OPERATION_PATTERN_MATCH)
                         pcre_free(re);
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+                blkid_put_cache(blkcache);
+#endif
         }
 
         return (probe_ret);

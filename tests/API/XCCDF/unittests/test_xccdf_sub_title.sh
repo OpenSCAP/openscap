@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -19,7 +19,7 @@ $OSCAP xccdf eval \
 	--results $result --report $report $srcdir/${name}.xccdf.xml > $stdout 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]
 cat $stdout | grep "This title is variable: No profile"; :> $stdout
-$OSCAP xccdf validate $result; :> $result
+$OSCAP xccdf validate --skip-schematron $result; :> $result
 grep 'This description is substituted according to the selected policy:.*No profile' $report
 grep 'This title is variable:.*No profile' $report
 grep 'sub ' $report || x=1; [ "x$x" == "x1" ]; unset x; :> $report
@@ -32,7 +32,7 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 \
 	--results $result --report $report $srcdir/${name}.xccdf.xml > $stdout 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]
 cat $stdout | grep "This title is variable: The First Profile"; :> $stdout
-$OSCAP xccdf validate $result; :> $result
+$OSCAP xccdf validate --skip-schematron $result; :> $result
 grep 'This description is substituted according to the selected policy:.*The First Profile' $report
 grep 'This title is variable:.*The First Profile' $report
 grep 'sub ' $report || x=1; [ "x$x" == "x1" ]; unset x; :> $report
@@ -45,7 +45,7 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_2 \
 	--results $result --report $report $srcdir/${name}.xccdf.xml > $stdout 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]
 cat $stdout | grep "This title is variable: The Second Profile"; rm $stdout
-$OSCAP xccdf validate $result; rm $result
+$OSCAP xccdf validate --skip-schematron $result; rm $result
 grep 'This description is substituted according to the selected policy:.*The Second Profile' $report
 grep 'This title is variable:.*The Second Profile' $report
 grep 'sub ' $report || x=1; [ "x$x" == "x1" ]; unset x; rm $report

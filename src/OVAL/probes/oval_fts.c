@@ -989,12 +989,13 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			continue;
 		}
 
+		const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
 		/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH operation on path and filepath */
 		if (ofts->ofts_path_regex != NULL && fts_ent->fts_info == FTS_D) {
 			int ret, svec[3];
 
 			ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
-					fts_ent->fts_path, fts_ent->fts_pathlen, 0, PCRE_PARTIAL,
+					fts_ent->fts_path+shift, fts_ent->fts_pathlen-shift, 0, PCRE_PARTIAL,
 					svec, sizeof(svec) / sizeof(svec[0]));
 			if (ret < 0) {
 				switch (ret) {
@@ -1016,7 +1017,6 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 		    || (!ofts->ofts_sfilepath && fts_ent->fts_info != FTS_D))
 			continue;
 
-		const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
 		stmp = SEXP_string_newf("%s", fts_ent->fts_path + shift);
 
 		if (ofts->ofts_sfilepath)
@@ -1029,6 +1029,15 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 
 		if (ores == OVAL_RESULT_TRUE)
 			break;
+		if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS) {
+			/* At this point the comparison result isn't OVAL_RESULT_TRUE. Since
+			we passed the exact path (from filepath or path elements) to
+			fts_open() we surely know that we can't find other items that would
+			be equal. Therefore we can terminate the matching. This can happen
+			if the filepath or path element references a variable that has
+			multiple different values. */
+			return NULL;
+		}
 	} /* for (;;) */
 
 	/*
@@ -1163,10 +1172,11 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				/* limit recursion only to selected file types */
 				switch (fts_ent->fts_info) {
 				case FTS_D:
-					if (!(ofts->recurse & OVAL_RECURSE_DIRS)) {
+					if (!(ofts->recurse & OVAL_RECURSE_DIRS) && !(ofts->recurse & OVAL_RECURSE_SYMLINKS && ofts->following)) {
 						fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
 						continue;
 					}
+					ofts->following = 0;
 					break;
 				case FTS_SL:
 					if (!(ofts->recurse & OVAL_RECURSE_SYMLINKS)) {
@@ -1174,6 +1184,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 						continue;
 					}
 					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_FOLLOW);
+					ofts->following = 1;
 					break;
 				default:
 					continue;
@@ -1273,7 +1284,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 						break;
 					}
 				} else {
-					if (fts_ent->fts_info != FTS_D) {
+					if (fts_ent->fts_info != FTS_D && fts_ent->fts_info != FTS_DP && fts_ent->fts_info != FTS_DC) {
 						SEXP_t *stmp;
 
 						stmp = SEXP_string_newf("%s", fts_ent->fts_name);
@@ -1335,6 +1346,12 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 		if (ofts->ofts_sfilepath) {
 			fts_ent = ofts->ofts_match_path_fts_ent;
 			ofts->ofts_match_path_fts_ent = NULL;
+			if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
+				&& (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+					(fts_ent->fts_statp != NULL) ?
+					&fts_ent->fts_statp->st_dev : NULL))) {
+				continue;
+			}
 			break;
 		} else {
 			fts_ent = oval_fts_read_recurse_path(ofts);

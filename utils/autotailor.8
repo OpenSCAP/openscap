@@ -1,0 +1,39 @@
+.TH autotailor "8" "April 2020" "Red Hat, Inc." "System Administration Utilities"
+.SH NAME
+autotailor \- CLI tool for tailoring of SCAP data streams.
+.SH DESCRIPTION
+autotailor produces tailoring files that SCAP-compliant scanners can use to complement SCAP data streams.
+A tailoring file adds a new profile, which is supposed to extend a profile that is already present in the data stream.
+
+Tailoring can add or remove rules, and it can redefine contents of XCCDF variables.
+
+The tool requires data stream location and ID of the base profile as inputs.
+Note however, that the referenced data stream is not opened, and the validity of tailoring is not checked against it.
+The tool doesn't prevent you from extending non-existent profiles, selecting non-existent rules, and so on.
+
+.SH USAGE
+.SS Modify a variable value
+$ autotailor --var-value xccdf_org.ssgproject.content_value_var_screensaver_lock_delay=120 -o tailoring.xml ssg-rhel8-ds.xml xccdf_org.ssgproject.content_profile_pci_dss
+
+The utility allows you to specify the ID namespace using the --namespace-id option, so you don't have to repeat the xccdf_org.ssgproject.content_... prefix everywhere.
+The default namespace ID is actually org.ssgproject.content, so the following invocations are equivalent to the first one:
+
+$ autotailor --var-value var_screensaver_lock_delay=120 --namespace-id org.ssgproject.content -o tailoring.xml ssg-rhel8-ds.xml pci_dss
+
+$ autotailor --var-value var_screensaver_lock_delay=120 -o tailoring.xml ssg-rhel8-ds.xml pci_dss
+
+The tailoring tailoring_file defines a new profile, xccdf_org.ssgproject.content_profile_pci_dss_customized, which alters the screensaver lock delay.
+
+.SS Perform more modifications
+$ autotailor --var-value var_screensaver_lock_delay=120 --select gconf_gnome_screensaver_idle_delay --var-value inactivity_timeout_value=600 ssg-rhel8-ds.xml pci_dss
+
+Use the --help option to learn about other options and their usage.
+
+.SH REPORTING BUGS
+.nf
+Please report bugs using https://github.com/OpenSCAP/openscap/issues
+
+.SH AUTHORS
+.nf
+Matěj Týč <matyc@redhat.com>
+.fi

@@ -76,5 +76,13 @@ xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source);
  */
 xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source);
 
+/**
+ * Get a DOM representation of this resource. The document is removed from
+ * oscap_source and isn't owned by oscap_source anymore.
+ * @memberof oscap_source
+ * @param source Resource to build DOM representation from
+ * @returns xmlDoc structure to read the content
+ */
+xmlDoc *oscap_source_pop_xmlDoc(struct oscap_source *source);
 
 #endif

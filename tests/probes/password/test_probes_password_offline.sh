@@ -30,6 +30,8 @@ function test_probes_password {
     [ -f $RF ] && rm -f $RF
 
     tmpdir=$(mktemp -t -d "test_password.XXXXXX")
+    mkdir -p "$tmpdir/etc"
+    echo "root:x:0:0:root:/root:/bin/bash" > "$tmpdir/etc/passwd"
     set_chroot_offline_test_mode "$tmpdir"
 
     $OSCAP oval eval --results $RF $DF
@@ -39,7 +41,7 @@ function test_probes_password {
 
     if [ -f $RF ]; then
         result=$RF
-        assert_exists 1 'oval_results/results/system/tests/test[@test_id="oval:1:tst:1"][@result="not applicable"]'
+        assert_exists 1 'oval_results/results/system/tests/test[@test_id="oval:1:tst:1"][@result="true"]'
         ret_val=$?
     else
         ret_val=1

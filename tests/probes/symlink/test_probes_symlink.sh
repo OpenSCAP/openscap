@@ -17,7 +17,7 @@ function test_probes_symlink {
 
     rm -f $RF
 
-    tmpdir=$(mktemp -t -d "test_symlink.XXXXXX")
+    tmpdir=$(make_temp_dir /tmp test_symlink)
 
     touch $tmpdir/some_file
     touch $tmpdir/file_to_remove

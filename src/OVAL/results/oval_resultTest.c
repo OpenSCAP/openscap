@@ -381,16 +381,10 @@ oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op)
 	return result;
 }
 
-static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_model *syschar_model, struct oval_entity *state_entity, struct oval_sysent *item_entity, oval_operation_t state_entity_operation, struct oval_state_content *content)
+static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_model *syschar_model, struct oval_variable *state_entity_var, const char *sys_data, oval_operation_t state_entity_operation, oval_check_t var_check)
 {
 	oval_syschar_collection_flag_t flag;
 	oval_result_t ent_val_res;
-
-	struct oval_variable *state_entity_var;
-	if ((state_entity_var = oval_entity_get_variable(state_entity)) == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL variable");
-		return -1;
-	}
 
 	if (0 != oval_syschar_model_compute_variable(syschar_model, state_entity_var)) {
 		return -1;
@@ -420,16 +414,15 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 			}
 			oval_datatype_t state_entity_val_datatype = oval_value_get_datatype(var_val);
 
-			var_val_res = oval_ent_cmp_str(state_entity_val_text, state_entity_val_datatype, item_entity, state_entity_operation);
+			var_val_res = oval_str_cmp_str(state_entity_val_text, state_entity_val_datatype, sys_data, state_entity_operation);
 			if (var_val_res == OVAL_RESULT_ERROR) {
 				dE("Error occured when comparing a variable '%s' value '%s' with collected item entity = '%s'",
-					oval_variable_get_id(state_entity_var), state_entity_val_text, oval_sysent_get_value(item_entity));
+					oval_variable_get_id(state_entity_var), state_entity_val_text, sys_data);
 			}
 			ores_add_res(&var_ores, var_val_res);
 		}
 		oval_value_iterator_free(val_itr);
 
-		oval_check_t var_check = oval_state_content_get_var_check(content);
 		ent_val_res = ores_get_result_bychk(&var_ores, var_check);
 		} break;
 	case SYSCHAR_FLAG_ERROR:
@@ -450,6 +443,9 @@ struct record_field_instance {
 	char *value;
 	oval_datatype_t data_type;
 	oval_check_t ent_check;
+	oval_operation_t operation;
+	struct oval_variable *var;
+	oval_check_t var_check;
 };
 
 static struct record_field_instance _oval_record_field_iterator_next_instance(struct oval_record_field_iterator *iterator)
@@ -461,11 +457,14 @@ static struct record_field_instance _oval_record_field_iterator_next_instance(st
 	instance.data_type = oval_record_field_get_datatype(rf);
 	if (oval_record_field_get_type(rf) == OVAL_RECORD_FIELD_STATE) {
 		instance.ent_check = oval_record_field_get_ent_check(rf);
+		instance.operation = oval_record_field_get_operation(rf);
+		instance.var = oval_record_field_get_variable(rf);
+		instance.var_check = oval_record_field_get_var_check(rf);
 	}
 	return instance;
 }
 
-static oval_result_t _evaluate_sysent_record(struct oval_state_content *state_content, struct oval_sysent *item_entity)
+static oval_result_t _evaluate_sysent_record(struct oval_syschar_model *syschar_model, struct oval_state_content *state_content, struct oval_sysent *item_entity)
 {
 	struct oresults record_ores;
 	ores_clear(&record_ores);
@@ -485,7 +484,12 @@ static oval_result_t _evaluate_sysent_record(struct oval_state_content *state_co
 			struct record_field_instance item_rf = _oval_record_field_iterator_next_instance(item_it);
 			if (strcmp(state_rf.name, item_rf.name) == 0) {
 				field_found = true;
-				oval_result_t fields_comparison_result = oval_str_cmp_str(state_rf.value, state_rf.data_type, item_rf.value, OVAL_OPERATION_EQUALS);
+				oval_result_t fields_comparison_result;
+				if (state_rf.var != NULL) {
+					fields_comparison_result = _evaluate_sysent_with_variable(syschar_model, state_rf.var, item_rf.value, state_rf.operation, state_rf.var_check);
+				} else {
+					fields_comparison_result = oval_str_cmp_str(state_rf.value, state_rf.data_type, item_rf.value, state_rf.operation);
+				}
 				ores_add_res(&field_ores, fields_comparison_result);
 			}
 		}
@@ -510,10 +514,17 @@ static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_
 	if (oval_sysent_get_status(item_entity) == SYSCHAR_STATUS_DOES_NOT_EXIST) {
 		return OVAL_RESULT_FALSE;
 	} else if (oval_entity_get_varref_type(state_entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+		struct oval_variable *state_entity_var;
+		if ((state_entity_var = oval_entity_get_variable(state_entity)) == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL variable");
+			return -1;
+		}
+		const char *sys_data = oval_sysent_get_value(item_entity);
+		oval_check_t var_check = oval_state_content_get_var_check(content);
 
 		return _evaluate_sysent_with_variable(syschar_model,
-				state_entity, item_entity,
-				state_entity_operation, content);
+				state_entity_var, sys_data,
+				state_entity_operation, var_check);
 	} else {
 		struct oval_value *state_entity_val;
 		char *state_entity_val_text;
@@ -525,7 +536,7 @@ static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_
 				dE("The only allowed operation for comparing record types is 'equals'.");
 				return OVAL_RESULT_ERROR;
 			}
-			return _evaluate_sysent_record(content, item_entity);
+			return _evaluate_sysent_record(syschar_model, content, item_entity);
 		} else {
 			if ((state_entity_val = oval_entity_get_value(state_entity)) == NULL) {
 				oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity value");
@@ -537,7 +548,8 @@ static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_
 			}
 			state_entity_val_datatype = oval_value_get_datatype(state_entity_val);
 
-			return oval_ent_cmp_str(state_entity_val_text, state_entity_val_datatype, item_entity, state_entity_operation);
+			const char *sys_data = oval_sysent_get_value(item_entity);
+			return oval_str_cmp_str(state_entity_val_text, state_entity_val_datatype, sys_data, state_entity_operation);
 		}
 	}
 }
@@ -654,10 +666,14 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			dW("Entity name '%s' from state (id: '%s') not found in item (id: '%s').",
 			   state_entity_name, oval_state_get_id(state), oval_sysitem_get_id(cur_sysitem));
 
-		ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
-		ores_add_res(&ste_ores, ste_ent_res);
 		oval_result_t cres = oval_status_counter_get_result(&counter, check_existence);
-		ores_add_res(&ste_ores, cres);
+		/* The entity check results are only relevant when the check existence is satisfied */
+		if (cres == OVAL_RESULT_TRUE) {
+			ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
+			ores_add_res(&ste_ores, ste_ent_res);
+		} else {
+			ores_add_res(&ste_ores, cres);
+		}
 	}
 	oval_state_content_iterator_free(state_contents_itr);
 
@@ -1129,7 +1145,7 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 	dI("Evaluating %s test '%s': %s.", type, test_id, comment);
 
 	if (rtest->result == OVAL_RESULT_NOT_EVALUATED) {
-		if ((oval_independent_subtype_t)oval_test_get_subtype(oval_result_test_get_test(rtest)) != OVAL_INDEPENDENT_UNKNOWN ) {
+		if (oval_test_get_subtype(oval_result_test_get_test(rtest)) != OVAL_INDEPENDENT_UNKNOWN) {
 			struct oval_string_map *tmp_map = oval_string_map_new();
 			void *args[] = { rtest->system, rtest, tmp_map };
 			dIndent(1);

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -27,12 +27,15 @@ function compare_time(){
 }
 
 name=$(basename $0 .sh)
-stderr=$(mktemp -t ${name}.out.XXXXXX)
-tmpdir=$(mktemp -d -t ${name}.out.XXXXXX)
+stderr=$(make_temp_file /tmp ${name}.out)
+tmpdir=$(make_temp_dir /tmp ${name}.out)
+
 oval=test_remediation_simple.oval.xml
 cp $srcdir/$oval $tmpdir # Accomodate scanning by xccdf placed in the same temp dir.
 chmod u+w $tmpdir/$oval
-result=$(mktemp -p $tmpdir ${name}.out.XXXXXX)
+
+result=$(make_temp_file $tmpdir ${name}.out)
+
 echo "Stderr file = $stderr"
 echo "Result file = $result"
 rm -f test_file
@@ -41,7 +44,7 @@ $OSCAP xccdf remediate --results $result  $srcdir/${name}.xccdf.xml 2> $stderr
 daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ ! -f test_file ]
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 4 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002001"]'
 starttime=`$XPATH 'string(//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002001"]/@start-time)' < $result 2>/dev/null`
@@ -56,7 +59,7 @@ $OSCAP xccdf remediate --result-id xccdf_org.open-scap_testresult_default-profil
 daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ ! -f test_file ]
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 5 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002002"]'
 starttime=`$XPATH 'string(//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002002"]/@start-time)' < $result 2>/dev/null`
@@ -74,7 +77,7 @@ daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ $ret -eq 2 ]
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ -f test_file ]; rm test_file
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 6 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001001"]'
 starttime=`$XPATH 'string(//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001001"]/@start-time)' < $result 2>/dev/null`
@@ -94,7 +97,7 @@ $OSCAP xccdf remediate --result-id xccdf_org.open-scap_testresult_default-profil
 daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 [ -f test_file ]; rm test_file
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 7 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile003"]'
 starttime=`$XPATH 'string(//TestResult[@id="xccdf_org.open-scap_testresult_default-profile003"]/@start-time)' < $result 2>/dev/null`

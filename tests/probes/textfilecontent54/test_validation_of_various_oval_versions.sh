@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+. $builddir/tests/test_common.sh
 
 LST_VALID="
 	tfc54-def-5.4-valid.xml

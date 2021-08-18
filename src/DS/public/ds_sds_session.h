@@ -120,6 +120,14 @@ OSCAP_API const char *ds_sds_session_get_datastream_id(const struct ds_sds_sessi
 OSCAP_API const char *ds_sds_session_get_checklist_id(const struct ds_sds_session *session);
 
 /**
+ * Return URI of currently selected component representing XCCDF within the DataStream
+ * @memberof ds_sds_session
+ * @param session The Source DataStream session
+ * @returns URI of selected component or NULL
+ */
+OSCAP_API const char *ds_sds_session_get_checklist_uri(const struct ds_sds_session *session);
+
+/**
  * Get component from Source DataStream by its href. This assumes that the component
  * has been already cached by the session. You can cache component or its dependencies
  * by calling ds_sds_session_select_checklist or ds_sds_session_register_component_with_dependencies.
@@ -192,7 +200,21 @@ OSCAP_API void ds_sds_session_reset(struct ds_sds_session *session);
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */
-OSCAP_API void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback);
+OSCAP_API OSCAP_DEPRECATED(void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback));
+
+/**
+ * Set property of remote content.
+ * @memberof ds_sds_session
+ * @param session The source data stream session
+ * @param allowed Whether is download of remote resources allowed in this
+ * session (defaults to false)
+ * @param local_files Allows to use a locally downloaded copy of the remote
+ * resources. Contains a path to a directory where the files are stored
+ * (defaults to NULL).
+ * @param callback used to notify user about download proceeds. This might be
+ * safely set to NULL -- ignoring user notification.
+ */
+OSCAP_API void ds_sds_session_configure_remote_resources(struct ds_sds_session *session, bool allowed, const char *local_files, download_progress_calllback_t callback);
 
 /**
  * Returns HTML representation of selected checklist in form of OpenSCAP guide.

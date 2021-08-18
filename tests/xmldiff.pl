@@ -1,4 +1,5 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
+use warnings;
 #
 # This is a modification of XML-SemanticDiff
 # ------------------------------------------

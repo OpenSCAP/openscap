@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 # Test <refine-rule> element
@@ -132,7 +132,7 @@ $OSCAP xccdf eval --profile child --results $result $xccdf > $stdout 2> $stderr 
 
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 RULE_COUNT=17
 

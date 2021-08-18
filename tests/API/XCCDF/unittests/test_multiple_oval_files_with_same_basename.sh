@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 touch not_executable
@@ -17,7 +17,7 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 8 '//rule-result'
 assert_exists 8 '//rule-result/result'
@@ -89,7 +89,7 @@ done
 rmdir $split/oval
 
 mangle="scap_org.open-scap_cref_"
-$OSCAP xccdf validate $split/${mangle}${name}.xccdf.xml 2> $stderr
+$OSCAP xccdf validate --skip-schematron $split/${mangle}${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 rm $split/${mangle}${name}.xccdf.xml
 rmdir $split

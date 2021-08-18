@@ -48,6 +48,7 @@
 #include "oval_probe_ext.h"
 #include "probe-table.h"
 #include "oval_types.h"
+#include "crapi/crapi.h"
 
 #if defined(OSCAP_THREAD_SAFE)
 #include <pthread.h>
@@ -93,6 +94,13 @@ static void oval_probe_session_libinit(void)
 	SEXP_free((SEXP_t *)exp);
 
         ncache_libinit();
+	/*
+	 * Initialize crypto API
+	 */
+#ifndef OS_WINDOWS
+	if (crapi_init (NULL) != 0)
+		return;
+#endif
 }
 
 /**
@@ -132,7 +140,7 @@ static void oval_probe_session_init(oval_probe_session_t *sess, struct oval_sysc
 	int probe_count = probe_table_size();
 	for (int i = 0; i < probe_count; i++) {
 		oval_subtype_t type = probe_table_at_index(i);
-		if ((oval_independent_subtype_t) type == OVAL_INDEPENDENT_SYSCHAR_SUBTYPE) {
+		if (type == OVAL_INDEPENDENT_SYSCHAR_SUBTYPE) {
 			probe_handler = &oval_probe_sys_handler;
 		} else {
 			probe_handler = &oval_probe_ext_handler;

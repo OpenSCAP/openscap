@@ -62,7 +62,8 @@ struct oscap_module OSCAP_INFO_MODULE = {
 	.summary = "Print information about a SCAP file.",
     .usage = "some-file.xml",
 	.help = "Options:\n"
-		"   --fetch-remote-resources      - Download remote content referenced by DataStream.\n"
+		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
+		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --profile <id>                - Show info of the profile with the given ID.\n"
 		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n",
     .opt_parser = getopt_info,
@@ -531,7 +532,7 @@ static int app_info_sds(struct oscap_source *source, const struct oscap_action *
 		return OSCAP_ERROR;
 	}
 
-	ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	ds_sds_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 
 	/* get collection */
 	struct ds_sds_index *sds = ds_sds_session_get_sds_idx(session);
@@ -762,6 +763,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	/* Command-options */
 	const struct option long_options[] = {
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"local-files", required_argument, NULL, 'l'},
 		{"profile", required_argument, 0, 'p'},
 		{"profiles", no_argument, 0, 'n'},
 		// end
@@ -778,6 +780,9 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 			case 'n':
 				action->show_profiles_only = 1;
 				action->provide_machine_readable_output = 1;
+				break;
+			case 'l':
+				action->local_files = optarg;
 				break;
 			default: return oscap_module_usage(action->module, stderr, NULL);
 		}

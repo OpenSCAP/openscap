@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Copyright 2015 Martin Preisler <martin@preisler.me> 
 #
@@ -38,7 +38,7 @@ function usage()
     echo "$ oscap-ssh user@host 22 info INPUT_CONTENT"
     echo "$ oscap-ssh user@host 22 xccdf eval [options] INPUT_CONTENT"
     echo
-    echo "Only source datastreams are supported as INPUT_CONTENT!"
+    echo "Only source data streams are supported as INPUT_CONTENT!"
     echo
     echo "supported oscap xccdf eval options are:"
     echo "  --profile"
@@ -52,7 +52,9 @@ function usage()
     echo "  --results-arf"
     echo "  --report"
     echo "  --skip-valid"
+    echo "  --skip-validation"
     echo "  --fetch-remote-resources"
+    echo "  --local-files"
     echo "  --progress"
     echo "  --datastream-id"
     echo "  --xccdf-id"
@@ -68,6 +70,7 @@ function usage()
     echo "  --results"
     echo "  --report"
     echo "  --skip-valid"
+    echo "  --skip-validation"
     echo "  --datastream-id"
     echo "  --oval-id"
     echo
@@ -78,6 +81,7 @@ function usage()
     echo "  --syschar"
     echo "  --variables"
     echo "  --skip-valid"
+    echo "  --skip-validation"
     echo
     echo "specific option for oscap-ssh (must be first argument):"
     echo "  --sudo"
@@ -105,6 +109,12 @@ function ssh_execute_with_command_and_options {
 # $2: Remote destination
 function scp_copy_to_temp_dir {
     scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" $SSH_ADDITIONAL_OPTIONS "$1" "$SSH_HOST:$REMOTE_TEMP_DIR/$2"
+}
+
+# $1: Local directory name to copy
+# $2: Remote destination
+function scp_copy_dir_to_temp_dir {
+    scp -r -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" $SSH_ADDITIONAL_OPTIONS "$1" "$SSH_HOST:$REMOTE_TEMP_DIR/$2"
 }
 
 # $1: Remote filename to get
@@ -193,6 +203,7 @@ oscap_args=("$@")
 
 LOCAL_CONTENT_PATH=""
 LOCAL_TAILORING_PATH=""
+LOCAL_LOCAL_FILES_PATH=""
 LOCAL_CPE_PATH=""
 LOCAL_VARIABLES_PATH=""
 LOCAL_DIRECTIVES_PATH=""
@@ -210,6 +221,10 @@ for i in $(seq 0 `expr $# - 1`); do
     ("--tailoring-file")
         LOCAL_TAILORING_PATH=${oscap_args[j]}
         oscap_args[j]="$REMOTE_TEMP_DIR/tailoring.xml"
+      ;;
+    ("--local-files")
+        LOCAL_LOCAL_FILES_PATH=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/local_files"
       ;;
     ("--cpe")
         LOCAL_CPE_PATH=${oscap_args[j]}
@@ -255,6 +270,7 @@ fi
 
 [ "$LOCAL_CONTENT_PATH" == "" ] || [ -f "$LOCAL_CONTENT_PATH" ] || die "Expected the last argument to be an input file, '$LOCAL_CONTENT_PATH' isn't a valid file path or the file doesn't exist!"
 [ "$LOCAL_TAILORING_PATH" == "" ] || [ -f "$LOCAL_TAILORING_PATH" ] || die "Tailoring file path '$LOCAL_TAILORING_PATH' isn't a valid file path or the file doesn't exist!"
+[ "$LOCAL_LOCAL_FILES_PATH" == "" ] || [ -d "$LOCAL_LOCAL_FILES_PATH" ] || die "Directory '$LOCAL_LOCAL_FILES_PATH' isn't a valid directory path or the directory doesn't exist!"
 [ "$LOCAL_CPE_PATH" == "" ] || [ -f "$LOCAL_CPE_PATH" ] || die "CPE file path '$LOCAL_CPE_PATH' isn't a valid file path or the file doesn't exist!"
 [ "$LOCAL_VARIABLES_PATH" == "" ] || [ -f "$LOCAL_VARIABLES_PATH" ] || die "OVAL variables file path '$LOCAL_VARIABLES_PATH' isn't a valid file path or the file doesn't exist!"
 [ "$LOCAL_DIRECTIVES_PATH" == "" ] || [ -f "$LOCAL_DIRECTIVES_PATH" ] || die "OVAL directives file path '$LOCAL_DIRECTIVES_PATH' isn't a valid file path or the file doesn't exist!"
@@ -266,6 +282,10 @@ fi
 if [ "$LOCAL_TAILORING_PATH" != "" ]; then
     echo "Copying tailoring file '$LOCAL_TAILORING_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
     scp_copy_to_temp_dir "$LOCAL_TAILORING_PATH" tailoring.xml || die "Failed to copy tailoring file to remote temporary directory!"
+fi
+if [ "$LOCAL_LOCAL_FILES_PATH" != "" ]; then
+    echo "Copying directory '$LOCAL_LOCAL_FILES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp_copy_dir_to_temp_dir "$LOCAL_LOCAL_FILES_PATH" local_files || die "Failed to copy directory $LOCAL_LOCAL_FILES_PATH to remote temporary directory!"
 fi
 if [ "$LOCAL_CPE_PATH" != "" ]; then
     echo "Copying CPE file '$LOCAL_CPE_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."

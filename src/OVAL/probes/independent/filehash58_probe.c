@@ -54,25 +54,44 @@
 #include "util.h"
 #include "probe/entcmp.h"
 #include "filehash58_probe.h"
+#include "oscap_helpers.h"
 
 #define FILE_SEPARATOR '/'
 
-#define CRAPI_INVALID -1
+/* List of hash types listed in OVAL specification */
+static const char *OVAL_FILEHASH58_HASH_TYPES[] = {
+	"MD5",
+	"SHA-1",
+	"SHA-224",
+	"SHA-256",
+	"SHA-384",
+	"SHA-512",
+	NULL
+};
 
+/* List of hash types supported by OpenSCAP */
 static const struct oscap_string_map CRAPI_ALG_MAP[] = {
+#ifdef OPENSCAP_ENABLE_MD5
 	{CRAPI_DIGEST_MD5, "MD5"},
+#endif
+#ifdef OPENSCAP_ENABLE_SHA1
 	{CRAPI_DIGEST_SHA1, "SHA-1"},
+#endif
 	{CRAPI_DIGEST_SHA224, "SHA-224"},
 	{CRAPI_DIGEST_SHA256, "SHA-256"},
 	{CRAPI_DIGEST_SHA384, "SHA-384"},
 	{CRAPI_DIGEST_SHA512, "SHA-512"},
 	/* {CRAPI_DIGEST_RMD160, "RMD-160"}, OVAL doesn't support this */
-	{CRAPI_INVALID, NULL}
+	{0, NULL}
 };
 
 static const struct oscap_string_map CRAPI_ALG_MAP_SIZE[] = {
+#ifdef OPENSCAP_ENABLE_MD5
 	{16, "MD5"},
+#endif
+#ifdef OPENSCAP_ENABLE_SHA1
 	{20, "SHA-1"},
+#endif
 	{28, "SHA-224"},
 	{32, "SHA-256"},
 	{48, "SHA-384"},
@@ -157,45 +176,64 @@ static int filehash58_cb(const char *prefix, const char *p, const char *f, const
 		probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR,
 			"Can't open \"%s\": errno=%d, %s.", pbuf, errno, strerror (errno));
 		probe_item_setstatus(itm, SYSCHAR_STATUS_ERROR);
-	} else {
-		uint8_t hash_dst[1025];
-		size_t  hash_dstlen = sizeof hash_dst;
-		char    hash_str[2051];
 
-		crapi_alg_t hash_type;
+		probe_item_collect(ctx, itm);
+		return 0;
+	}
 
-		hash_type = oscap_string_to_enum(CRAPI_ALG_MAP, h);
-		hash_dstlen = oscap_string_to_enum(CRAPI_ALG_MAP_SIZE, h);
+	uint8_t hash_dst[1025];
+	size_t hash_dstlen = sizeof(hash_dst);
+	char hash_str[2051];
+	crapi_alg_t hash_type;
 
-		/*
-		 * Compute hash value
-		 */
-		if (crapi_mdigest_fd (fd, 1, hash_type, hash_dst, &hash_dstlen) != 0) {
-			close (fd);
-			return (-1);
-		}
+	hash_type = oscap_string_to_enum(CRAPI_ALG_MAP, h);
+	if (hash_type == 0) {
+		char *msg = oscap_sprintf("This version of OpenSCAP doesn't support the '%s' hash algorithm.", h);
+		dW(msg);
+		itm = probe_item_create (OVAL_INDEPENDENT_FILE_HASH58, NULL,
+			"filepath", OVAL_DATATYPE_STRING, pbuf,
+			"path", OVAL_DATATYPE_STRING, p,
+			"filename", OVAL_DATATYPE_STRING, f,
+			"hash_type", OVAL_DATATYPE_STRING, h,
+			NULL);
+		probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR, msg);
+		free(msg);
+		probe_item_setstatus(itm, SYSCHAR_STATUS_ERROR);
+		probe_item_collect(ctx, itm);
+		close(fd);
+		return 0;
+	}
 
+	hash_dstlen = oscap_string_to_enum(CRAPI_ALG_MAP_SIZE, h);
+
+	/*
+	 * Compute hash value
+	 */
+	if (crapi_mdigest_fd(fd, 1, hash_type, hash_dst, &hash_dstlen) != 0) {
 		close (fd);
+		return (-1);
+	}
 
-		hash_str[0] = '\0';
-		mem2hex (hash_dst, hash_dstlen, hash_str, sizeof hash_str);
+	close (fd);
 
-		/*
-		 * Create and add the item
-		 */
-		itm = probe_item_create(OVAL_INDEPENDENT_FILE_HASH58, NULL,
-					"filepath", OVAL_DATATYPE_STRING, pbuf,
-					"path",     OVAL_DATATYPE_STRING, p,
-					"filename", OVAL_DATATYPE_STRING, f,
-					"hash_type",OVAL_DATATYPE_STRING, h,
-					"hash",     OVAL_DATATYPE_STRING, hash_str,
-					NULL);
+	hash_str[0] = '\0';
+	mem2hex(hash_dst, hash_dstlen, hash_str, sizeof(hash_str));
 
-		if (hash_dstlen == 0) {
-			probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR,
-					   "Unable to compute %s hash value of \"%s\".", h, pbuf);
-			probe_item_setstatus(itm, SYSCHAR_STATUS_ERROR);
-		}
+	/*
+	 * Create and add the item
+	 */
+	itm = probe_item_create(OVAL_INDEPENDENT_FILE_HASH58, NULL,
+		"filepath", OVAL_DATATYPE_STRING, pbuf,
+		"path", OVAL_DATATYPE_STRING, p,
+		"filename", OVAL_DATATYPE_STRING, f,
+		"hash_type",OVAL_DATATYPE_STRING, h,
+		"hash", OVAL_DATATYPE_STRING, hash_str,
+		NULL);
+
+	if (hash_dstlen == 0) {
+		probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR,
+			"Unable to compute %s hash value of \"%s\".", h, pbuf);
+		probe_item_setstatus(itm, SYSCHAR_STATUS_ERROR);
 	}
 
 	probe_item_collect(ctx, itm);
@@ -210,12 +248,6 @@ int filehash58_probe_offline_mode_supported()
 
 void *filehash58_probe_init(void)
 {
-	/*
-	 * Initialize crypto API
-	 */
-	if (crapi_init (NULL) != 0)
-		return (NULL);
-
 	/*
 	 * Initialize mutex.
 	 */
@@ -292,15 +324,14 @@ int filehash58_probe_main(probe_ctx *ctx, void *arg)
 	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			/* find hash types to compare with entity, think "not satisfy" */
-			const struct oscap_string_map *p = CRAPI_ALG_MAP;
-			while (p->value != CRAPI_INVALID) {
-				SEXP_t *crapi_hash_type_sexp = SEXP_string_new(p->string, strlen(p->string));
-				if (probe_entobj_cmp(hash_type, crapi_hash_type_sexp) == OVAL_RESULT_TRUE) {
-					filehash58_cb(prefix, ofts_ent->path, ofts_ent->file, p->string, ctx);
+			for (int i = 0; OVAL_FILEHASH58_HASH_TYPES[i] != NULL; i++) {
+				const char *oval_filehash58_hash_type = OVAL_FILEHASH58_HASH_TYPES[i];
+				SEXP_t *oval_filehash58_hash_type_sexp = SEXP_string_new(oval_filehash58_hash_type, strlen(oval_filehash58_hash_type));
+				if (probe_entobj_cmp(hash_type, oval_filehash58_hash_type_sexp) == OVAL_RESULT_TRUE) {
+					filehash58_cb(prefix, ofts_ent->path, ofts_ent->file, oval_filehash58_hash_type, ctx);
 				}
 
-				SEXP_free(crapi_hash_type_sexp);
-				p++;
+				SEXP_free(oval_filehash58_hash_type_sexp);
 			}
 			oval_ftsent_free(ofts_ent);
 		}

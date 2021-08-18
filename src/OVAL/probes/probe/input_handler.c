@@ -30,6 +30,10 @@
 #include "_seap.h"
 #include <probe-api.h>
 
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
 #include "common/debug_priv.h"
 #include "../SEAP/generic/rbt/rbt.h"
 #include "probe.h"

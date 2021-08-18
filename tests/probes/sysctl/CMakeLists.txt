@@ -1,3 +1,4 @@
 if(ENABLE_PROBES_UNIX)
-	add_oscap_test("all.sh")
+	add_oscap_test("test_sysctl_probe.sh")
+	add_oscap_test("test_sysctl_probe_all.sh")
 endif()

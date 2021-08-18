@@ -239,7 +239,21 @@ OSCAP_API void oval_session_set_export_system_characteristics(struct oval_sessio
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */
-OSCAP_API void oval_session_set_remote_resources(struct oval_session *session, bool allowed, download_progress_calllback_t callback);
+OSCAP_API OSCAP_DEPRECATED(void oval_session_set_remote_resources(struct oval_session *session, bool allowed, download_progress_calllback_t callback));
+
+/**
+ * Set property of remote content.
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param allowed Whether is download of remote resources allowed in this
+ * session (defaults to false)
+ * @param local_files Allows to use a locally downloaded copy of the remote
+ * resources. Contains a path to a directory where the files are stored
+ * (defaults to NULL).
+ * @param callback used to notify user about download proceeds. This might be
+ * safely set to NULL -- ignoring user notification.
+ */
+OSCAP_API void oval_session_configure_remote_resources(struct oval_session *session, bool allowed, const char *local_files, download_progress_calllback_t callback);
 
 /**
  * Destructor of an \ref oval_session.

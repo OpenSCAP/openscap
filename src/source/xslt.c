@@ -105,7 +105,7 @@ static inline int save_stylesheet_result_to_file(xmlDoc *resulting_doc, xsltStyl
 static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char *xsltfile, const char **params, const char *path_to_xslt, xsltStylesheet **stylesheet)
 {
 	xmlDoc *doc = oscap_source_get_xmlDoc(source);
-	if (doc == NULL || stylesheet == NULL) {
+	if (doc == NULL || stylesheet == NULL || xsltfile == NULL) {
 		return NULL;
 	}
 

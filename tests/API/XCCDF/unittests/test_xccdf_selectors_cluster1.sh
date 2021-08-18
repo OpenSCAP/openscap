@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -15,7 +15,7 @@ echo "Output file = $output"
 echo "Result file = $result"
 [ -f $output ]; [ "`cat $output`" == "XCCDF Results are exported correctly." ]; rm $output
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 '//Profile'
 assert_exists 2 '//Profile/select'

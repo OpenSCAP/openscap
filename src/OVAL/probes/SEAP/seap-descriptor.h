@@ -43,7 +43,6 @@ typedef uint8_t SEAP_scheme_t;
  */
 typedef struct {
         SEAP_msgid_t   next_id;
-        SEXP_ostate_t *ostate; /* Output state */
         SEAP_scheme_t  scheme; /* Protocol/Scheme used for this descriptor */
         void          *scheme_data; /* Protocol/Scheme related data */
 
@@ -60,6 +59,7 @@ typedef struct {
         SEAP_cmdtbl_t *cmd_c_table; /* Local SEAP commands */
         SEAP_cmdtbl_t *cmd_w_table; /* Waiting SEAP commands */
     oval_subtype_t subtype;
+	struct probe_common_main_argument *arg;
 } SEAP_desc_t;
 
 #define SEAP_DESC_FDIN  0x00000001

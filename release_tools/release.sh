@@ -34,12 +34,6 @@ clean_repository_aggressively()
 }
 
 
-check_cpe()
-{
-    grep -q "cpe:/o:fedoraproject:fedora:$latest_fedora" "$OSCAP_REPO_ROOT/cpe/openscap-cpe-dict.xml" || die "Couldn't find Fedora $latest_fedora CPE"
-    grep -q "cpe:/o:redhat:enterprise_linux:$latest_rhel" "$OSCAP_REPO_ROOT/cpe/openscap-cpe-dict.xml" || die "Couldn't find RHEL $latest_rhel CPE"
-}
-
 # Args:
 # $1: Python version
 check_python_binding()
@@ -412,7 +406,7 @@ release_to_git_and_bump_release()
     test -n "$GITHUB_TOKEN" || die "We don't know your GitHub token, so we can't proceed. Get one on https://github.com/settings/tokens and put it in the .env file, so it contains the line GITHUB_TOKEN='<your token here>'"
     test "$1" = "$version" && die "The new version is the same as current version, I am not doing anything."
     check_release_is_ok
-    release_to_git
+    # release_to_git  # GH now add tags to the release automatically
     # upload_to_git  # to be done when https://github.com/PyGithub/PyGithub/pull/525 is merged.
     flip_milestones "$GITHUB_TOKEN" openscap "$_new_version"
     bump_release "$_new_version"

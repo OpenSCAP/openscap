@@ -34,7 +34,6 @@
 #include "generic/common.h"
 #include "_seap-types.h"
 #include "_sexp-types.h"
-#include "_sexp-manip.h"
 #include "generic/redblack.h"
 #include "_seap-command.h"
 #include "_seap-packet.h"

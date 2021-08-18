@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 # Test loading of OVAL results files located referenced absolutely
@@ -13,9 +13,9 @@ function testInDirectory(){
 
 	pushd "$directory"
 
-	local result=$(mktemp -t ${name}.out.result.XXXXXX)
-	local report=$(mktemp -t ${name}.out.report.XXXXXX)
-	local stderr=$(mktemp -t ${name}.err.XXXXXX)
+	local result=$(make_temp_file /tmp ${name}.out.result)
+	local report=$(make_temp_file /tmp ${name}.out.report)
+	local stderr=$(make_temp_file /tmp ${name}.err)
 
 	echo "Stderr file = $stderr"
 	echo "Result file = $result"
@@ -41,7 +41,7 @@ function testInDirectory(){
 }
 
 name=$(basename $0 .sh)
-ORIGINAL_XCCDF="$(readlink -e "$srcdir/${name}.xccdf.xml")"
+ORIGINAL_XCCDF="$(readlink -f "$srcdir/${name}.xccdf.xml")"
 
 ### test in XCCDF's directory
 
@@ -51,14 +51,13 @@ ORIGINAL_XCCDF="$(readlink -e "$srcdir/${name}.xccdf.xml")"
 # there are two possible ways to define absolute path
 # simple abs path /a/b/c
 for prefix in "" "file://";do
-    testDir=`mktemp -d`
+    testDir=$(make_temp_dir /tmp tmp)
     mkdir -p "$testDir/oval/always-fail"
 
     cp "$ORIGINAL_XCCDF" "$srcdir/test_default_selector.oval.xml" "$testDir"
     cp "$srcdir/oval/always-fail/oval.xml" "$testDir/oval/always-fail"
-    XCCDF="$(readlink -e "$testDir/${name}.xccdf.xml")"
-
-    sed -i "s|%%TEST_DIR_PATH%%|${prefix}${testDir}|" $XCCDF
+    XCCDF="$(readlink -f "$testDir/${name}.xccdf.xml")"
+    xsed -i "s|%%TEST_DIR_PATH%%|${prefix}${testDir}|" $XCCDF
 
     testInDirectory "$testDir" "$XCCDF"
     rm -rf "$testDir"

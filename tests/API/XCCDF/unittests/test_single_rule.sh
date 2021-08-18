@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -24,7 +24,7 @@ $OSCAP xccdf eval --results $result --profile $prof1 \
 	$srcdir/${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"pass\"]"
 assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"pass\"]"
@@ -36,7 +36,7 @@ $OSCAP xccdf eval --results $result --profile $prof1 \
 	--rule $rule_pass $srcdir/${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"pass\"]"
 assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"notselected\"]"
@@ -49,7 +49,7 @@ $OSCAP xccdf eval --results $result --rule $rule_pass \
 	$srcdir/${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"pass\"]"
 assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"notselected\"]"
@@ -62,7 +62,7 @@ $OSCAP xccdf eval --results $result --rule $rule_fail \
 [ $ret -eq 2 ]
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"notselected\"]"
 assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"fail\"]"
@@ -74,7 +74,7 @@ $OSCAP xccdf eval --results $result --profile $prof1 \
 	--rule $rule_fail $srcdir/${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"notselected\"]"
 assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"pass\"]"
@@ -102,7 +102,7 @@ $OSCAP xccdf eval --results $result --profile $prof1 \
 	--rule $rule_pass $srcdir/${name}.ds.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"pass\"]"
 assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"notselected\"]"
@@ -116,7 +116,7 @@ $OSCAP xccdf eval --tailoring-file $srcdir/${name}-tailoring.xml \
 	--rule $rule_pass $srcdir/${name}.ds.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"pass\"]"
 assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"notselected\"]"

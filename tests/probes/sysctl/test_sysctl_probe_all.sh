@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 . $builddir/tests/test_common.sh
 
@@ -16,6 +16,7 @@ SYSCTL_BLACKLIST='
 	fs.protected_symlinks
 	kernel.cad_pid
 	kernel.unprivileged_userns_apparmor_policy
+	kernel.apparmor_display_secid_mode
 	kernel.usermodehelper.bset
 	kernel.usermodehelper.inheritable
 	net.core.bpf_jit_harden
@@ -48,12 +49,19 @@ echo "Errors file: $stderr"
 
 $OSCAP oval eval --results $result $srcdir/test_sysctl_probe_all.oval.xml > /dev/null 2>$stderr
 
-# sysctl has duplicities in output
-# hide permission errors like: "sysctl: permission denied on key 'fs.protected_hardlinks'"
-# kernel parameters might use "/" and "." separators interchangeably - normalizing
-sysctl -aN --deprecated 2> /dev/null | grep -v $SYSCTL_BLACKLIST_REGEX | tr "/" "." | sort -u > "$sysctlNames"
+case $(uname) in
+	FreeBSD)
+		sysctl -aN 2> /dev/null > "$sysctlNames"
+		;;
+	Linux)
+		# sysctl has duplicities in output
+		# hide permission errors like: "sysctl: permission denied on key 'fs.protected_hardlinks'"
+		# kernel parameters might use "/" and "." separators interchangeably - normalizing
+		sysctl -aN --deprecated 2> /dev/null | grep -v $SYSCTL_BLACKLIST_REGEX | tr "/" "." | sort -u > "$sysctlNames"
+		;;
+esac
 
-grep unix-sys:name "$result" | grep -v $SYSCTL_BLACKLIST_REGEX | sed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
+grep unix-sys:name "$result" | grep -v $SYSCTL_BLACKLIST_REGEX | xsed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
 
 # If procps_ver > 3.3.12 we need to filter *stable_secret and vm.stat_refresh
 # options from the sysctl output, for more details see
@@ -66,10 +74,27 @@ if [ "$procps_ver" != "$lowest_ver" ]; then
 	sed -i '/.*vm.stat_refresh/d' "$sysctlNames"
 fi
 
+if ! grep -q "hugepages" "$ourNames"; then
+	sed -i "/^.*hugepages.*$/d" "$sysctlNames"
+fi
+
+echo "Diff (sysctlNames / ourNames): ------"
 diff "$sysctlNames" "$ourNames"
+echo "-------------------------------------"
 
 # remove oscap error message related to permissions from stderr
 sed -i -E "/^E: oscap: +Can't read sysctl value from /d" "$stderr"
+sed -i -E "/^E: oscap: +An error.*, Operation not permitted/d" "$stderr"
+
+# remove oscap error message related to gibberish binary entries
+# that can't fit into 8K buffer and result in errno 14
+# (for example /proc/sys/kernel/spl/hostid could be the case)
+sed -i -E "/^E: oscap: +An error.*14, Bad address/d" "$stderr"
+sed -i "/^.*hugepages.*$/d" "$stderr"
+
+echo "Errors (without messages related to permissions):"
+cat "$stderr"
+
 [ ! -s $stderr ]
 
 rm $stderr $result $ourNames $sysctlNames

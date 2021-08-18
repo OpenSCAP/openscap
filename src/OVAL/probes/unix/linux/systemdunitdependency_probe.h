@@ -25,6 +25,8 @@
 
 #include "probe-api.h"
 
+int systemdunitdependency_probe_offline_mode_supported(void);
+
 int systemdunitdependency_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_SYSTEMDUNITDEPENDENCY_PROBE_H */

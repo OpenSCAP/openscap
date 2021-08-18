@@ -96,7 +96,11 @@ int oval_probe_handler_set(oval_phtbl_t *phtbl, oval_subtype_t type, oval_probe_
                 }
         }
 
-        phtbl->ph = realloc(phtbl->ph, sizeof(oval_ph_t *) * ++phtbl->sz);
+        void *new_ph = realloc(phtbl->ph, sizeof(oval_ph_t *) * ++phtbl->sz);
+        if (new_ph == NULL)
+                return -1;
+        phtbl->ph = new_ph;
+
         phrec = phtbl->ph[phtbl->sz - 1] = malloc(sizeof(oval_ph_t));
         sort  = true;
 fillrec:

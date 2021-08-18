@@ -84,11 +84,11 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 	case OVAL_DATATYPE_FILESET_REVISION:
 	case OVAL_DATATYPE_IOS_VERSION:
 		// todo:
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unsupported datatype: %s.", dtype);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unsupported datatype: %u.", dtype);
 		val_sexp = NULL;
 		break;
 	default:
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown datatype: %s.", dtype);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown datatype: %u.", dtype);
 		val_sexp = NULL;
 		break;
 	}
@@ -911,7 +911,7 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 				break;
 			default:
 				dE("Unexpected SEXP number datatype: %d, name: '%s'.", sndt, key);
-				valp = '\0';
+				valp = NULL;
 				break;
 			}
 			break;
@@ -926,7 +926,7 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 		default:
 			dE("Unexpected OVAL datatype: %d, '%s', name: '%s'.",
 			   dt, oval_datatype_get_text(dt), key);
-			valp = '\0';
+			valp = NULL;
 			break;
 		}
 

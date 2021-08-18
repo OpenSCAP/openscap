@@ -25,6 +25,8 @@
 
 #include "probe-api.h"
 
+int systemdunitproperty_probe_offline_mode_supported(void);
+
 int systemdunitproperty_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_SYSTEMDUNITPROPERTY_PROBE_H */

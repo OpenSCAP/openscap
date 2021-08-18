@@ -1,0 +1,20 @@
+downstream_package_name: openscap
+jobs:
+- job: copr_build
+  metadata:
+    targets:
+    - fedora-all-x86_64
+  trigger: pull_request
+- job: tests
+  metadata:
+    targets:
+    - fedora-all-x86_64
+  trigger: pull_request
+- job: propose_downstream
+  metadata:
+    dist-git-branch: fedora-all
+  trigger: release
+specfile_path: openscap.spec
+synced_files:
+- .packit.yaml
+upstream_package_name: openscap

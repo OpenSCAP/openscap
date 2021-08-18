@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -16,7 +16,7 @@ echo "Result file = $result"
 grep "Skipping rule that requires an unregistered check system or incorrect content reference to evaluate." $stderr
 rm $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 '//rule-result'
 assert_exists 1 '//rule-result/result'

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -12,13 +12,13 @@ for args in "" "--profile xccdf_moc.elpmaxe.www_profile_1"; do
 	stderr=$(mktemp -t ${name}.out.XXXXXX)
 	# If an <xccdf:Rule> contains an <xccdf:complex-check>, then the benchmark consumer MUST process it
 	# and MUST ignore any <xccdf:check> elements that are also contained by the <xccdf:Rule>.
-	$OSCAP xccdf eval --skip-valid --results $result $srcdir/${name}.xccdf.xml 2> $stderr
+	$OSCAP xccdf eval --skip-validation --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 
 	echo "Stderr file = $stderr"
 	echo "Result file = $result"
 	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-	$OSCAP xccdf validate $result || [ $? == 2 ]
+	$OSCAP xccdf validate --skip-schematron $result || [ $? == 2 ]
 
 	assert_exists 1 '//rule-result'
 	assert_exists 1 '//rule-result/result[text()="pass"]'

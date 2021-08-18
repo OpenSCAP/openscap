@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -15,7 +15,7 @@ echo "Result file = $result"
 grep "Skipping rule that uses OVAL but is possibly malformed; an incorrect content reference prevents this check from being evaluated." $stderr
 rm $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 '/Benchmark/status[not(@date)]'
 assert_exists 1 '//rule-result'

@@ -77,6 +77,7 @@ static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
 static int app_xccdf_xslt(const struct oscap_action *action);
 static int app_generate_fix(const struct oscap_action *action);
+static int app_generate_guide(const struct oscap_action *action);
 
 #define XCCDF_SUBMODULES_NUM		7
 #define XCCDF_GEN_SUBMODULES_NUM	5 /* See actual arrays
@@ -112,7 +113,7 @@ static struct oscap_module XCCDF_VALIDATE = {
     .opt_parser = getopt_xccdf,
 	.func = app_xccdf_validate,
 	.help = "Options:\n"
-		"   --schematron                  - Use schematron-based validation in addition to XML Schema\n"
+		"   --skip-schematron             - Do not use schematron-based validation in addition to XML Schema\n"
 	,
 };
 
@@ -126,13 +127,15 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
 	.help =	"Options:\n"
 		"   --profile <name>              - The name of Profile to be evaluated.\n"
 		"   --skip-valid                  - Skip validation.\n"
+		"   --skip-validation\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
-		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
+		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
 		"                                   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
 		"                                   for applicability checks.\n"
@@ -164,15 +167,20 @@ static struct oscap_module XCCDF_EVAL = {
 		"   --without-syschar             - Don't provide system characteristic in OVAL/ARF result files.\n"
 		"   --report <file>               - Write HTML report into file.\n"
 		"   --skip-valid                  - Skip validation.\n"
+		"   --skip-validation\n"
+		"   --skip-signature-validation   - Skip data stream signature validation.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --enforce-signature           - Process only signed data streams.\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
+		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id:$result\\n\".\n"
-		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
 		"                                   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 		"   --remediate                   - Automatically execute XCCDF fix elements for failed rules.\n"
 		"                                   Use of this option is always at your own risk.\n",
@@ -189,9 +197,11 @@ static struct oscap_module XCCDF_REMEDIATE = {
 		"Options:\n"
 		"   --result-id                   - TestResult ID to be processed. Default is the most recent one.\n"
 		"   --skip-valid                  - Skip validation.\n"
+		"   --skip-validation\n"
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
 		"                                   for applicability checks.\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
+		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --results <file>              - Write XCCDF Results into file.\n"
 		"   --results-arf <file>          - Write ARF (result data stream) into file.\n"
 		"   --stig-viewer <file>          - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
@@ -244,12 +254,21 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
     .help = GEN_OPTS
 		"\nGuide Options:\n"
 		"   --output <file>               - Write the document into file.\n"
-		"   --hide-profile-info           - Do not output additional information about selected profile.\n"
-		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
-		"                                   (only applicable for source datastreams)\n",
+		"   --hide-profile-info           - This option has no effect.\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be used.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --skip-signature-validation   - Skip data stream signature validation.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --enforce-signature           - Process only signed data streams.\n",
     .opt_parser = getopt_xccdf,
-    .user = "xccdf-guide.xsl",
-    .func = app_xccdf_xslt
+    .user = NULL,
+    .func = app_generate_guide
 };
 
 static struct oscap_module XCCDF_GEN_FIX = {
@@ -259,18 +278,22 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
         "\nFix Options:\n"
-		"   --fix-type <type>             - Fix type. Should be one of: bash, ansible, puppet, anaconda (default: bash).\n"
+		"   --fix-type <type>             - Fix type. Should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes,\n"
+		"                                   blueprint (default: bash).\n"
 		"   --output <file>               - Write the script into file.\n"
 		"   --result-id <id>              - Fixes will be generated for failed rule-results of the specified TestResult.\n"
 		"   --template <id|filename>      - Fix template. (default: bash)\n"
-		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be used.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
 		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"                                   (only applicable for source data streams)\n"
 		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
-		"                                   (only applicable for source datastreams)\n",
+		"                                   (only applicable for source data streams)\n"
+		"   --skip-signature-validation   - Skip data stream signature validation.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --enforce-signature           - Process only signed data streams.\n",
     .opt_parser = getopt_xccdf,
     .user = "legacy-fix.xsl",
     .func = app_generate_fix
@@ -536,6 +559,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (session == NULL)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
+	xccdf_session_set_signature_validation(session, action->validate_signature);
+	xccdf_session_set_signature_enforcement(session, action->enforce_signature);
 	if (action->thin_results) {
 		xccdf_session_set_thin_results(session, true);
 		xccdf_session_set_without_sys_chars_export(session, true);
@@ -551,7 +576,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (action->tailoring_file != NULL)
 		xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
-	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
 	xccdf_session_set_rule(session, action->rule);
@@ -598,35 +623,32 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_session_remediate(session);
 	}
 
-	xccdf_session_set_xccdf_export(session, action->f_results);
-	xccdf_session_set_xccdf_stig_viewer_export(session, action->f_results_stig);
-	xccdf_session_set_report_export(session, action->f_report);
-	if (xccdf_session_export_xccdf(session) != 0)
-		goto cleanup;
-	else if (action->validate && getenv("OSCAP_FULL_VALIDATION") != NULL &&
-		(action->f_results || action->f_report || action->f_results_arf || action->f_results_stig))
-		fprintf(stdout, "XCCDF Results are exported correctly.\n");
-
-	if (xccdf_session_export_arf(session) != 0)
-		goto cleanup;
-	else if (action->f_results_arf && getenv("OSCAP_FULL_VALIDATION") != NULL)
-		fprintf(stdout, "Result DataStream exported correctly.\n");
-
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
-
-cleanup:
-	oscap_print_error();
+	int evaluation_result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
 
 	/* syslog message */
 #if defined(HAVE_SYSLOG_H)
-	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", result,
-		session == NULL ? 0 : xccdf_session_get_base_score(session));
+	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", evaluation_result, xccdf_session_get_base_score(session));
 #endif
 
-	if (session != NULL)
-		xccdf_session_free(session);
+	xccdf_session_set_xccdf_export(session, action->f_results);
+	xccdf_session_set_xccdf_stig_viewer_export(session, action->f_results_stig);
+	xccdf_session_set_report_export(session, action->f_report);
+	if (xccdf_session_export_all(session) != 0)
+		goto cleanup;
 
+	if (action->validate && getenv("OSCAP_FULL_VALIDATION") != NULL &&
+		(action->f_results || action->f_report || action->f_results_arf || action->f_results_stig))
+		fprintf(stdout, "XCCDF Results are exported correctly.\n");
+
+	if (action->f_results_arf && getenv("OSCAP_FULL_VALIDATION") != NULL)
+		fprintf(stdout, "Result data stream exported correctly.\n");
+
+	result = evaluation_result;
+
+cleanup:
+	xccdf_session_free(session);
+	oscap_print_error();
 	return result;
 }
 
@@ -659,7 +681,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
-	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_custom_oval_eval_fn(session, resolve_variables_wrapper);
 
@@ -702,7 +724,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 	xccdf_session_set_user_cpe(session, action->cpe);
-	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 
 	if (xccdf_session_load(session) != 0)
@@ -729,16 +751,17 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	if (xccdf_session_export_check_engine_plugins(session) != 0)
 		goto cleanup;
 
-	if (xccdf_session_export_xccdf(session) != 0)
-		goto cleanup;
-	if (xccdf_session_export_arf(session) != 0)
+	/* Get the result from TestResult model and decide if end with error or with correct return code */
+	int evaluation_result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
+
+	if (xccdf_session_export_all(session) != 0)
 		goto cleanup;
 
-	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
+	result = evaluation_result;
+
 cleanup:
-	oscap_print_error();
 	xccdf_session_free(session);
+	oscap_print_error();
 	return result;
 }
 
@@ -866,10 +889,14 @@ int app_generate_fix(const struct oscap_action *action)
 			template = "urn:redhat:anaconda:pre";
 		} else if (strcmp(action->fix_type, "ignition") == 0) {
 			template = "urn:xccdf:fix:script:ignition";
+		} else if (strcmp(action->fix_type, "kubernetes") == 0) {
+			template = "urn:xccdf:fix:script:kubernetes";
+		} else if (strcmp(action->fix_type, "blueprint") == 0) {
+			template = "urn:redhat:osbuild:blueprint";
 		} else {
 			fprintf(stderr,
 					"Unknown fix type '%s'.\n"
-					"Please provide one of: bash, ansible, puppet, anaconda, ignition.\n"
+					"Please provide one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint.\n"
 					"Or provide a custom template using '--template' instead.\n",
 					action->fix_type);
 			return OSCAP_ERROR;
@@ -910,8 +937,10 @@ int app_generate_fix(const struct oscap_action *action)
 		goto cleanup;
 
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
+	xccdf_session_set_signature_validation(session, action->validate_signature);
+	xccdf_session_set_signature_enforcement(session, action->enforce_signature);
 	xccdf_session_set_user_cpe(session, action->cpe);
-	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
@@ -968,6 +997,52 @@ cleanup2:
 		close(output_fd);
 cleanup:
 	ds_rds_session_free(arf_session);
+	xccdf_session_free(session);
+	oscap_print_error();
+	return ret;
+}
+
+int app_generate_guide(const struct oscap_action *action)
+{
+	int ret = OSCAP_ERROR;
+
+	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
+	struct xccdf_session *session = xccdf_session_new_from_source(source);
+	if (session == NULL) {
+		goto cleanup;
+	}
+
+	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
+	xccdf_session_set_signature_validation(session, action->validate_signature);
+	xccdf_session_set_signature_enforcement(session, action->enforce_signature);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
+	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
+	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
+	if (xccdf_session_is_sds(session)) {
+		xccdf_session_set_component_id(session, action->f_xccdf_id);
+		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
+	}
+	xccdf_session_set_loading_flags(session, XCCDF_SESSION_LOAD_XCCDF);
+
+	if (xccdf_session_load(session) != 0) {
+		goto cleanup;
+	}
+
+	if (!xccdf_session_set_profile_id(session, action->profile)) {
+		if (action->profile != NULL) {
+			if (xccdf_set_profile_or_report_bad_id(session, action->profile, action->f_xccdf) == OSCAP_ERROR)
+				goto cleanup;
+		} else {
+			fprintf(stderr, "No Policy was found for default profile.\n");
+			goto cleanup;
+		}
+	}
+
+	if (xccdf_session_generate_guide(session, action->f_results) == 0) {
+		ret = OSCAP_OK;
+	}
+
+cleanup:
 	xccdf_session_free(session);
 	oscap_print_error();
 	return ret;
@@ -1053,7 +1128,8 @@ enum oval_opt {
     XCCDF_OPT_CPE_DICT,
     XCCDF_OPT_OUTPUT = 'o',
     XCCDF_OPT_RESULT_ID = 'i',
-	XCCDF_OPT_FIX_TYPE
+	XCCDF_OPT_FIX_TYPE,
+	XCCDF_OPT_LOCAL_FILES
 };
 
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
@@ -1085,17 +1161,23 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"cpe-dict",	required_argument, NULL, XCCDF_OPT_CPE_DICT}, // DEPRECATED!
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
 		{"fix-type", required_argument, NULL, XCCDF_OPT_FIX_TYPE},
+		{"local-files", required_argument, NULL, XCCDF_OPT_LOCAL_FILES},
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
 		{"check-engine-results", no_argument, &action->check_engine_results, 1},
 		{"skip-valid",		no_argument, &action->validate, 0},
+		{"skip-validation",		no_argument, &action->validate, 0},
+		{"skip-signature-validation", no_argument, &action->validate_signature, 0},
+		{"enforce-signature", no_argument, &action->enforce_signature, 1},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{"progress", no_argument, &action->progress, 1},
 		{"remediate", no_argument, &action->remediate, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
+		//TODO: deprecate and remove
 		{"schematron",          no_argument, &action->schematron, 1},
+		{"skip-schematron",     no_argument, &action->schematron, 0},
 		{"without-syschar",    no_argument, &action->without_sys_chars, 1},
 		{"thin-results",        no_argument, &action->thin_results, 1},
 	// end
@@ -1133,6 +1215,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
 		case XCCDF_OPT_FIX_TYPE:
 			action->fix_type = optarg;
+			break;
+		case XCCDF_OPT_LOCAL_FILES:
+			action->local_files = optarg;
 			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
@@ -1177,34 +1262,28 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 
 int app_xccdf_validate(const struct oscap_action *action) {
 	int ret;
-	int result;
-
+	int result = OSCAP_OK;
 
 	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
 	ret = oscap_source_validate(source, reporter, (void *) action);
-        if (ret==-1) {
-                result=OSCAP_ERROR;
-                goto cleanup;
-        }
-        else if (ret==1) {
-                result=OSCAP_FAIL;
-        }
-        else
-                result=OSCAP_OK;
 
-	if (action->schematron) {
-		ret = oscap_source_validate_schematron(source, NULL);
-		if (ret == -1) {
-			result = OSCAP_ERROR;
-		} else if (ret > 0) {
-			result = OSCAP_FAIL;
+	if (ret < 0) {
+		result = OSCAP_ERROR;
+	} else if (ret > 0) {
+		result = OSCAP_FAIL;
+	} else {
+		if (action->schematron) {
+			ret = oscap_source_validate_schematron(source, NULL);
+			if (ret < 0) {
+				result = OSCAP_ERROR;
+			} else if (ret > 0) {
+				result = OSCAP_FAIL;
+			}
 		}
 	}
 
-cleanup:
 	oscap_source_free(source);
 	oscap_print_error();
 
-        return result;
-
+	return result;
 }

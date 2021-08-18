@@ -26,9 +26,11 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <mntent.h>
 #include "fsdev.h"
 #include "fsdev.c"
+
+#if defined(OS_LINUX) || defined(OS_AIX)
+#include <mntent.h>
 
 static int test_single_call()
 {
@@ -42,8 +44,8 @@ static int test_single_call()
 static int test_multiple_calls(const char *fake_mtab)
 {
 	/*
-	 * fake mtab contains only 4 local filesystems:
-	 * /, /tmp, /home and /proc
+	 * fake mtab contains only 3 local filesystems:
+	 * /, /tmp, and /home
 	 */
 	FILE *f = setmntent(fake_mtab, "r");
 	if (f == NULL) {
@@ -58,7 +60,7 @@ static int test_multiple_calls(const char *fake_mtab)
 		}
 	}
 	endmntent(f);
-	return (locals == 4);
+	return (locals == 3);
 }
 
 int main(int argc, char *argv[])
@@ -73,3 +75,13 @@ int main(int argc, char *argv[])
 	}
 	return 0;
 }
+
+#else
+
+int main(int argc, char *argv[])
+{
+	fprintf(stderr, "is_local is only defined and used by Linux and AIX\n");
+	return 0;
+}
+
+#endif

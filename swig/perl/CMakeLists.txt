@@ -1,4 +1,5 @@
 include(UseSWIG)
+include(FindPerlLibs)
 
 set(CMAKE_SWIG_FLAGS "-module" "openscap_pm")
 if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
@@ -12,7 +13,14 @@ if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "Cl
 	target_compile_options(${SWIG_MODULE_openscap_pm_REAL_NAME} PUBLIC "-w")
 endif()
 
-install(TARGETS ${SWIG_MODULE_openscap_pm_REAL_NAME}
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/perl5/vendor_perl)
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap_pm.pm
-	DESTINATION ${CMAKE_INSTALL_DATADIR}/perl5/vendor_perl)
+if (APPLE OR (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD"))
+        install(TARGETS ${SWIG_MODULE_openscap_pm_REAL_NAME}
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}/perl5/vendor_perl)
+        install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap_pm.pm
+                DESTINATION ${CMAKE_INSTALL_DATADIR}/perl5/vendor_perl)
+else()
+        install(TARGETS ${SWIG_MODULE_openscap_pm_REAL_NAME}
+               DESTINATION ${PERL_VENDORLIB})
+        install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap_pm.pm
+               DESTINATION ${PERL_VENDORARCH})
+endif()

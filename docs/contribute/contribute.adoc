@@ -11,6 +11,12 @@ NOTE: This guide also applies for adding a new feature, the process is the same
 as for fixing an issue described below.
 
 
+== Code style
+
+OpenSCAP project is following link:https://www.kernel.org/doc/html/v4.10/process/coding-style.html[Linux kernel coding style]
+for newly-written code and preserves formatting of the existing codebase between major releases.
+
+
 == Fork and setup the OpenSCAP repository
 Before you start working on a fix it's a good practice to leave a
 comment in the issue that you work on the fix so other contributors know that

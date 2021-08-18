@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -8,7 +8,7 @@ result=`mktemp`
 stderr=`mktemp`
 $OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_ocil.xml 2> $stderr
 [ ! -s "$stderr" ]
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_1"]/result[text()="notchecked"]'
 rm $stderr
 rm $result

@@ -113,14 +113,21 @@ void oval_result_definition_free(struct oval_result_definition *definition)
 	free(definition);
 }
 
-struct oval_result_definition *make_result_definition_from_oval_definition
-    (struct oval_result_system *sys, struct oval_definition *oval_definition, int variable_instance) {
+struct oval_result_definition *make_result_definition_from_oval_definition(struct oval_result_system *sys, struct oval_definition *oval_definition, struct oscap_list *visited_definitions, int variable_instance)
+{
 	char *defid = oval_definition_get_id(oval_definition);
+	if (visited_definitions != NULL) {
+		if (oscap_list_contains(visited_definitions, defid, (oscap_cmp_func) oscap_streq)) {
+			dE("Circular dependency in OVAL definition '%s'.", defid);
+			return NULL;
+		}
+		oscap_list_add(visited_definitions, strdup(defid));
+	}
 	struct oval_result_definition *rslt_definition = oval_result_definition_new(sys, defid);
 	oval_result_definition_set_instance(rslt_definition, variable_instance);
 	struct oval_criteria_node *oval_criteria = oval_definition_get_criteria(oval_definition);
 	struct oval_result_criteria_node *rslt_criteria = 
-		make_result_criteria_node_from_oval_criteria_node(sys, oval_criteria, variable_instance);
+		make_result_criteria_node_from_oval_criteria_node(sys, oval_criteria, visited_definitions, variable_instance);
 	if (rslt_criteria)
 		oval_result_definition_set_criteria(rslt_definition, rslt_criteria);
 	return rslt_definition;

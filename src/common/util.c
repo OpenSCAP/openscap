@@ -47,7 +47,7 @@
 #endif
 
 #define PATH_SEPARATOR '/'
-#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 5000
+#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 3500
 
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str)
 {
@@ -324,6 +324,9 @@ char *oscap_strerror_r(int errnum, char *buf, size_t buflen)
 #ifdef OS_WINDOWS
 	strerror_s(buf, buflen, errnum);
 	return buf;
+#elif defined(OS_FREEBSD)
+	strerror_r(errnum, buf, buflen);
+	return buf;
 #else
 	return strerror_r(errnum, buf, buflen);
 #endif
@@ -425,6 +428,21 @@ int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char *
 
 	return ret;
 }
+
+#ifndef OS_WINDOWS
+FILE *oscap_fopen_with_prefix(const char *prefix, const char *path)
+{
+	FILE *fp;
+	if (prefix != NULL) {
+		char *path_with_prefix = oscap_sprintf("%s%s", prefix, path);
+		fp = fopen(path_with_prefix, "r");
+		free(path_with_prefix);
+	} else {
+		fp = fopen(path, "r");
+	}
+	return fp;
+}
+#endif
 
 #ifdef OS_WINDOWS
 char *oscap_windows_wstr_to_str(const wchar_t *wstr)

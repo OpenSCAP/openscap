@@ -41,7 +41,6 @@
 
 #include "_sexp-types.h"
 #include "_sexp-value.h"
-#include "_sexp-manip.h"
 #include "_sexp-rawptr.h"
 #include "_sexp-ID.h"
 

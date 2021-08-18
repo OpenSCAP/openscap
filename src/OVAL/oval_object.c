@@ -352,9 +352,8 @@ int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	if ( subtype == OVAL_SUBTYPE_UNKNOWN) {
-		dE("Unknown object %s.", id);
-		ret = -1;
-		goto cleanup;
+		dI("Unknown object %s, using independent/unknown", id);
+		subtype = OVAL_INDEPENDENT_UNKNOWN;
 	}
 	oval_object_set_subtype(object, subtype);
 
@@ -371,7 +370,6 @@ int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 
 	ret = oval_parser_parse_tag(reader, context, &_oval_object_parse_tag, object);
 
-cleanup:
 	free(id);
 	free(comm);
 	free(version);
@@ -384,8 +382,8 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 
 	/* skip unknown object */
 	oval_subtype_t subtype = oval_object_get_subtype(object);
-        if ( subtype == OVAL_SUBTYPE_UNKNOWN ) {
-                dE("Unknown Object %s.", oval_object_get_id(object));
+        if (subtype == OVAL_SUBTYPE_UNKNOWN) {
+                dW("Unable to convert unknown object %s, skipping", oval_object_get_id(object));
                 return object_node;
         }
 

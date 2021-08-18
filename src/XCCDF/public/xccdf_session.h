@@ -117,6 +117,22 @@ OSCAP_API void xccdf_session_set_rule(struct xccdf_session *session, const char 
 OSCAP_API void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation);
 
 /**
+ * Set XML signature validation
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param validate False value indicates to skip any XML signature validation.
+ */
+OSCAP_API void xccdf_session_set_signature_validation(struct xccdf_session *session, bool validate);
+
+/**
+ * Set XML signature enforcement
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param enforce True value renders all unsigned XMLs invalid.
+ */
+OSCAP_API void xccdf_session_set_signature_enforcement(struct xccdf_session *session, bool enforce);
+
+/**
  * Set whether the thin results override is enabled.
  * If true the OVAL results put in ARF or separate files will have thin results.
  * Thin results do not contain details about the evaluated criteria, only
@@ -216,7 +232,21 @@ OSCAP_API void xccdf_session_set_user_tailoring_cid(struct xccdf_session *sessio
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */
-OSCAP_API void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback);
+OSCAP_API OSCAP_DEPRECATED(void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback));
+
+/**
+ * Set properties of remote content.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param allowed Whether is download od remote resources allowed in this
+ * session (defaults to false)
+ * @param local_files Allows to use a locally downloaded copy of the remote
+ * resources. Contains a path to a directory where the files are stored
+ * (defaults to NULL).
+ * @param callback used to notify user about download proceeds. This might be
+ * safely set to NULL -- ignoring user notification.
+ */
+OSCAP_API void xccdf_session_configure_remote_resources(struct xccdf_session *session, bool allowed, const char *local_files, download_progress_calllback_t callback);
 
 /**
  * Disable or allow loading of depending content (OVAL, SCE, CPE)
@@ -557,6 +587,25 @@ OSCAP_API int xccdf_session_build_policy_from_testresult(struct xccdf_session *s
  * @returns zero on success.
  */
 OSCAP_API int xccdf_session_add_report_from_source(struct xccdf_session *session, struct oscap_source *report_source);
+
+/**
+ * Generate HTML guide form a loaded XCCDF session
+ * @param session XCCDF Session
+ * @param outfile path to the output file
+ * @returns zero on success
+ */
+OSCAP_API int xccdf_session_generate_guide(struct xccdf_session *session, const char *outfile);
+
+/**
+ * Export XCCDF results, ARF results and HTML report from the given XCCDF
+ * session based on values set in the XCCDF session. This is a destructive
+ * operation that modifies the oscap_source structures, specifically the XML
+ * trees. Callers must not perform any operation with the session after this
+ * call and they must free the session immediately.
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+OSCAP_API int xccdf_session_export_all(struct xccdf_session *session);
 
 /// @}
 /// @}

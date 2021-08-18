@@ -26,13 +26,15 @@ function test_probes_selinuxboolean {
     local ret_val=0;
     local DF="$1.xml"
     local RF="$1.results.xml"
+    local stderr=$(mktemp $1.err.XXXXXX)
+    echo "stderr file: $stderr"
 
     [ -f $RF ] && rm -f $RF
 
     bash ${srcdir}/$1.xml.sh > $DF
     LINES=$?
 
-    $OSCAP oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF 2>$stderr
 
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF $LINES
@@ -40,6 +42,9 @@ function test_probes_selinuxboolean {
     else
 	ret_val=1
     fi
+
+    grep -Ei "(W: |E: )" $stderr && ret_val=1 && echo "There is an error and/or a warning in the output!"
+    rm $stderr
 
     return $ret_val
 }

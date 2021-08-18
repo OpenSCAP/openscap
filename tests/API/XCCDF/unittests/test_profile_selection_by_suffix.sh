@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -12,6 +12,9 @@ tailoring=$srcdir/${name}_tailoring.xccdf.xml
 echo "Stderr file = $stderr"
 echo "Result file = $result"
 ret=0
+
+touch test_file
+[ -f test_file ]
 
 # Multiple matches should result in failure
 $OSCAP xccdf eval --profile common $benchmark 2> $stderr || ret=$?
@@ -55,3 +58,5 @@ grep -Fq "No profile matching suffix \"another\" was found" $stderr
 
 [ -f $stderr ]; rm $stderr
 rm $result
+
+rm -f test_file

@@ -91,6 +91,7 @@ typedef struct {
 	int direction;
 	int recurse;
 	int filesystem;
+	int following;
 
 	fsdev_t *localdevs;
 	const char *prefix;

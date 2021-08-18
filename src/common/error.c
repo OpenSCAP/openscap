@@ -114,19 +114,17 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 	_push_err(err);
 }
 
-void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_errfamily_t family, ...)
+void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_errfamily_t family, const char *fmt, ...)
 {
 	struct oscap_err_t *err;
 	char *msg;
 	va_list ap;
-	const char *fmt;
 
 #ifdef OSCAP_THREAD_SAFE
 	(void)pthread_once(&__once, oscap_errkey_init);
 #endif
 
-	va_start(ap, family);
-	fmt = va_arg(ap, const char *);
+	va_start(ap, fmt);
 	msg = oscap_vsprintf(fmt, ap);
 	va_end(ap);
 

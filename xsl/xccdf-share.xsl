@@ -24,9 +24,9 @@ Authors:
 -->
 
 <xsl:stylesheet version="1.1"
-    xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:cdf="http://checklists.nist.gov/xccdf/1.2">
+    xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
+    exclude-result-prefixes="xsl cdf">
 
 <xsl:param name="verbosity"/>
 
@@ -128,7 +128,21 @@ Authors:
 <!-- works for both XCCDF Rule elements and rule-result elements -->
 <xsl:template name="item-severity">
     <xsl:param name="item"/>
-    <xsl:choose><xsl:when test="$item/@severity"><xsl:value-of select="$item/@severity"/></xsl:when><xsl:otherwise>unknown</xsl:otherwise></xsl:choose>
+    <xsl:param name="profile"/>
+    <xsl:variable name="refine-rule" select="$profile/cdf:refine-rule[@idref=$item/@id]" />
+    <xsl:choose>
+        <xsl:when test="$refine-rule/@severity">
+            <xsl:value-of select="$refine-rule/@severity"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:choose>
+                <xsl:when test="$item/@severity">
+                    <xsl:value-of select="$item/@severity"/>
+                </xsl:when>
+                <xsl:otherwise>unknown</xsl:otherwise>
+            </xsl:choose>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 <!-- substitution for testresults, used in HTML report -->
@@ -280,6 +294,8 @@ Authors:
             <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:ansible'">Ansible snippet</xsl:when>
             <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:puppet'">Puppet snippet</xsl:when>
             <xsl:when test="$fix/@system = 'urn:redhat:anaconda:pre'">Anaconda snippet</xsl:when>
+            <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:kubernetes'">Kubernetes snippet</xsl:when>
+            <xsl:when test="$fix/@system = 'urn:redhat:osbuild:blueprint'">OSBuild Blueprint snippet</xsl:when>
             <xsl:otherwise>script</xsl:otherwise>
         </xsl:choose>
     </xsl:variable>

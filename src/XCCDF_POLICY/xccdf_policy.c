@@ -47,6 +47,7 @@
 #include "oval_agent_api.h"
 
 #include "item.h"
+#include "helpers.h"
 #include "common/list.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
@@ -351,7 +352,7 @@ static void xccdf_policy_resolve_item(struct xccdf_policy * policy, struct xccdf
 	if (xccdf_item_get_type(item) == XCCDF_GROUP) {
 		struct xccdf_item_iterator *child_it = xccdf_group_get_content((const struct xccdf_group *)item);
 		while (xccdf_item_iterator_has_more(child_it))
-			xccdf_policy_resolve_item(policy, xccdf_item_iterator_next(child_it), result);
+			xccdf_policy_resolve_item(policy, xccdf_item_iterator_next(child_it), selected);
 		xccdf_item_iterator_free(child_it);
 	}
 
@@ -971,6 +972,38 @@ bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model *model, str
 	}
 }
 
+static bool _xccdf_policy_item_is_in_conflict(struct xccdf_policy *policy, const struct xccdf_item *item) {
+	bool in_conflict = false;
+	struct oscap_string_iterator *item_conflicts_it = xccdf_item_get_conflicts(item);
+	while (oscap_string_iterator_has_more(item_conflicts_it)) {
+		const char *conflict_id = oscap_string_iterator_next(item_conflicts_it);
+		if (xccdf_policy_is_item_selected(policy, conflict_id)) {
+			in_conflict = true;
+			break;
+		}
+	}
+	oscap_string_iterator_free(item_conflicts_it);
+	return in_conflict;
+}
+
+static bool _xccdf_policy_item_has_all_requirements(struct xccdf_policy *policy, const struct xccdf_item *item) {
+	bool has_all_requirements = true;
+	struct oscap_stringlist_iterator *item_requires_it = xccdf_item_get_requires(item);
+	while (oscap_stringlist_iterator_has_more(item_requires_it)) {
+		struct oscap_stringlist *requires_ids_list = oscap_stringlist_iterator_next(item_requires_it);
+		struct oscap_string_iterator *rule_requires_ids_it = oscap_stringlist_get_strings(requires_ids_list);
+		bool has_requirements = false;
+		while (oscap_string_iterator_has_more(rule_requires_ids_it)) {
+			const char *requires_id = oscap_string_iterator_next(rule_requires_ids_it);
+			has_requirements = has_requirements || xccdf_policy_is_item_selected(policy, requires_id);
+		}
+		has_all_requirements = has_all_requirements && has_requirements;
+		oscap_string_iterator_free(rule_requires_ids_it);
+	}
+	oscap_stringlist_iterator_free(item_requires_it);
+	return has_all_requirements;
+}
+
 /**
  * Evaluate given check which is immediate child of the rule.
  * A possibe child checks will be evaluated by xccdf_policy_check_evaluate.
@@ -978,7 +1011,7 @@ bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model *model, str
  * which is (in general) not predictable in any way.
  */
 static inline int
-_xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rule *rule, struct xccdf_result *result)
+_xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rule *rule, struct xccdf_result *result, bool parent_selected)
 {
 	const char* rule_id = xccdf_rule_get_id(rule);
 	const bool is_selected = xccdf_policy_is_item_selected(policy, rule_id);
@@ -994,6 +1027,16 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 		}
 		policy->rule_found = 1;
 	}
+
+	if (!is_selected || !parent_selected)
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
+
+	// See section 7.2.3.3.2 (<xccdf:requires> and <xccdf:conflicts> Elements) of the XCCDF specification.
+	if (_xccdf_policy_item_is_in_conflict(policy, XITEM(rule)) || !_xccdf_policy_item_has_all_requirements(policy, XITEM(rule))) {
+		xccdf_policy_resolve_item(policy, XITEM(rule), false);
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
+	}
+
 	/* Otherwise start reporting */
 	report = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule);
 	if (report)
@@ -1002,9 +1045,6 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	struct xccdf_refine_rule_internal* r_rule = oscap_htable_get(policy->refine_rules_internal, rule_id);
 	xccdf_role_t role = xccdf_get_final_role(rule, r_rule);
 
-	if (!is_selected) {
-		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
-	}
 	dI("Evaluating XCCDF rule '%s'.", rule_id);
 
 	if (role == XCCDF_ROLE_UNCHECKED)
@@ -1127,7 +1167,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
  * and evaluate it.
  * Name collision with xccdf_item -> changed to xccdf_policy_item 
  */
-static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf_item * item, struct xccdf_result * result)
+static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf_item * item, struct xccdf_result * result, bool parent_selected)
 {
     struct xccdf_item_iterator      * child_it;
     struct xccdf_item               * child;
@@ -1137,14 +1177,22 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 
     switch (itype) {
         case XCCDF_RULE:{
-			return _xccdf_policy_rule_evaluate(policy, (struct xccdf_rule *) item, result);
+			return _xccdf_policy_rule_evaluate(policy, (struct xccdf_rule *) item, result, parent_selected);
         } break;
 
         case XCCDF_GROUP:{
 			child_it = xccdf_group_get_content((const struct xccdf_group *)item);
 			while (xccdf_item_iterator_has_more(child_it)) {
 				child = xccdf_item_iterator_next(child_it);
-				ret = xccdf_policy_item_evaluate(policy, child, result);
+				bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_item_get_id(item));
+				if (is_selected) {
+					// See section 7.2.3.3.2 (<xccdf:requires> and <xccdf:conflicts> Elements) of the XCCDF specification.
+					if (_xccdf_policy_item_is_in_conflict(policy, item) || !_xccdf_policy_item_has_all_requirements(policy, item)) {
+						xccdf_policy_resolve_item(policy, item, false);
+						is_selected = false;
+					}
+				}
+				ret = xccdf_policy_item_evaluate(policy, child, result, parent_selected && is_selected);
 				if (ret != 0)
 					break;
 			}
@@ -2005,9 +2053,9 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 	if ((xccdf_policy_get_profile(policy) != NULL) && (xccdf_profile_get_id(xccdf_policy_get_profile(policy)) != NULL)) {
 		id = oscap_strdup(xccdf_profile_get_id(xccdf_policy_get_profile(policy)));
 		xccdf_result_set_profile(result, id);
+	} else {
+		id = oscap_strdup("default-profile");
 	}
-    else
-        id = oscap_strdup("default-profile");
 
 	dI("Evaluating a XCCDF policy with selected '%s' profile.", id);
 
@@ -2042,7 +2090,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 	struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
 	while (xccdf_item_iterator_has_more(item_it)) {
 		struct xccdf_item *item = xccdf_item_iterator_next(item_it);
-		ret = xccdf_policy_item_evaluate(policy, item, result);
+		ret = xccdf_policy_item_evaluate(policy, item, result, true);
 		if (ret == -1) {
 			xccdf_item_iterator_free(item_it);
 			xccdf_result_free(result);
