@@ -236,6 +236,7 @@ endif()
 # ---------- PLUGIN FEATURE SWITCHES
 option(ENABLE_PLUGINS "enables plugin support" TRUE)
 cmake_dependent_option(ENABLE_PLUGINS_INDEPENDENT "enable support for independent (cross platform) plugins" ON "ENABLE_PLUGINS" OFF)
+set(IS_WIN32 FALSE)
 if (WIN32)
     set(IS_WIN32 TRUE)
 endif()
