@@ -353,13 +353,15 @@ static const probe_table_entry_t probe_table[] = {
 #endif
 	{OVAL_SUBTYPE_UNKNOWN, NULL, NULL, NULL, NULL}
 };
-static probe_table_entry_t* probe_table_mem = NULL;
 static probe_table_entry_t* probe_table_ptr = (probe_table_entry_t*)probe_table;
+#if defined(OPENSCAP_PLUGINS_ENABLED)
+static probe_table_entry_t* probe_table_mem = NULL;
 static size_t probe_table_len = 0;
 #ifdef OPENSCAP_PLUGINS_WINDOWS
 static HINSTANCE* plugin_libs = NULL;
 #endif
 static size_t plugin_libs_len = 0;
+#endif
 
 static const probe_table_entry_t *probe_table_get(oval_subtype_t type)
 {
@@ -450,6 +452,7 @@ oval_subtype_t probe_table_at_index(int idx)
 	return entry.type;
 }
 
+#if defined(OPENSCAP_PLUGINS_ENABLED)
 static void probe_table_load_plugin(const char* path)
 {
 #ifdef OPENSCAP_PLUGINS_WINDOWS
@@ -613,3 +616,4 @@ void probe_table_plugins_cleanup()
 	}
 	probe_table_len = 0;
 }
+#endif

@@ -233,15 +233,6 @@ else()
 	option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that lets you use executables instead of OVAL for checks" ON)
 endif()
 
-# ---------- PLUGIN FEATURE SWITCHES
-option(ENABLE_PLUGINS "enables plugin support" TRUE)
-cmake_dependent_option(ENABLE_PLUGINS_INDEPENDENT "enable support for independent (cross platform) plugins" ON "ENABLE_PLUGINS" OFF)
-set(IS_WIN32 FALSE)
-if (WIN32)
-    set(IS_WIN32 TRUE)
-endif()
-cmake_dependent_option(ENABLE_PLUGINS_WINDOWS "enable support for Windows plugins" ${IS_WIN32} "ENABLE_PLUGINS" OFF)
-
 # ---------- OVAL FEATURE SWITCHES
 option(ENABLE_PROBES "build OVAL probes - each probe implements an OVAL test" TRUE)
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
@@ -264,6 +255,11 @@ cmake_dependent_option(ENABLE_PROBES_WINDOWS "build OVAL probes for the Windows 
 
 option(OPENSCAP_ENABLE_SHA1 "Enable using the SHA-1 algorithm" ON)
 option(OPENSCAP_ENABLE_MD5 "Enable using the MD5 algorithm" ON)
+
+# ---------- PLUGIN FEATURE SWITCHES
+option(ENABLE_PLUGINS "enables plugin support" ${IS_WIN32})
+cmake_dependent_option(ENABLE_PLUGINS_INDEPENDENT "enable support for independent (cross platform) plugins" ON "ENABLE_PLUGINS" OFF)
+cmake_dependent_option(ENABLE_PLUGINS_WINDOWS "enable support for Windows plugins" ${IS_WIN32} "ENABLE_PLUGINS" OFF)
 
 # INDEPENDENT PROBES
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE "Independent environmentvariable probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
