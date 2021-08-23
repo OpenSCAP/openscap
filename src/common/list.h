@@ -58,19 +58,19 @@ struct oscap_list {
 
 // FIXME: SCE engine uses these
 
-struct oscap_list *oscap_list_new(void);
-void oscap_create_lists(struct oscap_list **first, ...);
-bool oscap_list_add(struct oscap_list *list, void *value);
-bool oscap_list_push(struct oscap_list *list, void *value);
-bool oscap_list_pop(struct oscap_list *list, oscap_destruct_func destructor);
-bool oscap_list_remove(struct oscap_list *list, void *value, oscap_cmp_func compare, oscap_destruct_func destructor);
-struct oscap_list *oscap_list_clone(const struct oscap_list * list, oscap_clone_func cloner);
-void oscap_list_free(struct oscap_list *list, oscap_destruct_func destructor);
-void oscap_list_free0(struct oscap_list *list);
-void oscap_list_dump(struct oscap_list *list, oscap_dump_func dumper, int depth);
-int oscap_list_get_itemcount(struct oscap_list *list);
-bool oscap_list_contains(struct oscap_list *list, void *what, oscap_cmp_func compare);
-struct oscap_list *oscap_list_destructive_join(struct oscap_list *list1, struct oscap_list *list2);
+OSCAP_API struct oscap_list *oscap_list_new(void);
+OSCAP_API void oscap_create_lists(struct oscap_list **first, ...);
+OSCAP_API bool oscap_list_add(struct oscap_list *list, void *value);
+OSCAP_API bool oscap_list_push(struct oscap_list *list, void *value);
+OSCAP_API bool oscap_list_pop(struct oscap_list *list, oscap_destruct_func destructor);
+OSCAP_API bool oscap_list_remove(struct oscap_list *list, void *value, oscap_cmp_func compare, oscap_destruct_func destructor);
+OSCAP_API struct oscap_list *oscap_list_clone(const struct oscap_list * list, oscap_clone_func cloner);
+OSCAP_API void oscap_list_free(struct oscap_list *list, oscap_destruct_func destructor);
+OSCAP_API void oscap_list_free0(struct oscap_list *list);
+OSCAP_API void oscap_list_dump(struct oscap_list *list, oscap_dump_func dumper, int depth);
+OSCAP_API int oscap_list_get_itemcount(struct oscap_list *list);
+OSCAP_API bool oscap_list_contains(struct oscap_list *list, void *what, oscap_cmp_func compare);
+OSCAP_API struct oscap_list *oscap_list_destructive_join(struct oscap_list *list1, struct oscap_list *list2);
 
 
 
@@ -87,17 +87,17 @@ struct oscap_iterator {
 
 // FIXME: SCE engine uses these
 
-void *oscap_iterator_new(struct oscap_list *list);
-void *oscap_iterator_new_filter(struct oscap_list *list, oscap_filter_func filter, void *user_data);
-void *oscap_iterator_next(struct oscap_iterator *it);
-size_t oscap_iterator_get_itemcount(const struct oscap_iterator *it);
-bool oscap_iterator_has_more(struct oscap_iterator *it);
-void oscap_iterator_reset(struct oscap_iterator *it);
-void *oscap_iterator_detach(struct oscap_iterator *it);
-void oscap_iterator_free(struct oscap_iterator *it);
+OSCAP_API void *oscap_iterator_new(struct oscap_list *list);
+OSCAP_API void *oscap_iterator_new_filter(struct oscap_list *list, oscap_filter_func filter, void *user_data);
+OSCAP_API void *oscap_iterator_next(struct oscap_iterator *it);
+OSCAP_API size_t oscap_iterator_get_itemcount(const struct oscap_iterator *it);
+OSCAP_API bool oscap_iterator_has_more(struct oscap_iterator *it);
+OSCAP_API void oscap_iterator_reset(struct oscap_iterator *it);
+OSCAP_API void *oscap_iterator_detach(struct oscap_iterator *it);
+OSCAP_API void oscap_iterator_free(struct oscap_iterator *it);
 
 
-void *oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare);
+OSCAP_API void *oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compare);
 
 /**
  * Iterate over an array, given an iterator.

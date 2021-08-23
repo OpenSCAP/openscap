@@ -373,7 +373,7 @@ char *oscap_vsprintf(const char *fmt, va_list ap);
  * @return Join of path1 and path2. The first path is separated by the second
  * path by exactly 1 slash separator.
  */
-char *oscap_path_join(const char *path1, const char *path2);
+OSCAP_API char *oscap_path_join(const char *path1, const char *path2);
 
 /// In a list of key-value pairs (odd indicies are keys, even values), find a value for given key
 const char *oscap_strlist_find_value(char ** const kvalues, const char *key);
@@ -420,7 +420,7 @@ char *oscap_expand_ipv6(const char *input);
  * @param str string to be converted
  * @memberof oscap_string_map
  */
-int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
+OSCAP_API int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
 
 /**
  * Convert an enumeration constant to its corresponding string representation.
@@ -428,7 +428,7 @@ int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
  * @param val value to be converted
  * @memberof oscap_string_map
  */
-const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
+OSCAP_API const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
 
 /**
  * Split a string.
@@ -438,7 +438,7 @@ const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
  * @param str String we want to split
  * @param delim Delimiter of string parts
  */
-char **oscap_split(char *str, const char *delim);
+OSCAP_API char **oscap_split(char *str, const char *delim);
 
 /**
  * compare two strings ignoring case
@@ -448,7 +448,7 @@ char **oscap_split(char *str, const char *delim);
  * after ignoring case, found to be less than, to match, or be greater
  * than s2,  respectively.
  */
-int oscap_strcasecmp(const char *s1, const char *s2);
+OSCAP_API int oscap_strcasecmp(const char *s1, const char *s2);
 
 /**
 * compare two strings ignoring case
@@ -459,7 +459,7 @@ int oscap_strcasecmp(const char *s1, const char *s2);
 * after ignoring case, found to be less than, to match, or be greater
 * than s2,  respectively.
 */
-int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
+OSCAP_API int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
 
 /**
  * Get string describing error number
@@ -467,7 +467,7 @@ int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
  * @param buf buffer to hold error string
  * @param buflen size of buffer
  */
-char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
+OSCAP_API char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
 
 /**
  * Match a regular expression and return substrings.
@@ -480,7 +480,7 @@ char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
  * @return count of matched substrings, 0 if no match
  * negative value on failure
  */
-int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings);
+OSCAP_API int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings);
 
 
 #ifndef OS_WINDOWS
@@ -503,7 +503,7 @@ FILE *oscap_fopen_with_prefix(const char *prefix, const char *path);
  * @param wstr wide string
  * @return C string
  */
-char *oscap_windows_wstr_to_str(const wchar_t *wstr);
+OSCAP_API char *oscap_windows_wstr_to_str(const wchar_t *wstr);
 
 /**
 * Convert C string to wide character string (UTF-8 to UTF-16)
@@ -512,7 +512,7 @@ char *oscap_windows_wstr_to_str(const wchar_t *wstr);
 * @param str C string
 * @return wide string
 */
-wchar_t *oscap_windows_str_to_wstr(const char *str);
+OSCAP_API wchar_t *oscap_windows_str_to_wstr(const char *str);
 
 /**
  * Get formated message about Windows API errors.
@@ -521,7 +521,7 @@ wchar_t *oscap_windows_str_to_wstr(const char *str);
  * @param error_code Error code returned by a Windows API call.
  * @return Error message in a form of a C string.
  */
-char *oscap_windows_error_message(unsigned long error_code);
+OSCAP_API char *oscap_windows_error_message(unsigned long error_code);
 #endif
 
 #endif				/* OSCAP_UTIL_H_ */
