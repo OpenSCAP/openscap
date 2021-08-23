@@ -30,3 +30,4 @@ build/
 /swig/python3/openscap_py_wrap.c
 /swig/python3/openscap_api.pyc
 .vscode/
+.vs/
