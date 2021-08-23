@@ -72,8 +72,9 @@ static void oscap_err_free(struct oscap_err_t *err)
 
 static inline void _push_err(struct oscap_err_t *err)
 {
+	struct err_queue *q = NULL;
 #ifdef OSCAP_THREAD_SAFE
-	struct err_queue *q = pthread_getspecific(__key);
+	q = pthread_getspecific(__key);
 #endif
 	if (q == NULL) {
 		q = err_queue_new();
@@ -87,11 +88,10 @@ static inline void _push_err(struct oscap_err_t *err)
 
 void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErrorPtr error)
 {
-
 	if (error == NULL)
 		return;
 
-	struct oscap_err_t *err;
+	struct oscap_err_t *err = NULL;
 #ifdef OSCAP_THREAD_SAFE
 	(void)pthread_once(&__once, oscap_errkey_init);
 #endif
@@ -116,8 +116,8 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 
 void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_errfamily_t family, const char *fmt, ...)
 {
-	struct oscap_err_t *err;
-	char *msg;
+	struct oscap_err_t *err = NULL;
+	char *msg = NULL;
 	va_list ap;
 
 #ifdef OSCAP_THREAD_SAFE
@@ -136,9 +136,8 @@ void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_err
 
 void oscap_clearerr(void)
 {
+	struct err_queue *q = NULL;
 #ifdef OSCAP_THREAD_SAFE
-	struct err_queue *q;
-
 	(void)pthread_once(&__once, oscap_errkey_init);
 
 	q = pthread_getspecific(__key);
@@ -149,18 +148,18 @@ void oscap_clearerr(void)
 
 bool oscap_err(void)
 {
+	struct err_queue *q = NULL;
 #ifdef OSCAP_THREAD_SAFE
 	(void)pthread_once(&__once, oscap_errkey_init);
-	struct err_queue *q = pthread_getspecific(__key);
+	q = pthread_getspecific(__key);
 #endif
 	return (q != NULL && !err_queue_is_empty(q));
 }
 
 oscap_errfamily_t oscap_err_family(void)
 {
+	struct err_queue *q = NULL;
 #ifdef OSCAP_THREAD_SAFE
-	struct err_queue *q;
-
 	(void)pthread_once(&__once, oscap_errkey_init);
 	q = pthread_getspecific(__key);
 #endif
@@ -172,9 +171,8 @@ oscap_errfamily_t oscap_err_family(void)
 
 const char *oscap_err_desc(void)
 {
+	struct err_queue *q = NULL;
 #ifdef OSCAP_THREAD_SAFE
-	struct err_queue *q;
-
 	(void)pthread_once(&__once, oscap_errkey_init);
 	q = pthread_getspecific(__key);
 #endif
@@ -186,12 +184,12 @@ const char *oscap_err_desc(void)
 
 char *oscap_err_get_full_error(void)
 {
+	struct err_queue *q = NULL;
 #ifdef OSCAP_THREAD_SAFE
-	struct err_queue *q;
+	
 	(void)pthread_once(&__once, oscap_errkey_init);
 	q = pthread_getspecific(__key);
 #endif
-
 	char *res = NULL;
 	if (q == NULL || err_queue_is_empty(q))
 		return NULL;
