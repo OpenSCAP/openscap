@@ -306,6 +306,7 @@ cmake_dependent_option(OPENSCAP_PROBE_SOLARIS_ISAINFO "Solaris isainfo probe" ON
 # WINDOWS PROBES
 cmake_dependent_option(OPENSCAP_PROBE_WINDOWS_ACCESSTOKEN "Windows accesstoken probe" ON "ENABLE_PROBES_WINDOWS" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_WINDOWS_REGISTRY "Windows registry probe" ON "ENABLE_PROBES_WINDOWS" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_WINDOWS_SERVICE "Windows service probe" ON "ENABLE_PROBES_WINDOWS" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_WINDOWS_WMI57 "Windows wmi57 probe" ON "ENABLE_PROBES_WINDOWS" OFF)
 
 
@@ -439,6 +440,7 @@ message(STATUS " ")
 message(STATUS "Windows probes: ${ENABLE_PROBES_WINDOWS}")
 message(STATUS "  Windows accesstoken probe: ${OPENSCAP_PROBE_WINDOWS_ACCESSTOKEN}")
 message(STATUS "  Windows registry probe: ${OPENSCAP_PROBE_WINDOWS_REGISTRY}")
+message(STATUS "  Windows service probe: ${OPENSCAP_PROBE_WINDOWS_SERVICE}")
 message(STATUS "  Windows wmi57 probe: ${OPENSCAP_PROBE_WINDOWS_WMI57}")
 message(STATUS " ")
 

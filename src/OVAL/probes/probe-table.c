@@ -199,6 +199,10 @@
 #include "windows/registry_probe.h"
 #endif
 
+#ifdef OPENSCAP_PROBE_WINDOWS_SERVICE
+#include "windows/service_probe.h"
+#endif
+
 #ifdef OPENSCAP_PROBE_WINDOWS_WMI57
 #include "windows/wmi57_probe.h"
 #endif
@@ -341,6 +345,9 @@ static const probe_table_entry_t probe_table[] = {
 #endif
 #ifdef OPENSCAP_PROBE_WINDOWS_REGISTRY
 	{OVAL_WINDOWS_REGISTRY, NULL, registry_probe_main, NULL, NULL},
+#endif
+#ifdef OPENSCAP_PROBE_WINDOWS_SERVICE
+	{ OVAL_WINDOWS_SERVICE, NULL, service_probe_main, NULL, NULL },
 #endif
 #ifdef OPENSCAP_PROBE_WINDOWS_WMI57
 	{OVAL_WINDOWS_WMI_57, NULL, wmi57_probe_main, NULL, NULL},

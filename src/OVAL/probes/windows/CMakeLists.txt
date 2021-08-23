@@ -10,6 +10,12 @@ if(OPENSCAP_PROBE_WINDOWS_REGISTRY)
 		"registry_probe.h"
 	)
 endif()
+if(OPENSCAP_PROBE_WINDOWS_SERVICE)
+	list(APPEND WINDOWS_PROBES_SOURCES
+		"service_probe.c"
+		"service_probe.h"
+	)
+endif()
 if(OPENSCAP_PROBE_WINDOWS_WMI57)
 	list(APPEND WINDOWS_PROBES_SOURCES
 		"wmi57_probe.c"
