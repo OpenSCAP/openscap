@@ -255,7 +255,7 @@ option(OPENSCAP_ENABLE_SHA1 "Enable using the SHA-1 algorithm" ON)
 option(OPENSCAP_ENABLE_MD5 "Enable using the MD5 algorithm" ON)
 
 # INDEPENDENT PROBES
-cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE "Independent environmentvariable probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE "Independent environmentvariable probe" ON "ENABLE_PROBES_INDEPENDENT" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE58 "Independent environmentvariable58 probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_FAMILY "Independent family probe" ON "ENABLE_PROBES_INDEPENDENT" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_FILEHASH "Independent filehash probe" ON "ENABLE_PROBES_INDEPENDENT; CRYPTO_FOUND; OPENSCAP_ENABLE_SHA1; OPENSCAP_ENABLE_MD5; NOT WIN32" OFF)
@@ -379,13 +379,13 @@ message(STATUS "MD5: ${OPENSCAP_ENABLE_MD5}")
 
 message(STATUS "")
 message(STATUS "Independent probes: ${ENABLE_PROBES_INDEPENDENT}")
+message(STATUS "  Independent environmentvariable probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE}")
 message(STATUS "  Independent family probe: ${OPENSCAP_PROBE_INDEPENDENT_FAMILY}")
 message(STATUS "  Independent system info probe: ${OPENSCAP_PROBE_INDEPENDENT_SYSTEM_INFO}")
 message(STATUS "  Independent variable probe: ${OPENSCAP_PROBE_INDEPENDENT_VARIABLE}")
 
 message(STATUS "")
 message(STATUS "Independent probes incompatible with WIN32 (WIN32 status: ${IS_WIN32})")
-message(STATUS "  Independent environmentvariable probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE}")
 message(STATUS "  Independent environmentvariable58 probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE58}")
 message(STATUS "  Independent filehash probe: ${OPENSCAP_PROBE_INDEPENDENT_FILEHASH}")
 message(STATUS "  Independent filehash58 probe: ${OPENSCAP_PROBE_INDEPENDENT_FILEHASH58}")
