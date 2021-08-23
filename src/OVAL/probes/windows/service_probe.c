@@ -60,22 +60,14 @@ static char* service_types_to_str(DWORD service_type)
         return "SERVICE_KERNEL_DRIVER";
     case SERVICE_FILE_SYSTEM_DRIVER:
         return "SERVICE_FILE_SYSTEM_DRIVER";
-    case SERVICE_ADAPTER:
-        return "SERVICE_ADAPTER";
     case SERVICE_WIN32_OWN_PROCESS:
         return "SERVICE_WIN32_OWN_PROCESS";
     case SERVICE_WIN32_SHARE_PROCESS:
         return "SERVICE_WIN32_SHARE_PROCESS";
-    case SERVICE_USER_SERVICE:
-        return "SERVICE_USER_SERVICE";
-    case SERVICE_USERSERVICE_INSTANCE:
-        return "SERVICE_USERSERVICE_INSTANCE";
     case SERVICE_INTERACTIVE_PROCESS:
         return "SERVICE_INTERACTIVE_PROCESS";
-    case SERVICE_PKG_SERVICE:
-        return "SERVICE_PKG_SERVICE";
     default:
-        return "unknwon";
+        return "unknown";
     }
 }
 
@@ -108,15 +100,10 @@ static char* controls_accepted_to_str(DWORD controls_accepted)
     case SERVICE_ACCEPT_TIMECHANGE:
         return "SERVICE_ACCEPT_TIMECHANGE";
     case SERVICE_ACCEPT_TRIGGEREVENT:
-        return "SERVICE_ACCEPT_TRIGGEREVENT";
-    case SERVICE_ACCEPT_USER_LOGOFF:
-        return "SERVICE_ACCEPT_USER_LOGOFF";
-    case SERVICE_ACCEPT_LOWRESOURCES:
-        return "SERVICE_ACCEPT_LOWRESOURCES";
-    case SERVICE_ACCEPT_SYSTEMLOWRESOURCES:
-        return "SERVICE_ACCEPT_SYSTEMLOWRESOURCES";
+        return "SERVICE_ACCEPT_TRIGGEREVENT";    
     default:
         return "unknown";
+
     }
 }
 
@@ -180,9 +167,8 @@ static char** get_controls_accepted(DWORD controls_accepted)
 {
     //dD("\n\n ********************* CONTROL ACCEPTEDS 0x%X ****************** \n\n", controls_accepted);
     uint32_t bytes[14] = {
-        0x00004000, 0x00002000, 0x00000800, 0x00000400, 0x00000200, 0x00000100,
-        0x00000080, 0x00000040, 0x00000020, 0x00000010, 0x00000008, 0x00000004,
-        0x00000002, 0x00000001
+        0x00000400, 0x00000200, 0x00000100, 0x00000080, 0x00000040, 0x00000020,
+        0x00000010, 0x00000008, 0x00000004, 0x00000002, 0x00000001
     };
     uint32_t found_bytes[14];
     for (int i = 0; i < 14; i++) {
@@ -217,7 +203,6 @@ static void set_service_description(struct service_info* sc_info, LPSERVICE_DESC
     else {
         sc_info->description_str = "";
     }
-
 }
 
 /**
@@ -345,7 +330,13 @@ static int enum_services(LPENUM_SERVICE_STATUS* lpEnumServices, LPDWORD dwServic
     );
 
     CloseServiceHandle(sc);
-    return 0;
+    if (bResult != FALSE) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
+    
 }
 /**
  * \brief       Collect all information about a service
@@ -419,7 +410,7 @@ static int collect_service_info(char* service_name, struct service_info* sc_info
         sc_handler,
         SERVICE_CONFIG_DESCRIPTION,
         NULL,
-        0,
+        sizeof(LPSERVICE_DESCRIPTIONA),
         &dwBytesNeeded))
     {
         dwError = GetLastError();
@@ -622,7 +613,6 @@ static void collect_item(SEXP_t* service_name_ent, struct service_info sc_info, 
     else {
         SEXP_free(service_name_sexp);
     }
-
 }
 
 /**
