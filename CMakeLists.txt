@@ -258,7 +258,7 @@ option(OPENSCAP_ENABLE_MD5 "Enable using the MD5 algorithm" ON)
 
 # ---------- PLUGIN FEATURE SWITCHES
 option(ENABLE_PLUGINS "enables plugin support" ${IS_WIN32})
-cmake_dependent_option(ENABLE_PLUGINS_INDEPENDENT "enable support for independent (cross platform) plugins" ON "ENABLE_PLUGINS" OFF)
+cmake_dependent_option(ENABLE_PLUGINS_INDEPENDENT "enable support for independent (cross platform) plugins" ${IS_WIN32} "ENABLE_PLUGINS" OFF)
 cmake_dependent_option(ENABLE_PLUGINS_WINDOWS "enable support for Windows plugins" ${IS_WIN32} "ENABLE_PLUGINS" OFF)
 
 # INDEPENDENT PROBES
