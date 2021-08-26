@@ -4,6 +4,12 @@ if(OPENSCAP_PROBE_WINDOWS_ACCESSTOKEN)
 		"accesstoken_probe.h"
 	)
 endif()
+if(OPENSCAP_PROBE_WINDOWS_PROCESS58)
+	list(APPEND WINDOWS_PROBES_SOURCES
+		"process58_probe.c"
+		"process58_probe.h"
+	)
+endif()
 if(OPENSCAP_PROBE_WINDOWS_REGISTRY)
 	list(APPEND WINDOWS_PROBES_SOURCES
 		"registry_probe.c"

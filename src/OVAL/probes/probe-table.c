@@ -199,6 +199,10 @@
 #include "windows/registry_probe.h"
 #endif
 
+#ifdef OPENSCAP_PROBE_WINDOWS_PROCESS58
+#include "windows/process58_probe.h"
+#endif
+
 #ifdef OPENSCAP_PROBE_WINDOWS_WMI57
 #include "windows/wmi57_probe.h"
 #endif
@@ -338,6 +342,9 @@ static const probe_table_entry_t probe_table[] = {
 #endif
 #ifdef OPENSCAP_PROBE_WINDOWS_ACCESSTOKEN
 	{OVAL_WINDOWS_ACCESS_TOKEN, NULL, accesstoken_probe_main, NULL, NULL},
+#endif
+#ifdef OPENSCAP_PROBE_WINDOWS_PROCESS58
+	{ OVAL_WINDOWS_PROCESS_58, NULL, process58_probe_main, NULL, NULL },
 #endif
 #ifdef OPENSCAP_PROBE_WINDOWS_REGISTRY
 	{OVAL_WINDOWS_REGISTRY, NULL, registry_probe_main, NULL, NULL},
