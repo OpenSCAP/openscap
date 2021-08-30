@@ -58,7 +58,7 @@ oval_result_t probe_ent_result_byopr(SEXP_t * res_lst, oval_operator_t operator)
  * @param ent_obj object entity
  * @param val raw value
  */
-oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val);
+OSCAP_API oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val);
 
 /**
  * Compare state entity's content with a item entity's value.

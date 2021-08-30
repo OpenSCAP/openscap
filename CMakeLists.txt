@@ -259,7 +259,7 @@ option(OPENSCAP_ENABLE_MD5 "Enable using the MD5 algorithm" ON)
 
 # ---------- PLUGIN FEATURE SWITCHES
 option(ENABLE_PLUGINS "enables plugin support" ${IS_WIN32})
-cmake_dependent_option(ENABLE_PLUGINS_INDEPENDENT "enable support for independent (cross platform) plugins" ON "ENABLE_PLUGINS" OFF)
+cmake_dependent_option(ENABLE_PLUGINS_INDEPENDENT "enable support for independent (cross platform) plugins" ${IS_WIN32} "ENABLE_PLUGINS" OFF)
 cmake_dependent_option(ENABLE_PLUGINS_WINDOWS "enable support for Windows plugins" ${IS_WIN32} "ENABLE_PLUGINS" OFF)
 
 # INDEPENDENT PROBES
@@ -617,7 +617,11 @@ add_subdirectory("xsl")
 add_subdirectory("cpe")
 add_subdirectory("swig")
 if(ENABLE_PLUGINS)
-	add_subdirectory("plugin")
+	if (NOT DEFINED PLUGINS_SOURCE_DIR)
+		set(PLUGINS_SOURCE_DIR "plugin")
+	endif()
+	message(STATUS "plugins source directory: ${PLUGINS_SOURCE_DIR}")
+	add_subdirectory("${PLUGINS_SOURCE_DIR}" "${CMAKE_BINARY_DIR}/plugin")
 endif()
 configure_file("run.in" ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/run @ONLY)
 configure_file("oscap_wrapper.in" ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/oscap_wrapper @ONLY)
