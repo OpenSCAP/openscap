@@ -117,8 +117,6 @@ static int read_status(const char *source, void *base, struct stat_parser *spt, 
 			sp = oscap_bfind(spt, spt_size, sizeof(struct stat_parser),
 			                 linebuf, (int(*)(void *, void *))&cmpkey);
 
-			dI("spt: %s", linebuf);
-
 			if (sp == NULL) {
 				/* drop end of unread line */
 				while (strchr(strval, '\n') == NULL) {
