@@ -24,7 +24,7 @@
  * @{
  * @addtogroup ERRORS
  * @{
- * Error checking mechanism. Purse of this mechanism is to inform user about problems that occured 
+ * Error checking mechanism. Purse of this mechanism is to inform user about problems that occurred
  * during executaion of library functions. Mechanism is similar to linux errno variable. When the problem 
  * raise, the information about it is stored in library buffer. This information consists of error family,
  * and textual description. Example of usage:
@@ -86,7 +86,7 @@ OSCAP_API oscap_errfamily_t oscap_err_family(void);
 OSCAP_API const char *oscap_err_desc(void);
 
 /**
- * Get the full description for all the errors which has occured in this
+ * Get the full description for all the errors which has occurred in this
  * thread since the last call of this function or \ref oscap_clearerr.
  * This function is destructive. Subsequent call shall return NULL.
  * @returns zero terminated string describing these errors, which shall

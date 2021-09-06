@@ -694,7 +694,7 @@ STIG by DISA. When evaluating a STIG provided by DISA using `oscap`, use the
 
 == Remediating system
 
-OpenSCAP allows to automatically remediate systems that have been found in a
+OpenSCAP allows one to automatically remediate systems that have been found in a
 non-compliant state. For system remediation the rules in SCAP content need to
 have a remediation script attached. For example, the SCAP source data streams in
 the `scap-security-guide` package contain rules with remediation fix scripts.
