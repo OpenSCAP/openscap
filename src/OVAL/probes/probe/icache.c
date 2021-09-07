@@ -488,13 +488,12 @@ int probe_icache_nop(probe_icache_t *cache)
 }
 
 #define PROBE_RESULT_MEMCHECK_CTRESHOLD  1000  /* item count */
-#define PROBE_RESULT_MEMCHECK_MAXRATIO   0.1   /* max. memory usage ratio - used/total */
 
 /**
  * Returns 0 if the memory constraints are not reached. Otherwise, 1 is returned.
  * In case of an error, -1 is returned.
  */
-static int probe_cobj_memcheck(size_t item_cnt)
+static int probe_cobj_memcheck(size_t item_cnt, double max_ratio)
 {
 	if (item_cnt > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
 		struct proc_memusage mu_proc;
@@ -509,9 +508,9 @@ static int probe_cobj_memcheck(size_t item_cnt)
 
 		c_ratio = (double)mu_proc.mu_rss/(double)(mu_sys.mu_total);
 
-		if (c_ratio > PROBE_RESULT_MEMCHECK_MAXRATIO) {
+		if (c_ratio > max_ratio) {
 			dW("Memory usage ratio limit reached! limit=%f, current=%f, used=%ld MB, free=%ld MB, total=%ld MB, count of items=%ld",
-			   PROBE_RESULT_MEMCHECK_MAXRATIO, c_ratio, mu_proc.mu_rss / 1024, mu_sys.mu_realfree / 1024, mu_sys.mu_total / 1024, item_cnt);
+			max_ratio, c_ratio, mu_proc.mu_rss / 1024, mu_sys.mu_realfree / 1024, mu_sys.mu_total / 1024, item_cnt);
 			errno = ENOMEM;
 			return (1);
 		}
@@ -550,7 +549,7 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 	cobj_itemcnt = SEXP_list_length(cobj_content);
 	SEXP_free(cobj_content);
 
-	memcheck_ret = probe_cobj_memcheck(cobj_itemcnt);
+	memcheck_ret = probe_cobj_memcheck(cobj_itemcnt, ctx->max_mem_ratio);
 	if (memcheck_ret == -1) {
 		dE("Failed to check available memory");
 		return -1;

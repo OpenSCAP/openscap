@@ -83,6 +83,7 @@ struct probe_ctx {
         SEXP_t         *filters;   /**< object filters (OVAL 5.8 and higher) */
         probe_icache_t *icache;    /**< item cache */
 	int offline_mode;
+	double max_mem_ratio;
 };
 
 typedef enum {
