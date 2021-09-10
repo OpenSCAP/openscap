@@ -271,6 +271,11 @@ static char *_get_etc_hostname(const char *oscap_probe_root)
 
 	fp = oscap_fopen_with_prefix(oscap_probe_root, "/etc/hostname");
 
+	if (fp == NULL) {
+		dD("Trying to use /proc/sys/kernel/hostname instead of /etc/hostname");
+		fp = oscap_fopen_with_prefix(oscap_probe_root, "/proc/sys/kernel/hostname");
+	}
+
 	if (fp == NULL)
 		goto fail;
 
