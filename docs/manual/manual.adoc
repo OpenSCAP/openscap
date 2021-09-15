@@ -1925,6 +1925,7 @@ behaviour.
 
 * *OSCAP_FULL_VALIDATION=1* - validate all exported documents (slower)
 * *SEXP_VALIDATE_DISABLE=1* - do not validate SEXP expressions (faster)
+* *OSCAP_PROBE_MEMORY_USAGE_RATIO* - maximum memory usage ratio (used/total) for OpenSCAP probes, default: 0.1
 
 
 
