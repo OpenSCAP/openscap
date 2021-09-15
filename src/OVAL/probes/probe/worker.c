@@ -1072,7 +1072,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		char *max_ratio_str = getenv("OSCAP_PROBE_MEMORY_USAGE_RATIO");
 		if (max_ratio_str != NULL) {
 			double max_ratio = strtod(max_ratio_str, NULL);
-			if (max_ratio != 0)
+			if (max_ratio > 0)
 				pctx.max_mem_ratio = max_ratio;
 		}
 
