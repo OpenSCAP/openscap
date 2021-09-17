@@ -104,14 +104,14 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 		intmax_t state_val, syschar_val;
 
 		if (!cstr_to_intmax(state_data, &state_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			dW(
 				"Conversion of the string \"%s\" to an integer (%zu bits) failed: %s",
 				state_data, sizeof(intmax_t)*8, strerror(errno));
 			return OVAL_RESULT_ERROR;
 		}
 
 		if (!cstr_to_intmax(sys_data, &syschar_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			dW(
 				"Conversion of the string \"%s\" to an integer (%zu bits) failed: %s",
 				sys_data, sizeof(intmax_t)*8, strerror(errno));
 			return OVAL_RESULT_ERROR;
@@ -121,14 +121,14 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 		double state_val, sys_val;
 
 		if (!cstr_to_double(state_data, &state_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			dW(
 				"Conversion of the string \"%s\" to a floating type (double) failed: %s",
 				state_data, strerror(errno));
 			return OVAL_RESULT_ERROR;
 		}
 
 		if (!cstr_to_double(sys_data, &sys_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			dW(
 				"Conversion of the string \"%s\" to a floating type (double) failed: %s",
 				sys_data, strerror(errno));
 			return OVAL_RESULT_ERROR;
