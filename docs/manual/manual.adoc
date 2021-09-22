@@ -1084,6 +1084,21 @@ scanned during this command. If you want to generate remediation only for the
 failed rules based on scan results, refer to <<_reviewing_remediations,Reviewing
 remediations>>.
 
+=== Generating Image Builder Blueprints
+
+OpenSCAP can also create a remediation in form of Image Builder (OSBuild) Blueprint. This remeditaion
+is intendeded to be used as a bootstrap for image creation and usually it will contain only essential
+elements of the configuration, elements that would be hard or impossible to change after the image
+is created, like partitioning or set of installed packages.
+
+It is recommended to combine this type of remediation with other types, executed on the running system.
+
+For example, to generate a blueprint remediation for RHEL 8 OSPP profile, run:
+
+----
+$ oscap xccdf generate fix --profile ospp --fix-type blueprint /usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml > blueprint.toml
+----
+
 == Details on SCAP conformance
 
 === Check Engines
