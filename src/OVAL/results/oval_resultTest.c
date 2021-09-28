@@ -416,7 +416,7 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 
 			var_val_res = oval_str_cmp_str(state_entity_val_text, state_entity_val_datatype, sys_data, state_entity_operation);
 			if (var_val_res == OVAL_RESULT_ERROR) {
-				dE("Error occurred when comparing a variable '%s' value '%s' with collected item entity = '%s'",
+				dW("Can't compare variable '%s' value = '%s' with collected item entity = '%s'",
 					oval_variable_get_id(state_entity_var), state_entity_val_text, sys_data);
 			}
 			ores_add_res(&var_ores, var_val_res);
