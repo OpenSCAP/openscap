@@ -328,6 +328,14 @@ char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 
 	CURLcode res;
 
+	/* CURLOPT_FAILONERROR - request failure on HTTP response >= 400 */
+	res = curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
+	if (res != 0) {
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_FAILONERROR: %s", curl_easy_strerror(res));
+		return NULL;
+	}
+
 	res = curl_easy_setopt(curl, CURLOPT_URL, url);
 	if (res != 0) {
 		curl_easy_cleanup(curl);
@@ -387,13 +395,21 @@ char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 	}
 
 	res = curl_easy_perform(curl);
-	curl_easy_cleanup(curl);
 
 	if (res != 0) {
-		oscap_seterr(OSCAP_EFAMILY_NET, "Download failed: %s", curl_easy_strerror(res));
+		if (res == CURLE_HTTP_RETURNED_ERROR) {
+			long http_code = 0;
+			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+			oscap_seterr(OSCAP_EFAMILY_NET, "Download failed: %s: %ld", curl_easy_strerror(res), http_code);
+		} else {
+			oscap_seterr(OSCAP_EFAMILY_NET, "Download failed: %s", curl_easy_strerror(res));
+		}
+		curl_easy_cleanup(curl);
 		oscap_buffer_free(buffer);
 		return NULL;
 	}
+
+	curl_easy_cleanup(curl);
 
 	*memory_size = oscap_buffer_get_length(buffer);
 	char* data = oscap_buffer_bequeath(buffer); // get data and free buffer struct

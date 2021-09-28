@@ -250,6 +250,19 @@ function test_ds_continue_without_remote_resources() {
 	rm -f "$result" "$oval_result"
 }
 
+function test_ds_error_remote_resources() {
+	local DS="${srcdir}/$1"
+	local PROFILE="$2"
+	local result=$(mktemp)
+	local stderr=$(mktemp)
+
+	$OSCAP xccdf eval --fetch-remote-resources --profile "$PROFILE" --results "$result" "$DS" 2>"$stderr" || ret=$?
+	grep -q "Downloading: https://www.example.com/security/data/oval/oval.xml.bz2 ... error" "$stderr"
+	grep -q "OpenSCAP Error: Download failed: HTTP response code said error: 404" "$stderr"
+
+	rm -f "$result" "$stderr"
+}
+
 function test_source_date_epoch() {
 	local xccdf="$srcdir/sds_multiple_oval/multiple-oval-xccdf.xml"
 	local result="$(mktemp)"
@@ -286,7 +299,9 @@ test_run "eval_cpe" test_eval_cpe eval_cpe/sds.xml
 test_run "test_eval_complex" test_eval_complex
 test_run "sds_add_multiple_oval_twice_in_row" sds_add_multiple_twice
 test_run "test_ds_1_2_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.2.ds.xml xccdf_com.example.www_profile_test_remote_res
+test_run "test_ds_1_2_error_remote_resources" test_ds_error_remote_resources ds_continue_without_remote_resources/remote_content_1.2.ds.xml xccdf_com.example.www_profile_test_remote_res
 test_run "test_ds_1_3_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.3.ds.xml xccdf_com.example.www_profile_test_remote_res
+test_run "test_ds_1_3_error_remote_resources" test_ds_error_remote_resources ds_continue_without_remote_resources/remote_content_1.3.ds.xml xccdf_com.example.www_profile_test_remote_res
 test_run "test_source_date_epoch" test_source_date_epoch
 
 test_exit
