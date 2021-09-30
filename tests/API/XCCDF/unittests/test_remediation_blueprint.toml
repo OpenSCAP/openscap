@@ -1,0 +1,45 @@
+###############################################################################
+#
+# Blueprint for Profile title on one line
+#
+# Profile Description:
+# Profile description
+#
+# Profile ID:  xccdf_moc.elpmaxe.www_profile_common
+# Benchmark ID:  xccdf_moc.elpmaxe.www_benchmark_test
+# Benchmark Version:  1.0
+# XCCDF Version:  1.2
+#
+# $ oscap xccdf generate fix --profile xccdf_moc.elpmaxe.www_profile_common --fix-type blueprint xccdf-file.xml
+#
+# It attempts to fix every selected rule, even if the system is already compliant.
+#
+# How to apply this Blueprint:
+# composer-cli blueprints push blueprint.toml
+#
+###############################################################################
+
+name = "xccdf_moc.elpmaxe.www_profile_common"
+description = "Profile title on one line"
+version = "1.0"
+distro = rhel-80
+
+[[packages]]
+name = "aide"
+version = "*"
+
+[[customizations.filesystem]]
+mountpoint = "/home"
+size = 1
+
+[[customizations.filesystem]]
+mountpoint = "/tmp"
+size = 2
+
+[customizations.kernel]
+append = "foo=bar audit=1"
+
+[customizations.services]
+enabled = ["sshd","usbguard"]
+disabled = ["kdump"]
+

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_test">
+  <status>accepted</status>
+  <version>1.0</version>
+  <Profile id="xccdf_moc.elpmaxe.www_profile_common">
+      <title>Profile title on one line</title>
+      <description>Profile description</description>
+      <select idref="xccdf_moc.elpmaxe.www_rule_1" selected="true"/>
+  </Profile>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
+    <title>Install aide</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[[packages]]
+name = "aide"
+version = "*"
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_2">
+    <title>Define /home</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[[customizations.filesystem]]
+mountpoint = "/home"
+size = 1
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_3">
+    <title>Add audit=1 kernel option</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[customizations.kernel]
+append = "audit=1"
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_4">
+    <title>Add foo=bar kernel option</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[customizations.kernel]
+append = "foo=bar"
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_5">
+    <title>Define /tmp</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[[customizations.filesystem]]
+mountpoint = "/tmp"
+size = 2
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_6">
+    <title>Enable usbguard</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[customizations.services]
+enabled = ["usbguard"]
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_7">
+    <title>Disable kdump</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[customizations.services]
+disabled = ["kdump"]
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_8">
+    <title>Set distro (RHEL 8.0)</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+distro = rhel-80
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_9">
+    <title>Enable sshd</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[customizations.services]
+enabled = ["sshd"]
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+</Benchmark>

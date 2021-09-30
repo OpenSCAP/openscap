@@ -656,6 +656,78 @@ static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, stru
 	}
 }
 
+struct blueprint_entries {
+	const char *pattern;
+	struct oscap_list *list;
+	pcre *re;
+};
+
+static inline int _parse_blueprint_fix(const char *fix_text, struct oscap_list *generic, struct oscap_list *services_enable, struct oscap_list *services_disable, struct oscap_list *kernel_append)
+{
+	const char *err;
+	int errofs;
+	int ret = 0;
+
+	struct blueprint_entries tab[] = {
+		{"\\[customizations\\.services\\]\\s+enabled[=\\s]+\\[([^\\]]+)\\]\\s+", services_enable, NULL},
+		{"\\[customizations\\.services\\]\\s+disabled[=\\s]+\\[([^\\]]+)\\]\\s+", services_disable, NULL},
+		{"\\[customizations\\.kernel\\]\\s+append[=\\s\"]+([^\"]+)[\\s\"]+", kernel_append, NULL},
+		// We do this only to pop the 'distro' entry to the top of the generic list,
+		// effectively placing it to the root of the TOML document.
+		{"\\s+(distro[=\\s\"]+[^\"]+[\\s\"]+)", generic, NULL},
+		{NULL, NULL, NULL}
+	};
+
+	for (int i = 0; tab[i].pattern != NULL; i++) {
+		tab[i].re = pcre_compile(tab[i].pattern, PCRE_UTF8, &err, &errofs, NULL);
+		if (tab[i].re == NULL) {
+			dE("Unable to compile /%s/ regex pattern, pcre_compile() returned error (offset: %d): '%s'.\n", tab[i].pattern, errofs, err);
+			ret = 1;
+			goto exit;
+		}
+	}
+
+	const size_t fix_text_len = strlen(fix_text);
+	size_t start_offset = 0;
+	int ovector[6] = {0};
+
+	for (int i = 0; tab[i].pattern != NULL; i++) {
+		while (true) {
+			const int match = pcre_exec(tab[i].re, NULL, fix_text, fix_text_len, start_offset,
+			                            0, ovector, sizeof(ovector) / sizeof(ovector[0]));
+			if (match == -1)
+				break;
+
+			if (match != 2) {
+				dE("Expected 1 capture group matches per entry. Found %i!", match - 1);
+				ret = 1;
+				goto exit;
+			}
+
+			char *val = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
+			memcpy(val, &fix_text[ovector[2]], ovector[3] - ovector[2]);
+			val[ovector[3] - ovector[2]] = '\0';
+
+			if (!oscap_list_contains(kernel_append, val, (oscap_cmp_func) oscap_streq)) {
+				oscap_list_prepend(tab[i].list, val);
+			} else {
+				free(val);
+			}
+
+			start_offset = ovector[1];
+		}
+	}
+
+	if (start_offset < fix_text_len-1) {
+		oscap_list_add(generic, strdup(fix_text + start_offset));
+	}
+
+exit:
+	for (int i = 0; tab[i].pattern != NULL; i++)
+		pcre_free(tab[i].re);
+
+	return ret;
+}
 
 static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *variables, struct oscap_list *tasks)
 {
@@ -793,6 +865,18 @@ static int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct x
 	return ret;
 }
 
+static int _xccdf_policy_rule_generate_blueprint_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct oscap_list *generic, struct oscap_list *services_enable, struct oscap_list *services_disable, struct oscap_list *kernel_append)
+{
+	char *fix_text = NULL;
+	int ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
+	if (fix_text == NULL) {
+		return ret;
+	}
+	ret = _parse_blueprint_fix(fix_text, generic, services_enable, services_disable, kernel_append);
+	free(fix_text);
+	return ret;
+}
+
 static int _xccdf_policy_rule_generate_ansible_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct oscap_list *variables, struct oscap_list *tasks)
 {
 	char *fix_text = NULL;
@@ -914,24 +998,44 @@ static char *_comment_multiline_text(char *text)
 static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
 	if (!(oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands") ||
-		oscap_streq(sys, "urn:xccdf:fix:script:ansible")))
+		  oscap_streq(sys, "urn:xccdf:fix:script:ansible") || oscap_streq(sys, "urn:redhat:osbuild:blueprint")))
 		return 0; // no header required
 
-	const bool ansible_script = strcmp(sys, "urn:xccdf:fix:script:ansible") == 0;
-	const char *how_to_apply = ansible_script ?
-		"# $ ansible-playbook -i \"localhost,\" -c local playbook.yml\n"
-		"# $ ansible-playbook -i \"192.168.1.155,\" playbook.yml\n"
-		"# $ ansible-playbook -i inventory.ini playbook.yml" :
-		"# $ sudo ./remediation-script.sh";
 	const char *oscap_version = oscap_get_version();
-	const char *format = ansible_script ? "ansible" : "bash";
-	const char *remediation_type = ansible_script ? "Ansible Playbook" : "Bash Remediation Script";
-	const char *shebang_with_newline = ansible_script ? "" : "#!/usr/bin/env bash\n";
+	char *how_to_apply = "";
+	char *format = (char *)sys;
+	char *remediation_type = "Unknown";
+	char *shebang_with_newline = "";
+
+	if (oscap_streq(sys, "urn:xccdf:fix:script:ansible")) {
+		how_to_apply = "# $ ansible-playbook -i \"localhost,\" -c local playbook.yml\n"
+		               "# $ ansible-playbook -i \"192.168.1.155,\" playbook.yml\n"
+		               "# $ ansible-playbook -i inventory.ini playbook.yml";
+		format = "ansible";
+		remediation_type = "Ansible Playbook";
+	}
+
+	if (oscap_streq(sys, "urn:redhat:osbuild:blueprint")) {
+		how_to_apply = "# composer-cli blueprints push blueprint.toml";
+		format = "blueprint";
+		remediation_type = "Blueprint";
+	}
+
+	if (oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands")) {
+		how_to_apply = "# $ sudo ./remediation-script.sh";
+		format = "bash";
+		remediation_type = "Bash Remediation Script";
+		shebang_with_newline = "#!/usr/bin/env bash\n";
+	}
 
 	char *fix_header;
 
 	struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
 	const char *profile_id = xccdf_profile_get_id(profile);
+
+	struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
+	const char *benchmark_version_info = benchmark ? xccdf_benchmark_get_version(benchmark) : "Unknown";
+	const char *benchmark_id = benchmark ? xccdf_benchmark_get_id(benchmark) : "Unknown";
 
 	// Title
 	struct oscap_text_iterator *title_iterator = xccdf_profile_get_title(profile);
@@ -942,11 +1046,6 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 
 	if (result == NULL) {
 		// Profile-based remediation fix
-		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
-		if (benchmark == NULL) {
-			free(profile_title);
-			return 1;
-		}
 		// Description
 		struct oscap_text_iterator *description_iterator = xccdf_profile_get_description(profile);
 		char *profile_description = description_iterator != NULL ?
@@ -955,10 +1054,8 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		char *commented_profile_description = _comment_multiline_text(profile_description);
 		free(profile_description);
 
-		const char *benchmark_version_info = xccdf_benchmark_get_version(benchmark);
-		const char *benchmark_id = xccdf_benchmark_get_id(benchmark);
-		const struct xccdf_version_info *xccdf_version = xccdf_benchmark_get_schema_version(benchmark);
-		const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version);
+		const struct xccdf_version_info *xccdf_version = benchmark ? xccdf_benchmark_get_schema_version(benchmark) : NULL;
+		const char *xccdf_version_name = xccdf_version ? xccdf_version_info_get_version(xccdf_version) : "Unknown";
 
 		fix_header = oscap_sprintf(
 			"%s"
@@ -1026,9 +1123,8 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			result_id, format, remediation_type, remediation_type, how_to_apply
 		);
 	}
-	free(profile_title);
 
-	if (ansible_script) {
+	if (oscap_streq(sys, "urn:xccdf:fix:script:ansible")) {
 		char *ansible_fix_header = oscap_sprintf(
 			"---\n"
 			"%s\n"
@@ -1036,9 +1132,85 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			fix_header);
 		free(fix_header);
 		return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
+	} else if (oscap_streq(sys, "urn:redhat:osbuild:blueprint")) {
+		char *blueprint_fix_header = oscap_sprintf(
+			"%s"
+			"name = \"%s\"\n"
+			"description = \"%s\"\n"
+			"version = \"%s\"\n",
+			fix_header, profile_id, profile_title, benchmark_version_info);
+		free(fix_header);
+		return _write_text_to_fd_and_free(output_fd, blueprint_fix_header);
 	} else {
 		return _write_text_to_fd_and_free(output_fd, fix_header);
 	}
+
+	free(profile_title);
+}
+
+static int _xccdf_policy_generate_fix_blueprint(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
+{
+	int ret = 0;
+	struct oscap_list *generic = oscap_list_new();
+	struct oscap_list *services_enable = oscap_list_new();
+	struct oscap_list *services_disable = oscap_list_new();
+	struct oscap_list *kernel_append = oscap_list_new();
+	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
+	while (oscap_iterator_has_more(rules_to_fix_it)) {
+		struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
+		ret = _xccdf_policy_rule_generate_blueprint_fix(policy, rule, sys, generic, services_enable, services_disable, kernel_append);
+		if (ret != 0)
+			break;
+	}
+	oscap_iterator_free(rules_to_fix_it);
+
+	struct oscap_iterator *generic_it = oscap_iterator_new(generic);
+	while(oscap_iterator_has_more(generic_it)) {
+		char *var_line = (char *) oscap_iterator_next(generic_it);
+		_write_text_to_fd(output_fd, var_line);
+	}
+	_write_text_to_fd(output_fd, "\n");
+	oscap_iterator_free(generic_it);
+	oscap_list_free(generic, free);
+
+	_write_text_to_fd(output_fd, "[customizations.kernel]\nappend = \"");
+	struct oscap_iterator *kernel_append_it = oscap_iterator_new(kernel_append);
+	while(oscap_iterator_has_more(kernel_append_it)) {
+		char *var_line = (char *) oscap_iterator_next(kernel_append_it);
+		_write_text_to_fd(output_fd, var_line);
+		if (oscap_iterator_has_more(kernel_append_it))
+			_write_text_to_fd(output_fd, " ");
+	}
+	_write_text_to_fd(output_fd, "\"\n\n");
+	oscap_iterator_free(kernel_append_it);
+	oscap_list_free(kernel_append, free);
+
+	_write_text_to_fd(output_fd, "[customizations.services]\n");
+	_write_text_to_fd(output_fd, "enabled = [");
+	struct oscap_iterator *services_enable_it = oscap_iterator_new(services_enable);
+	while(oscap_iterator_has_more(services_enable_it)) {
+		char *var_line = (char *) oscap_iterator_next(services_enable_it);
+		_write_text_to_fd(output_fd, var_line);
+		if (oscap_iterator_has_more(services_enable_it))
+			_write_text_to_fd(output_fd, ",");
+	}
+	_write_text_to_fd(output_fd, "]\n");
+	oscap_iterator_free(services_enable_it);
+	oscap_list_free(services_enable, free);
+
+	_write_text_to_fd(output_fd, "disabled = [");
+	struct oscap_iterator *services_disable_it = oscap_iterator_new(services_disable);
+	while(oscap_iterator_has_more(services_disable_it)) {
+		char *var_line = (char *) oscap_iterator_next(services_disable_it);
+		_write_text_to_fd(output_fd, var_line);
+		if (oscap_iterator_has_more(services_disable_it))
+			_write_text_to_fd(output_fd, ",");
+	}
+	_write_text_to_fd(output_fd, "]\n\n");
+	oscap_iterator_free(services_disable_it);
+	oscap_list_free(services_disable, free);
+
+	return ret;
 }
 
 static int _xccdf_policy_generate_fix_ansible(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
@@ -1145,6 +1317,8 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	// in Ansible we have to generate variables first and then tasks
 	if (strcmp(sys, "urn:xccdf:fix:script:ansible") == 0) {
 		ret = _xccdf_policy_generate_fix_ansible(rules_to_fix, policy, sys, output_fd);
+	} else if (strcmp(sys, "urn:redhat:osbuild:blueprint") == 0) {
+		ret = _xccdf_policy_generate_fix_blueprint(rules_to_fix, policy, sys, output_fd);
 	} else {
 		ret =  _xccdf_policy_generate_fix_other(rules_to_fix, policy, sys, output_fd);
 	}
