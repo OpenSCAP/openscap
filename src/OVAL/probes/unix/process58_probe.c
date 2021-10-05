@@ -472,7 +472,7 @@ static inline char *make_defunc_str(char* const cmd_buffer){
 static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 {
 	char buf[PATH_MAX];
-	int err = PROBE_EACCESS, max_cap_id;
+	int max_cap_id;
 	DIR *d;
 	struct dirent *ent;
 	oval_schema_version_t oval_version;
@@ -501,6 +501,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	cmd_buffer[0] = '[';
 
 	// Scan the directories
+	bool any_pid_dir_found = false;
 	while (( ent = readdir(d) )) {
 		int fd, len;
 		char *tmp, state, tty_dev[128];
@@ -562,9 +563,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 			}
 		}
 
-
-		err = PROBE_ESUCCESS; // If we get this far, no permission problems
-		dI("Have command: %s", cmd);
+		any_pid_dir_found = true;
 		cmd_sexp = SEXP_string_newf("%s", cmd);
 		pid_sexp = SEXP_number_newu_32(pid);
 		if ((cmd_sexp == NULL || probe_entobj_cmp(cmd_ent, cmd_sexp) == OVAL_RESULT_TRUE) &&
@@ -662,7 +661,16 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	}
         closedir(d);
 	oscap_buffer_free(cmdline_buffer);
-	return err;
+
+	if (!any_pid_dir_found) {
+		dW("No data about processes could be read from '%s'.", buf);
+	}
+	// In offline mode, empty /proc might be a normal situation and doesn't
+	// have to mean permissions problems
+	if (prefix)
+		return PROBE_ESUCCESS;
+	else
+		return any_pid_dir_found ? PROBE_ESUCCESS : PROBE_EACCESS;
 }
 
 int process58_probe_offline_mode_supported(void)
