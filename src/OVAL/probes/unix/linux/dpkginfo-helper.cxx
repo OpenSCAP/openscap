@@ -133,7 +133,9 @@ int dpkginfo_init()
 
 int dpkginfo_fini()
 {
-        cgCache->Close();
+        if (cgCache != NULL) {
+                cgCache->Close();
+        }
 
         delete cgCache;
         cgCache = NULL;
