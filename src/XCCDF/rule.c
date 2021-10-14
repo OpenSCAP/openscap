@@ -36,6 +36,7 @@
 #include "xccdf_impl.h"
 #include "common/debug_priv.h"
 #include "oscap_helpers.h"
+#include "oscap_string.h"
 
 bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {
@@ -973,11 +974,17 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	while (oscap_stringlist_iterator_has_more(lists)) {
 		struct oscap_stringlist *list = oscap_stringlist_iterator_next(lists);
 		struct oscap_string_iterator *strings = oscap_stringlist_get_strings(list);
+		struct oscap_string *all_requires = oscap_string_new();
 		while (oscap_string_iterator_has_more(strings)) {
 			const char *requires = oscap_string_iterator_next(strings);
-			xmlNode * child = xmlNewTextChild(rule_node, ns_xccdf, BAD_CAST "requires", BAD_CAST NULL);
-                        xmlNewProp(child, BAD_CAST "idref", BAD_CAST requires);
+			if (!oscap_string_empty(all_requires))
+				oscap_string_append_string(all_requires, " ");
+			oscap_string_append_string(all_requires, requires);
 		}
+		const char *all_reqs = oscap_string_get_cstr(all_requires);
+		xmlNode * child = xmlNewTextChild(rule_node, ns_xccdf, BAD_CAST "requires", BAD_CAST NULL);
+		xmlNewProp(child, BAD_CAST "idref", BAD_CAST all_reqs);
+		oscap_string_free(all_requires);
 		oscap_string_iterator_free(strings);
 	}
 	oscap_stringlist_iterator_free(lists);
@@ -1065,11 +1072,17 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	while (oscap_stringlist_iterator_has_more(lists)) {
 		struct oscap_stringlist *list = oscap_stringlist_iterator_next(lists);
 		struct oscap_string_iterator *strings = oscap_stringlist_get_strings(list);
+		struct oscap_string *all_requires = oscap_string_new();
 		while (oscap_string_iterator_has_more(strings)) {
 			const char *requires = oscap_string_iterator_next(strings);
-			xmlNode * child = xmlNewTextChild(group_node, ns_xccdf, BAD_CAST "requires", BAD_CAST NULL);
-                        xmlNewProp(child, BAD_CAST "idref", BAD_CAST requires);
+			if (!oscap_string_empty(all_requires))
+				oscap_string_append_string(all_requires, " ");
+			oscap_string_append_string(all_requires, requires);
 		}
+		const char *all_reqs = oscap_string_get_cstr(all_requires);
+		xmlNode * child = xmlNewTextChild(group_node, ns_xccdf, BAD_CAST "requires", BAD_CAST NULL);
+		xmlNewProp(child, BAD_CAST "idref", BAD_CAST all_reqs);
+		oscap_string_free(all_requires);
 		oscap_string_iterator_free(strings);
 	}
 	oscap_stringlist_iterator_free(lists);
