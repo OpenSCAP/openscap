@@ -21,6 +21,8 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_7"]/result[tex
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_9"]/result[text()="pass"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_11"]/result[text()="pass"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_13"]/result[text()="pass"]'
+assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_15"]/result[text()="pass"]'
+assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_16"]/result[text()="pass"]'
 
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_1"]/result[text()="notselected"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_1_2"]/result[text()="notselected"]'
@@ -32,5 +34,6 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_8"]/result[tex
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_10"]/result[text()="notselected"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_12"]/result[text()="notselected"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_14"]/result[text()="notselected"]'
+assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_17"]/result[text()="notselected"]'
 
 rm -f "$result"
