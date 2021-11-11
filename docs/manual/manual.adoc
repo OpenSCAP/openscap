@@ -29,6 +29,7 @@
 :toclevels: 4
 :toc-placement: preamble
 :numbered:
+:footer-style: none
 
 image::vertical-logo.png[align="center"]
 
