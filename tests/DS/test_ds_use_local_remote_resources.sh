@@ -24,6 +24,7 @@ $OSCAP xccdf eval --local-files "$tmpdir3" --profile "$PROFILE" --results "$resu
 
 grep -q "WARNING: Datastream component 'scap_org.open-scap_cref_remote.oval.xml' points out to the remote 'https://www.example.com/security/data/oval/remote.oval.xml'. Use '--fetch-remote-resources' option to download it." "$stderr" && false
 grep -q "WARNING: Skipping 'https://www.example.com/security/data/oval/remote.oval.xml' file which is referenced from datastream" "$stderr" && false
+grep -q "WARNING: Using local file '$tmpdir3/remote.oval.xml' instead of 'https://www.example.com/security/data/oval/remote.oval.xml'" "$stderr"
 
 assert_exists 1 '//rule-result[@idref="xccdf_com.example.www_rule_test-pass"]/result[text()="pass"]'
 # the remote_res rule is a multicheck with 2 oval definitions so it's twice here
