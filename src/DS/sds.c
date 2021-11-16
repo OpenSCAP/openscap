@@ -412,11 +412,13 @@ static int _handle_disabled_downloads(struct ds_sds_session *session, const char
 		xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
 		if (doc == NULL) {
 			free(local_filepath);
+			oscap_source_free(source_file);
 			return -1;
 		}
 		xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
 
 		if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
+			oscap_source_free(source_file);
 			free(local_filepath);
 			return -1;
 		}
