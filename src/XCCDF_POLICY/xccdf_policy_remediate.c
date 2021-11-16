@@ -1131,6 +1131,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"- hosts: all\n",
 			fix_header);
 		free(fix_header);
+		free(profile_title);
 		return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
 	} else if (oscap_streq(sys, "urn:redhat:osbuild:blueprint")) {
 		char *blueprint_fix_header = oscap_sprintf(
@@ -1140,12 +1141,12 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"version = \"%s\"\n",
 			fix_header, profile_id, profile_title, benchmark_version_info);
 		free(fix_header);
+		free(profile_title);
 		return _write_text_to_fd_and_free(output_fd, blueprint_fix_header);
 	} else {
+		free(profile_title);
 		return _write_text_to_fd_and_free(output_fd, fix_header);
 	}
-
-	free(profile_title);
 }
 
 static int _xccdf_policy_generate_fix_blueprint(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
