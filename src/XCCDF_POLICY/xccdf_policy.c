@@ -716,11 +716,12 @@ static int _xccdf_policy_report_rule_result(struct xccdf_policy *policy,
 	} else
 		xccdf_check_free(check);
 
-	/* If policy selects only one rule, skip reporting for the other
-	 * unselected rules - only the selected rule will be reported. */
-	if (policy->rule != NULL) {
+	/* If at least one --rule option has been provided by the user on the
+	 * command line skip reporting for the other rules - only the selected
+	 * rule(s) will be reported. */
+	if (oscap_htable_itemcount(policy->rules) > 0) {
 		const char* rule_id = xccdf_rule_get_id(rule);
-		if (strcmp(policy->rule, rule_id) != 0)
+		if (oscap_htable_get(policy->rules, rule_id) == NULL)
 			return ret;
 	}
 	ret = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_END, (void *) rule_result);
@@ -1018,14 +1019,14 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	const char *message = NULL;
 	int report = 0;
 
-	/* If policy selects only one rule and the rule currently being
-	 * evaluated is not equal to the selected rule, do not evaluate it and
-	 * mark it as notselected. */
-	if (policy->rule != NULL) {
-		if (strcmp(policy->rule, rule_id) != 0) {
+	/* If user wants to evaluate only specific rules and the rule currently
+	 * being evaluated is not among these rules, do not evaluate it and mark it
+	 * as notselected. */
+	if (oscap_htable_itemcount(policy->rules) > 0) {
+		if (oscap_htable_get(policy->rules, rule_id) == NULL) {
 			return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 		}
-		policy->rule_found = 1;
+		oscap_htable_add(policy->rules_found, rule_id, (void *)true);
 	}
 
 	if (!is_selected || !parent_selected)
@@ -1833,6 +1834,8 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	memset(policy, 0, sizeof(struct xccdf_policy));
 
 	policy->profile = profile;
+	policy->rules = oscap_htable_new();
+	policy->rules_found = oscap_htable_new();
 	policy->selects = oscap_list_new();
 	policy->values  = oscap_list_new();
 	policy->results = oscap_list_new();
@@ -2101,11 +2104,16 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 	}
 	xccdf_item_iterator_free(item_it);
 
-	if (policy->rule != NULL && !policy->rule_found) {
-		oscap_seterr(OSCAP_EFAMILY_XCCDF,
-			"Rule '%s' not found in selected profile.", policy->rule);
-		return NULL;
+	struct oscap_htable_iterator *rit = oscap_htable_iterator_new(policy->rules);
+	while (oscap_htable_iterator_has_more(rit)) {
+		const char *rule_id = oscap_htable_iterator_next_key(rit);
+		if (oscap_htable_get(policy->rules_found, rule_id) == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XCCDF,
+				"Rule '%s' not found in selected profile.", rule_id);
+			return NULL;
+		}
 	}
+	oscap_htable_iterator_free(rit);
 
 	xccdf_policy_add_final_setvalues(policy, xccdf_benchmark_to_item(benchmark), result);
 
@@ -2223,6 +2231,8 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 		 */
 		xccdf_profile_free((struct xccdf_item *) policy->profile);
 
+	oscap_htable_free0(policy->rules);
+	oscap_htable_free0(policy->rules_found);
 	oscap_list_free(policy->selects, (oscap_destruct_func) xccdf_select_free);
 	oscap_list_free(policy->values, (oscap_destruct_func) xccdf_value_binding_free);
 	oscap_list_free(policy->results, (oscap_destruct_func) xccdf_result_free);

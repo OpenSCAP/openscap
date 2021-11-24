@@ -220,6 +220,13 @@ bool oscap_htable_add(struct oscap_htable *htable, const char *key, void *item);
  */
 void *oscap_htable_get(struct oscap_htable *htable, const char *key);
 
+/**
+ * Get count of items in the hash table
+ * @param htable Hash table
+ * @return Count of items stored in the given hash table
+ */
+size_t oscap_htable_itemcount(struct oscap_htable *htable);
+
 void *oscap_htable_detach(struct oscap_htable *htable, const char *key);
 
 void oscap_htable_dump(struct oscap_htable *htable, oscap_dump_func dumper, int depth);

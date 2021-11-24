@@ -515,6 +515,11 @@ void *oscap_htable_get(struct oscap_htable *htable, const char *key)
 	return htitem ? htitem->value : NULL;
 }
 
+size_t oscap_htable_itemcount(struct oscap_htable *htable)
+{
+	return htable->itemcount;
+}
+
 void oscap_print_depth(int);
 
 void oscap_htable_dump(struct oscap_htable *htable, oscap_dump_func dumper, int depth)

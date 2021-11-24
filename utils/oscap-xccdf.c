@@ -624,7 +624,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
-	xccdf_session_set_rule(session, action->rule);
+	struct oscap_string_iterator *it = oscap_stringlist_get_strings(action->rules);
+	while (oscap_string_iterator_has_more(it)) {
+		const char *rid = oscap_string_iterator_next(it);
+		xccdf_session_add_rule(session, rid);
+	}
+	oscap_string_iterator_free(it);
 
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
@@ -1255,7 +1260,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
 		case XCCDF_OPT_BENCHMARK_ID:	action->f_benchmark_id = optarg; break;
 		case XCCDF_OPT_PROFILE:		action->profile = optarg;	break;
-		case XCCDF_OPT_RULE:		action->rule = optarg;		break;
+		case XCCDF_OPT_RULE:
+			oscap_stringlist_add_string(action->rules, optarg);
+			break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
 		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;

@@ -625,6 +625,8 @@ $ oscap xccdf eval --profile Desktop --rule ensure_gpgcheck_globally_activated  
 Where `ensure_gpgcheck_globally_activated` is the only rule from the `Desktop`
 profile which will be evaluated.
 
+The `--rule` option can be used multiple times to evaluate multiple rules at once.
+
 In the examples above we are generating XCCDF result files using the `--results`
 command-line argument. You can use `--results-arf` to generate an SCAP result
 data stream (also called ARF - Asset Reporting Format) XML instead.

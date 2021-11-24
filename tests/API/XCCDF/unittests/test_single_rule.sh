@@ -8,6 +8,7 @@ name=$(basename $0 .sh)
 prof1="xccdf_com.example.www_profile_test_single_rule"
 prof2="xccdf_com.example.www_profile_test_single_rule_2"
 rule_pass="xccdf_com.example.www_rule_test-pass"
+# in profile $prof1 the $rule_fail passes because val1 is set to bar2
 rule_fail="xccdf_com.example.www_rule_test-fail"
 result=$(mktemp -t ${name}.out.XXXXXX)
 stderr=$(mktemp -t ${name}.out.XXXXXX)
@@ -40,6 +41,19 @@ $OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"pass\"]"
 assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"notselected\"]"
+:> $result
+
+# Tests that multiple rules are evaluated when multiple --rule options are
+# provided
+$OSCAP xccdf eval --results $result --profile $prof1 \
+	--rule $rule_pass --rule $rule_fail \
+	$srcdir/${name}.xccdf.xml 2> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+
+$OSCAP xccdf validate --skip-schematron $result
+
+assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"pass\"]"
+assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"pass\"]"
 :> $result
 
 # Tests that only selected rule from XCCDF document is evaluated without
@@ -106,6 +120,18 @@ $OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"pass\"]"
 assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"notselected\"]"
+:> $result
+
+# Tests that multiple rules are evaluated when multiple --rule options are
+# provided
+$OSCAP xccdf eval --results $result --profile $prof1 \
+	--rule $rule_pass --rule $rule_fail $srcdir/${name}.ds.xml 2> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+
+$OSCAP xccdf validate --skip-schematron $result
+
+assert_exists 1 "//rule-result[@idref=\"$rule_pass\"]/result[text()=\"pass\"]"
+assert_exists 1 "//rule-result[@idref=\"$rule_fail\"]/result[text()=\"pass\"]"
 :> $result
 
 # Tests that only selected passing rule from profile ${prof1}_customized from
