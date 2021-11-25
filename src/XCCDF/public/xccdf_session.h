@@ -114,6 +114,14 @@ OSCAP_DEPRECATED(OSCAP_API void xccdf_session_set_rule(struct xccdf_session *ses
 OSCAP_API void xccdf_session_add_rule(struct xccdf_session *session, const char *rule);
 
 /**
+ * Skip rule during evaluation of the session
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param rule rule ID
+ */
+OSCAP_API void xccdf_session_skip_rule(struct xccdf_session *session, const char *rule);
+
+/**
  * Set XSD validation level to one of three possibilities:
  *	- None: 	All XSD validations will be skipped.
  *	- Default:	Partial (input) XSD validations will be done.

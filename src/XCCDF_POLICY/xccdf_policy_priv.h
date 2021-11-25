@@ -61,6 +61,7 @@ struct xccdf_policy {
 	/** A list of all selects. Either from profile or later added through API. */
 	struct oscap_htable *rules;
 	struct oscap_htable *rules_found;
+	struct oscap_htable *skip_rules;
 	struct oscap_list           * selects;
 	struct oscap_list           * values;   ///< Bound values of profile
 	struct oscap_list           * results;  ///< List of XCCDF results

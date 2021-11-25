@@ -1019,6 +1019,12 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	const char *message = NULL;
 	int report = 0;
 
+	/* If the rule is requested to be skipped by the user using --skip-rule on
+	 * the command line we will skip the evaluation of this rule. */
+	if (oscap_htable_get(policy->skip_rules, rule_id) != NULL) {
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
+	}
+
 	/* If user wants to evaluate only specific rules and the rule currently
 	 * being evaluated is not among these rules, do not evaluate it and mark it
 	 * as notselected. */
@@ -1836,6 +1842,7 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	policy->profile = profile;
 	policy->rules = oscap_htable_new();
 	policy->rules_found = oscap_htable_new();
+	policy->skip_rules = oscap_htable_new();
 	policy->selects = oscap_list_new();
 	policy->values  = oscap_list_new();
 	policy->results = oscap_list_new();
@@ -2232,6 +2239,7 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 		xccdf_profile_free((struct xccdf_item *) policy->profile);
 
 	oscap_htable_free0(policy->rules);
+	oscap_htable_free0(policy->skip_rules);
 	oscap_htable_free0(policy->rules_found);
 	oscap_list_free(policy->selects, (oscap_destruct_func) xccdf_select_free);
 	oscap_list_free(policy->values, (oscap_destruct_func) xccdf_value_binding_free);

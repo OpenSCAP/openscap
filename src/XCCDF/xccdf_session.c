@@ -69,6 +69,7 @@ struct oval_content_resource {
 struct xccdf_session {
 	const char *filename;				///< File name of SCAP (SDS or XCCDF) file for this session.
 	struct oscap_list *rules;
+	struct oscap_list *skip_rules;
 	struct oscap_source *source;                    ///< Main source assigned with the main file (SDS or XCCDF)
 	char *temp_dir;					///< Temp directory used for decomposed component files.
 	struct {
@@ -164,6 +165,7 @@ struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source)
 	session->check_engine_plugins = oscap_list_new();
 	session->loading_flags = XCCDF_SESSION_LOAD_ALL;
 	session->rules = oscap_list_new();
+	session->skip_rules = oscap_list_new();
 
 	// We now have to switch up the oscap_sources in case we were given XCCDF tailoring
 
@@ -379,6 +381,11 @@ void xccdf_session_set_rule(struct xccdf_session *session, const char *rule)
 void xccdf_session_add_rule(struct xccdf_session *session, const char *rule)
 {
 	oscap_list_add(session->rules, strdup(rule));
+}
+
+void xccdf_session_skip_rule(struct xccdf_session *session, const char *rule)
+{
+	oscap_list_add(session->skip_rules, strdup(rule));
 }
 
 void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation)
@@ -1333,6 +1340,12 @@ int xccdf_session_evaluate(struct xccdf_session *session)
 		oscap_htable_add(policy->rules, rule_id, (void *)true);
 	}
 	oscap_iterator_free(it);
+	struct oscap_iterator *sit = oscap_iterator_new(session->skip_rules);
+	while (oscap_iterator_has_more(sit)) {
+		const char *rule_id = oscap_iterator_next(sit);
+		oscap_htable_add(policy->skip_rules, rule_id, (void *)true);
+	}
+	oscap_iterator_free(sit);
 
 	session->xccdf.result = xccdf_policy_evaluate(policy);
 	if (session->xccdf.result == NULL)

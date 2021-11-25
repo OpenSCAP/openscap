@@ -61,6 +61,7 @@ static void oscap_action_init(struct oscap_action *action)
     action->schematron = 1;
     action->validate_signature = 1;
     action->rules = oscap_stringlist_new();
+    action->skip_rules = oscap_stringlist_new();
 }
 
 static void oscap_action_release(struct oscap_action *action)
@@ -69,6 +70,7 @@ static void oscap_action_release(struct oscap_action *action)
 	free(action->f_ovals);
 	cvss_impact_free(action->cvss_impact);
     oscap_stringlist_free(action->rules);
+    oscap_stringlist_free(action->skip_rules);
 }
 
 static size_t paramlist_size(const char **p) { size_t s = 0; if (!p) return s; while (p[s]) s += 2; return s; }

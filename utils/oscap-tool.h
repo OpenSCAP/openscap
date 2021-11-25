@@ -135,6 +135,7 @@ struct oscap_action {
 	/* others */
         char *profile;
 	struct oscap_stringlist *rules;
+	struct oscap_stringlist *skip_rules;
         char *format;
         const char *tmpl;
         char *id;
