@@ -101,6 +101,8 @@ static int _write_text_to_fd_and_free(int output_fd, char *text)
 
 static int _write_remediation_to_fd_and_free(int output_fd, const char* template, char* text)
 {
+	if (text == NULL)
+		return 0;
 	if (oscap_streq(template, "urn:xccdf:fix:script:ansible")) {
 		// Add required indentation in front of every single line
 
