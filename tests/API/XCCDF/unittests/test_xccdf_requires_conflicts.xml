@@ -19,9 +19,9 @@
       <Profile id="xccdf_org.open-scap_profile_override">
         <title>Override</title>
         <select idref="xccdf_moc.elpmaxe.www_rule_1" selected="false"/>
-        <select idref="xccdf_moc.elpmaxe_group_1_2" selected="false"/>
+        <select idref="xccdf_moc.elpmaxe.www_group_1_2" selected="false"/>
       </Profile>
-      <Group id="xccdf_moc.elpmaxe_group_1_2" selected="true">
+      <Group id="xccdf_moc.elpmaxe.www_group_1_2" selected="true">
         <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
           <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <check-content-ref href="simple-oval.xml" name="oval:x:def:1"/>
@@ -72,26 +72,26 @@
       </Rule>
       <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_7">
         <requires idref="xccdf_moc.elpmaxe.www_rule_2"/>
-        <conflicts idref="xccdf_moc.elpmaxe_group_1_2"/>
+        <conflicts idref="xccdf_moc.elpmaxe.www_group_1_2"/>
         <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
           <check-content-ref href="simple-oval.xml" name="oval:x:def:1"/>
         </check>
       </Rule>
       <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_8">
-        <requires idref="xccdf_moc.elpmaxe_group_1_2"/>
+        <requires idref="xccdf_moc.elpmaxe.www_group_1_2"/>
         <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
           <check-content-ref href="simple-oval.xml" name="oval:x:def:1"/>
         </check>
       </Rule>
       <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_9">
         <requires idref="xccdf_moc.elpmaxe.www_rule_12"/>
-        <conflicts idref="xccdf_moc.elpmaxe_group_1_2"/>
+        <conflicts idref="xccdf_moc.elpmaxe.www_group_1_2"/>
         <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
           <check-content-ref href="simple-oval.xml" name="oval:x:def:1"/>
         </check>
       </Rule>
       <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_10">
-        <conflicts idref="xccdf_moc.elpmaxe_group_1_2"/>
+        <conflicts idref="xccdf_moc.elpmaxe.www_group_1_2"/>
         <conflicts idref="xccdf_moc.elpmaxe.www_rule_3"/>
         <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
           <check-content-ref href="simple-oval.xml" name="oval:x:def:1"/>
