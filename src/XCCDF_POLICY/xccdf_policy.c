@@ -1038,15 +1038,18 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 			return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 		}
 		oscap_htable_add(policy->rules_found, rule_id, (void *)true);
-	}
+		_xccdf_policy_modify_selected_final(policy, rule_id, result);
 
-	if (!is_selected || !parent_selected)
-		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
+	} else {
+		/* solve selects only when in --rule mode */
+		if (!is_selected || !parent_selected)
+			return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 
-	// See section 7.2.3.3.2 (<xccdf:requires> and <xccdf:conflicts> Elements) of the XCCDF specification.
-	if (_xccdf_policy_item_is_in_conflict(policy, XITEM(rule)) || !_xccdf_policy_item_has_all_requirements(policy, XITEM(rule))) {
-		xccdf_policy_resolve_item(policy, XITEM(rule), false);
-		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
+		// See section 7.2.3.3.2 (<xccdf:requires> and <xccdf:conflicts> Elements) of the XCCDF specification.
+		if (_xccdf_policy_item_is_in_conflict(policy, XITEM(rule)) || !_xccdf_policy_item_has_all_requirements(policy, XITEM(rule))) {
+			xccdf_policy_resolve_item(policy, XITEM(rule), false);
+			return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
+		}
 	}
 
 	/* Otherwise start reporting */
