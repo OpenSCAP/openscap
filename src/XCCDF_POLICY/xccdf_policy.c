@@ -324,6 +324,15 @@ static xccdf_test_result_type_t _resolve_negate(xccdf_test_result_type_t value, 
     return value;
 }
 
+
+static void _xccdf_policy_modify_selected_final(struct xccdf_policy *policy, const char *id, bool selected)
+{
+	static bool TRUE0 = true;
+	static bool FALSE0 = false;
+	oscap_htable_detach(policy->selected_final, id);
+	oscap_htable_add(policy->selected_final, id, selected ? &TRUE0 : &FALSE0);
+}
+
 /**
  * Resolve the xccdf item. Parameter selected indicates parents selection attribute
  * It is used to decide the final selection attribute of item
@@ -337,15 +346,12 @@ static void xccdf_policy_resolve_item(struct xccdf_policy * policy, struct xccdf
         __attribute__nonnull__(policy);
         __attribute__nonnull__(item);
 
-	static bool TRUE0= true;
-	static bool FALSE0 = false;
 	bool result;
-
-	oscap_htable_detach(policy->selected_final, xccdf_item_get_id(item));
+	const char *id = xccdf_item_get_id(item);
 	if (!selected)
 		result = false;
 	else {
-		struct xccdf_select *sel = xccdf_policy_get_select_by_id(policy, xccdf_item_get_id(item));
+		struct xccdf_select *sel = xccdf_policy_get_select_by_id(policy, id);
 		result = (sel != NULL) ? xccdf_select_get_selected(sel) : xccdf_item_get_selected(item);
 	}
 
@@ -355,8 +361,7 @@ static void xccdf_policy_resolve_item(struct xccdf_policy * policy, struct xccdf
 			xccdf_policy_resolve_item(policy, xccdf_item_iterator_next(child_it), selected);
 		xccdf_item_iterator_free(child_it);
 	}
-
-	oscap_htable_add(policy->selected_final, xccdf_item_get_id(item), result ? &TRUE0 : &FALSE0);
+	_xccdf_policy_modify_selected_final(policy, id, result);
 }
 
 /**
