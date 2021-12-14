@@ -133,6 +133,19 @@
                         <criterion comment="Oracle Linux 8 is installed" test_ref="oval:org.open-scap.cpe.ol:tst:8"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpelinux:def:8" version="1">
+                  <metadata>
+                        <title>Circle Linux 8</title>
+                        <affected family="unix">
+                              <platform>Circle Linux 8</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:circle:circle:8" source="CPE"/>
+                        <description>The operating system installed on the system is Circle Linux 8</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Circle Linux 8 is installed" test_ref="oval:org.open-scap.cpelinux:tst:8"/>
+                  </criteria>
+            </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:1005" version="1">
                   <metadata>
                         <title>Community Enterprise Operating System 5</title>
@@ -868,6 +881,11 @@
                   <object object_ref="oval:org.open-scap.cpe.oraclelinux-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.ol:ste:8"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpelinux:tst:8" version="1" check="at least one" comment="circle-release is version 8"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpelinux-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpelinux:ste:8"/>
+            </rpminfo_test>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1005" version="1" check="at least one" comment="centos-release is version 5"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
@@ -1223,6 +1241,9 @@
             <rpminfo_object id="oval:org.open-scap.cpe.oraclelinux-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name>oraclelinux-release</name>
             </rpminfo_object>
+            <rpminfo_object id="oval:org.open-scap.cpelinux-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name>circle-release</name>
+            </rpminfo_object>
             <registry_object id="oval:org.open-scap.cpe.windows:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" >
                   <hive>HKEY_LOCAL_MACHINE</hive>
                   <key>SOFTWARE\Microsoft\Windows NT\CurrentVersion</key>
@@ -1305,6 +1326,10 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.ol:ste:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^oraclelinux-release</name>
+                  <version operation="pattern match">^8</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpelinux:ste:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^circle-release</name>
                   <version operation="pattern match">^8</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:16" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
