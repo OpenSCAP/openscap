@@ -1,8 +1,8 @@
 # This spec file is not synchronized to the Fedora downstream.
 # It serves as Fedora CI configuration and as support for downstream updates.
 Name:           openscap
-Version:        1.3.4
 Release:        0%{?dist}
+Version:        1.3.0
 Epoch:          1
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 License:        LGPLv2+
@@ -151,6 +151,12 @@ pathfix.py -i %{__python3} -p -n $RPM_BUILD_ROOT%{_bindir}/scap-as-rpm
 
 %ldconfig_scriptlets
 
+# enable oscap-remediate-offline.service here for now
+# https://github.com/hughsie/PackageKit/issues/401
+# https://bugzilla.redhat.com/show_bug.cgi?id=1833176
+mkdir -p %{buildroot}%{_unitdir}/system-update.target.wants/
+ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.wants/oscap-remediate.service
+
 %files
 %doc AUTHORS NEWS README.md
 %license COPYING
@@ -183,6 +189,9 @@ pathfix.py -i %{__python3} -p -n $RPM_BUILD_ROOT%{_bindir}/scap-as-rpm
 %{_bindir}/oscap
 %{_bindir}/oscap-chroot
 %{_sysconfdir}/bash_completion.d
+%{_libexecdir}/oscap-remediate
+%{_unitdir}/oscap-remediate.service
+%{_unitdir}/system-update.target.wants/
 
 %files utils
 %doc docs/oscap-scan.cron

@@ -109,6 +109,7 @@ find_package(OpenDbx)
 find_package(PCRE REQUIRED)
 find_package(PerlLibs)
 find_package(Popt)
+find_package(Systemd)
 
 find_package(Procps)
 if(PROCPS_FOUND)
@@ -607,6 +608,14 @@ if(NOT WIN32)
 		${CMAKE_CURRENT_BINARY_DIR}/libopenscap.pc
 		DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 	)
+	if(WITH_SYSTEMD)
+		# systemd service for offline (boot-time) remediation
+		configure_file("oscap-remediate.service.in" "oscap-remediate.service" @ONLY)
+		install(FILES
+			${CMAKE_CURRENT_BINARY_DIR}/oscap-remediate.service
+			DESTINATION ${SYSTEMD_UNITDIR}
+		)
+	endif()
 endif()
 
 # changelog
