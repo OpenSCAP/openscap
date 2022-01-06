@@ -175,6 +175,8 @@ static struct oscap_module XCCDF_EVAL = {
 		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id:$result\\n\".\n"
+		"   --progress-full               - Switch to sparse but a bit more saturated output also suitable for progress reporting.\n"
+		"                                   Format is \"$rule_id|$rule_title|$result\\n\".\n"
 		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
 		"                                   (only applicable for source data streams)\n"
 		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
@@ -211,6 +213,8 @@ static struct oscap_module XCCDF_REMEDIATE = {
 		"   --check-engine-results        - Save results from check engines loaded from plugins as well.\n"
 		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id:$result\\n\".\n"
+		"   --progress-full               - Switch to sparse but a bit more saturated output also suitable for progress reporting.\n"
+		"                                   Format is \"$rule_id|$rule_title|$result\\n\".\n"
 	,
 	.opt_parser = getopt_xccdf,
 	.func = app_xccdf_remediate
@@ -331,6 +335,12 @@ static struct oscap_module* XCCDF_SUBMODULES[XCCDF_SUBMODULES_NUM] = {
     NULL
 };
 
+enum progress_output_opt {
+	PROGRESS_OPT_NONE = 0,
+	PROGRESS_OPT_SPARSE,
+	PROGRESS_OPT_FULL,
+};
+
 /**
  * XCCDF Result Colors:
  * PASS:green(32), FAIL:red(31), ERROR:lred(1;31), UNKNOWN:grey(1;30), NOT_APPLICABLE:default bold(1), NOT_CHECKED:default bold(1),
@@ -443,6 +453,38 @@ static int callback_scr_result_progress(struct xccdf_rule_result *rule_result, v
 	return 0;
 }
 
+static int callback_scr_rule_progress_full(struct xccdf_rule *rule, void *arg)
+{
+	const char *rule_id = xccdf_rule_get_id(rule);
+
+	if (!xccdf_policy_is_item_selected((struct xccdf_policy *)arg, rule_id))
+		return 0;
+
+	char *title = xccdf_policy_get_readable_item_title((struct xccdf_policy *)arg, (struct xccdf_item *)rule, NULL);
+	printf("%s|%s|", rule_id, title);
+	free(title);
+	fflush(stdout);
+
+	return 0;
+}
+
+static int callback_scr_result_progress_full(struct xccdf_rule_result *rule_result, void *arg)
+{
+	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
+
+	/* is result from selected rule? we print only selected rules */
+	if (result == XCCDF_RESULT_NOT_SELECTED)
+		return 0;
+
+	/* print result */
+	const char *result_str = xccdf_test_result_type_get_text(result);
+
+	printf("%s\n", result_str);
+	fflush(stdout);
+
+	return 0;
+}
+
 static int callback_scr_multicheck(struct oval_definition *definition, void *arg)
 {
 	printf("OVAL Definition ID\t%s\n", oval_definition_get_id(definition));
@@ -482,15 +524,18 @@ static int callback_syslog_result(struct xccdf_rule_result *rule_result, void *a
 */
 
 
-static void _register_progress_callback(struct xccdf_session *session, bool progress)
+static void _register_progress_callback(struct xccdf_session *session, int progress)
 {
 	struct xccdf_policy_model *policy_model = xccdf_session_get_policy_model(session);
-	if (progress) {
+	if (progress == PROGRESS_OPT_SPARSE) {
 		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result_progress, NULL);
-	}
-	else {
+	} else if (progress == PROGRESS_OPT_FULL) {
+		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule_progress_full,
+		                                           (void *) xccdf_session_get_xccdf_policy(session));
+		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result_progress_full, NULL);
+	} else {
 		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule,
-				(void *) xccdf_session_get_xccdf_policy(session));
+		                                           (void *) xccdf_session_get_xccdf_policy(session));
 		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
 		xccdf_policy_model_register_multicheck_callback(policy_model, callback_scr_multicheck, NULL);
 	}
@@ -598,6 +643,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	_register_progress_callback(session, action->progress);
 
+	if (action->progress == PROGRESS_OPT_SPARSE) {
+		// Don't pronounce phases in this mode
+	} else if (action->progress == PROGRESS_OPT_FULL) {
+		printf("---evaluation\n");
+	} else {
+		printf("--- Starting Evaluation ---\n\n");
+	}
+
 	/* Perform evaluation */
 	if (xccdf_session_evaluate(session) != 0)
 		goto cleanup;
@@ -618,8 +671,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		goto cleanup;
 
 	if (action->remediate) {
-		if (!action->progress)
-			printf("\n --- Starting Remediation ---\n");
+		if (action->progress == PROGRESS_OPT_SPARSE) {
+			// Don't pronounce phases in this mode
+		} else if (action->progress == PROGRESS_OPT_FULL) {
+			printf("---remediation\n");
+		} else {
+			printf("\n--- Starting Remediation ---\n\n");
+		}
 		xccdf_session_remediate(session);
 	}
 
@@ -1171,7 +1229,8 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"skip-signature-validation", no_argument, &action->validate_signature, 0},
 		{"enforce-signature", no_argument, &action->enforce_signature, 1},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
-		{"progress", no_argument, &action->progress, 1},
+		{"progress", no_argument, &action->progress, PROGRESS_OPT_SPARSE},
+		{"progress-full", no_argument, &action->progress, PROGRESS_OPT_FULL},
 		{"remediate", no_argument, &action->remediate, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
