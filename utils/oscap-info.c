@@ -99,6 +99,9 @@ static inline void _print_xccdf_status(struct xccdf_status *status, const char *
 
 static void _remove_occurence_of_character_from_string(char *string, char c)
 {
+	if (string == NULL)
+		return;
+
 	char *reading_ptr = string, *writing_ptr = string;
 	while (*reading_ptr) {
 		*writing_ptr = *reading_ptr;
@@ -111,6 +114,9 @@ static void _remove_occurence_of_character_from_string(char *string, char c)
 
 static void _translate_character_in_string(char *string, char to_replace, char replace_with)
 {
+	if (string == NULL)
+		return;
+
 	char *string_iterator = string;
 	while (*string_iterator) {
 		if (*string_iterator == to_replace)
