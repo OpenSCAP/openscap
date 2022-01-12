@@ -12,8 +12,10 @@ set -e -o pipefail
 
 source="$srcdir/test_xccdf_requires_conflicts.xml"
 result=result.xml
+stderr="$(mktemp)"
 
-$OSCAP xccdf eval --profile xccdf_org.open-scap_profile_override --results "$result" "$source"
+$OSCAP xccdf eval --profile xccdf_org.open-scap_profile_override --results "$result" "$source" 2> "$stderr"
+[ ! -s "$stderr" ]
 
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/result[text()="pass"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_5"]/result[text()="pass"]'
@@ -41,7 +43,8 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_17"]/result[te
 # rule 2 should be evaluated despite it conflicts with rule 3 but the user
 # requested the rule explicetely
 
-$OSCAP xccdf eval --rule xccdf_moc.elpmaxe.www_rule_2 --results "$result" "$source"
+$OSCAP xccdf eval --rule xccdf_moc.elpmaxe.www_rule_2 --results "$result" "$source" 2> "$stderr"
+[ ! -s "$stderr" ]
 
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/result[text()="notselected"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_5"]/result[text()="notselected"]'
@@ -70,7 +73,8 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_17"]/result[te
 # but the user requested the rule explicetely, selecting a specific profile
 # doesn't change anything
 
-$OSCAP xccdf eval --profile xccdf_org.open-scap_profile_override --rule xccdf_moc.elpmaxe.www_rule_2 --results "$result" "$source"
+$OSCAP xccdf eval --profile xccdf_org.open-scap_profile_override --rule xccdf_moc.elpmaxe.www_rule_2 --results "$result" "$source" 2> "$stderr"
+[ ! -s "$stderr" ]
 
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/result[text()="notselected"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_5"]/result[text()="notselected"]'
@@ -100,7 +104,8 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_17"]/result[te
 # the command line. Once you provide the --rule option, oscap evaluates all the
 # rules explicitely listed.
 
-$OSCAP xccdf eval  --rule xccdf_moc.elpmaxe.www_rule_2 --rule xccdf_moc.elpmaxe.www_rule_3 --results "$result" "$source"
+$OSCAP xccdf eval  --rule xccdf_moc.elpmaxe.www_rule_2 --rule xccdf_moc.elpmaxe.www_rule_3 --results "$result" "$source"  2> "$stderr"
+grep "W: oscap: Rule 'xccdf_moc.elpmaxe.www_rule_3' requires rule 'xccdf_moc.elpmaxe.www_rule_4', but it hasn't been specified using the '--rule' option" "$stderr"
 
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/result[text()="pass"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_5"]/result[text()="notselected"]'
@@ -131,7 +136,8 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_17"]/result[te
 # rules explicitely listed. Selecting a specific profile doesn't influence the
 # rule selection performed by --rule.
 
-$OSCAP xccdf eval  --rule xccdf_moc.elpmaxe.www_rule_2 --rule xccdf_moc.elpmaxe.www_rule_3 --profile xccdf_org.open-scap_profile_override --results "$result" "$source"
+$OSCAP xccdf eval  --rule xccdf_moc.elpmaxe.www_rule_2 --rule xccdf_moc.elpmaxe.www_rule_3 --profile xccdf_org.open-scap_profile_override --results "$result" "$source" 2> "$stderr"
+grep "W: oscap: Rule 'xccdf_moc.elpmaxe.www_rule_3' requires rule 'xccdf_moc.elpmaxe.www_rule_4', but it hasn't been specified using the '--rule' option" "$stderr"
 
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/result[text()="pass"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_5"]/result[text()="notselected"]'
@@ -159,7 +165,8 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_17"]/result[te
 # rule 4 got skipped because it isn't listed, once you provide a --rule option,
 # oscap evaluates only the rules explictely listed
 
-$OSCAP xccdf eval --rule xccdf_moc.elpmaxe.www_rule_3 --results "$result" "$source"
+$OSCAP xccdf eval --rule xccdf_moc.elpmaxe.www_rule_3 --results "$result" "$source" 2> "$stderr"
+grep "W: oscap: Rule 'xccdf_moc.elpmaxe.www_rule_3' requires rule 'xccdf_moc.elpmaxe.www_rule_4', but it hasn't been specified using the '--rule' option." "$stderr"
 
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/result[text()="pass"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_5"]/result[text()="notselected"]'
@@ -186,7 +193,10 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_17"]/result[te
 # Evaluates both rule 3 and 4, it doesn't evaluate rule 1, despite rule 4
 # requires rule 1, but rule 1 wasn't listed on command line.
 
-$OSCAP xccdf eval --rule xccdf_moc.elpmaxe.www_rule_3 --rule xccdf_moc.elpmaxe.www_rule_4 --results "$result" "$source"
+$OSCAP xccdf eval --rule xccdf_moc.elpmaxe.www_rule_3 --rule xccdf_moc.elpmaxe.www_rule_4 --results "$result" "$source"  2> "$stderr"
+! grep "W: oscap: Rule 'xccdf_moc.elpmaxe.www_rule_3' requires rule 'xccdf_moc.elpmaxe.www_rule_4', but it hasn't been specified using the '--rule' option." "$stderr"
+grep "W: oscap: Rule 'xccdf_moc.elpmaxe.www_rule_4' requires rule 'xccdf_moc.elpmaxe.www_rule_1', but it hasn't been specified using the '--rule' option." "$stderr"
+
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/result[text()="pass"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_5"]/result[text()="notselected"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_7"]/result[text()="notselected"]'
@@ -209,12 +219,10 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_17"]/result[te
 
 # add --profile to the previous test
 # test "requires" element and the --rule option
+$OSCAP xccdf eval --rule xccdf_moc.elpmaxe.www_rule_3 --rule xccdf_moc.elpmaxe.www_rule_4 --profile xccdf_org.open-scap_profile_override --results "$result" "$source" 2> "$stderr"
+! grep "W: oscap: Rule 'xccdf_moc.elpmaxe.www_rule_3' requires rule 'xccdf_moc.elpmaxe.www_rule_4', but it hasn't been specified using the '--rule' option." "$stderr"
+grep "W: oscap: Rule 'xccdf_moc.elpmaxe.www_rule_4' requires rule 'xccdf_moc.elpmaxe.www_rule_1', but it hasn't been specified using the '--rule' option." "$stderr"
 
-# Evaluates both rules 3 and 4, because rule 4 requires
-# rule 1, but rule 1 is unselected by the override profile therefore rule 4
-# can't be evalauted
-
-$OSCAP xccdf eval --rule xccdf_moc.elpmaxe.www_rule_3 --rule xccdf_moc.elpmaxe.www_rule_4 --profile xccdf_org.open-scap_profile_override --results "$result" "$source"
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_3"]/result[text()="pass"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_5"]/result[text()="notselected"]'
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_7"]/result[text()="notselected"]'
@@ -236,3 +244,4 @@ assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_14"]/result[te
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_17"]/result[text()="notselected"]'
 
 rm -f "$result"
+rm -f "$stderr"

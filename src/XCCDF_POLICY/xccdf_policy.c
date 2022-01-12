@@ -1010,6 +1010,28 @@ static bool _xccdf_policy_item_has_all_requirements(struct xccdf_policy *policy,
 	return has_all_requirements;
 }
 
+
+static bool _user_specified_rule_mode(struct xccdf_policy *policy) {
+	return oscap_htable_itemcount(policy->rules) > 0;
+}
+
+static void _warn_about_required_rules(const struct xccdf_policy *policy, const struct xccdf_rule *rule)
+{
+	struct oscap_stringlist_iterator *requires_it = xccdf_item_get_requires((struct xccdf_item *) rule);
+	while (oscap_stringlist_iterator_has_more(requires_it)) {
+		struct oscap_stringlist *requires_ids_list = oscap_stringlist_iterator_next(requires_it);
+		struct oscap_string_iterator *rule_requires_ids_it = oscap_stringlist_get_strings(requires_ids_list);
+		while (oscap_string_iterator_has_more(rule_requires_ids_it)) {
+			const char *requires_id = oscap_string_iterator_next(rule_requires_ids_it);
+			if (oscap_htable_get(policy->rules, requires_id) == NULL) {
+				dW("Rule '%s' requires rule '%s', but it hasn't been specified using the '--rule' option.", xccdf_rule_get_id(rule), requires_id);
+			}
+		}
+		oscap_string_iterator_free(rule_requires_ids_it);
+	}
+	oscap_stringlist_iterator_free(requires_it);
+}
+
 /**
  * Evaluate given check which is immediate child of the rule.
  * A possibe child checks will be evaluated by xccdf_policy_check_evaluate.
@@ -1033,12 +1055,13 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	/* If user wants to evaluate only specific rules and the rule currently
 	 * being evaluated is not among these rules, do not evaluate it and mark it
 	 * as notselected. */
-	if (oscap_htable_itemcount(policy->rules) > 0) {
+	if (_user_specified_rule_mode(policy) > 0) {
 		if (oscap_htable_get(policy->rules, rule_id) == NULL) {
 			return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 		}
 		oscap_htable_add(policy->rules_found, rule_id, (void *)true);
-		_xccdf_policy_modify_selected_final(policy, rule_id, result);
+		_xccdf_policy_modify_selected_final(policy, rule_id, true);
+		_warn_about_required_rules(policy, rule);
 
 	} else {
 		/* solve selects only when in --rule mode */
