@@ -700,6 +700,10 @@ static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct 
 	return rule_ritem;
 }
 
+static bool _user_specified_rule_mode(struct xccdf_policy *policy) {
+	return oscap_htable_itemcount(policy->rules) > 0;
+}
+
 static int _xccdf_policy_report_rule_result(struct xccdf_policy *policy,
 					    struct xccdf_result *result,
 					    const struct xccdf_rule *rule,
@@ -724,7 +728,7 @@ static int _xccdf_policy_report_rule_result(struct xccdf_policy *policy,
 	/* If at least one --rule option has been provided by the user on the
 	 * command line skip reporting for the other rules - only the selected
 	 * rule(s) will be reported. */
-	if (oscap_htable_itemcount(policy->rules) > 0) {
+	if (_user_specified_rule_mode(policy) > 0) {
 		const char* rule_id = xccdf_rule_get_id(rule);
 		if (oscap_htable_get(policy->rules, rule_id) == NULL)
 			return ret;
@@ -1008,11 +1012,6 @@ static bool _xccdf_policy_item_has_all_requirements(struct xccdf_policy *policy,
 	}
 	oscap_stringlist_iterator_free(item_requires_it);
 	return has_all_requirements;
-}
-
-
-static bool _user_specified_rule_mode(struct xccdf_policy *policy) {
-	return oscap_htable_itemcount(policy->rules) > 0;
 }
 
 static void _warn_about_required_rules(const struct xccdf_policy *policy, const struct xccdf_rule *rule)
