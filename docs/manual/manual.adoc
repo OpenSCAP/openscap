@@ -2158,7 +2158,49 @@ by `oscap-docker` or `oscap-vm`, like containers in other
 formats than Docker.
 Again, usage of the tool mimics usage and options of `oscap` tool.
 
+== Scanning and remediating the system at boot time
 
+OpenSCAP can scan and remediate the system at boot time using systemd's `system-update.target`.
+The `oscap-remediate.service` is expecting the `/system-update` symlink (universal trigger for all services in system-update's requires list) which points to a file with base name `oscap-remediate-offline.conf.sh`.
+The file itself could be located anywhere, but it should be accessible at boot time. This configuration file is essentially a Bash script with a set of environment variables, loaded with `source` by the service.
+Upon the start the service will immediately remove the symlink to prevent invocation loop but it won't touch the configuration file itself. A helper tool, `oscap-remediate-offline`, can be used to bootstrap the configuration and prime the `/system-update` symlink, but its flexibility is limited and in general it should only be used for debugging.
+
+WARNING: The `oscap-remediate-offline` tool should not be considered as a stable API for priming the service. The *only* API of the service is the configuration file and the `/system-update` symlink pointing to it.
+
+Configuration variables:
+----
+# Mandatory -----------------------------
+
+# The path to the data stream file
+OSCAP_REMEDIATE_DS=/some/data_stream.xml
+
+# The ID of the profile to use
+OSCAP_REMEDIATE_PROFILE_ID=some_profile
+
+# Optional ------------------------------
+
+# Data stream, XCCDF or Benchmark IDs
+# Benchmark ID and DS + XCCDF IDs pair are mutually
+# exclusive. DS + XCCDF IDs will take precedence
+OSCAP_REMEDIATE_DATASTREAM_ID=some_ds_id
+OSCAP_REMEDIATE_XCCDF_ID=some_xccdf_id
+OSCAP_REMEDIATE_BENCHMARK_ID=some_bench_id
+
+# Tailoring file and tailoring component ID
+OSCAP_REMEDIATE_TAILORING=/some/tailoring.xml
+OSCAP_REMEDIATE_TAILORING_ID=tailoring_id
+
+# Where to write ARF result and HTML report
+# No defaults, they won't be generated if
+# they are not requested explicitly
+OSCAP_REMEDIATE_ARF_RESULT=/some/arf_res.xml
+OSCAP_REMEDIATE_HTML_REPORT=/some/report.html
+
+# Log file name and verbosity
+OSCAP_REMEDIATE_VERBOSE_LOG=/var/some_verbose.log
+# Optional even if OSCAP_REMEDIATE_VERBOSE_LOG is provided (default: INFO)
+OSCAP_REMEDIATE_VERBOSE_LEVEL=INFO
+----
 
 == Frequently Asked Questions (FAQs)
 *Why do I get "notchecked" results when I use e.g. https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_Red_Hat_Enterprise_Linux_7_V2R3_STIG.zip[STIG checklist]?*

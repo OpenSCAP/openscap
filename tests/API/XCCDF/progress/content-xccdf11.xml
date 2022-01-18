@@ -4,6 +4,7 @@
   <version>1.0</version>
   <model system="urn:xccdf:scoring:default"/>
   <Rule id="xccdf_moc.elpmaxe.www_rule_1" selected="true">
+    <title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Rule 1</title>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-content-ref name="oval:x:def:1" href="content-oval.xml"/>
     </check>

@@ -57,6 +57,18 @@ if(ENABLE_OSCAP_UTIL)
 			COMMENT "Generating chroot-capable oscap buddy"
 			DEPENDS oscap-chrootable-nocap
 		)
+
+		if(WITH_SYSTEMD)
+			install(PROGRAMS "oscap-remediate"
+				DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}
+			)
+			install(PROGRAMS "oscap-remediate-offline"
+				DESTINATION ${CMAKE_INSTALL_BINDIR}
+			)
+			install(FILES "oscap-remediate-offline.8"
+				DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+			)
+		endif()
 	endif()
 endif()
 if(ENABLE_OSCAP_UTIL_CHROOT)
