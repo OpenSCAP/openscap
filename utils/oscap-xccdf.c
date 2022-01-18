@@ -152,6 +152,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"Options:\n"
 		"   --profile <name>              - The name of Profile to be evaluated.\n"
 		"   --rule <name>                 - The name of a single rule to be evaluated.\n"
+		"   --skip-rule <name>            - The name of the rule to be skipped.\n"
 		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
 		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
@@ -624,7 +625,18 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
-	xccdf_session_set_rule(session, action->rule);
+	struct oscap_string_iterator *it = oscap_stringlist_get_strings(action->rules);
+	while (oscap_string_iterator_has_more(it)) {
+		const char *rid = oscap_string_iterator_next(it);
+		xccdf_session_add_rule(session, rid);
+	}
+	oscap_string_iterator_free(it);
+	struct oscap_string_iterator *sit = oscap_stringlist_get_strings(action->skip_rules);
+	while (oscap_string_iterator_has_more(sit)) {
+		const char *rid = oscap_string_iterator_next(sit);
+		xccdf_session_skip_rule(session, rid);
+	}
+	oscap_string_iterator_free(sit);
 
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
@@ -1173,6 +1185,7 @@ enum oval_opt {
     XCCDF_OPT_BENCHMARK_ID,
     XCCDF_OPT_PROFILE,
     XCCDF_OPT_RULE,
+    XCCDF_OPT_SKIP_RULE,
     XCCDF_OPT_REPORT_FILE,
     XCCDF_OPT_TEMPLATE,
     XCCDF_OPT_FORMAT,
@@ -1208,6 +1221,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"benchmark-id",		required_argument, NULL, XCCDF_OPT_BENCHMARK_ID},
 		{"profile", 		required_argument, NULL, XCCDF_OPT_PROFILE},
 		{"rule", 		required_argument, NULL, XCCDF_OPT_RULE},
+		{"skip-rule", 		required_argument, NULL, XCCDF_OPT_SKIP_RULE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
 		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
@@ -1255,7 +1269,12 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
 		case XCCDF_OPT_BENCHMARK_ID:	action->f_benchmark_id = optarg; break;
 		case XCCDF_OPT_PROFILE:		action->profile = optarg;	break;
-		case XCCDF_OPT_RULE:		action->rule = optarg;		break;
+		case XCCDF_OPT_RULE:
+			oscap_stringlist_add_string(action->rules, optarg);
+			break;
+		case XCCDF_OPT_SKIP_RULE:
+			oscap_stringlist_add_string(action->skip_rules, optarg);
+			break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
 		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;

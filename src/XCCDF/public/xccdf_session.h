@@ -102,7 +102,24 @@ OSCAP_API bool xccdf_session_is_sds(const struct xccdf_session *session);
  * @param session XCCDF Session
  * @param rule If not NULL, session will use only this rule
  */
-OSCAP_API void xccdf_session_set_rule(struct xccdf_session *session, const char *rule);
+OSCAP_DEPRECATED(OSCAP_API void xccdf_session_set_rule(struct xccdf_session *session, const char *rule));
+
+/**
+ * Add specific rule for session - if at least one rule is added to the session,
+ * only the added rules will be evaluated
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param rule rule ID
+ */
+OSCAP_API void xccdf_session_add_rule(struct xccdf_session *session, const char *rule);
+
+/**
+ * Skip rule during evaluation of the session
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param rule rule ID
+ */
+OSCAP_API void xccdf_session_skip_rule(struct xccdf_session *session, const char *rule);
 
 /**
  * Set XSD validation level to one of three possibilities:

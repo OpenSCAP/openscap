@@ -134,7 +134,8 @@ struct oscap_action {
 	char *f_verbose_log;
 	/* others */
         char *profile;
-	const char *rule;
+	struct oscap_stringlist *rules;
+	struct oscap_stringlist *skip_rules;
         char *format;
         const char *tmpl;
         char *id;
