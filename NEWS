@@ -1,3 +1,26 @@
+openscap-1.3.6                                                  19-01-2022
+  - New features
+    - Select and exclude groups of rules on the command line
+    - The boot-time remediation service for systemd's Offline Update mode
+    - Memory limit control using OSCAP_PROBE_MEMORY_USAGE_RATIO environment variable
+    - Allow disablement of SHA-1 and MD5
+    - Allow providing pre-downloaded components
+    - Introduce OSBuild Blueprint fix type
+  - Maintenance, bug fix
+    - Fix coverity issues
+    - Patch the `segfault` in dpkginfo_fini()
+    - Add an alternative source of hostname
+    - Fail download on HTTP errors
+    - Compile "environmentvariable_probe" on Windows
+    - FreeBSD build and test fixes
+    - Add offline mode for password probe
+    - Initialize crypto API only once
+    - Fix UBI 9 scan
+    - oval/yamlfilecontent: Add 'null' values handling
+    - Do not set Rpath
+    - Do not split `XCCDF:requires` with multiple `idrefs`
+    - Allow empty /proc in offline mode
+
 openscap-1.3.5                                                  23-04-2021
   - New features
     - Made schematron-based validation enabled by default for validate command of oval and xccdf modules
