@@ -54,7 +54,7 @@ extern int chroot(const char *);
 
 /* default max. memory usage ratio - used/total */
 /* can be overridden by environment variable OSCAP_PROBE_MEMORY_USAGE_RATIO */
-#define OSCAP_PROBE_MEMORY_USAGE_RATIO_DEFAULT 0.1
+#define OSCAP_PROBE_MEMORY_USAGE_RATIO_DEFAULT 0.33
 
 extern bool  OSCAP_GSYM(varref_handling);
 extern void *OSCAP_GSYM(probe_arg);
