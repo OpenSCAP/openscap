@@ -151,7 +151,7 @@ pathfix.py -i %{__python3} -p -n $RPM_BUILD_ROOT%{_bindir}/scap-as-rpm
 
 %ldconfig_scriptlets
 
-# enable oscap-remediate-offline.service here for now
+# enable oscap-remediate.service here for now
 # https://github.com/hughsie/PackageKit/issues/401
 # https://bugzilla.redhat.com/show_bug.cgi?id=1833176
 mkdir -p %{buildroot}%{_unitdir}/system-update.target.wants/

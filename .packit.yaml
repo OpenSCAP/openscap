@@ -4,16 +4,13 @@ jobs:
     targets:
     - fedora-all-x86_64
     - epel-8-x86_64
+    - epel-9-x86_64
   trigger: pull_request
 - job: tests
   metadata:
     targets:
     - fedora-all-x86_64
   trigger: pull_request
-- job: propose_downstream
-  metadata:
-    dist-git-branch: fedora-all
-  trigger: release
 actions:
   get-current-version:
   - bash -c "source release_tools/versions.sh && echo ${version}"
