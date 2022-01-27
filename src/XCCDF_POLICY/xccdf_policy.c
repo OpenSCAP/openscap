@@ -2147,6 +2147,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 		if (oscap_htable_get(policy->rules_found, rule_id) == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_XCCDF,
 				"Rule '%s' not found in selected profile.", rule_id);
+			oscap_htable_iterator_free(rit);
 			return NULL;
 		}
 	}
