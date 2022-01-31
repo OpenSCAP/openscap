@@ -107,7 +107,7 @@ args+=( ${OSCAP_REMEDIATE_HTML_REPORT:+"--report=${OSCAP_REMEDIATE_HTML_REPORT}"
 args+=( "--progress-full" )
 args+=( "--remediate" )
 args+=( "${OSCAP_REMEDIATE_DS}" )
-log "Args: ${args[@]}"
+log "Args: ${args[*]}"
 
 # Now we are good to go
 header="OpenSCAP is checking the system for compliance using"$'\n'"${profile_title}"$'\n\n'"Evaluating..."

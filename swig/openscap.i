@@ -559,8 +559,7 @@ struct xccdf_session {
 };
 
 void xccdf_session_set_rule_py(struct xccdf_session  *sess, char *rule) {
-    char *n_rule = strdup(rule);
-    xccdf_session_set_rule(sess, n_rule);
+    xccdf_session_set_rule(sess, rule);
 }
 
 void xccdf_session_free_py(struct xccdf_session *sess){
