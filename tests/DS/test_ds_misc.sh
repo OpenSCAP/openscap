@@ -270,7 +270,9 @@ function test_source_date_epoch() {
 	export SOURCE_DATE_EPOCH="1583410177"
 	export TZ=UTC
 	# ensure the file mtime is always newer than the $timestamp
-	touch -c "$xccdf"
+	touch -c "$srcdir/sds_multiple_oval/first-oval.xml"
+	touch -c "$srcdir/sds_multiple_oval/multiple-oval-xccdf.xml"
+	touch -c "$srcdir/sds_multiple_oval/second-oval.xml"
 	$OSCAP ds sds-compose "$xccdf" "$result"
 	assert_exists 3 '//ds:component[@timestamp="'$timestamp'"]'
 	rm -f "$result"
