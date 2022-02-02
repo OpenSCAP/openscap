@@ -29,6 +29,7 @@
 #include <libxslt/xsltutils.h>
 #include <libexslt/exslt.h>
 #include <string.h>
+#include <sys/stat.h>
 #ifdef OS_WINDOWS
 #include <io.h>
 #else
@@ -83,9 +84,22 @@ static int xccdf_ns_xslt_workaround(xmlDocPtr doc, xmlNodePtr node)
 static inline int save_stylesheet_result_to_file(xmlDoc *resulting_doc, xsltStylesheet *stylesheet, const char *outfile)
 {
 	FILE *f = NULL;
-	if (outfile)
-		f = fopen(outfile, "w");
-	else
+	if (outfile) {
+		struct stat sb;
+		if (stat(outfile, &sb) == 0) {
+			if (unlink(outfile) != 0) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not remove output file '%s': %s", outfile, strerror(errno));
+				return -1;
+			}
+			f = fopen(outfile, "w");
+			if (chown(outfile, sb.st_uid, sb.st_gid) == -1) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not recover permissions of output file '%s': %s", outfile, strerror(errno));
+				return -1;
+			}
+		} else {
+			f = fopen(outfile, "w");
+		}
+	} else
 		f = stdout;
 
 	if (f == NULL) {
