@@ -233,9 +233,22 @@ int oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 		int fd = open(filename, O_CREAT|O_TRUNC|O_WRONLY,
 				S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 #endif
-		if (fd < 0) {
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), filename);
-			return -1;
+		if (fd == -1) {
+			if (errno == EACCES) {
+				/* File already exists and we aren't allowed to create a new one
+				with the same name */
+#ifdef OS_WINDOWS
+				fd = open(filename, O_WRONLY|O_TRUNC, S_IREAD|S_IWRITE);
+#else
+				fd = open(filename, O_WRONLY|O_TRUNC,
+						S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+#endif
+			}
+			if (fd == -1) {
+				oscap_seterr(OSCAP_EFAMILY_GLIBC,
+						"%s '%s'", strerror(errno), filename);
+				return -1;
+			}
 		}
 
 		buff = xmlOutputBufferCreateFd(fd, NULL);
