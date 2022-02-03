@@ -30,6 +30,8 @@
 #include <libxslt/xsltutils.h>
 #include <libexslt/exslt.h>
 #include <string.h>
+#include <sys/stat.h>
+
 #ifdef OS_WINDOWS
 #include <io.h>
 #else
