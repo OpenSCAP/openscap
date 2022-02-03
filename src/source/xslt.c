@@ -85,7 +85,11 @@ static int xccdf_ns_xslt_workaround(xmlDocPtr doc, xmlNodePtr node)
 
 static inline int save_stylesheet_result_to_file(xmlDoc *resulting_doc, xsltStylesheet *stylesheet, const char *outfile)
 {
+#ifdef OS_WINDOWS
+	int fd = _fileno(stdout);
+#else
 	int fd = STDOUT_FILENO;
+#endif
 	if (outfile) {
 #ifdef OS_WINDOWS
 		fd = open(outfile, O_WRONLY|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE);
@@ -115,7 +119,11 @@ static inline int save_stylesheet_result_to_file(xmlDoc *resulting_doc, xsltStyl
 	if (ret < 0) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save result document");
 	}
+#ifdef OS_WINDOWS
+	if (fd != _fileno(stdout))
+#else
 	if (fd != STDOUT_FILENO)
+#endif
 		close(fd);
 	return ret;
 }
