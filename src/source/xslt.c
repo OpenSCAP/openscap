@@ -22,6 +22,7 @@
 #include <config.h>
 #endif
 
+#include <fcntl.h>
 #include <libxml/parser.h>
 #include <libxslt/xslt.h>
 #include <libxslt/xsltInternals.h>
@@ -82,23 +83,38 @@ static int xccdf_ns_xslt_workaround(xmlDocPtr doc, xmlNodePtr node)
 
 static inline int save_stylesheet_result_to_file(xmlDoc *resulting_doc, xsltStylesheet *stylesheet, const char *outfile)
 {
-	FILE *f = NULL;
-	if (outfile)
-		f = fopen(outfile, "w");
-	else
-		f = stdout;
-
-	if (f == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not open output file '%s'", outfile ? outfile : "stdout");
-		return -1;
+	int fd = STDOUT_FILENO;
+	if (outfile) {
+#ifdef OS_WINDOWS
+		fd = open(outfile, O_WRONLY|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE);
+#else
+		fd = open(outfile, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+#endif
+		if (fd == -1) {
+			if (errno == EACCES) {
+				/* File already exists and we aren't allowed to create a new one
+				with the same name */
+#ifdef OS_WINDOWS
+				fd = open(outfile, O_WRONLY|O_TRUNC, S_IREAD|S_IWRITE);
+#else
+				fd = open(outfile, O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+#endif
+			}
+			if (fd == -1) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP,
+					"Could not open output file '%s': %s",
+					outfile, strerror(errno));
+				return -1;
+			}
+		}
 	}
 
-	int ret = xsltSaveResultToFile(f, resulting_doc, stylesheet);
+	int ret = xsltSaveResultToFd(fd, resulting_doc, stylesheet);
 	if (ret < 0) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save result document");
 	}
-	if (outfile && f)
-		fclose(f);
+	if (fd != STDOUT_FILENO)
+		close(fd);
 	return ret;
 }
 
