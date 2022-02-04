@@ -227,16 +227,9 @@ int oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 		xmlCode = xmlSaveFormatFileEnc(filename, doc, "UTF-8", 1);
 	}
 	else {
-#ifdef OS_WINDOWS
-		int fd = open(filename, O_CREAT|O_TRUNC|O_WRONLY, S_IREAD|S_IWRITE);
-#else
-		int fd = open(filename, O_CREAT|O_TRUNC|O_WRONLY,
-				S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
-#endif
-		if (fd < 0) {
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), filename);
+		int fd = oscap_open_writable(filename);
+		if (fd == -1)
 			return -1;
-		}
 
 		buff = xmlOutputBufferCreateFd(fd, NULL);
 		if (buff == NULL) {
