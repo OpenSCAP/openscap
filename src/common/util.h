@@ -524,4 +524,16 @@ wchar_t *oscap_windows_str_to_wstr(const char *str);
 char *oscap_windows_error_message(unsigned long error_code);
 #endif
 
-#endif				/* OSCAP_UTIL_H_ */
+/**
+ * Open a file for writing.
+ * The main difference from fopen() is that if the file exists but its opening
+ * for writing fails as permission denied, it will attempt to open it again
+ * without the O_CREAT flag. This is useful when writing to world-writeable
+ * directories with sticky bit such as /tmp on systems with fs.protected_regular
+ * turned on.
+ * @param filename name of the file to be opened
+ * @return file descriptor or -1 on error
+ */
+int oscap_open_writable(const char *filename);
+
+#endif              /* OSCAP_UTIL_H_ */

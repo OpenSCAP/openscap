@@ -22,7 +22,6 @@
 #include <config.h>
 #endif
 
-#include <fcntl.h>
 #include <libxml/parser.h>
 #include <libxslt/xslt.h>
 #include <libxslt/xsltInternals.h>
@@ -30,7 +29,6 @@
 #include <libxslt/xsltutils.h>
 #include <libexslt/exslt.h>
 #include <string.h>
-#include <sys/stat.h>
 
 #ifdef OS_WINDOWS
 #include <io.h>
@@ -91,29 +89,10 @@ static inline int save_stylesheet_result_to_file(xmlDoc *resulting_doc, xsltStyl
 	int fd = STDOUT_FILENO;
 #endif
 	if (outfile) {
-#ifdef OS_WINDOWS
-		fd = open(outfile, O_WRONLY|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE);
-#else
-		fd = open(outfile, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
-#endif
-		if (fd == -1) {
-			if (errno == EACCES) {
-				/* File already exists and we aren't allowed to create a new one
-				with the same name */
-#ifdef OS_WINDOWS
-				fd = open(outfile, O_WRONLY|O_TRUNC, S_IREAD|S_IWRITE);
-#else
-				fd = open(outfile, O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
-#endif
-			}
-			if (fd == -1) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP,
-					"Could not open output file '%s': %s",
-					outfile, strerror(errno));
-				return -1;
-			}
-		}
+		fd = oscap_open_writable(outfile);
 	}
+	if (fd == -1)
+		return -1;
 
 	int ret = xsltSaveResultToFd(fd, resulting_doc, stylesheet);
 	if (ret < 0) {

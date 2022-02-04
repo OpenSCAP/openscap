@@ -25,12 +25,14 @@
 #include <config.h>
 #endif
 
+#include <fcntl.h>
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <math.h>
 #include <pcre.h>
+#include <sys/stat.h>
 
 #include "util.h"
 #include "_error.h"
@@ -482,3 +484,32 @@ char *oscap_windows_error_message(unsigned long error_code)
 	return error_message;
 }
 #endif
+
+int oscap_open_writable(const char *filename)
+{
+#ifdef OS_WINDOWS
+	int fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE);
+#else
+	int fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC,
+			S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+#endif
+	if (fd == -1) {
+		if (errno == EACCES) {
+			/* File already exists and we aren't allowed to create a new one
+			with the same name */
+#ifdef OS_WINDOWS
+			fd = open(filename, O_WRONLY|O_TRUNC, S_IREAD|S_IWRITE);
+#else
+			fd = open(filename, O_WRONLY|O_TRUNC,
+					S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+#endif
+		}
+		if (fd == -1) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP,
+					"Could not open output file '%s': %s",
+					filename, strerror(errno));
+			return -1;
+		}
+	}
+	return fd;
+}

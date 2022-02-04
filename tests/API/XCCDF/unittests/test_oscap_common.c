@@ -28,6 +28,7 @@
 #include <string.h>
 #include "common/list.h"
 #include "common/util.h"
+#include "common/_error.h"
 #include "oscap_assert.h"
 
 #define SEEN_LEN 9
