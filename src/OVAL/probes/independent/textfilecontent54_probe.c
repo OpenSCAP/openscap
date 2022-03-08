@@ -55,6 +55,7 @@
 #include "common/debug_priv.h"
 #include "common/util.h"
 #include "textfilecontent54_probe.h"
+#include "oscap_helpers.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -176,7 +177,27 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	if (!S_ISREG(st.st_mode))
 		goto cleanup;
 
-	if (!is_text_file(whole_path_with_prefix))
+	char resolved_name[PATH_MAX];
+	char *linkname = oscap_realpath(whole_path_with_prefix, resolved_name);
+	if (linkname == NULL) {
+		SEXP_t *msg;
+		if (errno == ENOENT) {
+			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				"Link target of symlink '%s' does not exist.",
+				whole_path_with_prefix);
+		} else if (errno == ELOOP) {
+			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				"Link '%s' is a circular link.", whole_path_with_prefix);
+		} else {
+			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
+		}
+		probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
+		SEXP_free(msg);
+		probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
+		ret = -1;
+		goto cleanup;
+	}
+	if (!is_text_file(linkname))
 		goto cleanup;
 
 	fd = open(whole_path_with_prefix, O_RDONLY);
