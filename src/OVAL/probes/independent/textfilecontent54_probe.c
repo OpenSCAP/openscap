@@ -44,6 +44,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include <pcre.h>
+#include <magic.h>
 
 #include "_seap.h"
 #include <probe-api.h>
@@ -118,6 +119,22 @@ struct pfdata {
 	pcre *compiled_regex;
 };
 
+static bool is_text_file(const char *filepath)
+{
+	bool result = false;
+	magic_t cookie = magic_open(MAGIC_MIME);
+	if (cookie == NULL)
+		goto cleanup;
+	if (magic_load(cookie, NULL) != 0)
+		goto cleanup;
+	const char *magic_full = magic_file(cookie, filepath);
+	if (oscap_str_startswith(magic_full, "text/"))
+		result = true;
+cleanup:
+	magic_close(cookie);
+	return result;
+}
+
 static int process_file(const char *prefix, const char *path, const char *file, void *arg, oval_schema_version_t over)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
@@ -157,6 +174,9 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	if (stat(whole_path_with_prefix, &st) == -1)
 		goto cleanup;
 	if (!S_ISREG(st.st_mode))
+		goto cleanup;
+
+	if (!is_text_file(whole_path_with_prefix))
 		goto cleanup;
 
 	fd = open(whole_path_with_prefix, O_RDONLY);

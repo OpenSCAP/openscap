@@ -1,5 +1,6 @@
 if(ENABLE_PROBES_INDEPENDENT)
 	add_oscap_test("test_behavior_multiline.sh")
+	add_oscap_test("test_binary_file.sh")
 	add_oscap_test("test_filecontent_non_utf.sh")
 	add_oscap_test("test_offline_mode_textfilecontent54.sh")
 	add_oscap_test("test_probes_textfilecontent54.sh")
