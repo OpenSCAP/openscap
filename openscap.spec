@@ -27,6 +27,7 @@ BuildRequires:  glib2-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libyaml-devel
 BuildRequires:  xmlsec1-devel xmlsec1-openssl-devel
+BuildRequires:  file-devel
 %if %{?_with_check:1}%{!?_with_check:0}
 BuildRequires:  perl-XML-XPath
 BuildRequires:  bzip2
@@ -44,6 +45,7 @@ Requires:       popt
 # Fedora has procps-ng, which provides procps
 Requires:       procps
 Requires:       xmlsec1 xmlsec1-openssl
+Requires:       file-libs
 
 %description
 OpenSCAP is a set of open source libraries providing an easier path
