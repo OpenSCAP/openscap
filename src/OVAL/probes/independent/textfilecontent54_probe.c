@@ -44,7 +44,6 @@
 #include <unistd.h>
 #include <limits.h>
 #include <pcre.h>
-#include <magic.h>
 
 #include "_seap.h"
 #include <probe-api.h>
@@ -55,7 +54,6 @@
 #include "common/debug_priv.h"
 #include "common/util.h"
 #include "textfilecontent54_probe.h"
-#include "oscap_helpers.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -120,22 +118,6 @@ struct pfdata {
 	pcre *compiled_regex;
 };
 
-static bool is_text_file(const char *filepath)
-{
-	bool result = false;
-	magic_t cookie = magic_open(MAGIC_MIME);
-	if (cookie == NULL)
-		goto cleanup;
-	if (magic_load(cookie, NULL) != 0)
-		goto cleanup;
-	const char *magic_full = magic_file(cookie, filepath);
-	if (oscap_str_startswith(magic_full, "text/"))
-		result = true;
-cleanup:
-	magic_close(cookie);
-	return result;
-}
-
 static int process_file(const char *prefix, const char *path, const char *file, void *arg, oval_schema_version_t over)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
@@ -175,29 +157,6 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	if (stat(whole_path_with_prefix, &st) == -1)
 		goto cleanup;
 	if (!S_ISREG(st.st_mode))
-		goto cleanup;
-
-	char resolved_name[PATH_MAX];
-	char *linkname = oscap_realpath(whole_path_with_prefix, resolved_name);
-	if (linkname == NULL) {
-		SEXP_t *msg;
-		if (errno == ENOENT) {
-			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-				"Link target of symlink '%s' does not exist.",
-				whole_path_with_prefix);
-		} else if (errno == ELOOP) {
-			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-				"Link '%s' is a circular link.", whole_path_with_prefix);
-		} else {
-			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
-		}
-		probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
-		ret = -1;
-		goto cleanup;
-	}
-	if (!is_text_file(linkname))
 		goto cleanup;
 
 	fd = open(whole_path_with_prefix, O_RDONLY);
