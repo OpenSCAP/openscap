@@ -1005,8 +1005,7 @@ data streams invalid) with the `--enforce-signature` option to the `oscap xccdf 
 == Generating reports, guides and scripts
 
 Another useful features of `oscap` is the ability to generate documents in a
-human-readable format. It allows you to transform an XML file into HTML or
-plain-text format. This feature is used to generate security guides and
+human-readable HTML format. This feature is used to generate security guides and
 checklists, which serve as a source of information, as well as guidance for
 secure system configuration. The results of system scans can also be transformed
 to well-readable result reports. Moreover, remediation scripts and Ansible
