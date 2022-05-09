@@ -71,6 +71,8 @@ static int read_common_sizet(void *szp, char *strval)
 		return (-1);
 
 	*end = '\0';
+
+	errno = 0;
 	*(size_t *)szp = strtoll(strval, NULL, 10);
 
 	if (errno == EINVAL ||
