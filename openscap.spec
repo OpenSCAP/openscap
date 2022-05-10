@@ -212,3 +212,6 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 %{python3_sitelib}/oscap_docker_python/*
 %{_bindir}/oscap-podman
 %{_mandir}/man8/oscap-podman.8*
+
+%changelog
+%autochangelog
