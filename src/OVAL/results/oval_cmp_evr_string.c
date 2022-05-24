@@ -37,7 +37,12 @@
 #include "common/_error.h"
 
 #ifdef HAVE_RPMVERCMP
+#ifdef RPM418_FOUND
+#include <rpm/rpmver.h>
+#include <rpm/rpmstring.h>
+#else
 #include <rpm/rpmlib.h>
+#endif
 #else
 #ifdef OS_WINDOWS
 #include <malloc.h>

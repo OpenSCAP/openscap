@@ -44,6 +44,7 @@
 #cmakedefine HAVE_RPMVERCMP
 #cmakedefine RPM46_FOUND
 #cmakedefine RPM47_FOUND
+#cmakedefine RPM418_FOUND
 
 #cmakedefine BZIP2_FOUND
 
