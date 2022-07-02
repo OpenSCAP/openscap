@@ -82,6 +82,14 @@ The %{name}-scanner package contains oscap command-line tool. The oscap
 is configuration and vulnerability scanner, capable of performing
 compliance checking using SCAP content.
 
+%package        remediate-offline
+Summary:        OpenSCAP Offline Remediation Service
+Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
+Requires:       %{name}-scanner%{?_isa} = %{epoch}:%{version}-%{release}
+
+%description    remediate-offline
+OpenSCAP's offline system remediation service.
+
 %package        utils
 Summary:        OpenSCAP Utilities
 Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
@@ -189,6 +197,8 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 %{_bindir}/oscap
 %{_bindir}/oscap-chroot
 %{_sysconfdir}/bash_completion.d
+
+%files remediate-offline
 %{_libexecdir}/oscap-remediate
 %{_unitdir}/oscap-remediate.service
 %{_unitdir}/system-update.target.wants/
