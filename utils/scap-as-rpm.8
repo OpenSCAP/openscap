@@ -13,8 +13,9 @@ FILE [FILE ...]
 .PP
 Takes given SCAP input(s) and makes an RPM package that contains them. The
 result RPM can be installed using # yum install ./package\-name\-1\-1.rpm which
-will put the contents into \fI/usr/share/xml/scap\fP. No dependency on openscap is enforced in the output package so you can use any SCAP\-capable
-scanner to evaluate the content.
+will put the contents into \fI/usr/share/xml/scap\fP. No dependency on OpenSCAP
+is enforced in the output package, so you can use any SCAP\-capable scanner to
+evaluate the content.
 .SS "positional arguments:"
 .TP
 FILE
@@ -24,10 +25,10 @@ requirement is not enforced.
 .SS "optional arguments:"
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-show this help message and exit
+Show this help message and exit.
 .TP
 \fB\-\-pkg\-name\fR PKG_NAME
-Name of the RPM package, if none is provided the
+Name of the RPM package, if none is provided, the
 basename of the first SCAP input is used. Ex.: xyzsecurity\-guide
 .HP
 \fB\-\-pkg\-version\fR PKG_VERSION
