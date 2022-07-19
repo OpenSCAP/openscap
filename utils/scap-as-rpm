@@ -158,9 +158,9 @@ def main():
     parser = argparse.ArgumentParser(
         description = "Takes given SCAP input(s) and makes an RPM package that contains them. "
                       "The result RPM can be installed using # yum install ./package-name-1-1.rpm "
-                      "which will put the contents into /usr/share/xml/scap. No dependency on openscap "
-                      "or scap-workbench is enforced in the output package so you can use any "
-                      "SCAP-capable scanner to evaluate the content.")
+                      "which will put the contents into /usr/share/xml/scap. No dependency on OpenSCAP "
+                      "is enforced in the output package, so you can use any SCAP-capable scanner to "
+                      "evaluate the content.")
 
     # we choose name automatically if its missing
     parser.add_argument("--pkg-name", dest = "pkg_name", default = None,
