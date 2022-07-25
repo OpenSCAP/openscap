@@ -216,6 +216,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 			matchitem1(tok, 'c',
 				   "onnecttimeout", tmp);
 			if (tmp != NULL) {
+				errno = 0;
 				info->conn_timeout = strtol(tmp, NULL, 10);
 
 				if (errno == ERANGE || errno == EINVAL)
