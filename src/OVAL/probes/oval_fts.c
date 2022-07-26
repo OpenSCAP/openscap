@@ -729,6 +729,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 	/* max_depth */
 	PROBE_ENT_AREF(behaviors, r0, "max_depth", return NULL;);
 	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+	errno = 0;
 	max_depth = strtol(cstr_buff, NULL, 10);
 	if (errno == EINVAL || errno == ERANGE) {
 		dE("Invalid value of the `%s' attribute: %s", "recurse_direction", cstr_buff);

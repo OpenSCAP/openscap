@@ -1280,6 +1280,7 @@ int op_assign_bool(void *var, char *val)
 		*((bool *)(var)) = false;
 	} else {
 		char *endptr = NULL;
+		errno = 0;
 		*((bool *)(var)) = (bool) strtol (val, &endptr, 2);
 		if (errno == EINVAL || errno == ERANGE) {
 			return -1;
