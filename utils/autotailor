@@ -52,6 +52,11 @@ class Tailoring:
         self.rules_to_select = []
         self.rules_to_unselect = []
 
+        self.refine_rule = []
+        self.refine_value = []
+
+        self.set_value = []
+
     def _full_id(self, string, el_type):
         if is_valid_xccdf_id(string):
             return string
@@ -70,6 +75,23 @@ class Tailoring:
 
     def add_value_change(self, varname, value):
         self.value_changes.append((varname, value))
+
+    def _add_rule_select_operations(self, container_element):
+        for rule_id in self.rules_to_select:
+            change = ET.SubElement(container_element, "xccdf-1.2:select")
+            change.set("idref", self._full_rule_id(rule_id))
+            change.set("selected", "true")
+
+        for rule_id in self.rules_to_unselect:
+            change = ET.SubElement(container_element, "xccdf-1.2:select")
+            change.set("idref", self._full_rule_id(rule_id))
+            change.set("selected", "false")
+
+    def _add_value_selections(self, container_element):
+        for varname, value in self.value_changes:
+            change = ET.SubElement(container_element, "xccdf-1.2:set-value")
+            change.set("idref", self._full_var_id(varname))
+            change.text = str(value)
 
     def to_xml(self, location=None):
         root = ET.Element("xccdf-1.2:Tailoring")
@@ -96,20 +118,8 @@ class Tailoring:
             title.set("override", "false")
         title.text = self.profile_title
 
-        for rule_id in self.rules_to_select:
-            change = ET.SubElement(profile, "xccdf-1.2:select")
-            change.set("idref", self._full_rule_id(rule_id))
-            change.set("selected", "true")
-
-        for rule_id in self.rules_to_unselect:
-            change = ET.SubElement(profile, "xccdf-1.2:select")
-            change.set("idref", self._full_rule_id(rule_id))
-            change.set("selected", "false")
-
-        for varname, value in self.value_changes:
-            change = ET.SubElement(profile, "xccdf-1.2:set-value")
-            change.set("idref", self._full_var_id(varname))
-            change.text = str(value)
+        self._add_rule_select_operations(profile)
+        self._add_value_selections(profile)
 
         root_str = ET.tostring(root)
         pretty_xml = xml.dom.minidom.parseString(root_str).toprettyxml()
