@@ -327,6 +327,7 @@ cmake_dependent_option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this 
 cmake_dependent_option(ENABLE_OSCAP_UTIL_PODMAN "enables the oscap-podman utility, this lets you scan Podman containers and container images" ON "NOT WIN32" OFF)
 cmake_dependent_option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this lets you scan entire chroots using offline scanning" ON "NOT WIN32" OFF)
 option(ENABLE_OSCAP_UTIL_AUTOTAILOR "enables the autotailor utility that is able to perform command-line tailoring" TRUE)
+option(ENABLE_OSCAP_REMEDIATE_SERVICE "enables the oscap-remediate service" TRUE)
 
 # ---------- TEST-SUITE SWITCHES
 
@@ -609,12 +610,14 @@ if(NOT WIN32)
 		DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 	)
 	if(WITH_SYSTEMD)
-		# systemd service for offline (boot-time) remediation
-		configure_file("oscap-remediate.service.in" "oscap-remediate.service" @ONLY)
-		install(FILES
-			${CMAKE_CURRENT_BINARY_DIR}/oscap-remediate.service
-			DESTINATION ${SYSTEMD_UNITDIR}
-		)
+		if(ENABLE_OSCAP_REMEDIATE_SERVICE)
+			# systemd service for offline (boot-time) remediation
+			configure_file("oscap-remediate.service.in" "oscap-remediate.service" @ONLY)
+			install(FILES
+				${CMAKE_CURRENT_BINARY_DIR}/oscap-remediate.service
+				DESTINATION ${SYSTEMD_UNITDIR}
+			)
+		endif()
 	endif()
 endif()
 

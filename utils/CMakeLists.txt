@@ -59,15 +59,17 @@ if(ENABLE_OSCAP_UTIL)
 		)
 
 		if(WITH_SYSTEMD)
-			install(PROGRAMS "oscap-remediate"
-				DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}
-			)
-			install(PROGRAMS "oscap-remediate-offline"
-				DESTINATION ${CMAKE_INSTALL_BINDIR}
-			)
-			install(FILES "oscap-remediate-offline.8"
-				DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
-			)
+			if (ENABLE_OSCAP_REMEDIATE_SERVICE)
+				install(PROGRAMS "oscap-remediate"
+					DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}
+				)
+				install(PROGRAMS "oscap-remediate-offline"
+					DESTINATION ${CMAKE_INSTALL_BINDIR}
+				)
+				install(FILES "oscap-remediate-offline.8"
+					DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+				)
+			endif()
 		endif()
 	endif()
 endif()
