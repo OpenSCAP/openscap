@@ -470,6 +470,7 @@ message(STATUS " ")
 message(STATUS "Documentation:")
 message(STATUS "enabled: ${ENABLE_DOCS}")
 message(STATUS "doxygen: ${DOXYGEN_EXECUTABLE}")
+message(STATUS "dot (graphviz): ${DOXYGEN_DOT_EXECUTABLE}")
 message(STATUS "asciidoc: ${ASCIIDOC_EXECUTABLE}")
 
 # ---------- PATHS
