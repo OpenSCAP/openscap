@@ -141,7 +141,7 @@ function sanity_check_arguments {
         usage
         exit 0
     elif first_argument_is_sudo "$@"; then
-        OSCAP_SUDO="sudo"
+        OSCAP_SUDO=("sudo")
         # force pseudo-tty allocation so that users can type their password if necessary
         SSH_TTY_ALLOCATION_OPTION="-t"
         shift
@@ -175,7 +175,7 @@ hash scp 2> /dev/null || die "Cannot find scp, please install the OpenSSH client
 hash mktemp 2> /dev/null || die "Cannot find mktemp, please install coreutils."
 
 
-OSCAP_SUDO=""
+OSCAP_SUDO=()
 # SSH_ADDITIONAL_OPTIONS may be defined in the calling shell
 SSH_TTY_ALLOCATION_OPTION=""
 
@@ -303,11 +303,7 @@ echo "Starting the evaluation..."
 # changing directory because of --oval-results support. oval results files are
 # dumped into PWD, and we can't be sure by the file names - we need controlled
 # environment
-if [ -z "$OSCAP_SUDO" ]; then
-    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; oscap $(command_array_to_string "${oscap_args[@]}")" "$SSH_TTY_ALLOCATION_OPTION"
-else
-    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; umask 022; $OSCAP_SUDO scap $(command_array_to_string "${oscap_args[@]}")" "$SSH_TTY_ALLOCATION_OPTION"
-fi
+ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; umask 022; ${OSCAP_SUDO[@]} scap $(command_array_to_string "${oscap_args[@]}")" "$SSH_TTY_ALLOCATION_OPTION"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 
