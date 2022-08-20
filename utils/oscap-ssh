@@ -123,11 +123,10 @@ function scp_retreive_from_temp_dir {
     scp -o ControlPath="$CONTROL_SOCKET" -P "$SSH_PORT" $SSH_ADDITIONAL_OPTIONS "$SSH_HOST:$REMOTE_TEMP_DIR/$1" "$2"
 }
 
-# $1: The name of the array holding command elements
-# Returns: String, where individual command components are double-quoted, so they are not interpreted by the shell.
-#  For example, an array ('-p' '(all)') will be transformed to "\"-p\" \"(all)\"", so after the shell expansion, it will end up as "-p" "(all)".
+# $@: Elements to be quoted if needed
+# Returns: String, where individual command components are joined, and quoted if necessary, so they are not interpreted by the shell.
 function command_array_to_string {
-    eval "printf '\"%s\" ' \"\${$1[@]}\""
+    printf "%q " "$@"
 }
 
 function first_argument_is_sudo {
@@ -305,9 +304,9 @@ echo "Starting the evaluation..."
 # dumped into PWD, and we can't be sure by the file names - we need controlled
 # environment
 if [ -z "$OSCAP_SUDO" ]; then
-    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; oscap $(command_array_to_string oscap_args)" "$SSH_TTY_ALLOCATION_OPTION"
+    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; oscap $(command_array_to_string "${oscap_args[@]}")" "$SSH_TTY_ALLOCATION_OPTION"
 else
-    OSCAP_CMD="oscap $(command_array_to_string oscap_args); rc=\$?; chown \$SUDO_USER $REMOTE_TEMP_DIR/*; exit \$rc"
+    OSCAP_CMD="oscap $(command_array_to_string "${oscap_args[@]}"); rc=\$?; chown \$SUDO_USER $REMOTE_TEMP_DIR/*; exit \$rc"
     ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO sh -c '$OSCAP_CMD'" "$SSH_TTY_ALLOCATION_OPTION"
 fi
 OSCAP_EXIT_CODE=$?
