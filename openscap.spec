@@ -8,6 +8,7 @@ Summary:        Set of open source libraries enabling integration of the SCAP li
 License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        https://github.com/OpenSCAP/%{name}/releases/download/%{version}/%{name}-%{version}.tar.gz
+Source1:        https://github.com/OpenSCAP/yaml-filter/archive/refs/tags/v0.2.0.tar.gz
 BuildRequires:  make
 BuildRequires:  cmake >= 2.6
 BuildRequires:  gcc
@@ -139,6 +140,7 @@ Tool for scanning Atomic containers.
 
 %prep
 %autosetup -p1
+tar xvzf %{SOURCE1} --directory=yaml-filter --strip-components=1
 
 %build
 %undefine __cmake_in_source_build
