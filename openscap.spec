@@ -1,3 +1,7 @@
+# build with asan
+# - bindings/sce fail to work because of some asan linkage issues presumed
+%bcond_with asan
+
 # gconf is a legacy system not used any more, and it blocks testing of oscap-anaconda-addon
 # as gconf is no longer part of the installation medium
 %bcond_with gconf
@@ -23,6 +27,11 @@ BuildRequires:  pkg-config
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
+%if %{with asan}
+BuildRequires:  libasan
+BuildRequires:  libasan-static
+BuildRequires:  libubsan
+%endif
 
 # Try to follow CMakeLists.txt order
 BuildRequires:  pkgconfig(libacl)
@@ -126,6 +135,7 @@ The %{name}-utils package contains command-line tools build on top
 of OpenSCAP library. Historically, openscap-utils included oscap
 tool which is now separated to %{name}-scanner sub-package.
 
+%if ! %{with asan}
 %package        engine-sce
 Summary:        Script Check Engine plug-in for OpenSCAP
 Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
@@ -143,6 +153,7 @@ Requires:       %{name}-engine-sce%{?_isa} = %{epoch}:%{version}-%{release}
 %description    engine-sce-devel
 The %{name}-engine-sce-devel package contains libraries and header files
 for developing applications that use %{name}-engine-sce.
+%endif
 
 %package        containers
 Summary:        Utils for scanning containers
@@ -161,6 +172,12 @@ tar xvzf %{SOURCE1} --directory=yaml-filter --strip-components=1
 %undefine __cmake_in_source_build
 %cmake -G Ninja \
     -DENABLE_DOCS=ON \
+%if %{with asan}
+    -DENABLE_ASAN=TRUE \
+    -DENABLE_PERL=OFF \
+    -DENABLE_PYTHON=OFF \
+    -DENABLE_SCE=OFF \
+%endif
 %if ! %{with gconf}
     -DOPENSCAP_PROBE_UNIX_GCONF=OFF \
     -DGCONF_LIBRARY= \
@@ -176,6 +193,11 @@ make docs
 %if %{with check}
 # Tests use common files. Running tests parallel causes failed tests because of that.
 %undefine _smp_mflags
+%if %{with asan}
+# https://github.com/google/sanitizers/wiki/AddressSanitizer
+# - but do not detect leaks, program is not long running, also numerous leaks so fix these completely would require some effort
+export ASAN_OPTIONS=detect_leaks=0:strict_string_checks=1:detect_stack_use_after_return=1:check_initialization_order=1:strict_init_order=1:detect_invalid_pointer_pairs=2
+%endif
 %ctest
 %endif
 
@@ -218,7 +240,9 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 %{_libdir}/libopenscap.so
 %{_libdir}/pkgconfig/*.pc
 %{_includedir}/openscap
+%if ! %{with asan}
 %exclude %{_includedir}/openscap/sce_engine_api.h
+%endif
 
 %files scanner
 %{_bindir}/oscap
@@ -245,6 +269,7 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 %{_mandir}/man8/oscap-vm.8*
 %{_mandir}/man8/scap-as-rpm.8*
 
+%if ! %{with asan}
 %files engine-sce
 %{_bindir}/oscap-run-sce-script
 %{_libdir}/libopenscap_sce.so.*
@@ -252,6 +277,7 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 %files engine-sce-devel
 %{_libdir}/libopenscap_sce.so
 %{_includedir}/openscap/sce_engine_api.h
+%endif
 
 %files containers
 %{_bindir}/oscap-docker

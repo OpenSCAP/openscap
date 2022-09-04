@@ -347,6 +347,7 @@ option(ENABLE_MITRE "enables MITRE tests -- requires specific environment suppor
 # ---------- LANGUAGE BINDINGS
 cmake_dependent_option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" ON "PYTHONINTERP_FOUND;SWIG_FOUND;PYTHONLIBS_FOUND" OFF)
 cmake_dependent_option(ENABLE_PERL "if enabled, the perl swig bindings will be built" ON "PERLLIBS_FOUND;SWIG_FOUND" OFF)
+option(ENABLE_ASAN "if enabled, the build using asan" FALSE)
 
 # ---------- NO IDEA WHAT THIS IS FOR
 set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
@@ -534,6 +535,12 @@ if(APPLE)
 	#full Single Unix Standard v3 (SUSv3) conformance (the Unix API)
 	add_definitions(-D_DARWIN_C_SOURCE)
 endif()
+
+if(ENABLE_ASAN)
+	add_compile_options(-fno-common -fno-omit-frame-pointer -fsanitize=address -fsanitize-address-use-after-scope -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined)
+	add_link_options(-fno-common -fno-omit-frame-pointer -fsanitize=address -static-libasan -fsanitize-address-use-after-scope -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined)
+endif()
+
 
 include_directories(
 	"compat/"
