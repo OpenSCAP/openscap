@@ -162,6 +162,7 @@ make docs
 %install
 %cmake_install
 
+%if "0%{?!fedora:1}"
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 # fix python shebangs
@@ -174,6 +175,7 @@ pathfix.py -i %{__python3} -p -n $RPM_BUILD_ROOT%{_bindir}/scap-as-rpm
 # https://bugzilla.redhat.com/show_bug.cgi?id=1833176
 mkdir -p %{buildroot}%{_unitdir}/system-update.target.wants/
 ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.wants/oscap-remediate.service
+%endif
 
 %files
 %doc AUTHORS NEWS README.md
@@ -209,7 +211,9 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 %{_sysconfdir}/bash_completion.d
 %{_libexecdir}/oscap-remediate
 %{_unitdir}/oscap-remediate.service
+%if "0%{?!fedora:1}"
 %{_unitdir}/system-update.target.wants/
+%endif
 
 %files utils
 %doc docs/oscap-scan.cron
