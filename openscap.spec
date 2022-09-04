@@ -28,9 +28,24 @@ BuildRequires:  dbus-devel
 BuildRequires:  libyaml-devel
 BuildRequires:  xmlsec1-devel xmlsec1-openssl-devel
 BuildRequires:  systemd
-%if %{?_with_check:1}%{!?_with_check:0}
-BuildRequires:  perl-XML-XPath
+%if %{with check}
 BuildRequires:  bzip2
+BuildRequires:  chkconfig
+BuildRequires:  diffutils
+BuildRequires:  findutils
+BuildRequires:  gawk
+BuildRequires:  hostname
+BuildRequires:  ipcalc
+BuildRequires:  iproute
+BuildRequires:  libselinux-utils
+BuildRequires:  lua
+BuildRequires:  openssl
+BuildRequires:  perl(XML::Parser)
+BuildRequires:  perl(XML::XPath)
+BuildRequires:  procps
+BuildRequires:  rpm-build
+BuildRequires:  tar
+BuildRequires:  tcpdump
 %endif
 Requires:       bash
 Requires:       bzip2-libs
@@ -138,8 +153,10 @@ Tool for scanning Atomic containers.
 make docs
 
 %check
-%if %{?_with_check:1}%{!?_with_check:0}
-ctest -V %{?_smp_mflags}
+%if %{with check}
+# Tests use common files. Running tests parallel causes failed tests because of that.
+%undefine _smp_mflags
+%ctest
 %endif
 
 %install
