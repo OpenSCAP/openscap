@@ -1,3 +1,10 @@
+# gconf is a legacy system not used any more, and it blocks testing of oscap-anaconda-addon
+# as gconf is no longer part of the installation medium
+%bcond_with gconf
+
+# By default do not build perl swig bindings
+%bcond_with perl
+
 # This spec file is not synchronized to the Fedora downstream.
 # It serves as Fedora CI configuration and as support for downstream updates.
 Name:           openscap
@@ -16,22 +23,46 @@ BuildRequires:  pkg-config
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
-BuildRequires:  swig libxml2-devel libxslt-devel perl-generators perl-XML-Parser
-BuildRequires:  rpm-devel
-BuildRequires:  libgcrypt-devel
-BuildRequires:  pcre-devel
-BuildRequires:  libacl-devel
-BuildRequires:  libselinux-devel
-BuildRequires:  libcap-devel
-BuildRequires:  libblkid-devel
-BuildRequires:  bzip2-devel
+
+# Try to follow CMakeLists.txt order
+BuildRequires:  pkgconfig(libacl)
+BuildRequires:  pkgconfig(blkid)
+BuildRequires:  pkgconfig(libcap)
+BuildRequires:  pkgconfig(libcurl)
+BuildRequires:  pkgconfig(dbus-1)
+BuildRequires:  doxygen
+%if %{with gconf}
+BuildRequires:  pkgconfig(glib-2.0)
+BuildRequires:  pkgconfig(gobject-2.0)
+BuildRequires:  pkgconfig(gconf-2.0)
+%endif
+BuildRequires:  pkgconfig(ldap)
+BuildRequires:  pkgconfig(opendbx)
+BuildRequires:  pkgconfig(libpcre)
+%if %{with perl}
+BuildRequires:  perl-devel
+# BuildRequires:  perl-generators
+%endif
+BuildRequires:  pkgconfig(popt)
+BuildRequires:  pkgconfig(libsystemd)
+BuildRequires:  pkgconfig(libprocps)
+BuildRequires:  pkgconfig(python3)
+BuildRequires:  pkgconfig(rpm)
+BuildRequires:  pkgconfig(libselinux)
+BuildRequires:  swig
+BuildRequires:  pkgconfig(libxml-2.0)
+BuildRequires:  pkgconfig(libxslt)
+BuildRequires:  pkgconfig(xmlsec1)
+BuildRequires:  pkgconfig(xmlsec1-openssl)
+BuildRequires:  pkgconfig(openssl)
+BuildRequires:  pkgconfig(bzip2)
+BuildRequires:  pkgconfig(libgcrypt)
+BuildRequires:  pkgconfig(yaml-0.1)
 BuildRequires:  asciidoc
-BuildRequires:  openldap-devel
-BuildRequires:  glib2-devel
-BuildRequires:  dbus-devel
-BuildRequires:  libyaml-devel
-BuildRequires:  xmlsec1-devel xmlsec1-openssl-devel
+BuildRequires:  git
+BuildRequires:  sed
 BuildRequires:  systemd
+
 %if %{with check}
 BuildRequires:  bzip2
 BuildRequires:  chkconfig
@@ -51,19 +82,6 @@ BuildRequires:  rpm-build
 BuildRequires:  tar
 BuildRequires:  tcpdump
 %endif
-Requires:       bash
-Requires:       bzip2-libs
-Requires:       dbus
-Requires:       glib2
-Requires:       libacl
-Requires:       libblkid
-Requires:       libcap
-Requires:       libselinux
-Requires:       openldap
-Requires:       popt
-# Fedora has procps-ng, which provides procps
-Requires:       procps
-Requires:       xmlsec1 xmlsec1-openssl
 
 %description
 OpenSCAP is a set of open source libraries providing an easier path
@@ -74,9 +92,6 @@ for the expression of Computer Network Defense related information.
 %package        devel
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       libxml2-devel
-Requires:       pkgconfig
-BuildRequires:  doxygen
 
 %description    devel
 The %{name}-devel package contains libraries and header files for
@@ -85,7 +100,6 @@ developing applications that use %{name}.
 %package        python3
 Summary:        Python 3 bindings for %{name}
 Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:  python3-devel
 
 %description    python3
 The %{name}-python3 package contains the bindings so that %{name}
@@ -94,8 +108,6 @@ libraries can be used by python3.
 %package        scanner
 Summary:        OpenSCAP Scanner Tool (oscap)
 Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       libcurl >= 7.12.0
-BuildRequires:  libcurl-devel >= 7.12.0
 
 %description    scanner
 The %{name}-scanner package contains oscap command-line tool. The oscap
@@ -105,6 +117,7 @@ compliance checking using SCAP content.
 %package        utils
 Summary:        OpenSCAP Utilities
 Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
+# These not probed from: scap-as-rpm
 Requires:       rpmdevtools rpm-build
 Requires:       %{name}-scanner%{?_isa} = %{epoch}:%{version}-%{release}
 
@@ -126,7 +139,6 @@ commands using a scripting language (Bash, Perl, Python, Ruby, ...).
 Summary:        Development files for %{name}-engine-sce
 Requires:       %{name}-devel%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       %{name}-engine-sce%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       pkgconfig
 
 %description    engine-sce-devel
 The %{name}-engine-sce-devel package contains libraries and header files
@@ -147,13 +159,15 @@ tar xvzf %{SOURCE1} --directory=yaml-filter --strip-components=1
 
 %build
 %undefine __cmake_in_source_build
-# gconf is a legacy system not used any more, and it blocks testing of oscap-anaconda-addon
-# as gconf is no longer part of the installation medium
 %cmake -G Ninja \
-    -DENABLE_PERL=OFF \
     -DENABLE_DOCS=ON \
+%if ! %{with gconf}
     -DOPENSCAP_PROBE_UNIX_GCONF=OFF \
-    -DGCONF_LIBRARY=
+    -DGCONF_LIBRARY= \
+%endif
+%if ! %{with perl}
+    -DENABLE_PERL=OFF \
+%endif
 
 %cmake_build
 make docs
