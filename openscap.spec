@@ -116,7 +116,7 @@ for developing applications that use %{name}-engine-sce.
 %package        containers
 Summary:        Utils for scanning containers
 Requires:       %{name} = %{epoch}:%{version}-%{release}
-Requires:       %{name}-scanner
+Requires:       %{name}-scanner%{?_isa} = %{epoch}:%{version}-%{release}
 BuildArch:      noarch
 
 %description    containers
