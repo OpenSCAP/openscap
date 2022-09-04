@@ -251,6 +251,9 @@ function test_ds_continue_without_remote_resources() {
 }
 
 function test_ds_error_remote_resources() {
+	# --fetch-remote-resources uses internet
+	require_internet || return 255
+
 	local DS="${srcdir}/$1"
 	local PROFILE="$2"
 	local result=$(mktemp)

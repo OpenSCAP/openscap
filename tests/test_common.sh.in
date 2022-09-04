@@ -170,6 +170,10 @@ function package_version {
     fi
 }
 
+function require_internet {
+    [ -s /etc/resolv.conf ] || return 255
+}
+
 function verify_results {
 
     require "grep" || return 255
