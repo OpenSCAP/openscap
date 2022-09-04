@@ -202,14 +202,11 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 %{_includedir}/openscap
 %exclude %{_includedir}/openscap/sce_engine_api.h
 
-%files engine-sce-devel
-%{_libdir}/libopenscap_sce.so
-%{_includedir}/openscap/sce_engine_api.h
-
 %files scanner
-%{_mandir}/man8/oscap.8*
 %{_bindir}/oscap
 %{_bindir}/oscap-chroot
+%{_mandir}/man8/oscap.8*
+%{_mandir}/man8/oscap-chroot.8*
 %{_sysconfdir}/bash_completion.d
 %{_libexecdir}/oscap-remediate
 %{_unitdir}/oscap-remediate.service
@@ -219,23 +216,31 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 
 %files utils
 %doc docs/oscap-scan.cron
-%{_mandir}/man8/*
-%exclude %{_mandir}/man8/oscap.8*
-%exclude %{_mandir}/man8/oscap-docker.8*
-%{_bindir}/*
-%exclude %{_bindir}/oscap
-%exclude %{_bindir}/oscap-docker
-%exclude %{_bindir}/oscap-chroot
+%{_bindir}/autotailor
+%{_bindir}/oscap-remediate-offline
+%{_bindir}/oscap-ssh
+%{_bindir}/oscap-vm
+%{_bindir}/scap-as-rpm
+%{_mandir}/man8/autotailor.8*
+%{_mandir}/man8/oscap-remediate-offline.8*
+%{_mandir}/man8/oscap-ssh.8*
+%{_mandir}/man8/oscap-vm.8*
+%{_mandir}/man8/scap-as-rpm.8*
 
 %files engine-sce
+%{_bindir}/oscap-run-sce-script
 %{_libdir}/libopenscap_sce.so.*
+
+%files engine-sce-devel
+%{_libdir}/libopenscap_sce.so
+%{_includedir}/openscap/sce_engine_api.h
 
 %files containers
 %{_bindir}/oscap-docker
 %{_mandir}/man8/oscap-docker.8*
-%{python3_sitelib}/oscap_docker_python/*
 %{_bindir}/oscap-podman
 %{_mandir}/man8/oscap-podman.8*
+%{python3_sitelib}/oscap_docker_python/*
 
 %changelog
 %autochangelog
