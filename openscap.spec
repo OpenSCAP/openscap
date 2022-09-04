@@ -10,7 +10,10 @@ URL:            http://www.open-scap.org/
 Source0:        https://github.com/OpenSCAP/%{name}/releases/download/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/OpenSCAP/yaml-filter/archive/refs/tags/v0.2.0.tar.gz
 BuildRequires:  make
-BuildRequires:  cmake >= 2.6
+BuildRequires:  cmake >= 2.8
+BuildRequires:  ninja-build
+BuildRequires:  pkg-config
+BuildRequires:  systemd-rpm-macros
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  swig libxml2-devel libxslt-devel perl-generators perl-XML-Parser
@@ -146,11 +149,12 @@ tar xvzf %{SOURCE1} --directory=yaml-filter --strip-components=1
 %undefine __cmake_in_source_build
 # gconf is a legacy system not used any more, and it blocks testing of oscap-anaconda-addon
 # as gconf is no longer part of the installation medium
-%cmake \
+%cmake -G Ninja \
     -DENABLE_PERL=OFF \
     -DENABLE_DOCS=ON \
     -DOPENSCAP_PROBE_UNIX_GCONF=OFF \
     -DGCONF_LIBRARY=
+
 %cmake_build
 make docs
 
