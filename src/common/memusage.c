@@ -143,7 +143,10 @@ static int read_status(const char *source, void *base, struct stat_parser *spt, 
 				/* drop end of unread line */
 				while (strchr(strval, '\n') == NULL) {
 					linebuf[0] = '\n';
-					fgets(linebuf, sizeof linebuf - 1, fp);
+					if (fgets(linebuf, sizeof linebuf - 1, fp) == NULL) {
+						fclose(fp);
+						return (-1);
+					}
 					strval = linebuf;
 				}
 				continue;
