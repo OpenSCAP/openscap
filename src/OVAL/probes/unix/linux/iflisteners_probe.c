@@ -88,7 +88,7 @@ typedef struct {
 } llist;
 
 struct interface_t {
-  char interface_name[255];
+  char interface_name[256];
   char hw_address[255];
 };
 
@@ -344,7 +344,7 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 		fclose(fd);
 
 		if (ent_ifindex == ifindex) {
-			strncpy(interface->interface_name, d_ent->d_name, sizeof interface->interface_name);
+			strncpy(interface->interface_name, d_ent->d_name, sizeof interface->interface_name - 1);
 			interface->interface_name[sizeof interface->interface_name - 1] = '\0';
 			snprintf(buf, sizeof buf - 1, "/sys/class/net/%s/address", d_ent->d_name);
 			fd = fopen(buf, "rt");
