@@ -27,6 +27,7 @@ BuildRequires:  glib2-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libyaml-devel
 BuildRequires:  xmlsec1-devel xmlsec1-openssl-devel
+BuildRequires:  systemd
 %if %{?_with_check:1}%{!?_with_check:0}
 BuildRequires:  perl-XML-XPath
 BuildRequires:  bzip2
