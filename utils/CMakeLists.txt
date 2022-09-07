@@ -1,6 +1,8 @@
-install(PROGRAMS "oscap-run-sce-script"
-	DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+if(ENABLE_SCE)
+	install(PROGRAMS "oscap-run-sce-script"
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
+endif()
 
 if(ENABLE_OSCAP_UTIL)
 	file(GLOB UTILS_SOURCES "*.c")
