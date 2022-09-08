@@ -1,8 +1,8 @@
 # This spec file is not synchronized to the Fedora downstream.
 # It serves as Fedora CI configuration and as support for downstream updates.
 Name:           openscap
+Version:        1.3.6
 Release:        0%{?dist}
-Version:        1.3.0
 Epoch:          1
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 License:        LGPLv2+
