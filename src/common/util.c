@@ -382,14 +382,18 @@ int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char *
 		}
 	}
 	extra.flags = PCRE_EXTRA_MATCH_LIMIT_RECURSION;
+	size_t str_len = strlen(str);
 #if defined(OS_SOLARIS)
-	rc = pcre_exec(re, &extra, str, strlen(str), *ofs, PCRE_NO_UTF8_CHECK, ovector, ovector_len);
+	rc = pcre_exec(re, &extra, str, str_len, *ofs, PCRE_NO_UTF8_CHECK, ovector, ovector_len);
 #else
-	rc = pcre_exec(re, &extra, str, strlen(str), *ofs, 0, ovector, ovector_len);
+	rc = pcre_exec(re, &extra, str, str_len, *ofs, 0, ovector, ovector_len);
 #endif
 
 	if (rc < -1) {
-		dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%s'.", rc, str);
+		if (str_len < 100)
+			dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%s'.", rc, str);
+		else
+			dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%.100s' (truncated, showing first 100 characters).", rc, str);
 		return rc;
 	} else if (rc == -1) {
 		/* no match */
