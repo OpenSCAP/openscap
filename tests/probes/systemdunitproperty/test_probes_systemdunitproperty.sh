@@ -12,6 +12,7 @@ set -e -o pipefail
 function test_probes_systemdunitproperty {
     probecheck "systemdunitproperty" || return 255
     pidof systemd > /dev/null || return 255
+    systemctl > /dev/null 2>&1 || return 255
 
     local ret_val=0;
     local DF="${srcdir}/test_probes_systemdunitproperty.xml"

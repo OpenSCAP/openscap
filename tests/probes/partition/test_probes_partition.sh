@@ -6,6 +6,7 @@ set -e -o pipefail
 
 function test_probes_partition {
     probecheck "partition" || return 255
+    require_non_chroot || return 255
 
     local ret_val=0;
     local DF="${srcdir}/test_probes_partition.xml"

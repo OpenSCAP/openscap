@@ -5,6 +5,9 @@ set -e -o pipefail
 . $builddir/tests/test_common.sh
 
 function curl_accept_encoding {
+	# --fetch-remote-resources uses internet
+	require_internet || return 255
+
 	local DF="${srcdir}/ds.xml"
 	local RF="results.xml"
 	local LOG="verbose.log"
