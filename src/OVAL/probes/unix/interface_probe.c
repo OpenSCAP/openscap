@@ -402,8 +402,8 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 		else {
 			struct sockaddr_in6 *sin6p;
 			char host_tmp[NI_MAXHOST];
-			int bit, byte, prefix = 0;
-			u_int32_t tmp;
+			int byte, prefix = 0;
+			u_int32_t bit, tmp;
 			int host_len;
 
 			sin6p = (struct sockaddr_in6 *) ifa->ifa_addr;

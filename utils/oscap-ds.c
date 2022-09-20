@@ -367,7 +367,9 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 
 	char* temp_cwd = strdup(action->ds_action->file);
 	char *temp_cwd_dirname = oscap_dirname(temp_cwd);
-	chdir(temp_cwd_dirname);
+	if (chdir(temp_cwd_dirname) < 0) {
+		goto cleanup;
+	}
 	free(temp_cwd_dirname);
 	free(temp_cwd);
 
@@ -377,7 +379,9 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	free(base_name);
 	free(source_xccdf);
 
-	chdir(previous_cwd);
+	if (chdir(previous_cwd) < 0) {
+		goto cleanup;
+	}
 	free(previous_cwd);
 
 	if (action->validate)

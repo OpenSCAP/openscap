@@ -522,7 +522,8 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 	{
 		/* fallback method - copy the contents into memory */
 
-		file->inmem = malloc(file->inlen);
+		file->inmem = malloc(file->inlen+1);
+		file->inmem[file->inlen] = '\0';
 
 		if (read (file->fd, file->inmem, file->inlen) != (ssize_t)file->inlen) {
 			/* Can't read the contents of the file */
