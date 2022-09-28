@@ -300,6 +300,7 @@ cmake_dependent_option(OPENSCAP_PROBE_LINUX_SELINUXBOOLEAN "Linux selinuxboolean
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_SELINUXSECURITYCONTEXT "Linux selinuxsecuritycontext probe" ON "ENABLE_PROBES_LINUX; SELINUX_FOUND" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY "Linux systemdunitdependency probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY "Linux systemdunitproperty probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_FWUPDSECURITYATTR "Linux fwupd probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
 
 # SOLARIS PROBES
 cmake_dependent_option(OPENSCAP_PROBE_SOLARIS_ISAINFO "Solaris isainfo probe" ON "ENABLE_PROBES_SOLARIS" OFF)
@@ -431,6 +432,7 @@ message(STATUS "  Linux selinuxboolean probe (depends on selinux): ${OPENSCAP_PR
 message(STATUS "  Linux selinuxsecuritycontext probe (depends on selinux): ${OPENSCAP_PROBE_LINUX_SELINUXSECURITYCONTEXT}")
 message(STATUS "  Linux systemdunitdependency probe (depends on dbus): ${OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY}")
 message(STATUS "  Linux systemdunitproperty probe (depends on dbus): ${OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY}")
+message(STATUS "  Linux fwupdsecurityattr probe (depends on dbus): ${OPENSCAP_PROBE_LINUX_FWUPDSECURITYATTR}")
 message(STATUS " ")
 
 message(STATUS "Solaris probes: ${ENABLE_PROBES_SOLARIS}")

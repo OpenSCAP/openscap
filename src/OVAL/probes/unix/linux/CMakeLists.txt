@@ -112,6 +112,14 @@ if(OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY)
 	)
 endif()
 
+if(OPENSCAP_PROBE_LINUX_FWUPDSECURITYATTR)
+	list(APPEND LINUX_PROBES_SOURCES
+		"fwupdsecattr_probe.c"
+		"fwupdsecattr_probe.h"
+	)
+endif()
+
+
 add_library(linux_probes_object OBJECT ${LINUX_PROBES_SOURCES})
 set_oscap_generic_properties(linux_probes_object)
 target_include_directories(linux_probes_object PRIVATE ${LINUX_PROBES_INCLUDE_DIRECTORIES})
