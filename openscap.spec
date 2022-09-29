@@ -214,5 +214,3 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 %{_bindir}/oscap-podman
 %{_mandir}/man8/oscap-podman.8*
 
-%changelog
-%autochangelog
