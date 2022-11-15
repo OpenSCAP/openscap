@@ -24,6 +24,7 @@
 #define OPENSCAP_UNAME_PROBE_H
 
 #include "probe-api.h"
+int uname_probe_offline_mode_supported(void);
 
 int uname_probe_main(probe_ctx *ctx, void *arg);
 

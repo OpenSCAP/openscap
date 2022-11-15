@@ -57,6 +57,14 @@
 #include "_seap.h"
 #include "probe-api.h"
 #include "uname_probe.h"
+#include <probe/probe.h>
+
+
+int uname_probe_offline_mode_supported()
+{
+        return PROBE_OFFLINE_OWN;
+}
+
 
 int uname_probe_main(probe_ctx *ctx, void *arg)
 {

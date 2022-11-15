@@ -331,7 +331,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_UNIX_SYSCTL, NULL, sysctl_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_UNAME
-	{OVAL_UNIX_UNAME, NULL, uname_probe_main, NULL, NULL},
+	{OVAL_UNIX_UNAME, NULL, uname_probe_main, NULL, uname_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_XINETD
 	{OVAL_UNIX_XINETD, xinetd_probe_init, xinetd_probe_main, xinetd_probe_fini, xinetd_probe_offline_mode_supported},
