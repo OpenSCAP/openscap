@@ -103,7 +103,7 @@ echo "stderr file: $stderr"
 	ZOMBIE_PID=$(get_zombie_pid_from_ppid ${ZOMBIE_PPID})
 	[ -n "${ZOMBIE_PPID}" ]
 	# "[command_line_extra.sh] <defunct>"
-	ZOMBIE_CMDLINE_REGEX='\[bash]\ <defunct>'
+	ZOMBIE_CMDLINE_REGEX='\[(bash|sleep)]\ <defunct>'
 
 	# Run process with special characters in parameters
 	"${PROC}" escaped "$(echo -ne "\e\n\E[1;33m") \\\n\e" &
@@ -116,7 +116,7 @@ echo "stderr file: $stderr"
 ### Wait for start of all processes (all processes have done exec())
 ########################################################################
 	wait_for_process $PID
-	wait_for_process ${ZOMBIE_PID} "command_line_extra.sh"
+	wait_for_process ${ZOMBIE_PID} "+(bash|sleep)"
 	wait_for_process ${ESCAPED_PID}
 
 ########################################################################
