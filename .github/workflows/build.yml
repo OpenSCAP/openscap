@@ -94,6 +94,7 @@ jobs:
         brew install swig
         brew install libxmlsec1
         brew install openssl
+        brew install pcre
 
     # Runs a set of commands using the runners shell
     - name: Build
