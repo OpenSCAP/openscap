@@ -408,12 +408,10 @@ oval_result_t oval_debian_evr_string_cmp(const char *state, const char *sys, ova
 	parseEVR(a_copy, &a_epoch, &a_version, &a_release);
 	parseEVR(b_copy, &b_epoch, &b_version, &b_release);
 
-	if (!a_epoch || !b_epoch) {
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid epoch.");
-		free(a_copy);
-		free(b_copy);
-		return OVAL_RESULT_ERROR;
-	}
+	if (!a_epoch)
+		a_epoch = "0";
+	if (!b_epoch)
+		b_epoch = "0";
 
 	aux = strtol(a_epoch, NULL, 10);
 	if (aux < INT_MIN || aux > INT_MAX) {
@@ -453,7 +451,7 @@ oval_result_t oval_debian_evr_string_cmp(const char *state, const char *sys, ova
 	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
 		return ((result <= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 	default:
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in rpm version comparison: %d.", operation);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in dpkg version comparison: %d.", operation);
 	}
 
 	return OVAL_RESULT_ERROR;
