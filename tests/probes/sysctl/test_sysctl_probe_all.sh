@@ -8,8 +8,8 @@ set -e -o pipefail
 # non root users
 PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 
-# non root users are not able to access some kernel params, so they get blacklisted
-SYSCTL_BLACKLIST='
+# non root users are not able to access some kernel params, so they get excluded
+SYSCTL_EXCLUDE='
 	dev.parport.parport0.autoprobe
 	fs.protected_hardlinks
 	fs.protected_fifos
@@ -29,9 +29,9 @@ SYSCTL_BLACKLIST='
 	vm.mmap_rnd_compat_bits
 	vm.stat_refresh'
 
-SYSCTL_BLACKLIST_REGEX="$(printf '\|%s' $SYSCTL_BLACKLIST)"
+SYSCTL_EXCLUDE_REGEX="$(printf '\|%s' $SYSCTL_EXCLUDE)"
 # strip leading '\|'
-SYSCTL_BLACKLIST_REGEX=${SYSCTL_BLACKLIST_REGEX:2}
+SYSCTL_EXCLUDE_REGEX=${SYSCTL_EXCLUDE_REGEX:2}
 
 function perform_test {
 probecheck "sysctl" || return 255
@@ -58,11 +58,11 @@ case $(uname) in
 		# sysctl has duplicities in output
 		# hide permission errors like: "sysctl: permission denied on key 'fs.protected_hardlinks'"
 		# kernel parameters might use "/" and "." separators interchangeably - normalizing
-		sysctl -aN --deprecated 2> /dev/null | grep -v $SYSCTL_BLACKLIST_REGEX | tr "/" "." | sort -u > "$sysctlNames"
+		sysctl -aN --deprecated 2> /dev/null | grep -v $SYSCTL_EXCLUDE_REGEX | tr "/" "." | sort -u > "$sysctlNames"
 		;;
 esac
 
-grep unix-sys:name "$result" | grep -v $SYSCTL_BLACKLIST_REGEX | xsed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
+grep unix-sys:name "$result" | grep -v $SYSCTL_EXCLUDE_REGEX | xsed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
 
 # If procps_ver > 3.3.12 we need to filter *stable_secret and vm.stat_refresh
 # options from the sysctl output, for more details see
