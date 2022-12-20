@@ -12482,7 +12482,7 @@ purposes.</description>
             };<xhtml:br/>
             <xhtml:br/>
             zone "example.com " IN { <xhtml:br/>
-            type master; <xhtml:br/>
+            type primary; <xhtml:br/>
             allow-transfer { key zone-transfer-key; }; <xhtml:br/>
             ... <xhtml:br/>
             }<xhtml:br/>
@@ -12494,13 +12494,13 @@ purposes.</description>
             secret "base64-key-string "; <xhtml:br/>
             }; <xhtml:br/>
             <xhtml:br/>
-            server IP-OF-MASTER { <xhtml:br/>
+            server IP-OF-PRIMARY { <xhtml:br/>
             keys { zone-transfer-key; }; <xhtml:br/>
             }; <xhtml:br/>
             <xhtml:br/>
             zone "example.com " IN { <xhtml:br/>
-            type slave;<xhtml:br/>
-            masters { IP-OF-MASTER ; }; <xhtml:br/>
+            type secondary;<xhtml:br/>
+            primaries { IP-OF-PRIMARY ; }; <xhtml:br/>
             ... <xhtml:br/>
             }; <xhtml:br/>
             <xhtml:br/>
