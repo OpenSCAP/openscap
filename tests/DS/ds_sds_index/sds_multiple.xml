@@ -12799,7 +12799,7 @@ purposes.</xccdf:description>
             };<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             zone "example.com " IN { <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-            type master; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            type primary; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             allow-transfer { key zone-transfer-key; }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             ... <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             }<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -12811,13 +12811,13 @@ purposes.</xccdf:description>
             secret "base64-key-string "; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-            server IP-OF-MASTER { <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            server IP-OF-PRIMARY { <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             keys { zone-transfer-key; }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             zone "example.com " IN { <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-            type slave;<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-            masters { IP-OF-MASTER ; }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            type secondary;<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            primaries { IP-OF-PRIMARY ; }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             ... <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
