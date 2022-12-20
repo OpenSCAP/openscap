@@ -2,10 +2,10 @@
 
 OpenSCAP release versions have the common *$major.$minor.$patch* format.
 
-Most of the bleeding edge unstable development happens in the *master* branch.
+Most of the bleeding edge unstable development happens in the *main* branch.
 This branch is likely to break API and ABI and is likely not suitable for anyone
 but the developers. Only release candidates or other test releases are tagged
-from the master branch.
+from the main branch.
 
 *$major.$minor* together (e.g.: `1.2`) are called *feature releases*. As the
 name suggests, once a feature release is made, no new features are added to it.
@@ -42,7 +42,7 @@ in the maintenance branch even if it is considered broken or wrong. Only changes
 that make the implementation more compliant to documentation can be considered
 - these changes are most commonly bugfixes.
 
-Incompatible improvements shall always be done in the development (`master`)
+Incompatible improvements shall always be done in the development (`main`)
 branch if they are done at all. The commits should be accompanied with
 appropriate changes in documentation.
 
@@ -67,7 +67,7 @@ surrounding this so please use your best judgement.
 
 Bugfixes applied to maintenance branches must be merged up. For example,
 a bugfix applied to `maint-1.2` shall be merged to `maint-1.x` (where `x > 2`)
-which then shall be merged to `master`.
+which then shall be merged to `main`.
 
 This rule makes sure we always carry bugfixes to new feature releases.
 
