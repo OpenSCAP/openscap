@@ -6,6 +6,9 @@ actions:
   get-current-version:
   - bash -c "source release_tools/versions.sh && echo ${version}"
 
+srpm_build_deps:
+  - bash
+
 jobs:
 - job: copr_build
   trigger: pull_request
