@@ -69,13 +69,13 @@ $ git checkout maint-1.2
 $ git checkout -b fix_455
 ----
 
-On the other hand, if you decided that the fix will go into the `master` branch
+On the other hand, if you decided that the fix will go into the `main` branch
 you have to switch to this branch first before creating a new one:
 [source,bash]
 ----
-# create a new local branch to track the remote master branch
-$ git checkout -b master remotes/origin/master
-# and now create a new branch from the master branch which will contain your fix
+# create a new local branch to track the remote main branch
+$ git checkout -b main remotes/origin/main
+# and now create a new branch from the main branch which will contain your fix
 $ git checkout -b fix_455
 ----
 
