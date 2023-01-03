@@ -11,6 +11,7 @@ PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 # non root users are not able to access some kernel params, so they get excluded
 SYSCTL_EXCLUDE='
 	dev.parport.parport0.autoprobe
+	dev.tty.legacy_tiocsti
 	fs.protected_hardlinks
 	fs.protected_fifos
 	fs.protected_regular
