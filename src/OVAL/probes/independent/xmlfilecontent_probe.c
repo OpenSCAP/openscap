@@ -297,9 +297,8 @@ static int process_file(const char *prefix, const char *path, const char *filena
 		node_cnt = nodes->nodeNr;
 		dD("node_cnt: %d.", node_cnt);
 		if (node_cnt <= 0) {
-			probe_item_setstatus(item, SYSCHAR_STATUS_DOES_NOT_EXIST);
-			probe_item_ent_add(item, "value_of", NULL, NULL);
-			probe_itement_setstatus(item, "value_of", 1, SYSCHAR_STATUS_DOES_NOT_EXIST);
+			ret = -5;
+			goto cleanup;
 		} else {
 			node_tab = nodes->nodeTab;
 			for (i = 0; i < node_cnt; ++i) {
