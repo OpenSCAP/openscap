@@ -87,6 +87,9 @@ jobs:
     # Runs a single command using the runners shell
     - name: Install Deps
       run: |
+        # Unlink and re-link to prevent errors when GitHub Mac runner images
+        # install Python outside of Brew:
+        brew list -1 | grep python | while read formula; do brew unlink $formula; brew link --overwrite $formula; done
         brew update
         brew install doxygen
         brew install opendbx
