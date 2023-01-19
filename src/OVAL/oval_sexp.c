@@ -770,11 +770,10 @@ int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 			var = oval_entity_get_variable(ent);
 			dt = oval_entity_get_datatype(ent);
 
-			if (oval_varref_elm_to_sexp(sess, var, dt, &val_lst, NULL) != 0)
-				goto fail;
-
-			SEXP_list_add(ste_ent, val_lst);
-			SEXP_free(val_lst);
+			if (oval_varref_elm_to_sexp(sess, var, dt, &val_lst, NULL) == 0) {
+				SEXP_list_add(ste_ent, val_lst);
+				SEXP_free(val_lst);
+			}
 		}
 
 		SEXP_list_add(ste, ste_ent);
