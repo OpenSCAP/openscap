@@ -122,11 +122,6 @@ Generate documentation by running `make docs`. Then, upload the generated OpenSC
 +
 Check out https://www.redhat.com/archives/open-scap-list/2017-August/msg00001.html for template. If the release is exciting, tweet it on twitter!
 
-. Merge maintenance branch into master.
+. Merge maintenance branch into main.
 +
 It is the best timing to merge just after release.
-
-== To be done ==
-
-* Full GitHub integration: Blocked by https://github.com/PyGithub/PyGithub/pull/525
-* Full Jenkins integration.
