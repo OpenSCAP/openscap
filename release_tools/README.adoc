@@ -99,8 +99,6 @@ The last commit before the release has to have the `openscap-<version>` message 
 +
 In a clean copy of the release branch run `cmake .. && make package_source` in the `build` directory.
 +
-Check the archive for suspicious files, prevent situation horse birth!
-+
 Create new GitHub release with the name of the version being released.
 +
 Add relevant part of the NEWS file as a release description. 
