@@ -5,7 +5,15 @@
 * System with `python3.6` or greater, installed https://pypi.python.org/pypi/PyGithub/1.35[PyGithub] module.
 * A GitHub token - get one on https://github.com/settings/tokens. Choose `repo` scope.
 
+
 == Process ==
+
+When releasign alpha/pre-releases, please keep in mind how RPM handles the versioning. Please see how is this handled in SPEC file https://fedoraproject.org/wiki/Packaging:Versioning before you build Fedora and RHEL packages.
+
+. Ensure the project is in a good shape for the release
++
+* Check CI is passing in https://github.com/OpenSCAP/openscap/actions?query=branch%3Amaint-1.3+event%3Apush[GitHub Actions]
+* Check builds in https://dashboard.packit.dev/projects/github.com/OpenSCAP/openscap[Packit] are successful.
 
 . Clone a clean `openscap` repository:
 
@@ -21,12 +29,26 @@ Put your GitHub token in the `.env` file, so it contains the following line:
 
 . Check out that the information within `versions.sh` is accurate.
 +
+This file contains some variables that differ among the releases:
++
+* `version`
+* `previous_version`
+
++
 OpenSCAP versions are supposed to have correct values from the previous build (see the step 6).
 
 . Run `up_to_compliance_check.sh`.
 +
+This script automatically performs the following actions:
+
+* Build and check build, execute CTest locally
+* Check Python bindings
+* Perform ABI compliance check
+
++
 In the ideal case, the script ends after the ABI compatiblity check finishes.
 Review the check results and act accordingly to them.
+Read the report, if there is an ABI issue (some symbols were changed / removed), fix it before proceeding further!
 
 . Run `handle_ltversions.sh`.
 +
@@ -40,6 +62,28 @@ Use this guideline to decide:
 
 +
 This changes the libtool library version number so it reflects the API/ABI change.
+The version number is changed in the following way:
+* adjusts `LT_CURRENT`, `LT_REVISION`, `LT_AGE``
+* version is current:revision:age -http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
+* resulting soname will be (`LT_CURRENT-LT_AGE`.`LT_AGE`.`LT_REVISION`)
+* Run `ls -al src/.libs/`, check the `libopenscap.so` version afterwards. Ensure that `libopenscap.so` has been built with new soname. Twice.
+
+. Perform scratch builds.
++
+Run `make package_source` and perform a scratch build on Fedora and RHEL in order to verify that the prepared OpenSCAP upstream release will be able to be built and packaged in these Linux distributions.
++
+You have to be a Fedora packager in order to be able to perform Fedora scratch builds.
+
+   make package_source
+   cp openscap-$version.tar.gz ~/fedora-packages/openscap/
+   cd ~/fedora-packages/openscap/
+   rpmdev-bumpspec -c "upgrade to the latest upstream release" \
+   -n $version openscap.spec
+   fedpkg build --scratch --srpm
++
+Use an analogous process also for RHEL.
++
+If something went seriously wrong with the tests (e.g. a very bad pointer handling was revealed), you may want to abort the release process and fix those problems first.
 
 . Update the NEWS and make the release commit.
 +
@@ -55,7 +99,7 @@ The last commit before the release has to have the `openscap-<version>` message 
 +
 In a clean copy of the release branch run `cmake .. && make package_source` in the `build` directory.
 +
-Create new GitHub release with the name of the vesrion (e.g. 1.3.2) being released.
+Create new GitHub release with the name of the version being released.
 +
 Add relevant part of the NEWS file as a release description. 
 +
@@ -64,11 +108,18 @@ Attach `openscap-X.Y.Z.tar.gz` and `openscap-X.Y.Z.tag.gz.sha512` files to the G
 . Run `new-release.sh`.
 +
 This will create and push version tags, create new GitHub release and handle milestones swap.
-Finally, it will bump version numbers in `versions.sh` to be ready for the next (e.g. 1.3.3) upstream release.
+Finally, it will bump version numbers in `versions.sh` to be ready for the next upstream release.
 
+. Generate and publish documentation.
++
+Generate documentation by running `make docs`. Then, upload the generated OpenSCAP User manual and Doxygen API documentation to https://static.open-scap.org/ (Ask project maintainers for information on how to update https://static.open-scap.org/).
 
+. Build packages for RHEL and Fedora.
 
-== To be done ==
+. Send announcement.
++
+Check out https://www.redhat.com/archives/open-scap-list/2017-August/msg00001.html for template. If the release is exciting, tweet it on twitter!
 
-* Full GitHub integration: Blocked by https://github.com/PyGithub/PyGithub/pull/525
-* Full Jenkins integration.
+. Merge maintenance branch into main.
++
+It is the best timing to merge just after release.
