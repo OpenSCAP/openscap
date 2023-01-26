@@ -11,7 +11,7 @@ its utilities. When you contribute to some part of the OpenSCAP project you
 should put a test for your contribution into the corresponding subdirectory
 in the link:../../tests[tests] directory. Use your best judgement when deciding
 where to put the test for your pull request and if you are not sure don't be
-affraid to ask in the pull request, someone will definitely help you with that.
+afraid to ask in the pull request, someone will definitely help you with that.
 
 NOTE: OpenSCAP project uses the **CMake** buildsystem which has built-in
 testing support through the
@@ -42,7 +42,7 @@ an XCCDF rule using `<check-content-ref>` element, for example:
 
 === Deciding where to put a new test
 In our example, we are testing the SCE module, therefore we will look for
-its subdirectory in the link:../../tests[tests] direcotory and we will find it
+its subdirectory in the link:../../tests[tests] directory and we will find it
 at the following link: link:../../tests/sce[tests/sce]. We will add our new test
 into this subdirectory.
 

@@ -324,7 +324,7 @@ behaviour.
 
 
 == Generating of code coverage
-Code coverage can be usefull during writing of test or performance profiling.
+Code coverage can be useful during writing of test or performance profiling.
 We could separate the process into five phases.
 
 1) *Get dependencies*

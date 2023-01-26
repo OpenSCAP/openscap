@@ -1608,7 +1608,7 @@ not considered local by the scanner:
 
 == List of accepted environment variables
 
-* `OSCAP_CHECK_ENGINE_PLUGIN_DIR` - Defines path to a directory that contains plug-in libraries implementing additonal check engines, eg. SCE.
+* `OSCAP_CHECK_ENGINE_PLUGIN_DIR` - Defines path to a directory that contains plug-in libraries implementing additional check engines, eg. SCE.
 * `OSCAP_CONTAINER_VARS` - Additional environment variables read by environmentvariable58_probe. The variables are separated by `\n`. It is used by `oscap-podman` and `oscap-docker` scripts during container scanning.
 * `OSCAP_EVALUATION_TARGET` - Change value of target facts `urn:xccdf:fact:identifier` and `urn:xccdf:fact:asset:identifier:ein` in XCCDF results. Used during offline scanning to pass the name of the target system.
 * `OSCAP_FULL_VALIDATION` - If set, XML schema validation will be performed in every step of SCAP content processing.
@@ -1806,7 +1806,7 @@ $ oscap xccdf eval --results results.xml --report report.html com.redhat.rhsa-al
 The files we used above cover multiple Red Hat products. If you only want to
 scan one product - for example a specific version of Red Hat Enterprise Linux -
 we advise to download a smaller specialized file covering just this one version.
-Using a smaller file will utilitize less bandwidth and make the evaluation
+Using a smaller file will utilize less bandwidth and make the evaluation
 quicker.
 
 For example for Red Hat Enterprise Linux 7 the plain OVAL file is located at:
@@ -1951,7 +1951,7 @@ $ oscap oval generate report --output oval-report-1.html usgcb-rhel5desktop-oval
 $ oscap oval generate report --output oval-report-2.html http%3A%2F%2Fwww.redhat.com%2Fsecurity%2Fdata%2Foval%2Fcom.redhat.rhsa-all.xml.result.xml
 ----
 
-If you're interested in runing evaluation of the USGCB on a remote machine using
+If you're interested in running evaluation of the USGCB on a remote machine using
 a GUI please see:
 https://open-scap.org/resources/documentation/evaluate-remote-machine-for-usgcb-compliance-with-scap-workbench/[Evaluate
 Remote Machine for USGCB Compliance with SCAP Workbench] tutorial.
