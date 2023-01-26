@@ -1,3 +1,16 @@
+openscap-1.3.7                                                  26-01-2023
+- Maintenance, bug fix
+  - Fix error when processing OVAL filters (rhbz#2126882, rhbz#2126883)
+  - Don't emit xmlfilecontent items if XPath doesn't match (rhbz#2138884, rhbz#2139060)
+  - Prevent "Failed to check available memory" errors (rhbz#2109485, rhbz#2111040)
+  - Make epoch comparison less strict for dpkg
+  - Generate graphs when creating Doxygen documentation
+  - Fix build on Fedora 37 and Rawhide
+  - Fix some compiler warnings
+  - Infrastructure and test suite fixes
+  - Use more conscious language
+  - Fix typos and update documentation
+
 openscap-1.3.6                                                  19-01-2022
   - New features
     - Select and exclude groups of rules on the command line
