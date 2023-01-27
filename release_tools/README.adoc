@@ -8,7 +8,7 @@
 
 == Process ==
 
-When releasign alpha/pre-releases, please keep in mind how RPM handles the versioning. Please see how is this handled in SPEC file https://fedoraproject.org/wiki/Packaging:Versioning before you build Fedora and RHEL packages.
+When releasing alpha/pre-releases, please keep in mind how RPM handles the versioning. Please see how is this handled in SPEC file https://fedoraproject.org/wiki/Packaging:Versioning before you build Fedora and RHEL packages.
 
 . Ensure the project is in a good shape for the release
 +
@@ -17,7 +17,7 @@ When releasign alpha/pre-releases, please keep in mind how RPM handles the versi
 
 . Clone a clean `openscap` repository:
 
-   git clone --recurse-submodules https://github.com/OpenSCAP/openscap.git
+   git clone --recurse-submodules git@github.com:OpenSCAP/openscap.git
 
 . Create `.env` file
 +
@@ -94,6 +94,11 @@ Update the `AUTHORS` file for missing authors and the `naming.sh` file if there 
 Use it to update the `NEWS` file and commit it.
 +
 The last commit before the release has to have the `openscap-<version>` message (e.g. `openscap-1.3.2`).
++
+Tag the commit and push the changes to upstream. You need to be allowed to push without pull requests in the GitHub repository settings.
++
+   git tag $version
+   git push origin maint-1.3
 
 . Create tarballs and GitHub release.
 +
@@ -105,14 +110,18 @@ Add relevant part of the NEWS file as a release description.
 +
 Attach `openscap-X.Y.Z.tar.gz` and `openscap-X.Y.Z.tag.gz.sha512` files to the GH release, created against the release tag.
 
-. Run `new-release.sh`.
+. Run `new-release.sh $new_version`.
 +
-This will create and push version tags, create new GitHub release and handle milestones swap.
-Finally, it will bump version numbers in `versions.sh` to be ready for the next upstream release.
+You need to provide the expected next version, ie. if you release 1.3.7 you should put there 1.3.8.
+This will handle milestones swap on GitHub and it will bump version numbers in `versions.sh` to be ready for the next upstream release.
++
+Then, change the version to expected next version in `/CMakeLists.txt`
++
+Commit and push the changes.
 
 . Generate and publish documentation.
 +
-Generate documentation by running `make docs`. Then, upload the generated OpenSCAP User manual and Doxygen API documentation to https://static.open-scap.org/ (Ask project maintainers for information on how to update https://static.open-scap.org/).
+Generate documentation by running `cmake -DENABLE_DOCS=ON .. && make docs`. Then, upload the generated OpenSCAP User manual and Doxygen API documentation to https://static.open-scap.org/ (Ask project maintainers for information on how to update https://static.open-scap.org/).
 
 . Build packages for RHEL and Fedora.
 
