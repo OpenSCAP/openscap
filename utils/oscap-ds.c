@@ -368,6 +368,8 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	char* temp_cwd = strdup(action->ds_action->file);
 	char *temp_cwd_dirname = oscap_dirname(temp_cwd);
 	if (chdir(temp_cwd_dirname) < 0) {
+		free(temp_cwd_dirname);
+		free(temp_cwd);
 		goto cleanup;
 	}
 	free(temp_cwd_dirname);
