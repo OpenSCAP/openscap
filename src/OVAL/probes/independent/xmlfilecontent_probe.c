@@ -303,7 +303,7 @@ static int process_file(const char *prefix, const char *path, const char *filena
 			node_tab = nodes->nodeTab;
 			for (i = 0; i < node_cnt; ++i) {
 				cur_node = node_tab[i];
-				dD("node[%d] line: %d, name: '%s', type: %d.",
+				dD("node[%d] line: %ld, name: '%s', type: %d.",
 				   i, XML_GET_LINE(cur_node), cur_node->name, cur_node->type);
 				if (cur_node->type == XML_ATTRIBUTE_NODE
 				    || cur_node->type == XML_TEXT_NODE) {
