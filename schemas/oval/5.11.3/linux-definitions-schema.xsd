@@ -2509,12 +2509,12 @@
           </xsd:complexType>
      </xsd:element>
 
-     <!-- ============================================================== -->
-     <!-- =================   FWUPD SECURITY ATTRIBUTE  ================ -->
-     <!-- ============================================================== -->
+     <!-- =============================================================== -->
+     <!-- =================   FWUPD SECURITY ATTRIBUTE   ================ -->
+     <!-- =============================================================== -->
      <xsd:element name="fwupdsecattr_test" substitutionGroup="oval-def:test">
           <xsd:annotation>
-               <xsd:documentation>Firmware Security attribute</xsd:documentation>
+               <xsd:documentation>The fwupdsecattr_test element is used to retrieve the firmware and hardware security configuration and status through fwupd. The detailed results can be found by executing the command "fwupdtool --force security" and make sure fwupd is properly installed.</xsd:documentation>
                <xsd:appinfo>
                     <oval:element_mapping>
                          <oval:test>fwupdsecattr_test</oval:test>
@@ -2547,7 +2547,7 @@
      </xsd:element>
      <xsd:element name="fwupdsecattr_object" substitutionGroup="oval-def:object">
           <xsd:annotation>
-               <xsd:documentation>The fwupdsecattr_object element is used by a fwupdsecattr_test to define the specific unit and property combination to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+               <xsd:documentation>The fwupdsecattr_object element is used by a fwupdsecattr_test to define the specific test for the firmware and hardware status, for example secure boot is properly set and version of Intel ME is greater than a specific version. The specific test, called AppStream-id is defined by fwupd. The detail information can be found in https://lvfs.readthedocs.io/en/latest/metainfo.html#appstream-id. </xsd:documentation>
                <xsd:appinfo>
                     <sch:pattern id="linux-def_fwupdsecattr_object_verify_filter_state">
                          <sch:rule context="linux-def:fwupdsecattr_object//oval-def:filter">
@@ -2571,7 +2571,7 @@
                                    <xsd:sequence>
                                         <xsd:element name="stream-id" type="oval-def:EntityObjectStringType">
                                              <xsd:annotation>
-                                                  <xsd:documentation>Get security attribute by fwupd stream-id</xsd:documentation>
+                                                  <xsd:documentation>This refers to a specific firmware, hardware, and fw/hw configurations and is defined by fwupd.</xsd:documentation>
                                              </xsd:annotation>
                                         </xsd:element>
                                         <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
@@ -2584,7 +2584,7 @@
      </xsd:element>
      <xsd:element name="fwupdsecattr_state" substitutionGroup="oval-def:state">
           <xsd:annotation>
-               <xsd:documentation>The fwupdsecattr_state element holds information about properties of a specific systemd unit. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+               <xsd:documentation>The fwupdsecattr_state element holds information about test results for the specific AppStream-id.</xsd:documentation>
           </xsd:annotation>
           <xsd:complexType>
                <xsd:complexContent>
@@ -2592,7 +2592,7 @@
                          <xsd:sequence>
                               <xsd:element name="security-attr" type="oval-def:EntityObjectStringType">
                                    <xsd:annotation>
-                                        <xsd:documentation>This is the current HSI value.</xsd:documentation>
+                                        <xsd:documentation>This is the current firmware security status defined by fwupd.</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                          </xsd:sequence>
