@@ -127,6 +127,10 @@
 #include "unix/linux/systemdunitproperty_probe.h"
 #endif
 
+#ifdef OPENSCAP_PROBE_LINUX_FWUPDSECURITYATTR
+#include "unix/linux/fwupdsecattr_probe.h"
+#endif
+
 #ifdef OPENSCAP_PROBE_SOLARIS_ISAINFO
 #include "unix/solaris/isainfo_probe.h"
 #endif
@@ -287,6 +291,9 @@ static const probe_table_entry_t probe_table[] = {
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY
 	{OVAL_LINUX_SYSTEMDUNITPROPERTY, NULL, systemdunitproperty_probe_main, NULL, systemdunitproperty_probe_offline_mode_supported},
+#endif
+#ifdef OPENSCAP_PROBE_LINUX_FWUPDSECURITYATTR
+	{OVAL_LINUX_FWUPDSECATTR, NULL, fwupdsecattr_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_SOLARIS_ISAINFO
 	{OVAL_SOLARIS_ISAINFO, NULL, isainfo_probe_main, NULL, NULL},
