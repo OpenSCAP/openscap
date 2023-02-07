@@ -475,7 +475,7 @@ char * sub_callback_wrapper(xccdf_subst_type_t type, const char *id, void *arg)
     arglist = Py_BuildValue("isO", type, id, usrdata);
     if (!PyCallable_Check(func)) {
       PyGILState_Release(state);
-      return 1;
+      return NULL;
     }
     result = PyEval_CallObject(func, arglist);
     if (result == NULL) {
