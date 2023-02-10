@@ -1,0 +1,27 @@
+name: "cppcheck"
+
+# please read https://github.com/deep5050/cppcheck-action
+# to configure output
+# this tool is more useful when false positives are supressed
+
+on:
+  push:
+    branches: [ 'maint-1.3' ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ 'maint-1.3' ]
+  schedule:
+    - cron: '32 17 * * 0'
+
+jobs:
+  cppcheck-analyze:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: cppcheck
+      uses: deep5050/cppcheck-action@main
+      with:
+        output_file: cppcheck.txt
+    - name: cppcheck.txt
+      run: cat cppcheck.txt
