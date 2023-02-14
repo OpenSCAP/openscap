@@ -42,12 +42,6 @@ class OscapDockerScan(object):
 
     def __init__(self, target, is_image=False, oscap_binary='oscap'):
 
-        # init docker low level api (usefull for deep details like container pid)
-        try:
-            self.client = docker.APIClient()
-        except AttributeError:
-            self.client = docker.Client()
-
         # init docker high level API (to deal with start/stop/run containers/image)
         self.client_api = docker.from_env()
         self.is_image = is_image
@@ -55,6 +49,9 @@ class OscapDockerScan(object):
         self.oscap_binary = oscap_binary or 'oscap'
         self.container_name = None
         self.image_name = None
+
+        # init docker low level api (useful for deep details like container pid)
+        self.client = self.client_api.api
 
         if self.is_image:
             self.image_name, self.config = self._get_image_name_and_config(target)
