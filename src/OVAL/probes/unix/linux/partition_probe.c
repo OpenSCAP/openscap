@@ -274,7 +274,7 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         const char *prefix = getenv("OSCAP_PROBE_ROOT");
         snprintf(mnt_path, PATH_MAX, "%s"MTAB_PATH, prefix ? prefix : "");
 
-#if defined(PROC_CHECK) && defined(OS_LINUX)
+#if defined(OS_LINUX)
         int   mnt_fd;
         struct statfs stfs;
 
