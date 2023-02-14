@@ -29,17 +29,6 @@ import sys
 from requests import exceptions
 
 
-def ping_docker():
-    ''' Simple check if the docker daemon is running '''
-    # Class docker.Client was renamed to docker.APIClient in
-    # python-docker-py 2.0.0.
-    try:
-        client = docker.APIClient()
-    except AttributeError:
-        client = docker.Client()
-    client.ping()
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='oscap docker',
                                      epilog='See `man oscap` to learn \
@@ -81,13 +70,6 @@ if __name__ == '__main__':
     if "action" not in args:
         parser.print_help()
         sys.exit(2)
-
-    try:
-        ping_docker()
-
-    except exceptions.ConnectionError:
-        print("The docker daemon does not appear to be running")
-        sys.exit(1)
 
     try:
         ODS = OscapDockerScan(args.scan_target, args.is_image, args.oscap_binary)
