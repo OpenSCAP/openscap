@@ -358,6 +358,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_htable_free(session->oval.arf_report_mapping, (oscap_destruct_func) free);
 	oscap_signature_ctx_free(session->signature_ctx);
 	oscap_list_free(session->rules, (oscap_destruct_func) free);
+	oscap_list_free(session->skip_rules, (oscap_destruct_func) free);
 	free(session);
 }
 
