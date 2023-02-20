@@ -116,6 +116,11 @@ void dpkginfo_free_reply(struct dpkginfo_reply_t *reply)
 {
         if (reply) {
                 free(reply->name);
+                free(reply->arch);
+                free(reply->epoch);
+                free(reply->release);
+                free(reply->version);
+                free(reply->evr);
                 delete reply;
         }
 }
