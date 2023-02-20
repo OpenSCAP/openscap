@@ -93,6 +93,7 @@ jobs:
         brew update
         brew install doxygen
         brew install opendbx
+        brew install pkg-config
         brew install popt
         brew install swig
         brew install libxmlsec1
