@@ -61,12 +61,12 @@ class OscapDockerScan(object):
             self.image_name, self.config = self._get_image_name_and_config(target)
             if self.image_name:
                 print("Creating a temporary container for the image...")
-                self.container_name = "tmp_oscap_" + str(uuid.uuid1())
 
                 try:
                     tmp_cont = self.client.create_container(
                         self.image_name, name=self.container_name)
 
+                    self.container_name = tmp_cont["Id"]
                     self.config = self.client.inspect_container(self.container_name)
                 except Exception as e:
                     sys.stderr.write("Cannot create container for image {0}.\n".format(self.image_name))
