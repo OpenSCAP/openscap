@@ -299,7 +299,7 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 		return PROBE_EOPNOTSUPP;
 	}
 
-	ent = probe_obj_getent(probe_in, "stream-id", 1);
+	ent = probe_obj_getent(probe_in, "stream_id", 1);
 	if (ent == NULL)
 		return PROBE_ENOENT;
 
@@ -343,7 +343,7 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 
 	if (hsi_result == UINT32_MAX) {
 		item = probe_item_create(OVAL_LINUX_FWUPDSECATTR, NULL,
-					 "security-attr", OVAL_DATATYPE_STRING, "Attribute not found",
+					 "security_attr", OVAL_DATATYPE_STRING, "not-found",
 					 NULL);
 		probe_item_setstatus(item, SYSCHAR_STATUS_NOT_COLLECTED);
 		probe_item_collect(ctx, item);
@@ -352,7 +352,7 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 
 	hsi_result_str = fwupd_security_attr_result_to_string(hsi_result);
 	item = probe_item_create(OVAL_LINUX_FWUPDSECATTR, NULL,
-				 "security-attr", OVAL_DATATYPE_STRING, hsi_result_str,
+				 "security_attr", OVAL_DATATYPE_STRING, hsi_result_str,
 				 NULL);
 	probe_item_collect(ctx, item);
 
