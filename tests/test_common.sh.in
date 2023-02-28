@@ -127,7 +127,7 @@ function require {
 # Check if Python module is available. For example:
 # require_python_module 'dbusmock' || return 255
 function require_python_module {
-	eval "python -c \"import $1\" >/dev/null 2>&1"
+	eval "python3 -c \"import $1\" >/dev/null 2>&1"
 	if [ $? -gt 0 ]; then
 		echo -e "No '$1' Python module found!\n"
 		return 255 # Test is not applicable.
@@ -368,7 +368,7 @@ init_dbus_mock() {
 	require_python_module "dbusmock" || return 255
 	require "gdbus" || return 255
 	printf "%s\n" "Initializing D-Bus mock from template: $1.py"
-	python -m dbusmock --template "${srcdir}/$1.py" & disown
+	python3 -m dbusmock --template "${srcdir}/$1.py" & disown
 	# We have to replace system bus address because mock D-Bus
 	# endpoint is created inside the user session
 	export DBUS_SYSTEM_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS
@@ -379,7 +379,7 @@ init_dbus_mock() {
 clean_dbus_mock() {
 	require "gdbus" || return 255
 	printf "%s\n" "Shutting down D-Bus mock: $1"
-	gdbus call --session -d "$1" -o / -m "$1.Exit" || true
+	gdbus call --session -d "$1" -o / -m "$1.Exit" >/dev/null 2>&1 || true
 }
 
 export -f assert_exists
