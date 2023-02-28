@@ -124,6 +124,31 @@ function require {
     return 0
 }
 
+# Check if Python module is available. For example:
+# require_python_module 'dbusmock' || return 255
+function require_python_module {
+	eval "python -c \"import $1\" >/dev/null 2>&1"
+	if [ $? -gt 0 ]; then
+		echo -e "No '$1' Python module found!\n"
+		return 255 # Test is not applicable.
+	fi
+}
+
+# Check if D-Bus service is present. Arguments are:
+# Args:
+# $1: 'system' or 'session' keyword
+# $2: Bus name (e.g. 'org.domain.foo')
+# $3: Object (e.g. '/')
+# require_dbus 'system' 'org.freedesktop.fwupd' '/' || return 255
+function require_dbus {
+	require "gdbus" || return 255
+	eval "gdbus introspect --$1 -d $2 -o $3 >/dev/null 2>&1"
+	if [ $? -gt 0 ]; then
+		echo -e "No '$2' ($1) D-Bus bus found!\n"
+		return 255 # Test is not applicable.
+	fi
+}
+
 # Check if probe exists, use it as follows:
 # probecheck 'probe' || return 255
 function probecheck {
@@ -334,6 +359,27 @@ log_and_fail() {
 die() {
 	log_and_fail "$1" "$2"
 	exit $?
+}
+
+# See https://github.com/martinpitt/python-dbusmock
+# Args:
+# $1: The name of the mock template file without extension.
+init_dbus_mock() {
+	require_python_module "dbusmock" || return 255
+	require "gdbus" || return 255
+	printf "%s\n" "Initializing D-Bus mock from template: $1.py"
+	python -m dbusmock --template "${srcdir}/$1.py" & disown
+	# We have to replace system bus address because mock D-Bus
+	# endpoint is created inside the user session
+	export DBUS_SYSTEM_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS
+}
+
+# Args:
+# $1: The name of the mock service bus
+clean_dbus_mock() {
+	require "gdbus" || return 255
+	printf "%s\n" "Shutting down D-Bus mock: $1"
+	gdbus call --session -d "$1" -o / -m "$1.Exit" || true
 }
 
 export -f assert_exists
