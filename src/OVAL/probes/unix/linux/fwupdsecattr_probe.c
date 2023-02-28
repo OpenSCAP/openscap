@@ -277,13 +277,17 @@ fwupd_security_attr_result_to_string(FwupdSecurityAttrResult result)
 		return "supported";
 	if (result == FWUPD_SECURITY_ATTR_RESULT_NOT_SUPPORTED)
 		return "not-supported";
-	return NULL;
+	if (result == FWUPD_SECURITY_ATTR_RESULT_UNKNOWN) {
+		dD("Got FWUPD_SECURITY_ATTR_RESULT_UNKNOWN\n");
+		return "unknown";
+	}
+	dW("Unknown/invalid FwupdSecurityAttrResult value: %d\n", result);
+	return "invalid-hsi-result";
 }
 
 int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *val, *item, *ent, *probe_in;
-	oval_schema_version_t oval_version;
 	char *stream_id = NULL;
 	const char *hsi_result_str;
 	uint64_t hsi_result = UINT64_MAX;
@@ -296,11 +300,6 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 	probe_in = probe_ctx_getobject(ctx);
 	if (probe_in == NULL)
 		return PROBE_ENOOBJ;
-
-	oval_version = probe_obj_get_platform_schema_version(probe_in);
-	if (oval_schema_version_cmp(oval_version, OVAL_SCHEMA_VERSION(5.11.3)) < 0) {
-		return PROBE_EOPNOTSUPP;
-	}
 
 	ent = probe_obj_getent(probe_in, "stream_id", 1);
 	if (ent == NULL)
@@ -316,10 +315,10 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 	SEXP_free(val);
 	SEXP_free(ent);
 
-	DBusError dbus_error;
-	DBusConnection *dbus_conn;
-
 	if (LIST_EMPTY(&hsi_result_cache)) {
+		DBusError dbus_error;
+		DBusConnection *dbus_conn;
+
 		dbus_error_init(&dbus_error);
 		dbus_conn = connect_dbus();
 
@@ -332,7 +331,10 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 			return 0;
 		}
 
-		if (get_all_security_attributes(dbus_conn, hsicache_callback, NULL)) {
+		int res = get_all_security_attributes(dbus_conn, hsicache_callback, NULL);
+		disconnect_dbus(dbus_conn);
+
+		if (res) {
 			dbus_error_free(&dbus_error);
 			SEXP_t *msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_INFO, "The fwupd service is not properly installed or configured.");
 			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
@@ -361,6 +363,5 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 
 exit:
 	free(stream_id);
-	disconnect_dbus(dbus_conn);
 	return 0;
 }
