@@ -48,6 +48,7 @@
 #ifdef OSCAP_UNIX
 #include <sys/utsname.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <sys/socket.h>
 #include <pwd.h>
 #include <sys/types.h>
@@ -56,7 +57,6 @@
 #if defined(OS_LINUX)
 #include <ifaddrs.h>
 #include <net/if.h>
-#include <netdb.h>
 #include <sys/ioctl.h>
 #endif
 
@@ -65,7 +65,6 @@
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <net/if.h>
-#include <netdb.h>
 #include <netinet/in.h>
 #include <sys/ioctl.h>
 #include <sys/sockio.h>
