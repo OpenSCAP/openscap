@@ -31,6 +31,7 @@ BuildRequires:  systemd
 %if %{?_with_check:1}%{!?_with_check:0}
 BuildRequires:  perl-XML-XPath
 BuildRequires:  bzip2
+BuildRequires:  python3-dbusmock
 %endif
 Requires:       bash
 Requires:       bzip2-libs
