@@ -21,24 +21,12 @@
 ''' oscap docker command '''
 
 import argparse
-from oscap_docker_python.oscap_docker_util import OscapAtomicScan, \
-    OscapDockerScan, isAtomicLoaded
+from oscap_docker_python.oscap_docker_util import OscapDockerScan
 
 import docker
 import traceback
 import sys
 from requests import exceptions
-
-
-def ping_docker():
-    ''' Simple check if the docker daemon is running '''
-    # Class docker.Client was renamed to docker.APIClient in
-    # python-docker-py 2.0.0.
-    try:
-        client = docker.APIClient()
-    except AttributeError:
-        client = docker.Client()
-    client.ping()
 
 
 if __name__ == '__main__':
@@ -47,9 +35,6 @@ if __name__ == '__main__':
                                      more about OSCAP-ARGUMENTS')
     parser.add_argument('--oscap', dest='oscap_binary', default='',
                         help='Set the oscap binary to use')
-
-    parser.add_argument('--disable-atomic', dest='noatomic', action='store_true',
-                        help="Force to use native docker API instead of atomic")
     subparser = parser.add_subparsers(help="commands")
 
     # Scan CVEs in image
@@ -87,35 +72,14 @@ if __name__ == '__main__':
         sys.exit(2)
 
     try:
-        ping_docker()
-
-    except exceptions.ConnectionError:
-        print("The docker daemon does not appear to be running")
-        sys.exit(1)
-
-    try:
-        if isAtomicLoaded() and not args.noatomic:
-            print("Using Atomic API")
-            OS = OscapAtomicScan(oscap_binary=args.oscap_binary)
-            if args.action == "scan":
-                rc = OscapAtomicScan.scan(OS, args.scan_target, leftover_args)
-            elif args.action == "scan_cve":
-                rc = OscapAtomicScan.scan_cve(OS, args.scan_target, leftover_args)
-            else:
-                parser.print_help()
-                sys.exit(2)
-
-        else:  # without atomic
-            print("Using native Docker API")
-
-            ODS = OscapDockerScan(args.scan_target, args.is_image, args.oscap_binary)
-            if args.action == "scan":
-                rc = OscapDockerScan.scan(ODS, leftover_args)
-            elif args.action == "scan_cve":
-                rc = OscapDockerScan.scan_cve(ODS, leftover_args)
-            else:
-                parser.print_help()
-                sys.exit(2)
+        ODS = OscapDockerScan(args.scan_target, args.is_image, args.oscap_binary)
+        if args.action == "scan":
+            rc = OscapDockerScan.scan(ODS, leftover_args)
+        elif args.action == "scan_cve":
+            rc = OscapDockerScan.scan_cve(ODS, leftover_args)
+        else:
+            parser.print_help()
+            sys.exit(2)
 
     except (ValueError, RuntimeError) as e:
         raise e
