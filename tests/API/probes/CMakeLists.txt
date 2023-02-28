@@ -39,11 +39,13 @@ target_include_directories(oval_fts_list PUBLIC
 target_link_libraries(oval_fts_list openscap)
 add_oscap_test("fts.sh")
 
-add_oscap_test_executable(test_memusage
-	"test_memusage.c"
-	"${CMAKE_SOURCE_DIR}/src/common/bfind.c"
-)
-target_include_directories(test_memusage PUBLIC
-	"${CMAKE_SOURCE_DIR}/src/common"
-)
-add_oscap_test("test_memusage.sh")
+if(OS_LINUX)
+	add_oscap_test_executable(test_memusage
+		"test_memusage.c"
+		"${CMAKE_SOURCE_DIR}/src/common/bfind.c"
+	)
+	target_include_directories(test_memusage PUBLIC
+		"${CMAKE_SOURCE_DIR}/src/common"
+	)
+	add_oscap_test("test_memusage.sh")
+endif(OS_LINUX)
