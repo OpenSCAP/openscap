@@ -32,13 +32,10 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Install Deps
-      env:
-        ACCEPT_EULA: Y
       run: |
         sudo apt-get update
-        sudo env ACCEPT_EULA=Y apt-get upgrade
-        sudo apt-get install lcov swig xsltproc rpm-common lua5.3 libyaml-dev libapt-pkg-dev libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libxslt1-dev libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev librtmp-dev libxmlsec1-dev libxmlsec1-openssl
-        sudo apt-get remove rpm
+        sudo apt-get -y install lcov swig xsltproc rpm-common lua5.3 libyaml-dev libapt-pkg-dev libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libxslt1-dev libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev librtmp-dev libxmlsec1-dev libxmlsec1-openssl
+        sudo apt-get -y remove rpm
 
     # Runs a set of commands using the runners shell
     - name: Build
