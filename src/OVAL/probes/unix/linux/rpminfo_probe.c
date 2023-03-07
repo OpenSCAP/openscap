@@ -60,6 +60,9 @@
 #include <regex.h>
 
 /* RPM headers */
+#ifdef RPM418_FOUND
+#include <rpm/rpmcrypto.h>
+#endif
 #include "rpm-helper.h"
 
 /* SEAP */

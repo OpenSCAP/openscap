@@ -47,6 +47,9 @@
 #include "oscap_helpers.h"
 
 /* Individual RPM headers */
+#ifdef RPM418_FOUND
+#include <rpm/rpmcrypto.h>
+#endif
 #include <rpm/rpmfi.h>
 #include <rpm/rpmcli.h>
 
