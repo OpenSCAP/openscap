@@ -294,6 +294,17 @@ void *rpminfo_probe_init(void)
 		return ((void *)g_rpm);
         }
 
+        /*
+        * Fedora >=36 changed the default dbpath in librpm from /var/lib/rpm to /usr/lib/sysimage/rpm
+        * See: https://fedoraproject.org/wiki/Changes/RelocateRPMToUsr
+        * Therefore, when running openscap on a Fedora >=36 system scanning another systems (such as RHEL, SLES, Fedora<36)
+        * openscap's librpm will try to read the rpm db from /usr/lib/sysimage/rpm which doesn't exist and therefore won't work.
+        * In implementing this change, /var/lib/rpm is still a symlink to /usr/lib/sysimage/rpm
+        * so /var/lib/rpm still works. So /var/lib/rpm is a dbpath that will work on all systems.
+        * Therefore, set the dbpath to be /var/lib/rpm, allow openscap running on any system to scan any system.
+        */
+        rpmPushMacro(NULL, "_dbpath", NULL, "/var/lib/rpm", RMIL_CMDLINE);
+
 	g_rpm->rpmts = rpmtsCreate();
 	pthread_mutex_init (&(g_rpm->mutex), NULL);
 
