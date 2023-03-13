@@ -56,7 +56,7 @@
 #include "memusage.h"
 #include "bfind.h"
 
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(__FreeBSD__) || defined(OS_SOLARIS)
 static int read_common_sizet(void *szp, char *strval)
 {
 	char *end;
