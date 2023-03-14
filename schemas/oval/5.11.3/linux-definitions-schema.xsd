@@ -2508,7 +2508,6 @@
                </xsd:complexContent>
           </xsd:complexType>
      </xsd:element>
-
      <!-- =============================================================== -->
      <!-- =================   FWUPD SECURITY ATTRIBUTE   ================ -->
      <!-- =============================================================== -->
@@ -2569,7 +2568,7 @@
                               <xsd:choice>
                                    <xsd:element ref="oval-def:set"/>
                                    <xsd:sequence>
-                                        <xsd:element name="stream-id" type="oval-def:EntityObjectStringType">
+                                        <xsd:element name="stream_id" type="oval-def:EntityObjectStringType">
                                              <xsd:annotation>
                                                   <xsd:documentation>This refers to a specific firmware, hardware, and fw/hw configurations and is defined by fwupd.</xsd:documentation>
                                              </xsd:annotation>
@@ -2590,7 +2589,7 @@
                <xsd:complexContent>
                     <xsd:extension base="oval-def:StateType">
                          <xsd:sequence>
-                              <xsd:element name="security-attr" type="oval-def:EntityObjectStringType">
+                              <xsd:element name="security_attr" type="oval-def:EntityObjectStringType">
                                    <xsd:annotation>
                                         <xsd:documentation>This is the current firmware security status defined by fwupd.</xsd:documentation>
                                    </xsd:annotation>
@@ -2600,10 +2599,6 @@
                </xsd:complexContent>
           </xsd:complexType>
      </xsd:element>
-
-
-
-
      <!-- =============================================================================== -->
      <!-- =============================================================================== -->
      <!-- =============================================================================== -->

@@ -34,7 +34,7 @@ jobs:
     - name: Install Deps
       run: |
         sudo apt-get update
-        sudo apt-get -y install lcov swig xsltproc rpm-common lua5.3 libyaml-dev libapt-pkg-dev libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libxslt1-dev libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev librtmp-dev libxmlsec1-dev libxmlsec1-openssl
+        sudo apt-get -y install lcov swig xsltproc rpm-common lua5.3 libyaml-dev libapt-pkg-dev libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libxslt1-dev libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev librtmp-dev libxmlsec1-dev libxmlsec1-openssl python3-dbusmock
         sudo apt-get -y remove rpm
 
     # Runs a set of commands using the runners shell
@@ -47,6 +47,7 @@ jobs:
     - name: Test
       working-directory: ./build
       run: |
+        export $(dbus-launch)
         ctest --output-on-failure
 
   build-fedora:
@@ -56,7 +57,7 @@ jobs:
       image: fedora:latest
     steps:
     - name: Install Deps
-      run: dnf install -y cmake git dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace
+      run: dnf install -y cmake git dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -69,6 +70,7 @@ jobs:
     - name: Test
       working-directory: ./build
       run: |
+        export $(dbus-launch)
         ctest --output-on-failure
 
   build-macos:
