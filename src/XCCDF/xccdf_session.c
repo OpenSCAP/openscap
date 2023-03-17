@@ -716,7 +716,9 @@ int xccdf_session_load(struct xccdf_session *session)
 			return ret;
 		}
 	}
-	return xccdf_session_load_tailoring(session);
+	ret = xccdf_session_load_tailoring(session);
+	oscap_source_free_xmlDoc(session->source);
+	return ret;
 }
 
 static int _reporter(const char *file, int line, const char *msg, void *arg)
