@@ -12,6 +12,7 @@ set -e -o pipefail
 
 function test_eval {
     probecheck "rpminfo" || return 255
+    [ -e "/var/lib/rpm" ] || return 255
     local stderr=$(mktemp -t ${name}.out.XXXXXX)
     $OSCAP xccdf eval "${srcdir}/$1" 2> $stderr
     diff /dev/null $stderr; rm $stderr
