@@ -845,6 +845,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 			   errno, strerror(errno));
 		}
 		free((void *) paths[0]);
+		pcre_free(regex);
 		return NULL;
 	}
 
@@ -860,6 +861,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 	if (ofts->ofts_match_path_fts == NULL || errno != 0) {
 		dE("fts_open() failed, errno: %d \"%s\".", errno, strerror(errno));
 		OVAL_FTS_free(ofts);
+		pcre_free(regex);
 		return (NULL);
 	}
 
