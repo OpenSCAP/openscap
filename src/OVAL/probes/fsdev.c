@@ -114,6 +114,7 @@ static int is_local_fs(struct mntent *ment)
 	};
 	const char *network_fs[] = {
 		"afs",
+		"auristorfs",
 		"ceph",
 		"cifs",
 		"smb3",
