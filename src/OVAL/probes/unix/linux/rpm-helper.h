@@ -30,6 +30,7 @@
 #include <rpm/rpmts.h>
 #include <rpm/rpmmacro.h>
 #include <rpm/rpmlog.h>
+#include <rpm/rpmpgp.h>
 #include <rpm/header.h>
 
 #include <pthread.h>
