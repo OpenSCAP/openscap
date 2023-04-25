@@ -96,6 +96,12 @@ OSCAP_API struct oscap_source *oscap_source_clone(struct oscap_source *old);
 OSCAP_API void oscap_source_free(struct oscap_source *source);
 
 /**
+ * Dispose oscap_source xmlDoc structure.
+ * @param source Resource to dispose xmlDoc structure from
+ */
+OSCAP_API void oscap_source_free_xmlDoc(struct oscap_source *source);
+
+/**
  * Get filepath of the given resource
  * @memberof oscap_source
  * @param source

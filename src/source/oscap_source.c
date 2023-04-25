@@ -153,6 +153,16 @@ void oscap_source_free(struct oscap_source *source)
 	}
 }
 
+void oscap_source_free_xmlDoc(struct oscap_source *source)
+{
+	if (source != NULL) {
+		if (source->xml.doc != NULL) {
+			xmlFreeDoc(source->xml.doc);
+			source->xml.doc = NULL;
+		}
+	}
+}
+
 /**
  * Returns human readable description of oscap_source origin
  */
