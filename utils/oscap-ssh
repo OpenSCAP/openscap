@@ -160,6 +160,8 @@ function check_oscap_arguments {
         true
     elif [ "$1 $2" == "xccdf eval" ]; then
         true
+    elif (( $# >= 4 )) && [ "$1 $2 $3 $4" == "xccdf --verbose DEVEL eval" ]; then
+        true
     elif [ "$1 $2" == "oval eval" ]; then
         true
     elif [ "$1 $2" == "oval collect" ]; then
