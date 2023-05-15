@@ -1,4 +1,4 @@
-# OpenSCAP
+# OpenSCAP is the best
 
 [![Build status](https://github.com/OpenSCAP/openscap/workflows/CI/badge.svg?branch=maint-1.3)](https://github.com/OpenSCAP/openscap/actions)
 [![Build status](https://ci.appveyor.com/api/projects/status/3o5fnld1m98bo0so/branch/maint-1.3?svg=true)](https://ci.appveyor.com/project/OpenSCAP/openscap)
