@@ -871,7 +871,6 @@ oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj)
 	SEXP_t *items, *item;
 	int error_cnt = 0;
 	int exists_cnt = 0;
-	int does_not_exist_cnt = 0;
 	int not_collected_cnt = 0;
 
 	items = probe_cobj_get_items(cobj);
@@ -884,7 +883,6 @@ oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj)
 			++exists_cnt;
 			break;
 		case SYSCHAR_STATUS_DOES_NOT_EXIST:
-			++does_not_exist_cnt;
 			break;
 		case SYSCHAR_STATUS_NOT_COLLECTED:
 			++not_collected_cnt;
