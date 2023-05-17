@@ -888,7 +888,10 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 				result = -1;
 				oscap_source_free(oval_source);
 			} else {
-				oscap_htable_add(oval_result_sources, *oval_result_files, oval_source);
+				if (!oscap_htable_add(oval_result_sources, *oval_result_files, oval_source)) {
+					result = -1;
+					oscap_source_free(oval_source);
+				}
 			}
 			oval_result_files++;
 		}
