@@ -56,7 +56,7 @@ sudo yum install \
 cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
 pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig \
-bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel
+bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel apt-devel
 ----
 
 On Fedora 24+, the command to install the build dependencies is:
@@ -66,7 +66,7 @@ sudo yum install \
 cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
 pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig \
-bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel
+bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel apt-devel
 ----
 
 On RHEL 8 / CentOS 8, the command to install the build dependencies is:
@@ -76,7 +76,7 @@ sudo yum install \
 cmake dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
 pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python36-devel rpm-devel swig \
-bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel
+bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel apt-devel
 ----
 
 On Ubuntu 16.04, Debian 8 or Debian 9, the command to install the build dependencies is:

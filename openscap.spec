@@ -13,6 +13,9 @@ BuildRequires:  cmake >= 2.6
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  swig libxml2-devel libxslt-devel perl-generators perl-XML-Parser
+%if 0%{?fedora}
+BuildRequires:  apt-devel
+%endif
 BuildRequires:  rpm-devel
 BuildRequires:  libgcrypt-devel
 BuildRequires:  pcre-devel
@@ -41,6 +44,9 @@ Requires:       libacl
 Requires:       libblkid
 Requires:       libcap
 Requires:       libselinux
+%if 0%{?fedora}
+Requires:       apt-libs
+%endif
 Requires:       openldap
 Requires:       popt
 # Fedora has procps-ng, which provides procps
