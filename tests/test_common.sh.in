@@ -368,7 +368,7 @@ init_dbus_mock() {
 	require_python_module "dbusmock" || return 255
 	require "gdbus" || return 255
 	printf "%s\n" "Initializing D-Bus mock from template: $1.py"
-	python3 -m dbusmock --template "${srcdir}/$1.py" & disown
+	python3 -m dbusmock --template "${srcdir}/$1.py" &
 	# We have to replace system bus address because mock D-Bus
 	# endpoint is created inside the user session
 	export DBUS_SYSTEM_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS
@@ -380,6 +380,7 @@ clean_dbus_mock() {
 	require "gdbus" || return 255
 	printf "%s\n" "Shutting down D-Bus mock: $1"
 	gdbus call --session -d "$1" -o / -m "$1.Exit" >/dev/null 2>&1 || true
+	export DBUS_SYSTEM_BUS_ADDRESS=
 }
 
 export -f assert_exists
