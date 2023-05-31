@@ -30,7 +30,8 @@
 #include <config.h>
 #endif
 
-#include <probe-api.h>
+#include <probe/probe.h>
+#include "probe-api.h"
 #include "probe/entcmp.h"
 #include "sysctl_probe.h"
 
@@ -40,7 +41,6 @@
 #include <limits.h>
 #include <string.h>
 
-#include "oval_fts.h"
 #include "common/debug_priv.h"
 
 #define SYSCTL_CMD "/sbin/sysctl -ae"
@@ -58,6 +58,11 @@
 
 #define PROC_SYS_DIR "/proc/sys"
 #define PROC_SYS_MAXDEPTH 7
+
+int sysctl_probe_offline_mode_supported(void)
+{
+        return PROBE_OFFLINE_OWN;
+}
 
 int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 {
@@ -119,10 +124,11 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
          * collect sysctls
          *  XXX: use direct access for the "equals" op
          */
-        ofts = oval_fts_open_prefixed(NULL, path_entity, filename_entity, NULL, bh_entity, probe_ctx_getresult(ctx));
+        const char *prefix = getenv("OSCAP_PROBE_ROOT");
+        ofts = oval_fts_open_prefixed(prefix, path_entity, filename_entity, NULL, bh_entity, probe_ctx_getresult(ctx));
 
         if (ofts == NULL) {
-                dE("oval_fts_open_prefixed(%s, %s) failed", PROC_SYS_DIR, ".\\+");
+                dE("oval_fts_open_prefixed(%s, %s) (prefix: %s) failed", PROC_SYS_DIR, ".\\+", prefix);
                 SEXP_free(path_entity);
                 SEXP_free(filename_entity);
                 SEXP_free(bh_entity);
@@ -283,6 +289,12 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 }
 
 #elif defined(OS_FREEBSD)
+
+int sysctl_probe_offline_mode_supported(void)
+{
+        return PROBE_OFFLINE_NONE;
+}
+
 int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         FILE *fp;
@@ -360,9 +372,17 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
         pclose(fp);
         return (0);
 }
+
 #else
+
+int sysctl_probe_offline_mode_supported(void)
+{
+        return PROBE_OFFLINE_NONE;
+}
+
 int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         return(PROBE_EOPNOTSUPP);
 }
+
 #endif
