@@ -18,7 +18,7 @@ function test_probes_fwupdsecattr {
     [ -f $RF ] && rm -f $RF
 
     init_dbus_mock $DBUS_MOCK_NAME
-    $OSCAP oval eval --results $RF $DF 2>$stderr
+    $OSCAP oval eval --results $RF $DF 2>$stderr || true
     clean_dbus_mock $DBUS_MOCK_NAME
 
     if [ -f $RF ]; then
