@@ -292,11 +292,6 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 	const char *hsi_result_str;
 	uint64_t hsi_result = UINT64_MAX;
 
-	/* arg is NULL if regex compilation failed */
-	if (arg == NULL) {
-		return PROBE_EINIT;
-	}
-
 	probe_in = probe_ctx_getobject(ctx);
 	if (probe_in == NULL)
 		return PROBE_ENOOBJ;
