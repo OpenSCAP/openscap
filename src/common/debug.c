@@ -187,11 +187,14 @@ static const char *__oscap_path_rstrip(const char *path)
 }
 
 
-static void debug_message_start(int level, int indent)
+static void debug_message_start(int level, int delta_indent)
 {
 	char  l;
+	static int indent = 0;
 
 	__LOCK_FP;
+
+	indent += delta_indent;
 
 	switch (level) {
 	case DBG_E:
@@ -250,13 +253,11 @@ static void debug_message_end()
 
 void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, int delta_indent, const char *fmt, ...)
 {
-	static int indent = 0;
 	va_list ap;
 
 	if (__debuglog_fp == NULL) {
 		return;
 	}
-	indent += delta_indent;
 	if (fmt == NULL) {
 		return;
 	}
@@ -264,7 +265,7 @@ void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, 
 		return;
 	}
 	va_start(ap, fmt);
-	debug_message_start(level, indent);
+	debug_message_start(level, delta_indent);
 	vfprintf(__debuglog_fp, fmt, ap);
 	if (__debuglog_level == DBG_D) {
 		debug_message_devel_metadata(file, fn, line);
