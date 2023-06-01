@@ -307,7 +307,6 @@ void oval_sysinfo_to_dom(struct oval_sysinfo *sysinfo, xmlDoc * doc, xmlNode * t
 {
         xmlNode *nodestr, *nodelst;
         xmlDoc  *docstr;
-	int i;
 
 	if (sysinfo) {
 		xmlNs *ns_syschar = xmlSearchNsByHref(doc, tag_parent, OVAL_SYSCHAR_NAMESPACE);
@@ -320,7 +319,7 @@ void oval_sysinfo_to_dom(struct oval_sysinfo *sysinfo, xmlDoc * doc, xmlNode * t
 
 		xmlNode *tag_interfaces = xmlNewTextChild(tag_sysinfo, ns_syschar, BAD_CAST "interfaces", NULL);
 		struct oval_sysint_iterator *intrfcs = oval_sysinfo_get_interfaces(sysinfo);
-		for (i = 1; oval_sysint_iterator_has_more(intrfcs); i++) {
+		while (oval_sysint_iterator_has_more(intrfcs)) {
 			struct oval_sysint *intrfc = oval_sysint_iterator_next(intrfcs);
 			oval_sysint_to_dom(intrfc, doc, tag_interfaces);
 		}

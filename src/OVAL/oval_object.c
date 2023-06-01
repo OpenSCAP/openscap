@@ -439,8 +439,7 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 	oval_behavior_iterator_free(behaviors);
 
 	struct oval_object_content_iterator *contents = oval_object_get_object_contents(object);
-	int i;
-	for (i = 0; oval_object_content_iterator_has_more(contents); i++) {
+	while (oval_object_content_iterator_has_more(contents)) {
 		struct oval_object_content *content = oval_object_content_iterator_next(contents);
 		oval_object_content_to_dom(content, doc, object_node);
 	}
