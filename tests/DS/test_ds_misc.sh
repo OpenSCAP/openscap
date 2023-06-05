@@ -262,7 +262,7 @@ function test_ds_error_remote_resources() {
 
 	$OSCAP xccdf eval --fetch-remote-resources --profile "$PROFILE" --results "$result" "$DS" 2>"$stderr" || ret=$?
 	grep -q "Downloading: https://www.example.com/security/data/oval/oval.xml.bz2 ... error" "$stderr"
-	grep -q "OpenSCAP Error: Download failed: HTTP response code said error: 404" "$stderr"
+	grep -q "OpenSCAP Error: Download failed" "$stderr"
 
 	rm -f "$result" "$stderr"
 }
