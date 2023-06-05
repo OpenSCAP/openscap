@@ -408,6 +408,11 @@ static int is_openembedded(void)
 	return parse_os_release("cpe:/o:openembedded:nodistro");
 }
 
+static int is_poky(void)
+{
+	return parse_os_release("cpe:/o:openembedded:poky");
+}
+
 static int is_common (void)
 {
         return (1);
@@ -430,7 +435,8 @@ const distro_tbl_t distro_tbl[] = {
         { &is_solaris,  &get_runlevel_redhat   },
         { &is_wrlinux,  &get_runlevel_wrlinux  },
         { &is_common,   &get_runlevel_common   },
-        { &is_openembedded,  &get_runlevel_common  }
+        { &is_openembedded,  &get_runlevel_common  },
+        { &is_poky,     &get_runlevel_common  }
 };
 
 #define DISTRO_TBL_SIZE ((sizeof distro_tbl)/sizeof (distro_tbl_t))
