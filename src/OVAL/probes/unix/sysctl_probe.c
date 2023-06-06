@@ -53,6 +53,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
+#include <dirent.h>
 #include "oval_fts.h"
 #include "common/debug_priv.h"
 
@@ -128,13 +129,22 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
         ofts = oval_fts_open_prefixed(prefix, path_entity, filename_entity, NULL, bh_entity, probe_ctx_getresult(ctx));
 
         if (ofts == NULL) {
-                dE("oval_fts_open_prefixed(%s, %s) (prefix: %s) failed", PROC_SYS_DIR, ".\\+", prefix);
                 SEXP_free(path_entity);
                 SEXP_free(filename_entity);
                 SEXP_free(bh_entity);
                 SEXP_free(name_entity);
 
-                return (PROBE_EFATAL);
+                if (prefix != NULL) {
+                        DIR *d = opendir(prefix);
+                        if (d != NULL) {
+                                closedir(d);
+                                return PROBE_ESUCCESS;
+                        }
+                        dW("Can't open prefix directory '%s': %s", prefix, strerror(errno));
+                }
+
+                dE("oval_fts_open_prefixed(%s, %s, %s, ...) failed", prefix, PROC_SYS_DIR, ".*");
+                return PROBE_EFATAL;
         }
 
         while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
