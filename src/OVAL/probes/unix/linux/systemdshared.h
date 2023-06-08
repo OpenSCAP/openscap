@@ -85,6 +85,8 @@ static char *get_path_by_unit(DBusConnection *conn, const char *unit)
 		// if it hasn't been loaded yet.
 		"LoadUnit"
 	);
+	dD("LoadUnit: %s", unit);
+
 	if (msg == NULL) {
 		dD("Failed to create dbus_message via dbus_message_new_method_call!");
 		goto cleanup;
@@ -124,7 +126,7 @@ static char *get_path_by_unit(DBusConnection *conn, const char *unit)
 	}
 
 	if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_OBJECT_PATH) {
-		dD("Expected string argument in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
+		dD("Expected object path argument in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
 		goto cleanup;
 	}
 
@@ -152,7 +154,7 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 		"org.freedesktop.systemd1",
 		"/org/freedesktop/systemd1",
 		"org.freedesktop.systemd1.Manager",
-		"ListUnits"
+		"ListUnitFiles"
 	);
 	if (msg == NULL) {
 		dD("Failed to create dbus_message via dbus_message_new_method_call!");
@@ -201,17 +203,18 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 			goto cleanup;
 		}
 
-		DBusMessageIter unit_name;
-		dbus_message_iter_recurse(&unit_iter, &unit_name);
+		DBusMessageIter unit_full_path_and_name;
+		dbus_message_iter_recurse(&unit_iter, &unit_full_path_and_name);
 
-		if (dbus_message_iter_get_arg_type(&unit_name) != DBUS_TYPE_STRING) {
-			dD("Expected string as the first element in the unit struct. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&unit_name)));
+		if (dbus_message_iter_get_arg_type(&unit_full_path_and_name) != DBUS_TYPE_STRING) {
+			dD("Expected string as the first element in the unit struct. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&unit_full_path_and_name)));
 			goto cleanup;
 		}
 
 		_DBusBasicValue value;
-		dbus_message_iter_get_basic(&unit_name, &value);
-		char *unit_name_s = oscap_strdup(value.str);
+		dbus_message_iter_get_basic(&unit_full_path_and_name, &value);
+		char *unit_name_s = oscap_strdup(basename(value.str));
+		oscap_strrm(unit_name_s, "@");
 		int cbret = callback(unit_name_s, cbarg);
 		free(unit_name_s);
 		if (cbret != 0) {
