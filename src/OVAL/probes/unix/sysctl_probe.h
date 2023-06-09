@@ -25,6 +25,8 @@
 
 #include "probe-api.h"
 
+int sysctl_probe_offline_mode_supported(void);
+
 int sysctl_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_SYSCTL_PROBE_H */
