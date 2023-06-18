@@ -622,7 +622,7 @@ xccdf_policy_is_item_selected(struct xccdf_policy *policy, const char *id)
 	const bool *tmp = (const bool*) oscap_htable_get(policy->selected_final, id);
 	if (tmp	== NULL) {
 		/* This shall really never happen. All valid IDs of any
-		 * xccdf:Item shall be stored in the dictionery. However,
+		 * xccdf:Item shall be stored in the dictionary. However,
 		 * we shall not to segfault. */
 		assert(false);
 		return false;
