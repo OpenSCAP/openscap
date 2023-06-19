@@ -329,7 +329,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_UNIX_RUNLEVEL, NULL, runlevel_probe_main, NULL, runlevel_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_SHADOW
-	{OVAL_UNIX_SHADOW, NULL, shadow_probe_main, NULL, NULL},
+	{OVAL_UNIX_SHADOW, NULL, shadow_probe_main, NULL, shadow_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_SYMLINK
 	{OVAL_UNIX_SYMLINK, NULL, symlink_probe_main, NULL, symlink_probe_offline_mode_supported},
