@@ -313,6 +313,24 @@ static inline char *oscap_strdup(const char *str) {
 #endif
 }
 
+/**
+ * Removes all occurrences of substr from str by shifting the contents to
+ * the left. If string is NULL, does nothing.
+ * @param str String we want to process
+ * @param substr Sub-string we want to get rid of
+ */
+static inline void oscap_strrm(char *str, const char *substr) {
+	if (str == NULL)
+		return;
+
+	size_t sublen = strlen(substr);
+	char *ptr = strstr(str, substr);
+	while (ptr != NULL) {
+		memmove(ptr, ptr+sublen, strlen(ptr) - sublen + 1);
+		ptr = strstr(str, substr);
+	}
+}
+
 /// Just like strcmp except it's NULL-safe. Use the standard strcmp directly if possible.
 static inline int oscap_strcmp(const char *s1, const char *s2) {
 	if (s1 == NULL) s1 = "";
