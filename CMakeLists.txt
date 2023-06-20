@@ -125,8 +125,8 @@ endif()
 find_package(PythonInterp 3)
 find_package(PythonLibs 3)
 
-set(PREFERRED_PYTHON_PATH "${PYTHON_EXECUTABLE}")
-set(PYTHON3_PATH "${PYTHON_EXECUTABLE}")
+set(PREFERRED_PYTHON_PATH "${PYTHON_EXECUTABLE}" CACHE STRING "")
+set(PYTHON3_PATH "${PYTHON_EXECUTABLE}" CACHE STRING "")
 
 find_package(RPM)
 if(RPM_FOUND)
