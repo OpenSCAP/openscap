@@ -1,3 +1,14 @@
+openscap-1.3.8                                                  21-06-2023
+- New features
+  - The boot-time remediation service for systemd's Offline Update mode is now disabled by default
+  - Add offline capabilities to the shadow OVAL probe
+  - Add offline capabilities to the sysctl OVAL probe
+  - Add 'auristorfs' to list of network fileystems
+  - Add new experimental linux-bound fwupdsecattr probe for system firmware security attributes (fwupd-based)
+- Maintenance, bug fix
+  - Use ListUnitFiles D-Bus method to fetch all units in systemd OVAL probe
+  - Fix minor resource leaks
+
 openscap-1.3.7                                                  26-01-2023
 - Maintenance, bug fix
   - Fix error when processing OVAL filters (rhbz#2126882, rhbz#2126883)
