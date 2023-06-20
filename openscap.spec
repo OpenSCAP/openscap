@@ -30,7 +30,6 @@ BuildRequires:  glib2-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libyaml-devel
 BuildRequires:  xmlsec1-devel xmlsec1-openssl-devel
-BuildRequires:  systemd
 %if %{?_with_check:1}%{!?_with_check:0}
 BuildRequires:  perl-XML-XPath
 BuildRequires:  bzip2
@@ -159,12 +158,6 @@ pathfix.py -i %{__python3} -p -n $RPM_BUILD_ROOT%{_bindir}/scap-as-rpm
 
 %ldconfig_scriptlets
 
-# enable oscap-remediate.service here for now
-# https://github.com/hughsie/PackageKit/issues/401
-# https://bugzilla.redhat.com/show_bug.cgi?id=1833176
-mkdir -p %{buildroot}%{_unitdir}/system-update.target.wants/
-ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.wants/oscap-remediate.service
-
 %files
 %doc AUTHORS NEWS README.md
 %license COPYING
@@ -197,9 +190,6 @@ ln -sf ../oscap-remediate.service %{buildroot}%{_unitdir}/system-update.target.w
 %{_bindir}/oscap
 %{_bindir}/oscap-chroot
 %{_sysconfdir}/bash_completion.d
-%{_libexecdir}/oscap-remediate
-%{_unitdir}/oscap-remediate.service
-%{_unitdir}/system-update.target.wants/
 
 %files utils
 %doc docs/oscap-scan.cron
