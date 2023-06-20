@@ -23,6 +23,7 @@ import re
 import sys
 import pathlib
 import xml.etree.ElementTree as ET
+import xml.dom.minidom
 
 
 ALL_NS = {
@@ -110,10 +111,10 @@ class Tailoring:
             change.set("idref", self._full_var_id(varname))
             change.text = str(value)
 
-        if location == "-":
-            location = sys.stdout.buffer
-
-        ET.ElementTree(root).write(location)
+        root_str = ET.tostring(root)
+        pretty_xml = xml.dom.minidom.parseString(root_str).toprettyxml()
+        with open(location, "w") if location != "-" else sys.stdout as f:
+            f.write(pretty_xml)
 
 
 def parse_args():
