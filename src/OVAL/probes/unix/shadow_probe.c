@@ -177,36 +177,62 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
         SEXP_free_r(&se_flg_mem);
 }
 
+static void _process_struct_shadow(struct spwd *sp, SEXP_t *un_ent, probe_ctx *ctx)
+{
+        SEXP_t *un;
+        struct result_info r;
+
+	dI("Have user: %s", sp->sp_namp);
+	un = SEXP_string_newf("%s", sp->sp_namp);
+	if (probe_entobj_cmp(un_ent, un) != OVAL_RESULT_TRUE) {
+		SEXP_free(un);
+		return;
+	}
+
+	r.username = sp->sp_namp;
+	r.password = sp->sp_pwdp;
+	r.chg_lst = sp->sp_lstchg;
+	r.chg_allow = sp->sp_min;
+	r.chg_req = sp->sp_max;
+	r.exp_warn = sp->sp_warn;
+	r.exp_inact = sp->sp_inact;
+	r.exp_date = sp->sp_expire;
+	r.flag = sp->sp_flag;
+
+	report_finding(&r, ctx);
+        SEXP_free(un);
+}
+
 static int read_shadow(SEXP_t *un_ent, probe_ctx *ctx)
 {
-	int err = 1;
-	struct spwd *pw;
+	struct spwd *sp;
 
-	while ((pw = getspent())) {
-		SEXP_t *un;
-
-		dI("Have user: %s", pw->sp_namp);
-		err = 0;
-		un = SEXP_string_newf("%s", pw->sp_namp);
-		if (probe_entobj_cmp(un_ent, un) == OVAL_RESULT_TRUE) {
-			struct result_info r;
-
-			r.username = pw->sp_namp;
-			r.password = pw->sp_pwdp;
-			r.chg_lst = pw->sp_lstchg;
-			r.chg_allow = pw->sp_min;
-			r.chg_req = pw->sp_max;
-			r.exp_warn = pw->sp_warn;
-			r.exp_inact = pw->sp_inact;
-			r.exp_date = pw->sp_expire;
-			r.flag = pw->sp_flag;
-
-			report_finding(&r, ctx);
+	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
+		const char *root = getenv("OSCAP_PROBE_ROOT");
+		char *shadow_file_path = oscap_path_join(root, "/etc/shadow");
+		FILE *fp = fopen(shadow_file_path, "r");
+		if (fp == NULL) {
+			free(shadow_file_path);
+			return 1;
 		}
-		SEXP_free(un);
+		while ((sp = fgetspent(fp))) {
+			_process_struct_shadow(sp, un_ent, ctx);
+		}
+		fclose(fp);
+		free(shadow_file_path);
+	} else {
+		while ((sp = getspent())) {
+			_process_struct_shadow(sp, un_ent, ctx);
+		}
+		endspent();
 	}
-	endspent();
-	return err;
+
+	return 0;
+}
+
+int shadow_probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_OWN;
 }
 
 int shadow_probe_main(probe_ctx *ctx, void *arg)

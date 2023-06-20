@@ -25,6 +25,7 @@
 
 #include "probe-api.h"
 
+int shadow_probe_offline_mode_supported(void);
 int shadow_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_SHADOW_PROBE_H */
