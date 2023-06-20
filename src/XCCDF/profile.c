@@ -287,14 +287,15 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 			}
 		case XCCDFE_SET_VALUE:{
 				oscap_list_add(prof->sub.profile.setvalues, xccdf_setvalue_new_parse(reader));
+				xmlTextReaderRead(reader);
 				break;
 			}
 		default:
 			if (!xccdf_item_process_element(prof, reader))
 				dW("Encountered an unknown element '%s' while parsing XCCDF profile.",
 				   xmlTextReaderConstLocalName(reader));
+			xmlTextReaderRead(reader);
 		}
-		xmlTextReaderRead(reader);
 	}
 
 	return prof;
