@@ -10,10 +10,11 @@ function perform_test {
 
 	result=`mktemp`
 	stderr=`mktemp`
-	hostname=`hostname`
+	hostname="fake.host.name.me"
 
 	tmpdir=$(make_temp_dir /tmp "test_offline_mode_sysctl")
-	ln -s -t "${tmpdir}" "/proc"
+	mkdir -p "${tmpdir}/proc/sys/kernel"
+	echo "${hostname}" > "${tmpdir}/proc/sys/kernel/hostname"
 	set_chroot_offline_test_mode "${tmpdir}"
 
 	$OSCAP oval eval --results $result $srcdir/test_sysctl_probe.oval.xml 2>$stderr
