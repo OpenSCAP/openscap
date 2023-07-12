@@ -1,6 +1,8 @@
 include(UseSWIG)
 include(FindPerlLibs)
 
+string(SUBSTRING "${PERL_VERSION_STRING}" 0 4 PERL_VERSION_MINOR)
+
 set(CMAKE_SWIG_FLAGS "-module" "openscap_pm")
 if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
 	swig_add_module(openscap_pm perl5 ../openscap.i)
@@ -20,7 +22,7 @@ if (APPLE OR (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD"))
                 DESTINATION ${CMAKE_INSTALL_DATADIR}/perl5/vendor_perl)
 else()
         install(TARGETS ${SWIG_MODULE_openscap_pm_REAL_NAME}
-               DESTINATION ${PERL_VENDORLIB})
+               DESTINATION ${CMAKE_INSTALL_LIBDIR}/perl5/${PERL_VERSION_MINOR})
         install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap_pm.pm
-               DESTINATION ${PERL_VENDORARCH})
+               DESTINATION ${CMAKE_INSTALL_LIBDIR}/perl5/vendor_perl/${PERL_VERSION_MINOR})
 endif()
