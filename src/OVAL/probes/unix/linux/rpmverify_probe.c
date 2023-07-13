@@ -46,6 +46,7 @@
 /* Individual RPM headers */
 #include <rpm/rpmfi.h>
 #include <rpm/rpmcli.h>
+#include <rpm/rpmpgp.h>
 
 /* SEAP */
 #include <probe-api.h>

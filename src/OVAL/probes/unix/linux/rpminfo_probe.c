@@ -62,6 +62,9 @@
 /* RPM headers */
 #include "rpm-helper.h"
 
+/* Individual RPM headers */
+#include <rpm/rpmpgp.h>
+
 /* SEAP */
 #include "_seap.h"
 #include <probe-api.h>
