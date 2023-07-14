@@ -61,7 +61,7 @@ fi
 if [ "$(id -u)" -ne 0 ]; then
     die "This script cannot run in rootless mode."
 fi
-if grep -q "\-\-remediate" <<< "$@"; then
+if grep -q -- "--remediate" <<< "$@"; then
     die "This script does not support '--remediate' option."
 fi
 
