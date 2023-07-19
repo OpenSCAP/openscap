@@ -552,9 +552,11 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 	memcheck_ret = probe_cobj_memcheck(cobj_itemcnt, ctx->max_mem_ratio);
 	if (memcheck_ret == -1) {
 		dE("Failed to check available memory");
+		SEXP_free(item);
 		return -1;
 	}
 	if (memcheck_ret == 1) {
+		SEXP_free(item);
 
 		/*
 		 * Don't set the message again if the collected object is
