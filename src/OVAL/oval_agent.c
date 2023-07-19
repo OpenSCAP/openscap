@@ -112,6 +112,7 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	/* probe sysinfo */
 	ret = oval_probe_query_sysinfo(ag_sess->psess, &sysinfo);
 	if (ret != 0) {
+		free(ag_sess->filename);
 		oval_probe_session_destroy(ag_sess->psess);
 		oval_syschar_model_free(ag_sess->sys_model);
 		free(ag_sess);
