@@ -206,7 +206,7 @@ static int get_all_security_attributes(DBusConnection *conn, void(*callback)(cha
 
 			switch (arg_type) {
 				case DBUS_TYPE_UINT32:
-					if(strncmp(property_name, "HsiResult", strlen("HsiResult")) == 0) {
+					if(!strncmp(property_name, "HsiResult", strlen("HsiResult"))) {
 						_DBusBasicValue hsiresult_value;
 						dbus_message_iter_get_basic(&value_variant, &hsiresult_value);
 						hsi_flags = hsiresult_value.u32;
@@ -214,6 +214,7 @@ static int get_all_security_attributes(DBusConnection *conn, void(*callback)(cha
 					break;
 				case DBUS_TYPE_STRING:
 					if(!strncmp(property_name, "AppstreamId", strlen("AppstreamId"))) {
+						free(appstream_name);
 						appstream_name = oval_dbus_value_to_string(&value_variant);
 						dD("Element string: %s", appstream_name);
 					}
@@ -222,8 +223,9 @@ static int get_all_security_attributes(DBusConnection *conn, void(*callback)(cha
 			free(property_name);
 		} while (dbus_message_iter_next(&array_entry));
 		callback(appstream_name, hsi_flags);
-	}
-	while (dbus_message_iter_next(&property_iter));
+		free(appstream_name);
+		appstream_name = NULL;
+	} while (dbus_message_iter_next(&property_iter));
 
 	dbus_message_unref(msg); msg = NULL;
 	ret = 0;
@@ -323,7 +325,7 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 			SEXP_free(msg);
-			return 0;
+			goto exit;
 		}
 
 		int res = get_all_security_attributes(dbus_conn, hsicache_callback, NULL);
@@ -335,7 +337,7 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 			SEXP_free(msg);
-			return 0;
+			goto exit;
 		}
 	}
 
