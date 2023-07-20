@@ -131,7 +131,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 			dbus_message_iter_recurse(&value_variant, &array);
 
 			do {
-				char *element = dbus_value_to_string(&array);
+				char *element = oval_dbus_value_to_string(&array);
 				if (element == NULL)
 					continue;
 
@@ -144,7 +144,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 			while (dbus_message_iter_next(&array));
 		}
 		else {
-			char *property_value = dbus_value_to_string(&value_variant);
+			char *property_value = oval_dbus_value_to_string(&value_variant);
 			cbret = callback(property_name, property_value, cbarg);
 			free(property_value);
 		}
@@ -277,7 +277,7 @@ int systemdunitproperty_probe_main(probe_ctx *ctx, void *probe_arg)
 	DBusConnection *dbus_conn;
 
 	dbus_error_init(&dbus_error);
-	dbus_conn = connect_dbus();
+	dbus_conn = oval_connect_dbus();
 
 	if (dbus_conn == NULL) {
 		dbus_error_free(&dbus_error);
@@ -303,7 +303,7 @@ int systemdunitproperty_probe_main(probe_ctx *ctx, void *probe_arg)
 	SEXP_free(unit_entity);
 	SEXP_free(property_entity);
 	dbus_error_free(&dbus_error);
-	disconnect_dbus(dbus_conn);
+	oval_disconnect_dbus(dbus_conn);
 
 	return 0;
 }

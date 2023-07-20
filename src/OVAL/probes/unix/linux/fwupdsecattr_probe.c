@@ -61,8 +61,8 @@
 #include "probe/entcmp.h"
 #include "common/debug_priv.h"
 
+#include "oval_dbus.h"
 #include "fwupdsecattr_probe.h"
-#include "systemdshared.h"
 
 
 static struct cachehed hsi_result_cache;
@@ -214,7 +214,7 @@ static int get_all_security_attributes(DBusConnection *conn, void(*callback)(cha
 					break;
 				case DBUS_TYPE_STRING:
 					if(!strncmp(property_name, "AppstreamId", strlen("AppstreamId"))) {
-						appstream_name = dbus_value_to_string(&value_variant);
+						appstream_name = oval_dbus_value_to_string(&value_variant);
 						dD("Element string: %s", appstream_name);
 					}
 					break;
@@ -315,7 +315,7 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 		DBusConnection *dbus_conn;
 
 		dbus_error_init(&dbus_error);
-		dbus_conn = connect_dbus();
+		dbus_conn = oval_connect_dbus();
 
 		if (dbus_conn == NULL) {
 			dbus_error_free(&dbus_error);
@@ -327,7 +327,7 @@ int fwupdsecattr_probe_main(probe_ctx *ctx, void *arg)
 		}
 
 		int res = get_all_security_attributes(dbus_conn, hsicache_callback, NULL);
-		disconnect_dbus(dbus_conn);
+		oval_disconnect_dbus(dbus_conn);
 
 		if (res) {
 			dbus_error_free(&dbus_error);
