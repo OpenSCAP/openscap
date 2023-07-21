@@ -42,7 +42,7 @@
   <states>
 
   <lin-def:fwupdsecattr_state id="oval:0:ste:1" version="1">
-   <lin-def:security_attr datatype="string" operation="pattern match">not-valid|not-enabled</lin-def:security_attr>
+   <lin-def:security_attr datatype="string" operation="pattern match">not-valid|not-enabled|enabled</lin-def:security_attr>
   </lin-def:fwupdsecattr_state>
 
   </states>

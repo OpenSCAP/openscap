@@ -104,7 +104,7 @@ static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_pa
 	}
 
 	dbus_message_iter_recurse(&args, &value_iter);
-	ret = dbus_value_to_string(&value_iter);
+	ret = oval_dbus_value_to_string(&value_iter);
 
 	dbus_message_unref(msg); msg = NULL;
 
@@ -234,7 +234,7 @@ int systemdunitdependency_probe_main(probe_ctx *ctx, void *probe_arg)
 	DBusConnection *dbus_conn;
 
 	dbus_error_init(&dbus_error);
-	dbus_conn = connect_dbus();
+	dbus_conn = oval_connect_dbus();
 
 	if (dbus_conn == NULL) {
 		dbus_error_free(&dbus_error);
@@ -257,7 +257,7 @@ int systemdunitdependency_probe_main(probe_ctx *ctx, void *probe_arg)
 
 	SEXP_free(unit_entity);
 	dbus_error_free(&dbus_error);
-	disconnect_dbus(dbus_conn);
+	oval_disconnect_dbus(dbus_conn);
 
-        return 0;
+	return 0;
 }

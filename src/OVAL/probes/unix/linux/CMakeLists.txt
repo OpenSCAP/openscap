@@ -92,6 +92,8 @@ endif()
 if(OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY OR OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY)
 	list(APPEND LINUX_PROBES_SOURCES
 		"systemdshared.h"
+		"oval_dbus.c"
+		"oval_dbus.h"
 	)
 	list(APPEND LINUX_PROBES_INCLUDE_DIRECTORIES
 		${DBUS_INCLUDE_DIRS}
@@ -114,8 +116,15 @@ endif()
 
 if(OPENSCAP_PROBE_LINUX_FWUPDSECURITYATTR)
 	list(APPEND LINUX_PROBES_SOURCES
+		"oval_dbus.c"
+		"oval_dbus.h"
+	)
+	list(APPEND LINUX_PROBES_SOURCES
 		"fwupdsecattr_probe.c"
 		"fwupdsecattr_probe.h"
+	)
+	list(APPEND LINUX_PROBES_INCLUDE_DIRECTORIES
+		${DBUS_INCLUDE_DIRS}
 	)
 endif()
 
