@@ -254,7 +254,7 @@ Authors:
         <h3>Rule results</h3>
         <xsl:choose>
             <xsl:when test="$not_ignored_rules_count > 0" >
-                <div class="progress" title="Displays proportion of passed/fixed, failed/error, and other rules (in that order). There were $not_ignored_rules_count rules taken into account.">
+                <div class="progress" title="Displays proportion of passed/fixed, failed/error, and other rules (in that order). There were {$not_ignored_rules_count} rules taken into account.">
                     <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div $not_ignored_rules_count * 100}%">
                         <xsl:value-of select="$passed_rules_count"/> passed
                     </div>
