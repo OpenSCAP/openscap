@@ -125,8 +125,8 @@ endif()
 find_package(PythonInterp 3)
 find_package(PythonLibs 3)
 
-set(PREFERRED_PYTHON_PATH "${PYTHON_EXECUTABLE}")
-set(PYTHON3_PATH "${PYTHON_EXECUTABLE}")
+set(PREFERRED_PYTHON_PATH "${PYTHON_EXECUTABLE}" CACHE PATH "Path to preferred Python")
+set(PYTHON3_PATH "${PYTHON_EXECUTABLE}" CACHE PATH "Path to Python3")
 
 find_package(RPM)
 if(RPM_FOUND)
