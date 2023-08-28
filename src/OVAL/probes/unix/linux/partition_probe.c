@@ -63,9 +63,9 @@
 #include <probe/probe.h>
 #include <probe/option.h>
 #include <mntent.h>
-#include <pcre.h>
 
 #include "common/debug_priv.h"
+#include "common/oscap_pcre.h"
 #include "partition_probe.h"
 
 #ifndef MTAB_PATH
@@ -346,8 +346,8 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
                 char buffer[MTAB_LINE_MAX];
                 struct mntent mnt_ent, *mnt_entp;
 
-                pcre *re = NULL;
-                const char *estr = NULL;
+                oscap_pcre_t *re = NULL;
+                char *estr = NULL;
                 int eoff = -1;
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
                 blkid_cache blkcache;
@@ -358,13 +358,14 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
                 }
 #endif
                 if (mnt_op == OVAL_OPERATION_PATTERN_MATCH) {
-                        re = pcre_compile(mnt_path, PCRE_UTF8, &estr, &eoff, NULL);
+                        re = oscap_pcre_compile(mnt_path, OSCAP_PCRE_OPTS_UTF8, &estr, &eoff);
 
                         if (re == NULL) {
                                 endmntent(mnt_fp);
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
                                 blkid_put_cache(blkcache);
 #endif
+                                oscap_pcre_err_free(estr);
                                 return (PROBE_EINVAL);
                         }
                 }
@@ -398,7 +399,7 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
                         } else if (mnt_op == OVAL_OPERATION_PATTERN_MATCH) {
                                 int rc;
 
-                                rc = pcre_exec(re, NULL, mnt_entp->mnt_dir,
+                                rc = oscap_pcre_exec(re, mnt_entp->mnt_dir,
                                                strlen(mnt_entp->mnt_dir), 0, 0, NULL, 0);
 
                                 if (rc == 0) {
@@ -418,7 +419,7 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
                 endmntent(mnt_fp);
 
                 if (mnt_op == OVAL_OPERATION_PATTERN_MATCH)
-                        pcre_free(re);
+                        oscap_pcre_free(re);
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
                 blkid_put_cache(blkcache);
 #endif

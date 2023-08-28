@@ -26,7 +26,6 @@
 
 #include <math.h>
 #include <errno.h>
-#include <pcre.h>
 #include <yaml.h>
 #include <yaml-path.h>
 
@@ -36,6 +35,7 @@
 #include "oval_fts.h"
 #include "list.h"
 #include "probe/probe.h"
+#include "common/oscap_pcre.h"
 
 #define OSCAP_YAML_STRING_TAG "tag:yaml.org,2002:str"
 #define OSCAP_YAML_BOOL_TAG "tag:yaml.org,2002:bool"
@@ -52,17 +52,18 @@ int yamlfilecontent_probe_offline_mode_supported()
 
 static bool match_regex(const char *pattern, const char *value)
 {
-	const char *errptr;
+	char *errptr;
 	int erroroffset;
-	pcre *re = pcre_compile(pattern, 0, &errptr, &erroroffset, NULL);
+	oscap_pcre_t *re = oscap_pcre_compile(pattern, 0, &errptr, &erroroffset);
 	if (re == NULL) {
-		dE("pcre_compile failed on pattern '%s': %s at %d", pattern,
+		dE("oscap_pcre_compile failed on pattern '%s': %s at %d", pattern,
 			errptr, erroroffset);
+		oscap_pcre_err_free(errptr);
 		return false;
 	}
 	int ovector[OVECCOUNT];
-	int rc = pcre_exec(re, NULL, value, strlen(value), 0, 0, ovector, OVECCOUNT);
-	pcre_free(re);
+	int rc = oscap_pcre_exec(re, value, strlen(value), 0, 0, ovector, OVECCOUNT);
+	oscap_pcre_free(re);
 	if (rc > 0) {
 		return true;
 	}

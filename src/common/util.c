@@ -31,13 +31,13 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <math.h>
-#include <pcre.h>
 #include <sys/stat.h>
 
 #include "util.h"
 #include "_error.h"
 #include "oscap.h"
 #include "oscap_helpers.h"
+#include "oscap_pcre.h"
 #include "debug_priv.h"
 
 #ifdef OS_WINDOWS
@@ -361,7 +361,7 @@ char *oscap_path_join(const char *path1, const char *path2)
 	return joined_path;
 }
 
-int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings) {
+int oscap_get_substrings(char *str, int *ofs, oscap_pcre_t *re, int want_substrs, char ***substrings) {
 	int i, ret, rc;
 	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
 	char **substrs;
@@ -372,30 +372,26 @@ int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char *
 		ovector[i] = -1;
 	}
 
-	struct pcre_extra extra;
-	extra.match_limit_recursion = OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT;
+	unsigned long limit = OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT;
 	char *limit_str = getenv("OSCAP_PCRE_EXEC_RECURSION_LIMIT");
-	if (limit_str != NULL) {
-		unsigned long limit;
-		if (sscanf(limit_str, "%lu", &limit) == 1) {
-			extra.match_limit_recursion = limit;
-		}
-	}
-	extra.flags = PCRE_EXTRA_MATCH_LIMIT_RECURSION;
+	if (limit_str != NULL)
+		if (sscanf(limit_str, "%lu", &limit) <= 0)
+			dW("Unable to parse OSCAP_PCRE_EXEC_RECURSION_LIMIT value");
+	oscap_pcre_set_match_limit_recursion(re, limit);
 	size_t str_len = strlen(str);
 #if defined(OS_SOLARIS)
-	rc = pcre_exec(re, &extra, str, str_len, *ofs, PCRE_NO_UTF8_CHECK, ovector, ovector_len);
+	rc = oscap_pcre_exec(re, str, str_len, *ofs, OSCAP_PCRE_OPTS_NO_UTF8_CHECK, ovector, ovector_len);
 #else
-	rc = pcre_exec(re, &extra, str, str_len, *ofs, 0, ovector, ovector_len);
+	rc = oscap_pcre_exec(re, str, str_len, *ofs, 0, ovector, ovector_len);
 #endif
 
-	if (rc < -1) {
+	if (rc < OSCAP_PCRE_ERR_NOMATCH) {
 		if (str_len < 100)
-			dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%s'.", rc, str);
+			dE("Function oscap_pcre_exec() failed to match a regular expression with return code %d on string '%s'.", rc, str);
 		else
-			dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%.100s' (truncated, showing first 100 characters).", rc, str);
+			dE("Function oscap_pcre_exec() failed to match a regular expression with return code %d on string '%.100s' (truncated, showing first 100 characters).", rc, str);
 		return rc;
-	} else if (rc == -1) {
+	} else if (rc == OSCAP_PCRE_ERR_NOMATCH) {
 		/* no match */
 		return 0;
 	}

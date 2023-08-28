@@ -41,7 +41,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <pcre.h>
 
 #include "rpm-helper.h"
 #include "probe-chroot.h"

@@ -9,6 +9,10 @@
 #include "sexp.h"
 #include "oval_fts.h"
 #include "probe-api.h"
+#include <stddef.h>
+#include <assert.h>
+#include "util.h"
+#include "public/oscap_debug.h"
 
 static int create_path_sexpr(char *arg_operation, char *arg_argument, SEXP_t **result)
 {
@@ -171,6 +175,8 @@ int main(int argc, char *argv[])
 	SEXP_t *path, *filename, *behaviors, *filepath, *result;
 
 	int ret = 0;
+
+	oscap_set_verbose(NULL, NULL);
 
 	if (argc < 11) {
 		fprintf(stderr, "Invalid usage -- too few arguments supplied.\n");

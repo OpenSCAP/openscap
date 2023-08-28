@@ -89,6 +89,12 @@ libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++ libapt-pkg-dev libyaml-d
 libxmlsec1-dev libxmlsec1-openssl
 ----
 
+Since version 1.3.9 OpenSCAP can use either PCRE or PCRE2 library to handle regular
+expressions. The default behaviour for 1.3.x line of versions is to try and link
+with PCRE. In order to switxh the build system to PCRE2 one must configure
+CMake with '-DWITH_PCRE2=True' parameter. Dependencies: Debian/Ubuntu — pcre2-dev,
+Fedora/RHEL — pcre2-devel.
+
 When you have all the build dependencies installed you can build the library.
 --
 
@@ -319,7 +325,7 @@ behaviour.
 * *OSCAP_FULL_VALIDATION=1* - validate all exported documents (slower)
 * *SEXP_VALIDATE_DISABLE=1* - do not validate SEXP expressions (faster)
 * *OSCAP_PCRE_EXEC_RECURSION_LIMIT* - override default recursion limit
-  for match in pcre_exec call in textfilecontent(54) probes.
+  for match in pcre_exec/pcre2_match calls in textfilecontent(54) probes.
 
 
 

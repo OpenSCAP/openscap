@@ -4,6 +4,7 @@ if(ENABLE_PROBES_UNIX)
 		"${CMAKE_SOURCE_DIR}/src/common/bfind.c"
 		"${CMAKE_SOURCE_DIR}/src/OVAL/probes/SEAP/generic/rbt/rbt_common.c"
 		"${CMAKE_SOURCE_DIR}/src/OVAL/probes/SEAP/generic/rbt/rbt_str.c"
+		"${CMAKE_SOURCE_DIR}/src/common/oscap_pcre.c"
 	)
 	target_link_libraries(test_probe_xinetd openscap)
 	target_include_directories(test_probe_xinetd PUBLIC

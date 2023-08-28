@@ -27,10 +27,10 @@
 
 #include <math.h>
 #include <string.h>
-#include <pcre.h>
 
 #include "oval_types.h"
 #include "common/_error.h"
+#include "common/oscap_pcre.h"
 #include "common/debug_priv.h"
 #include "oval_cmp_basic_impl.h"
 
@@ -124,29 +124,30 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 {
 	int ret;
 	oval_result_t result = OVAL_RESULT_ERROR;
-	pcre *re;
-	const char *err;
+	oscap_pcre_t *re;
+	char *err;
 	int errofs;
 
-	re = pcre_compile(pattern, PCRE_UTF8, &err, &errofs, NULL);
+	re = oscap_pcre_compile(pattern, OSCAP_PCRE_OPTS_UTF8, &err, &errofs);
 	if (re == NULL) {
 		dE("Unable to compile regex pattern '%s', "
-				"pcre_compile() returned error (offset: %d): '%s'.\n", pattern, errofs, err);
+				"oscap_pcre_compile() returned error (offset: %d): '%s'.\n", pattern, errofs, err);
+		oscap_pcre_err_free(err);
 		return OVAL_RESULT_ERROR;
 	}
 
-	ret = pcre_exec(re, NULL, test_str, strlen(test_str), 0, 0, NULL, 0);
-	if (ret > -1 ) {
+	ret = oscap_pcre_exec(re, test_str, strlen(test_str), 0, 0, NULL, 0);
+	if (ret > OSCAP_PCRE_ERR_NOMATCH ) {
 		result = OVAL_RESULT_TRUE;
-	} else if (ret == -1) {
+	} else if (ret == OSCAP_PCRE_ERR_NOMATCH) {
 		result = OVAL_RESULT_FALSE;
 	} else {
 		dE("Unable to match regex pattern '%s' on string '%s', "
-				"pcre_exec() returned error: %d.\n", pattern, test_str, ret);
+				"oscap_pcre_exec() returned error: %d.\n", pattern, test_str, ret);
 		result = OVAL_RESULT_ERROR;
 	}
 
-	pcre_free(re);
+	oscap_pcre_free(re);
 	return result;
 }
 

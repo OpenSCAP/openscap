@@ -4,6 +4,7 @@ add_oscap_test_executable(test_oscap_common
 	${CMAKE_SOURCE_DIR}/src/common/list.c
 	${CMAKE_SOURCE_DIR}/src/common/error.c
 	${CMAKE_SOURCE_DIR}/src/common/err_queue.c
+	${CMAKE_SOURCE_DIR}/src/common/oscap_pcre.c
 )
 
 add_oscap_test_executable(test_xccdf_overrides

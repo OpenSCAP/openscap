@@ -32,8 +32,8 @@
 #include "public/oscap.h"
 #include <stdarg.h>
 #include <string.h>
-#include <pcre.h>
 #include "oscap_export.h"
+#include "oscap_pcre.h"
 
 #ifndef __attribute__nonnull__
 #define __attribute__nonnull__(x) assert((x) != NULL)
@@ -498,7 +498,7 @@ char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
  * @return count of matched substrings, 0 if no match
  * negative value on failure
  */
-int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings);
+int oscap_get_substrings(char *str, int *ofs, oscap_pcre_t *re, int want_substrs, char ***substrings);
 
 
 #ifndef OS_WINDOWS

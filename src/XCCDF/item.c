@@ -30,7 +30,6 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
-#include <pcre.h>
 
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -41,6 +40,7 @@
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/util.h"
+#include "common/oscap_pcre.h"
 #include "oscap_helpers.h"
 
 /* According to `man 3 pcreapi`, the number passed in ovecsize should always
@@ -768,12 +768,16 @@ void xccdf_item_add_applicable_platform(struct xccdf_item *item, xmlTextReaderPt
 	 * an underscore to workaround the situation that this XCCDF benchmark is
 	 * not applicable.
 	 */
-	const char *pcreerror = NULL;
+	char *pcreerror = NULL;
 	int erroffset = 0;
-	pcre *regex = pcre_compile("^(cpe:/o:microsoft:windows)(7.*)", 0, &pcreerror, &erroffset, NULL);
+	oscap_pcre_t *regex = oscap_pcre_compile("^(cpe:/o:microsoft:windows)(7.*)", 0, &pcreerror, &erroffset);
+	if (regex == NULL) {
+		oscap_pcre_err_free(pcreerror);
+		return;
+	}
 	int ovector[OVECTOR_LEN];
-	int rc = pcre_exec(regex, NULL, platform_idref, strlen(platform_idref), 0, 0, ovector, OVECTOR_LEN);
-	pcre_free(regex);
+	int rc = oscap_pcre_exec(regex, platform_idref, strlen(platform_idref), 0, 0, ovector, OVECTOR_LEN);
+	oscap_pcre_free(regex);
 	/* 1 pattern + 2 groups = 3 */
 	if (rc == 3) {
 		const int first_group_start = ovector[2];
