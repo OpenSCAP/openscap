@@ -154,7 +154,11 @@ ctest -V %{?_smp_mflags}
 find $RPM_BUILD_ROOT -name '*.la' -exec rm -f {} ';'
 
 # fix python shebangs
+%if 0%{?fedora}
+%{__python3} %{_rpmconfigdir}/redhat/pathfix.py -i %{__python3} -p -n $RPM_BUILD_ROOT%{_bindir}/scap-as-rpm
+%else
 pathfix.py -i %{__python3} -p -n $RPM_BUILD_ROOT%{_bindir}/scap-as-rpm
+%endif
 
 %ldconfig_scriptlets
 
