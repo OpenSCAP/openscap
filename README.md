@@ -22,7 +22,7 @@ We welcome all contributions to the OpenSCAP project. If you would like to contr
 
 ## Microsoft Windows Support
 
-The Microsoft Windows support [is officially void](docs/windows.md) as of Feb 1 2022.
+The Microsoft Windows support [is officially void](docs/windows.md) as of Febuary 1, 2022.
 
 ## Use cases
 
