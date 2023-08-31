@@ -18,7 +18,9 @@ validate, edit, and export SCAP documents.
 
 ## Contributing
 
-We welcome all contributions to the OpenSCAP project. If you would like to contribute, either by fixing existing issues or adding new features, please check out our [contribution guide](docs/contribute/contribute.adoc) to get started. If you would like to discuss anything, ask questions, or if you need additional help getting started, you can either send a message to our FreeNode IRC channel, **#openscap**, or to our [mailing list](https://www.redhat.com/mailman/listinfo/open-scap-list).
+We welcome all contributions to the OpenSCAP project.
+If you would like to contribute, either by fixing existing issues or adding new features, please check out our [contribution guide](docs/contribute/contribute.adoc) to get started.
+If you would like to discuss anything, ask questions, or if you need additional help getting started, you can either send a message to our libera.chat IRC channel, **#openscap**, or to our [mailing list](https://www.redhat.com/mailman/listinfo/open-scap-list).
 
 ## Microsoft Windows Support
 
