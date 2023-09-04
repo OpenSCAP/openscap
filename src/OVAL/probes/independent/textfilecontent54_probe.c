@@ -216,7 +216,7 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 			want_instance = 0;
 
 		SEXP_free(next_inst);
-		substr_cnt = oscap_get_substrings(buf, &ofs, pfd->compiled_regex, want_instance, &substrs);
+		substr_cnt = oscap_pcre_get_substrings(buf, &ofs, pfd->compiled_regex, want_instance, &substrs);
 
 		if (substr_cnt < 0) {
 			SEXP_t *msg;

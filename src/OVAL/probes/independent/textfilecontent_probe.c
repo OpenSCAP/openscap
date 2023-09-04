@@ -196,7 +196,7 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	int ofs = 0;
 
 	while (fgets(line, sizeof(line), fp) != NULL) {
-		substr_cnt = oscap_get_substrings(line, &ofs, re, 1, &substrs);
+		substr_cnt = oscap_pcre_get_substrings(line, &ofs, re, 1, &substrs);
 		if (substr_cnt > 0) {
 			int k;
 			SEXP_t *item;

@@ -96,6 +96,18 @@ void oscap_pcre_set_match_limit_recursion(oscap_pcre_t *opcre, unsigned long lim
  */
 void oscap_pcre_optimize(oscap_pcre_t *opcre);
 
+/**
+ * Match a regular expression and return substrings.
+ * Caller is responsible for freeing the returned array.
+ * @param str subject string
+ * @param ofs starting offset in str
+ * @param re compiled regular expression
+ * @param want_substrs if non-zero, substrings will be returned
+ * @param substrings contains returned substrings
+ * @return count of matched substrings, 0 if no match
+ * negative value on failure
+ */
+int oscap_pcre_get_substrings(char *str, int *ofs, oscap_pcre_t *re, int want_substrs, char ***substrings);
 
 /**
  * Free the error message returned by oscap_pcre_compile. DON'T USE REGULAR free()!

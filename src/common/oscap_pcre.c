@@ -26,6 +26,8 @@
 
 #include <memory.h>
 
+#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 3500
+
 #ifdef HAVE_PCRE2
 #define PCRE2_CODE_UNIT_WIDTH 8
 #define PCRE2_ERR_BUF_SIZE 127
@@ -243,6 +245,75 @@ void oscap_pcre_free(oscap_pcre_t *opcre)
 	}
 }
 
+int oscap_pcre_get_substrings(char *str, int *ofs, oscap_pcre_t *re, int want_substrs, char ***substrings) {
+	int i, ret, rc;
+	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
+	char **substrs;
+
+	// todo: max match count check
+
+	for (i = 0; i < ovector_len; ++i) {
+		ovector[i] = -1;
+	}
+
+	unsigned long limit = OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT;
+	char *limit_str = getenv("OSCAP_PCRE_EXEC_RECURSION_LIMIT");
+	if (limit_str != NULL)
+		if (sscanf(limit_str, "%lu", &limit) <= 0)
+			dW("Unable to parse OSCAP_PCRE_EXEC_RECURSION_LIMIT value");
+	oscap_pcre_set_match_limit_recursion(re, limit);
+	size_t str_len = strlen(str);
+#if defined(OS_SOLARIS)
+	rc = oscap_pcre_exec(re, str, str_len, *ofs, OSCAP_PCRE_OPTS_NO_UTF8_CHECK, ovector, ovector_len);
+#else
+	rc = oscap_pcre_exec(re, str, str_len, *ofs, 0, ovector, ovector_len);
+#endif
+
+	if (rc < OSCAP_PCRE_ERR_NOMATCH) {
+		if (str_len < 100)
+			dE("Function oscap_pcre_exec() failed to match a regular expression with return code %d on string '%s'.", rc, str);
+		else
+			dE("Function oscap_pcre_exec() failed to match a regular expression with return code %d on string '%.100s' (truncated, showing first 100 characters).", rc, str);
+		return rc;
+	} else if (rc == OSCAP_PCRE_ERR_NOMATCH) {
+		/* no match */
+		return 0;
+	}
+
+	*ofs = (*ofs == ovector[1]) ? ovector[1] + 1 : ovector[1];
+
+	if (!want_substrs) {
+		/* just report successful match */
+		return 1;
+	}
+
+	ret = 0;
+	if (rc == 0) {
+		/* vector too small */
+		// todo: report partial results
+		rc = ovector_len / 3;
+	}
+
+	substrs = malloc(rc * sizeof (char *));
+	for (i = 0; i < rc; ++i) {
+		int len;
+		char *buf;
+
+		if (ovector[2 * i] == -1) {
+			continue;
+		}
+		len = ovector[2 * i + 1] - ovector[2 * i];
+		buf = malloc(len + 1);
+		memcpy(buf, str + ovector[2 * i], len);
+		buf[len] = '\0';
+		substrs[ret] = buf;
+		++ret;
+	}
+
+	*substrings = substrs;
+
+	return ret;
+}
 
 void oscap_pcre_err_free(char *err)
 {
