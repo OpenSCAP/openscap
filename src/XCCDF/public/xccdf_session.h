@@ -82,6 +82,14 @@ OSCAP_API struct xccdf_session *xccdf_session_new_from_source(struct oscap_sourc
 OSCAP_API void xccdf_session_free(struct xccdf_session *session);
 
 /**
+ * Reset xccdf_session results.
+ * This function resets XCCDF policies, session rules, skipped rules, OVAL system characteristics and OVAL results.
+ * @memberof xccdf_session
+ * @param session to reset results from.
+ */
+OSCAP_API void xccdf_session_result_reset(struct xccdf_session *session);
+
+/**
  * Retrieves the filename the session was created with
  * @memberof xccdf_session
  */

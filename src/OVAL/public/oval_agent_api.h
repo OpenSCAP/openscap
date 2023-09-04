@@ -97,6 +97,16 @@ OSCAP_API struct oval_result_definition * oval_agent_get_result_definition(oval_
 OSCAP_API int oval_agent_reset_session(oval_agent_session_t * ag_sess);
 
 /**
+ * Clean system characteristics that were generated in this agent session
+ */
+OSCAP_API void oval_agent_reset_syschar(oval_agent_session_t * ag_sess);
+
+/**
+ * Clean results that were generated in this agent session
+ */
+OSCAP_API void oval_agent_reset_results(oval_agent_session_t * ag_sess);
+
+/**
  * Abort a running probe session
  */
 OSCAP_API int oval_agent_abort_session(oval_agent_session_t *ag_sess);
