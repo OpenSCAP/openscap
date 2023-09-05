@@ -150,10 +150,14 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
         while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
                 SEXP_t *se_mib;
                 char    mibpath[PATH_MAX], *mib;
-                size_t  miblen;
+                size_t  miblen, mibstart;
                 struct stat file_stat;
 
-                snprintf(mibpath, sizeof mibpath, "%s/%s", ofts_ent->path, ofts_ent->file);
+                if (prefix != NULL) {
+                        snprintf(mibpath, sizeof mibpath, "%s/%s/%s", prefix, ofts_ent->path, ofts_ent->file);
+                } else {
+                        snprintf(mibpath, sizeof mibpath, "%s/%s", ofts_ent->path, ofts_ent->file);
+                }
 
                 /* Skip write-only files, eg. /proc/sys/net/ipv4/route/flush */
                 if (stat(mibpath, &file_stat) == -1) {
@@ -168,7 +172,10 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
                         continue;
                 }
 
-                mib    = strdup(mibpath + strlen(PROC_SYS_DIR) + 1);
+                mibstart = 0;
+                mibstart += prefix != NULL ? strlen(prefix)+1 : 0;
+                mibstart += strlen(PROC_SYS_DIR)+1;
+                mib    = strdup(mibpath + mibstart);
                 miblen = strlen(mib);
 
                 while (miblen > 0) {
