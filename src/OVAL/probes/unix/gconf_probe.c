@@ -36,7 +36,6 @@
 #include <stdint.h>
 #include <limits.h>
 #include <probe-api.h>
-#include <pcre.h>
 #include <gconf/gconf.h>
 #include "gconf_probe.h"
 

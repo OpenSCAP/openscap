@@ -31,13 +31,13 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <math.h>
-#include <pcre.h>
 #include <sys/stat.h>
 
 #include "util.h"
 #include "_error.h"
 #include "oscap.h"
 #include "oscap_helpers.h"
+#include "oscap_pcre.h"
 #include "debug_priv.h"
 
 #ifdef OS_WINDOWS
@@ -49,7 +49,6 @@
 #endif
 
 #define PATH_SEPARATOR '/'
-#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 3500
 
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str)
 {
@@ -359,80 +358,6 @@ char *oscap_path_join(const char *path1, const char *path2)
 	strncpy(joined_path + path1_len, path2 + path2_shift, path2_len);
 	joined_path[joined_path_len] = '\0';
 	return joined_path;
-}
-
-int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings) {
-	int i, ret, rc;
-	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
-	char **substrs;
-
-	// todo: max match count check
-
-	for (i = 0; i < ovector_len; ++i) {
-		ovector[i] = -1;
-	}
-
-	struct pcre_extra extra;
-	extra.match_limit_recursion = OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT;
-	char *limit_str = getenv("OSCAP_PCRE_EXEC_RECURSION_LIMIT");
-	if (limit_str != NULL) {
-		unsigned long limit;
-		if (sscanf(limit_str, "%lu", &limit) == 1) {
-			extra.match_limit_recursion = limit;
-		}
-	}
-	extra.flags = PCRE_EXTRA_MATCH_LIMIT_RECURSION;
-	size_t str_len = strlen(str);
-#if defined(OS_SOLARIS)
-	rc = pcre_exec(re, &extra, str, str_len, *ofs, PCRE_NO_UTF8_CHECK, ovector, ovector_len);
-#else
-	rc = pcre_exec(re, &extra, str, str_len, *ofs, 0, ovector, ovector_len);
-#endif
-
-	if (rc < -1) {
-		if (str_len < 100)
-			dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%s'.", rc, str);
-		else
-			dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%.100s' (truncated, showing first 100 characters).", rc, str);
-		return rc;
-	} else if (rc == -1) {
-		/* no match */
-		return 0;
-	}
-
-	*ofs = (*ofs == ovector[1]) ? ovector[1] + 1 : ovector[1];
-
-	if (!want_substrs) {
-		/* just report successful match */
-		return 1;
-	}
-
-	ret = 0;
-	if (rc == 0) {
-		/* vector too small */
-		// todo: report partial results
-		rc = ovector_len / 3;
-	}
-
-	substrs = malloc(rc * sizeof (char *));
-	for (i = 0; i < rc; ++i) {
-		int len;
-		char *buf;
-
-		if (ovector[2 * i] == -1) {
-			continue;
-		}
-		len = ovector[2 * i + 1] - ovector[2 * i];
-		buf = malloc(len + 1);
-		memcpy(buf, str + ovector[2 * i], len);
-		buf[len] = '\0';
-		substrs[ret] = buf;
-		++ret;
-	}
-
-	*substrings = substrs;
-
-	return ret;
 }
 
 #ifndef OS_WINDOWS

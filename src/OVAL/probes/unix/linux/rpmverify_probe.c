@@ -39,7 +39,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <pcre.h>
 
 #include "rpm-helper.h"
 
@@ -54,6 +53,7 @@
 
 #include <probe/probe.h>
 #include <probe/option.h>
+#include "common/oscap_pcre.h"
 
 #include "rpmverify_probe.h"
 
@@ -83,18 +83,19 @@ static int rpmverify_collect(probe_ctx *ctx,
 	rpmdbMatchIterator match;
         rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
 	Header pkgh;
-        pcre *re = NULL;
+	oscap_pcre_t *re = NULL;
 	int  ret = -1;
 
         /* pre-compile regex if needed */
         if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
-                const char *errmsg;
+                char *errmsg;
                 int erroff;
 
-                re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
+                re = oscap_pcre_compile(file, OSCAP_PCRE_OPTS_UTF8, &errmsg,  &erroff);
 
                 if (re == NULL) {
                         /* TODO */
+                        oscap_pcre_err_free(errmsg);
                         return (-1);
                 }
         }
@@ -213,7 +214,7 @@ static int rpmverify_collect(probe_ctx *ctx,
         ret   = 0;
 ret:
         if (re != NULL)
-                pcre_free(re);
+                oscap_pcre_free(re);
 
         RPMVERIFY_UNLOCK;
         return (ret);

@@ -37,11 +37,11 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <pcre.h>
 #include <ctype.h>
 
 #include "cpe_name.h"
 #include "common/util.h"
+#include "common/oscap_pcre.h"
 #include "oscap_helpers.h"
 
 #define CPE_URI_SUPPORTED "2.3"
@@ -549,8 +549,8 @@ cpe_format_t cpe_name_get_format_of_str(const char *str)
 	if (str == NULL)
 		return CPE_FORMAT_UNKNOWN;
 
-	pcre *re;
-	const char *error;
+	oscap_pcre_t *re;
+	char *error;
 	int erroffset;
 	int rc;
 	int ovector[30];
@@ -559,26 +559,38 @@ cpe_format_t cpe_name_get_format_of_str(const char *str)
 	// http://scap.nist.gov/schema/cpe/2.3/cpe-naming_2.3.xsd
 	// [c] was replaced with [cC] here and in the schemas
 
-	re = pcre_compile("^[cC][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~%]*){0,6}$", 0, &error, &erroffset, NULL);
-	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
-	pcre_free(re);
+	re = oscap_pcre_compile("^[cC][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\\._\\-~%]*){0,6}$", 0, &error, &erroffset);
+	if (re == NULL) {
+		oscap_pcre_err_free(error);
+		return CPE_FORMAT_UNKNOWN;
+	}
+	rc = oscap_pcre_exec(re, str, strlen(str), 0, 0, ovector, 30);
+	oscap_pcre_free(re);
 
 	if (rc >= 0)
 		return CPE_FORMAT_URI;
 
 	// The regex was taken from the official XSD at
 	// http://scap.nist.gov/schema/cpe/2.3/cpe-naming_2.3.xsd
-	re = pcre_compile("^cpe:2\\.3:[aho\\*\\-](:(((\\?*|\\*?)([a-zA-Z0-9\\-\\._]|(\\\\[\\\\\\*\\?!\"#$$%&'\\(\\)\\+,/:;<=>@\\[\\]\\^`\\{\\|}~]))+(\\?*|\\*?))|[\\*\\-])){5}(:(([a-zA-Z]{2,3}(-([a-zA-Z]{2}|[0-9]{3}))?)|[\\*\\-]))(:(((\\?*|\\*?)([a-zA-Z0-9\\-\\._]|(\\\\[\\\\\\*\\?!\"#$$%&'\\(\\)\\+,/:;<=>@\\[\\]\\^`\\{\\|}~]))+(\\?*|\\*?))|[\\*\\-])){4}$", 0, &error, &erroffset, NULL);
-	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
-	pcre_free(re);
+	re = oscap_pcre_compile("^cpe:2\\.3:[aho\\*\\-](:(((\\?*|\\*?)([a-zA-Z0-9\\-\\._]|(\\\\[\\\\\\*\\?!\"#$$%&'\\(\\)\\+,/:;<=>@\\[\\]\\^`\\{\\|}~]))+(\\?*|\\*?))|[\\*\\-])){5}(:(([a-zA-Z]{2,3}(-([a-zA-Z]{2}|[0-9]{3}))?)|[\\*\\-]))(:(((\\?*|\\*?)([a-zA-Z0-9\\-\\._]|(\\\\[\\\\\\*\\?!\"#$$%&'\\(\\)\\+,/:;<=>@\\[\\]\\^`\\{\\|}~]))+(\\?*|\\*?))|[\\*\\-])){4}$", 0, &error, &erroffset);
+	if (re == NULL) {
+		oscap_pcre_err_free(error);
+		return CPE_FORMAT_UNKNOWN;
+	}
+	rc = oscap_pcre_exec(re, str, strlen(str), 0, 0, ovector, 30);
+	oscap_pcre_free(re);
 
 	if (rc >= 0)
 		return CPE_FORMAT_STRING;
 
 	// FIXME: This should be way more strict
-	re = pcre_compile("^wfn:\\[.+\\]$", PCRE_CASELESS, &error, &erroffset, NULL);
-	rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
-	pcre_free(re);
+	re = oscap_pcre_compile("^wfn:\\[.+\\]$", OSCAP_PCRE_OPTS_CASELESS, &error, &erroffset);
+	if (re == NULL) {
+		oscap_pcre_err_free(error);
+		return CPE_FORMAT_UNKNOWN;
+	}
+	rc = oscap_pcre_exec(re, str, strlen(str), 0, 0, ovector, 30);
+	oscap_pcre_free(re);
 
 	if (rc >= 0)
 		return CPE_FORMAT_WFN;

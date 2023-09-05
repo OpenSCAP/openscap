@@ -101,7 +101,6 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
-#include <pcre.h>
 #elif defined(OS_FREEBSD)
 #include <arpa/inet.h>
 #include <ifaddrs.h>
@@ -540,21 +539,23 @@ static char *_get_os_release_elem(char *os_release_data, const char *elem_name)
 	char elem_re[128] = {0};
 	snprintf(elem_re, sizeof(elem_re), "%s%s%s", "^", elem_name, "=[\"']?(.*?)[\"']?$");
 
-	const char *error;
+	char *error;
 	int erroffset, ovec[_REGEX_RES_VECSIZE] = {0};
-	pcre *re = pcre_compile(elem_re, PCRE_MULTILINE, &error, &erroffset, NULL);
-	if (re == NULL)
+	oscap_pcre_t *re = oscap_pcre_compile(elem_re, OSCAP_PCRE_OPTS_MULTILINE, &error, &erroffset);
+	if (re == NULL) {
+		oscap_pcre_err_free(error);
 		goto finish;
+	}
 
 	char *ptr = NULL;
-	int rc = pcre_exec(re, NULL, os_release_data, len, 0, 0, ovec, _REGEX_RES_VECSIZE);
+	int rc = oscap_pcre_exec(re, os_release_data, len, 0, 0, ovec, _REGEX_RES_VECSIZE);
 	if (rc >= 0) {
 		/* ovec[0] and ovec[1] - are the start and the end of the whole pattern match (=".....")
 		 * ovec[2] and ovec[3] - are start and end char positions of the capture group (.*?) */
 		ptr = strndup(os_release_data+ovec[2], ovec[3]-ovec[2]);
 		ret = ptr;
 	}
-	pcre_free(re);
+	oscap_pcre_free(re);
 
 finish:
 	return ret;

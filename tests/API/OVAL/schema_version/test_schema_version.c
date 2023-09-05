@@ -27,6 +27,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "OVAL/public/oval_schema_version.h"
+#include <stddef.h>
+#include <assert.h>
+#include "util.h"
+#include "public/oscap_debug.h"
 
 static const char *cmp_to_cstr(int cmp)
 {
@@ -44,6 +48,7 @@ int main(int argc, char **argv)
 		printf("Not enough arguments\n");
 		return 1;
 	}
+	oscap_set_verbose(NULL, NULL);
 	const char *v1_str = argv[1];
 	const char *v2_str = argv[2];
 	int expected_result = atoi(argv[3]);

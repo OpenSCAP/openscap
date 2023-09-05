@@ -30,8 +30,8 @@
 #else
 #include <fts.h>
 #endif
-#include <pcre.h>
 #include "fsdev.h"
+#include "common/oscap_pcre.h"
 
 #define ENT_GET_AREF(ent, dst, attr_name, mandatory)			\
 	do {								\
@@ -78,8 +78,7 @@ typedef struct {
 	char *ofts_recurse_path_curpth;
 	dev_t ofts_recurse_path_devid;
 
-	pcre       *ofts_path_regex;
-	pcre_extra *ofts_path_regex_extra;
+	oscap_pcre_t *ofts_path_regex;
 	uint32_t ofts_path_op;
 
 	SEXP_t *ofts_spath;

@@ -38,12 +38,12 @@
 #endif
 
 #include <libxml/tree.h>
-#include <pcre.h>
 
 #include "XCCDF/item.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
+#include "common/oscap_pcre.h"
 #include "xccdf_policy_priv.h"
 #include "xccdf_policy_model_priv.h"
 #include "public/xccdf_policy.h"
@@ -661,12 +661,12 @@ static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, stru
 struct blueprint_entries {
 	const char *pattern;
 	struct oscap_list *list;
-	pcre *re;
+	oscap_pcre_t *re;
 };
 
 static inline int _parse_blueprint_fix(const char *fix_text, struct oscap_list *generic, struct oscap_list *services_enable, struct oscap_list *services_disable, struct oscap_list *kernel_append)
 {
-	const char *err;
+	char *err;
 	int errofs;
 	int ret = 0;
 
@@ -681,9 +681,10 @@ static inline int _parse_blueprint_fix(const char *fix_text, struct oscap_list *
 	};
 
 	for (int i = 0; tab[i].pattern != NULL; i++) {
-		tab[i].re = pcre_compile(tab[i].pattern, PCRE_UTF8, &err, &errofs, NULL);
+		tab[i].re = oscap_pcre_compile(tab[i].pattern, OSCAP_PCRE_OPTS_UTF8, &err, &errofs);
 		if (tab[i].re == NULL) {
-			dE("Unable to compile /%s/ regex pattern, pcre_compile() returned error (offset: %d): '%s'.\n", tab[i].pattern, errofs, err);
+			dE("Unable to compile /%s/ regex pattern, oscap_pcre_compile() returned error (offset: %d): '%s'.\n", tab[i].pattern, errofs, err);
+			oscap_pcre_err_free(err);
 			ret = 1;
 			goto exit;
 		}
@@ -695,7 +696,7 @@ static inline int _parse_blueprint_fix(const char *fix_text, struct oscap_list *
 
 	for (int i = 0; tab[i].pattern != NULL; i++) {
 		while (true) {
-			const int match = pcre_exec(tab[i].re, NULL, fix_text, fix_text_len, start_offset,
+			const int match = oscap_pcre_exec(tab[i].re, fix_text, fix_text_len, start_offset,
 			                            0, ovector, sizeof(ovector) / sizeof(ovector[0]));
 			if (match == -1)
 				break;
@@ -726,7 +727,7 @@ static inline int _parse_blueprint_fix(const char *fix_text, struct oscap_list *
 
 exit:
 	for (int i = 0; tab[i].pattern != NULL; i++)
-		pcre_free(tab[i].re);
+		oscap_pcre_free(tab[i].re);
 
 	return ret;
 }
@@ -737,13 +738,14 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 	const char *pattern =
 		"- name: XCCDF Value [^ ]+ # promote to variable\n  set_fact:\n"
 		"    ([^:]+): (.+)\n  tags:\n    - always\n";
-	const char *err;
+	char *err;
 	int errofs;
 
-	pcre *re = pcre_compile(pattern, PCRE_UTF8, &err, &errofs, NULL);
+	oscap_pcre_t *re = oscap_pcre_compile(pattern, OSCAP_PCRE_OPTS_UTF8, &err, &errofs);
 	if (re == NULL) {
 		dE("Unable to compile regex pattern, "
-				"pcre_compile() returned error (offset: %d): '%s'.\n", errofs, err);
+				"oscap_pcre_compile() returned error (offset: %d): '%s'.\n", errofs, err);
+		oscap_pcre_err_free(err);
 		return 1;
 	}
 
@@ -758,14 +760,14 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 	const size_t fix_text_len = strlen(fix_text);
 	int start_offset = 0;
 	while (true) {
-		const int match = pcre_exec(re, NULL, fix_text, fix_text_len, start_offset,
+		const int match = oscap_pcre_exec(re, fix_text, fix_text_len, start_offset,
 				0, ovector, sizeof(ovector) / sizeof(ovector[0]));
 		if (match == -1)
 			break;
 		if (match != 3) {
 			dE("Expected 2 capture group matches per XCCDF variable. Found %i!",
 				match - 1);
-			pcre_free(re);
+			oscap_pcre_free(re);
 			return 1;
 		}
 
@@ -807,7 +809,7 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 		oscap_list_add(tasks, remediation_part);
 	}
 
-	pcre_free(re);
+	oscap_pcre_free(re);
 	return 0;
 }
 

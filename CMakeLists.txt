@@ -106,7 +106,11 @@ find_package(Doxygen)
 find_package(GConf)
 find_package(Ldap)
 find_package(OpenDbx)
-find_package(PCRE REQUIRED)
+if(WITH_PCRE2)
+	find_package(PCRE2 REQUIRED)
+else()
+	find_package(PCRE REQUIRED)
+endif()
 find_package(PerlLibs)
 find_package(Popt)
 find_package(Systemd)
@@ -191,6 +195,13 @@ if(EXISTS ${CMAKE_SOURCE_DIR}/yaml-filter/CMakeLists.txt)
 else()
 	message(STATUS "yaml-filter was not found")
 	set(YAML_FILTER_FOUND FALSE)
+endif()
+
+if(PCRE2_FOUND)
+	set(HAVE_PCRE2 1)
+	message("-- Using PCRE2")
+elseif(PCRE_FOUND)
+	message("-- Using PCRE")
 endif()
 
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
@@ -329,6 +340,8 @@ cmake_dependent_option(ENABLE_OSCAP_UTIL_PODMAN "enables the oscap-podman utilit
 cmake_dependent_option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this lets you scan entire chroots using offline scanning" ON "NOT WIN32" OFF)
 option(ENABLE_OSCAP_UTIL_AUTOTAILOR "enables the autotailor utility that is able to perform command-line tailoring" TRUE)
 option(ENABLE_OSCAP_REMEDIATE_SERVICE "enables the oscap-remediate service" FALSE)
+
+option(WITH_PCRE2 "use PCRE2 library" FALSE)
 
 # ---------- TEST-SUITE SWITCHES
 
@@ -517,6 +530,7 @@ endif()
 
 if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -Wno-int-conversion -Werror=implicit-function-declaration -D_GNU_SOURCE -std=c99")
+	add_link_options(-Wl,-z,now)
 endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
 	add_link_options(-lkvm -lm -lprocstat)
@@ -563,6 +577,7 @@ include_directories(
 	${XMLSEC_INCLUDE_DIRS}
 	${OPENSSL_INCLUDE_DIR}
 	${PCRE_INCLUDE_DIRS}
+	${PCRE2_INCLUDE_DIRS}
 )
 
 # Honor visibility properties for all target types
