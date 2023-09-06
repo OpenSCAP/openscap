@@ -61,11 +61,6 @@ trigger_docbuild()
 }
 
 
-ensure_test_prerequisities()
-{
-    systemctl -q is-active sendmail || die "As of 11/2017, you have to have 'sendmail' running for tests to succeed."
-}
-
 build_all()
 {
     (mkdir -p "$BUILDDIR" && cd "$BUILDDIR" && cmake -DENABLE_SCE=TRUE .. && make) || die "Error building pristine OpenSCAP"
@@ -74,7 +69,6 @@ build_all()
 
 execute_local_tests()
 {
-    ensure_test_prerequisities
     build_all
     (cd "$BUILDDIR" && ctest || die "Error during test run")
     check_python_binding 3
