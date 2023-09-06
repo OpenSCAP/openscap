@@ -69,6 +69,7 @@ struct dpkginfo_global {
 };
 
 static struct dpkginfo_global g_dpkg = {
+	.mutex = PTHREAD_MUTEX_INITIALIZER,
         .init_done = -1,
 };
 
@@ -78,9 +79,9 @@ int dpkginfo_probe_offline_mode_supported(void) {
 
 void *dpkginfo_probe_init(void)
 {
-        pthread_mutex_init (&(g_dpkg.mutex), NULL);
-
+        pthread_mutex_lock (&(g_dpkg.mutex));
         g_dpkg.init_done = dpkginfo_init();
+        pthread_mutex_unlock (&(g_dpkg.mutex));
         if (g_dpkg.init_done < 0) {
                 dE("dpkginfo_init has failed.");
         }
@@ -92,8 +93,9 @@ void dpkginfo_probe_fini (void *ptr)
 {
         struct dpkginfo_global *d = (struct dpkginfo_global *)ptr;
 
+        pthread_mutex_lock (&(d->mutex));
         dpkginfo_fini();
-        pthread_mutex_destroy (&(d->mutex));
+        pthread_mutex_unlock (&(d->mutex));
 
         return;
 }

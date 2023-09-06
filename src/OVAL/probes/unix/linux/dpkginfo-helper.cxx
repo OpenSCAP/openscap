@@ -24,8 +24,6 @@ using namespace std;
 static int _init_done = 0;
 static pkgCacheFile *cgCache = NULL;
 
-static MMap *dpkg_mmap = NULL;
-
 static int opencache (void) {
         if (pkgInitConfig (*_config) == false) return 0;
 
@@ -36,8 +34,6 @@ static int opencache (void) {
         }
 
         if (pkgInitSystem (*_config, _system) == false) return 0;
-
-        if (!cgCache->ReadOnlyOpen(NULL)) return 0;
 
         if (_error->PendingError () == true) {
                 _error->DumpErrors ();
@@ -52,6 +48,8 @@ struct dpkginfo_reply_t * dpkginfo_get_by_name(const char *name, int *err)
         pkgCache &cache = *cgCache->GetPkgCache();
         pkgRecords Recs (cache);
         struct dpkginfo_reply_t *reply = NULL;
+
+        if (!cgCache->ReadOnlyOpen(NULL)) return 0;
 
         // Locate the package
         pkgCache::PkgIterator Pkg = cache.FindPkg(name);
@@ -127,11 +125,15 @@ void dpkginfo_free_reply(struct dpkginfo_reply_t *reply)
 
 int dpkginfo_init()
 {
-        cgCache = new pkgCacheFile;
-        if (_init_done == 0)
+        if (_init_done == 0) {
+                cgCache = new pkgCacheFile;
                 if (opencache() != 1) {
+                        delete cgCache;
+                        cgCache = NULL;
                         return -1;
                 }
+                _init_done = 1;
+        }
 
         return 0;
 }
@@ -141,12 +143,6 @@ int dpkginfo_fini()
         if (cgCache != NULL) {
                 cgCache->Close();
         }
-
-        delete cgCache;
-        cgCache = NULL;
-
-        delete dpkg_mmap;
-        dpkg_mmap = NULL;
 
         return 0;
 }
