@@ -1,3 +1,13 @@
+openscap-1.3.9                                                  06-09-2023
+- New features
+  - OpenSCAP can now use PCRE2 library
+- Maintenance, bug fix
+  - Fix offline mode (OVAL/sysctl)
+  - Fix leak of dpkg cache when dpkginfo_init is called multiple times
+  - Fix un-expanded variable in xccdf report output
+  - Fix issues when parsing profiles
+  - Fix minor problems and resource leaks
+
 openscap-1.3.8                                                  21-06-2023
 - New features
   - The boot-time remediation service for systemd's Offline Update mode is now disabled by default
