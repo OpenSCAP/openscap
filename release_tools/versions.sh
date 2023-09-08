@@ -1,4 +1,4 @@
-version=1.3.9
-previous_version=1.3.8
+version=1.3.10
+previous_version=1.3.9
 
 version_major_minor="${version%.*}"
