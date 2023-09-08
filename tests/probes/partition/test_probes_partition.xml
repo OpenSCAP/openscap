@@ -21,6 +21,28 @@
         </criteria>
       </criteria>
     </definition>
+    <definition class="compliance" version="1" id="oval:1:def:2"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria>
+        <criteria operator="AND">
+          <criterion test_ref="oval:1:tst:2"/>
+        </criteria>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:1:def:3"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria>
+        <criteria operator="AND">
+          <criterion test_ref="oval:1:tst:3"/>
+        </criteria>
+      </criteria>
+    </definition>
 
   </definitions>
 
@@ -29,16 +51,32 @@
       <object object_ref="oval:1:obj:1"/>
       <state state_ref="oval:1:ste:1"/>
     </partition_test>
+    <partition_test version="1" id="oval:1:tst:2" check="at least one" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:2"/>
+      <state state_ref="oval:1:ste:2"/>
+    </partition_test>
+    <partition_test version="1" id="oval:1:tst:3" check="at least one" check_existence="none_exist" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:1:obj:3"/>
+    </partition_test>
   </tests>
 
   <objects>
     <partition_object version="1" id="oval:1:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <mount_point>/proc</mount_point>
     </partition_object>
+    <partition_object version="1" id="oval:1:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <mount_point operation="pattern match">^\/proc$</mount_point>
+    </partition_object>
+    <partition_object version="1" id="oval:1:obj:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <mount_point operation="pattern match">^something.*without.*leading.*slash$</mount_point>
+    </partition_object>
   </objects>
 
   <states>
     <partition_state version="1" id="oval:1:ste:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <device>proc</device>
+    </partition_state>
+    <partition_state version="1" id="oval:1:ste:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <device>proc</device>
     </partition_state>
   </states>

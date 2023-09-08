@@ -402,7 +402,7 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
                                 rc = oscap_pcre_exec(re, mnt_entp->mnt_dir,
                                                strlen(mnt_entp->mnt_dir), 0, 0, NULL, 0);
 
-                                if (rc == 0) {
+                                if (rc >= 0) {
 	                                if (
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
 		                                collect_item(ctx, obj_over, mnt_entp, blkcache)
