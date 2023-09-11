@@ -210,7 +210,7 @@ void oscap_acquire_cleanup_dir(char **dir_path)
 {
 	if (*dir_path != NULL)
 	{
-		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
+		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS);
 		free(*dir_path);
 		*dir_path = NULL;
 	}
