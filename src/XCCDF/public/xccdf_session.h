@@ -575,6 +575,18 @@ OSCAP_API unsigned int xccdf_session_get_cpe_oval_agents_count(const struct xccd
 OSCAP_API bool xccdf_session_contains_fail_result(const struct xccdf_session *session);
 
 /**
+ * @struct xccdf_rule_result_iterator
+ */
+struct xccdf_rule_result_iterator;
+
+/**
+ * Get rule results.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ */
+OSCAP_API struct xccdf_rule_result_iterator *xccdf_session_get_rule_results(const struct xccdf_session *session);
+
+/**
  * Run XCCDF Remediation. It uses XCCDF Policy and XCCDF TestResult from the session
  * and modifies the TestResult. This also drops and recreate OVAL Agent Session, thus
  * users are advised to run @ref xccdf_session_export_oval first.

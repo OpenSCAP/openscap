@@ -1863,6 +1863,11 @@ bool xccdf_session_contains_fail_result(const struct xccdf_session *session)
 	return false;
 }
 
+struct xccdf_rule_result_iterator *xccdf_session_get_rule_results(const struct xccdf_session *session)
+{
+	return xccdf_result_get_rule_results(session->xccdf.result);
+}
+
 int xccdf_session_remediate(struct xccdf_session *session)
 {
 	int res = 0;
