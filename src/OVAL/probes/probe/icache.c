@@ -214,6 +214,7 @@ const char* thread_name = "icache_worker";
 
         while(pthread_cond_wait(&cache->queue_notempty, &cache->queue_mutex) == 0) {
 			if (cache->queue_cnt <= 0) {
+				pthread_mutex_unlock(&cache->queue_mutex);
 				return NULL;
 			}
         do {
@@ -234,6 +235,7 @@ const char* thread_name = "icache_worker";
 		if (cache->queue_cnt == 0 ?
 			cache->queue_end != cache->queue_beg :
 			cache->queue_end == cache->queue_beg) {
+			pthread_mutex_unlock(&cache->queue_mutex);
 			return NULL;
 		}
 
@@ -412,6 +414,7 @@ int probe_icache_add(probe_icache_t *cache, SEXP_t *cobj, SEXP_t *item)
         if (pthread_cond_signal(&cache->queue_notempty) != 0) {
                 dE("An error ocured while signaling the `notempty' condition: %u, %s",
                    errno, strerror(errno));
+                pthread_mutex_unlock(&cache->queue_mutex);
                 return (-1);
         }
 
@@ -442,6 +445,7 @@ int probe_icache_nop(probe_icache_t *cache)
         if (pthread_cond_init(&cond, NULL) != 0) {
                 dE("Can't initialize icache queue condition variable (NOP): %u, %s",
                    errno, strerror(errno));
+                pthread_mutex_unlock(&cache->queue_mutex);
                 return (-1);
         }
 
@@ -463,6 +467,7 @@ int probe_icache_nop(probe_icache_t *cache)
                    errno, strerror(errno));
 
                 pthread_cond_destroy(&cond);
+                pthread_mutex_unlock(&cache->queue_mutex);
                 return (-1);
         }
 
