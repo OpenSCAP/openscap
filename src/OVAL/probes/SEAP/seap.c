@@ -526,6 +526,7 @@ int SEAP_replyerr (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, uint32_t e)
         _A(ctx != NULL);
         _A(rep_msg != NULL);
 
+        err.type = 0;
         err.code = e;
         err.id   = rep_msg->id;
         err.data = NULL; /* FIXME: Attach original message */
