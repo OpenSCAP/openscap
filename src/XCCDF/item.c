@@ -772,6 +772,7 @@ void xccdf_item_add_applicable_platform(struct xccdf_item *item, xmlTextReaderPt
 	int erroffset = 0;
 	oscap_pcre_t *regex = oscap_pcre_compile("^(cpe:/o:microsoft:windows)(7.*)", 0, &pcreerror, &erroffset);
 	if (regex == NULL) {
+		free(platform_idref);
 		oscap_pcre_err_free(pcreerror);
 		return;
 	}

@@ -138,13 +138,16 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
                 switch (errno) {
                 case EINVAL:
                         dD("%s: invalid value type", "name");
+			SEXP_free (ent);
 			return PROBE_EINVAL;
                         break;
                 case EFAULT:
                         dD("%s: element not found", "name");
+			SEXP_free (ent);
 			return PROBE_ENOELM;
                         break;
 		default:
+			SEXP_free (ent);
 			return PROBE_EUNKNOWN;
                 }
         }

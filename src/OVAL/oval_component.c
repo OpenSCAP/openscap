@@ -1617,6 +1617,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 				texts[idx0] = oval_value_get_text(oval_value_iterator_next(comp_values));
 				not_finished = true;
 			} else {
+				oval_value_iterator_free(comp_values);
 				oval_collection_free_items(component_colls[idx0],
 							   (oscap_destruct_func) oval_value_free);
 				component_colls[idx0] = NULL;
