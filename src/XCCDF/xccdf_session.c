@@ -362,6 +362,40 @@ void xccdf_session_free(struct xccdf_session *session)
 	free(session);
 }
 
+static void _xccdf_session_reset_oval_agents_syschar(struct xccdf_session *session)
+{
+	if (session->oval.agents != NULL) {
+		for (int i=0; session->oval.agents[i]; i++) {
+			oval_agent_reset_syschar(session->oval.agents[i]);
+		}
+	}
+}
+
+static void _xccdf_session_reset_oval_agents_results(struct xccdf_session *session)
+{
+	if (session->oval.agents != NULL) {
+		for (int i=0; session->oval.agents[i]; i++) {
+			oval_agent_reset_results(session->oval.agents[i]);
+		}
+	}
+}
+
+void xccdf_session_result_reset(struct xccdf_session *session)
+{
+	if (session->xccdf.policy_model != NULL) {
+		oscap_list_free(session->xccdf.policy_model->policies, (oscap_destruct_func) xccdf_policy_free);
+		session->xccdf.policy_model->policies = oscap_list_new();
+	}
+
+	oscap_list_free(session->rules, (oscap_destruct_func) free);
+	session->rules = oscap_list_new();
+	oscap_list_free(session->skip_rules, (oscap_destruct_func) free);
+	session->skip_rules = oscap_list_new();
+
+	_xccdf_session_reset_oval_agents_syschar(session);
+	_xccdf_session_reset_oval_agents_results(session);
+}
+
 const char *xccdf_session_get_filename(const struct xccdf_session *session)
 {
 	return oscap_source_readable_origin(session->source);
