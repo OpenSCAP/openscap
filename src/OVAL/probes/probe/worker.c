@@ -219,6 +219,9 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 	ent_cnt = SEXP_number_getu_32(r1 = SEXP_list_nth(varrefs, 3));
 	SEXP_free(r1);
 
+	if (ent_cnt == UINT32_MAX)
+		return -1;
+
 	struct probe_varref_ctx *ctx = malloc(sizeof(struct probe_varref_ctx));
 	ctx->pi2 = SEXP_softref((SEXP_t *)probe_in);
 	ctx->ent_cnt = ent_cnt;
