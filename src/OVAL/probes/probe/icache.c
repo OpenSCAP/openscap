@@ -505,6 +505,9 @@ static int probe_cobj_memcheck(size_t item_cnt, double max_ratio)
 		struct sys_memusage  mu_sys;
 		double c_ratio;
 
+		memset(&mu_proc, 0, sizeof(mu_proc));
+		memset(&mu_sys, 0, sizeof(mu_sys));
+
 		if (oscap_proc_memusage (&mu_proc) != 0)
 			return (-1);
 

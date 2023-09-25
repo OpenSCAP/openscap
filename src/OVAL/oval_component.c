@@ -2288,6 +2288,8 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(st
 		struct oval_value *ov;
 		char sv[32];
 
+		memset(sv, 0, sizeof (sv));
+
 		if (datatype == OVAL_DATATYPE_INTEGER) {
 			snprintf(sv, sizeof (sv), "%ld", (long int) val);
 		} else if (datatype == OVAL_DATATYPE_FLOAT) {
