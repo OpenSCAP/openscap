@@ -411,7 +411,7 @@ static int _handle_disabled_downloads(struct ds_sds_session *session, const char
 			"WARNING: Using local file '%s' instead of '%s'",
 			local_filepath, xlink_href);
 		struct oscap_source *source_file = oscap_source_new_from_file(local_filepath);
-		xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
+		xmlDoc *doc = oscap_source_pop_xmlDoc(source_file);
 		if (doc == NULL) {
 			free(local_filepath);
 			oscap_source_free(source_file);
@@ -425,6 +425,7 @@ static int _handle_disabled_downloads(struct ds_sds_session *session, const char
 			return -1;
 		}
 		free(local_filepath);
+		oscap_source_free(source_file);
 		return 0;
 	}
 	ds_sds_session_remote_resources_progress(session)(true,

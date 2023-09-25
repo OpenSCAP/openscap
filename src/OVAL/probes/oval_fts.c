@@ -499,6 +499,8 @@ static int process_pattern_match(const char *path, oscap_pcre_t **regex_out)
 		   "pattern: '%s'.", pattern);
 		if (regex_out != NULL)
 			*regex_out = regex;
+		else
+			oscap_pcre_free(regex);
 	}
 
 	free(pattern);

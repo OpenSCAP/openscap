@@ -237,6 +237,8 @@ cleanup:
 	if (msg != NULL)
 		dbus_message_unref(msg);
 
+	free(appstream_name);
+
 	return ret;
 }
 

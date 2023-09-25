@@ -226,6 +226,7 @@ void *probe_input_handler(void *arg)
 
 				break;
 			}
+			SEXP_free(probe_in);
 		} else {
 			SEXP_VALIDATE(probe_out);
 

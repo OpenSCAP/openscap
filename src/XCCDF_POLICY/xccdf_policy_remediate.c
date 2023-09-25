@@ -422,12 +422,14 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 	int fd = oscap_acquire_temp_file(temp_dir, "fix-XXXXXXXX", &temp_file);
 	if (fd == -1) {
 		_rule_add_info_message(rr, "mkstemp failed: %s", strerror(errno));
+		free(temp_file);
 		goto cleanup;
 	}
 
 	if (_write_text_to_fd(fd, fix_text) != 0) {
 		_rule_add_info_message(rr, "Could not write to the temp file: %s", strerror(errno));
 		(void) close(fd);
+		free(temp_file);
 		goto cleanup;
 	}
 
@@ -437,6 +439,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 	int pipefd[2];
 	if (pipe(pipefd) == -1) {
 		_rule_add_info_message(rr, "Could not create pipe: %s", strerror(errno));
+		free(temp_file);
 		goto cleanup;
 	}
 
