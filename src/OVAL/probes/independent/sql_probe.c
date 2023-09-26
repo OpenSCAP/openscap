@@ -427,7 +427,7 @@ int sql_probe_main(probe_ctx *ctx, void *arg)
 	err = dbSQL_eval(engine, version, conn, sqlexp, ctx);
 __exit:
 	if (engine != NULL) {
-		__clearmem(conn, strlen(engine));
+		__clearmem(engine, strlen(engine));
 		free(engine);
 	}
 

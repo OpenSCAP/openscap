@@ -74,7 +74,7 @@ int64_t strto_int64 (const char *str, size_t len, char **endptr, int base)
 {
     int errno_copy = 0;
     int64_t result = 0;
-    char *null_str = calloc(len + 1, sizeof(str));
+    char *null_str = calloc(len + 1, sizeof(*str));
 
     memcpy(null_str, str, len);
     errno = 0;
@@ -90,7 +90,7 @@ uint64_t strto_uint64 (const char *str, size_t len, char **endptr, int base)
 {
     int errno_copy = 0;
     int64_t result = 0;
-    char *null_str = calloc(len + 1, sizeof(str));
+    char *null_str = calloc(len + 1, sizeof(*str));
 
     memcpy(null_str, str, len);
     errno = 0;
@@ -106,7 +106,7 @@ double strto_double (const char *str, size_t len, char **endptr)
 {
     int errno_copy = 0;
     int64_t result = 0;
-    char *null_str = calloc(len + 1, sizeof(str));
+    char *null_str = calloc(len + 1, sizeof(*str));
 
     memcpy(null_str, str, len);
     errno = 0;
