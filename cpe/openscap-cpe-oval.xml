@@ -133,6 +133,32 @@
                         <criterion comment="Oracle Linux 8 is installed" test_ref="oval:org.open-scap.cpe.ol:tst:8"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.almalinux:def:8" version="1">
+                  <metadata>
+                        <title>AlmaLinux 8</title>
+                        <affected family="unix">
+                              <platform>AlmaLinux 8</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:almalinux:almalinux:8" source="CPE"/>
+                        <description>The operating system installed on the system is AlmaLinux 8</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="AlmaLinux 8 is installed" test_ref="oval:org.open-scap.cpe.almalinux:tst:8"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.almalinux:def:9" version="1">
+                  <metadata>
+                        <title>AlmaLinux 9</title>
+                        <affected family="unix">
+                              <platform>AlmaLinux 9</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:almalinux:almalinux:9" source="CPE"/>
+                        <description>The operating system installed on the system is AlmaLinux 9</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="AlmaLinux 9 is installed" test_ref="oval:org.open-scap.cpe.almalinux:tst:9"/>
+                  </criteria>
+            </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:1005" version="1">
                   <metadata>
                         <title>Community Enterprise Operating System 5</title>
@@ -868,6 +894,16 @@
                   <object object_ref="oval:org.open-scap.cpe.oraclelinux-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.ol:ste:8"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.almalinux:tst:8" version="1" check="at least one" comment="almalinux-release is version 8"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.almalinux-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.almalinux:ste:8"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.almalinux:tst:9" version="1" check="at least one" comment="almalinux-release is version 9"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.almalinux-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.almalinux:ste:9"/>
+            </rpminfo_test>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1005" version="1" check="at least one" comment="centos-release is version 5"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
@@ -1223,6 +1259,9 @@
             <rpminfo_object id="oval:org.open-scap.cpe.oraclelinux-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name>oraclelinux-release</name>
             </rpminfo_object>
+            <rpminfo_object id="oval:org.open-scap.cpe.almalinux-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name>almalinux-release</name>
+            </rpminfo_object>
             <registry_object id="oval:org.open-scap.cpe.windows:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" >
                   <hive>HKEY_LOCAL_MACHINE</hive>
                   <key>SOFTWARE\Microsoft\Windows NT\CurrentVersion</key>
@@ -1306,6 +1345,14 @@
             <rpminfo_state id="oval:org.open-scap.cpe.ol:ste:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^oraclelinux-release</name>
                   <version operation="pattern match">^8</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.almalinux:ste:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^almalinux-release</name>
+                  <version operation="pattern match">^8</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.almalinux:ste:9" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^almalinux-release</name>
+                  <version operation="pattern match">^9</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:16" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^16$</version>
