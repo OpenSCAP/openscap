@@ -31,6 +31,7 @@ ALL_NS = {
     "xccdf-1.2": "http://checklists.nist.gov/xccdf/1.2",
 }
 DEFAULT_PROFILE_SUFFIX = "_customized"
+DEFAULT_REVERSE_DNS = "org.ssgproject.content"
 
 
 def is_valid_xccdf_id(string):
@@ -38,10 +39,9 @@ def is_valid_xccdf_id(string):
 
 
 class Tailoring:
-    ID_NAMESPACE = "org.ssgproject.content"
-
     def __init__(self):
         self.id_suffix = "auto_tailoring_default"
+        self.reverse_dns = DEFAULT_REVERSE_DNS
         self.version = 1
         self.profile_name = ""
         self.extends = ""
@@ -61,7 +61,7 @@ class Tailoring:
         if is_valid_xccdf_id(string):
             return string
         default_prefix = "xccdf_{namespace}_{el_type}_".format(
-            namespace=self.ID_NAMESPACE, el_type=el_type)
+            namespace=self.reverse_dns, el_type=el_type)
         return default_prefix + string
 
     def _full_profile_id(self, string):
@@ -143,10 +143,10 @@ def parse_args():
         "--title", default="",
         help="Title of the new profile.")
     parser.add_argument(
-        "--id-namespace", default=Tailoring.ID_NAMESPACE,
+        "--id-namespace", default=DEFAULT_REVERSE_DNS,
         help="The reverse-DNS style string that is part of entities IDs in "
         "the corresponding data stream. If left out, the default value "
-        "'{reverse_dns}' is used.".format(reverse_dns=Tailoring.ID_NAMESPACE))
+        "'{reverse_dns}' is used.".format(reverse_dns=DEFAULT_REVERSE_DNS))
     parser.add_argument(
         "-v", "--var-value", metavar="VAR=VALUE", action="append", default=[],
         help="Specify modification of the XCCDF value in form <varname>=<value>. "
@@ -189,7 +189,7 @@ if __name__ == "__main__":
         ET.register_namespace(prefix, uri)
 
     t = Tailoring()
-    t.ID_NAMESPACE = args.id_namespace
+    t.reverse_dns = args.id_namespace
     t.extends = args.profile
     if args.new_profile_id:
         t.profile_name = args.new_profile_id
