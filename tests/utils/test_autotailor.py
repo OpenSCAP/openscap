@@ -42,3 +42,11 @@ def test_full_id():
     assert t._full_var_id(
         "xccdf_org.ssgproject.content_value_var_crypto_policy") == \
         "xccdf_org.ssgproject.content_value_var_crypto_policy"
+
+
+def test_customized_profile_id():
+    t = autotailor.Tailoring()
+    t.extends = "stig"
+    assert t.profile_id == "stig_customized"
+    t.profile_id = "my_cool_profile"
+    assert t.profile_id == "my_cool_profile"

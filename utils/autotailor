@@ -46,7 +46,7 @@ class Tailoring:
         self.id_suffix = "auto_tailoring_default"
         self.reverse_dns = DEFAULT_REVERSE_DNS
         self.version = 1
-        self.profile_name = ""
+        self._profile_id = None
         self.extends = ""
         self.original_ds_filename = ""
         self.profile_title = ""
@@ -59,6 +59,17 @@ class Tailoring:
         self.refine_value = []
 
         self.set_value = []
+
+    @property
+    def profile_id(self):
+        if self._profile_id is not None:
+            return self._profile_id
+        else:
+            return self.extends + "_customized"
+
+    @profile_id.setter
+    def profile_id(self, new_profile_id):
+        self._profile_id = new_profile_id
 
     def _full_id(self, string, el_type):
         if is_valid_xccdf_id(string):
@@ -110,7 +121,7 @@ class Tailoring:
         version.text = str(self.version)
 
         profile = ET.SubElement(root, "xccdf-1.2:Profile")
-        profile.set("id", self._full_profile_id(self.profile_name))
+        profile.set("id", self._full_profile_id(self.profile_id))
         profile.set("extends", self._full_profile_id(self.extends))
 
         # Title has to be there due to the schema definition.
@@ -194,10 +205,7 @@ if __name__ == "__main__":
     t = Tailoring()
     t.reverse_dns = args.id_namespace
     t.extends = args.profile
-    if args.new_profile_id:
-        t.profile_name = args.new_profile_id
-    else:
-        t.profile_name = args.profile + "_customized"
+    t.profile_id = args.new_profile_id
     t.original_ds_filename = args.datastream
     for change in args.var_value:
         varname, value = assignment_to_tuple(change)
