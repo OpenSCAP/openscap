@@ -194,7 +194,7 @@ if __name__ == "__main__":
     if args.new_profile_id:
         t.profile_name = args.new_profile_id
     else:
-        t.profile_name = args.profile
+        t.profile_name = args.profile + "_customized"
     t.original_ds_filename = args.datastream
     for change in args.var_value:
         varname, value = assignment_to_tuple(change)
