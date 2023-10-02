@@ -35,7 +35,10 @@ DEFAULT_REVERSE_DNS = "org.ssgproject.content"
 
 
 def is_valid_xccdf_id(string):
-    return re.match(r"^xccdf_", string) is not None
+    return re.match(
+        r"^xccdf_[a-zA-Z0-9.-]+_(benchmark|profile|rule|group|value|"
+        r"testresult|tailoring)_.+",
+        string) is not None
 
 
 class Tailoring:
