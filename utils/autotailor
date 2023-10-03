@@ -47,7 +47,7 @@ def is_valid_xccdf_id(string):
 
 class Tailoring:
     def __init__(self):
-        self.id_suffix = "auto_tailoring_default"
+        self.id = "xccdf_auto_tailoring_default"
         self.reverse_dns = DEFAULT_REVERSE_DNS
         self.version = 1
         self._profile_id = None
@@ -182,7 +182,7 @@ class Tailoring:
 
     def to_xml(self, location=None):
         root = ET.Element("{%s}Tailoring" % NS)
-        root.set("id", "xccdf_" + self.id_suffix)
+        root.set("id", self.id)
 
         benchmark = ET.SubElement(root, "{%s}benchmark" % NS)
         datastream_uri = pathlib.Path(
