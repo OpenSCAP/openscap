@@ -27,10 +27,7 @@ import xml.etree.ElementTree as ET
 import xml.dom.minidom
 
 
-ALL_NS = {
-    "xccdf-1.1": "http://checklists.nist.gov/xccdf/1.1",
-    "xccdf-1.2": "http://checklists.nist.gov/xccdf/1.2",
-}
+NS = "http://checklists.nist.gov/xccdf/1.2"
 DEFAULT_PROFILE_SUFFIX = "_customized"
 DEFAULT_REVERSE_DNS = "org.ssgproject.content"
 ROLES = ["full", "unscored", "unchecked"]
@@ -161,48 +158,47 @@ class Tailoring:
 
     def _add_rule_select_operations(self, container_element):
         for rule_id in self.rules_to_select:
-            change = ET.SubElement(container_element, "xccdf-1.2:select")
+            change = ET.SubElement(container_element, "{%s}select" % NS)
             change.set("idref", self._full_rule_id(rule_id))
             change.set("selected", "true")
 
         for rule_id in self.rules_to_unselect:
-            change = ET.SubElement(container_element, "xccdf-1.2:select")
+            change = ET.SubElement(container_element, "{%s}select" % NS)
             change.set("idref", self._full_rule_id(rule_id))
             change.set("selected", "false")
 
     def _add_value_selections(self, container_element):
         for varname, value in self.value_changes:
-            change = ET.SubElement(container_element, "xccdf-1.2:set-value")
+            change = ET.SubElement(container_element, "{%s}set-value" % NS)
             change.set("idref", self._full_var_id(varname))
             change.text = str(value)
 
     def rule_refinements_to_xml(self, profile_el):
         for rule_id, refinements in self._rule_refinements.items():
-            ref_rule_el = ET.SubElement(profile_el, "xccdf-1.2:refine-rule")
+            ref_rule_el = ET.SubElement(profile_el, "{%s}refine-rule" % NS)
             ref_rule_el.set("idref", rule_id)
             for attr, val in refinements.items():
                 ref_rule_el.set(attr, val)
 
     def to_xml(self, location=None):
-        root = ET.Element("xccdf-1.2:Tailoring")
-        root.set("xmlns:xccdf-1.2", ALL_NS["xccdf-1.2"])
+        root = ET.Element("{%s}Tailoring" % NS)
         root.set("id", "xccdf_" + self.id_suffix)
 
-        benchmark = ET.SubElement(root, "xccdf-1.2:benchmark")
+        benchmark = ET.SubElement(root, "{%s}benchmark" % NS)
         datastream_uri = pathlib.Path(
             self.original_ds_filename).absolute().as_uri()
         benchmark.set("href", datastream_uri)
 
-        version = ET.SubElement(root, "xccdf-1.2:version")
+        version = ET.SubElement(root, "{%s}version" % NS)
         version.set("time", datetime.datetime.now().isoformat())
         version.text = str(self.version)
 
-        profile = ET.SubElement(root, "xccdf-1.2:Profile")
+        profile = ET.SubElement(root, "{%s}Profile" % NS)
         profile.set("id", self._full_profile_id(self.profile_id))
         profile.set("extends", self._full_profile_id(self.extends))
 
         # Title has to be there due to the schema definition.
-        title = ET.SubElement(profile, "xccdf-1.2:title")
+        title = ET.SubElement(profile, "{%s}title" % NS)
         if self.profile_title:
             title.set("override", "true")
         else:
@@ -296,8 +292,6 @@ def assignment_to_tuple(assignment):
 
 if __name__ == "__main__":
     args = parse_args()
-    for prefix, uri in ALL_NS.items():
-        ET.register_namespace(prefix, uri)
 
     t = Tailoring()
     t.reverse_dns = args.id_namespace
