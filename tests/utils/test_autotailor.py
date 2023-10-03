@@ -12,7 +12,7 @@ def import_arbitrary_file_as_module(path, module_name):
     return module
 
 
-autotailor = import_arbitrary_file_as_module("utils/autotailor", "autotailor")
+autotailor = import_arbitrary_file_as_module("../../../utils/autotailor", "autotailor")
 
 
 def test_is_valid_xccdf_id():
