@@ -1,6 +1,5 @@
 import importlib
 import pytest
-import xml.etree.ElementTree as ET
 
 NS = "http://checklists.nist.gov/xccdf/1.2"
 
