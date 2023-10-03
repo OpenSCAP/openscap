@@ -93,7 +93,7 @@ class Tailoring:
     @staticmethod
     def _validate_rule_refinement_params(rule_id, attribute, value):
         if not is_valid_xccdf_id(rule_id):
-            msg ="Rule id '{rule_id}' is invalid!".format(rule_id=rule_id)
+            msg = "Rule id '{rule_id}' is invalid!".format(rule_id=rule_id)
             raise ValueError(msg)
         enumeration = Tailoring._find_enumeration(attribute)
         if value in enumeration:
@@ -184,7 +184,8 @@ class Tailoring:
         root.set("id", "xccdf_" + self.id_suffix)
 
         benchmark = ET.SubElement(root, "xccdf-1.2:benchmark")
-        datastream_uri = pathlib.Path(self.original_ds_filename).absolute().as_uri()
+        datastream_uri = pathlib.Path(
+            self.original_ds_filename).absolute().as_uri()
         benchmark.set("href", datastream_uri)
 
         version = ET.SubElement(root, "xccdf-1.2:version")
@@ -222,9 +223,9 @@ def parse_args():
         help="The tailored data stream filename.")
     parser.add_argument(
         "profile", metavar="BASE_PROFILE_ID",
-        help="Specify ID of the base profile. "
-        "ID of the profile can be either its full ID, or the suffix, in which case "
-        "the 'xccdf_<id-namespace>_profile' prefix will be prepended internally.")
+        help="Specify ID of the base profile. ID of the profile can be "
+        "either its full ID, or the suffix, in which case the "
+        "'xccdf_<id-namespace>_profile' prefix will be prepended internally.")
     parser.add_argument(
         "--title", default="",
         help="Title of the new profile.")
@@ -235,10 +236,11 @@ def parse_args():
         "'{reverse_dns}' is used.".format(reverse_dns=DEFAULT_REVERSE_DNS))
     parser.add_argument(
         "-v", "--var-value", metavar="VAR=VALUE", action="append", default=[],
-        help="Specify modification of the XCCDF value in form <varname>=<value>. "
-        "Name of the variable can be either its full name, or the suffix, in which case "
-        "the 'xccdf_<id-namespace>_value' prefix will be prepended internally. "
-        "Specify the argument multiple times if needed.")
+        help="Specify modification of the XCCDF value in form "
+        "<varname>=<value>. Name of the variable can be either its full name, "
+        "or the suffix, in which case the 'xccdf_<id-namespace>_value' prefix "
+        "will be prepended internally. Specify the argument multiple times "
+        "if needed.")
     parser.add_argument(
         "-r", "--rule-role", metavar="RULE=ROLE", action="append", default=[],
         help="Specify refinement of the XCCDF rule role in form "
@@ -269,14 +271,15 @@ def parse_args():
     parser.add_argument(
         "-p", "--new-profile-id",
         help="Specify the ID of the tailored profile. "
-        "The ID of the new profile can be either its full ID, or the suffix, in which case "
-        "the 'xccdf_<id-namespace>_profile_' prefix will be prepended internally. "
-        "If left out, the new ID will be obtained "
+        "The ID of the new profile can be either its full ID, or the suffix, "
+        "in which case the 'xccdf_<id-namespace>_profile_' prefix will be "
+        "prepended internally. If left out, the new ID will be obtained "
         "by appending '{suffix}' to the tailored profile ID."
         .format(suffix=DEFAULT_PROFILE_SUFFIX))
     parser.add_argument(
         "-o", "--output", default="-",
-        help="Where to save the tailoring file. If not supplied, write to standard output.")
+        help="Where to save the tailoring file. If not supplied, write to "
+        "standard output.")
     args = parser.parse_args()
     return args
 
