@@ -135,6 +135,11 @@ class Tailoring:
     def change_severities(self, assignements):
         self.change_attributes(assignements, "severity")
 
+    def change_values(self, assignements):
+        for change in assignements:
+            varname, value = assignment_to_tuple(change)
+            t.add_value_change(varname, value)
+
     def _full_id(self, string, el_type):
         if is_valid_xccdf_id(string):
             return string
@@ -299,9 +304,7 @@ if __name__ == "__main__":
     t.extends = args.profile
     t.profile_id = args.new_profile_id
     t.original_ds_filename = args.datastream
-    for change in args.var_value:
-        varname, value = assignment_to_tuple(change)
-        t.add_value_change(varname, value)
+    t.change_values(args.var_value)
     t.change_roles(args.rule_role)
     t.change_severities(args.rule_severity)
 
