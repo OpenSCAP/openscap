@@ -3,6 +3,7 @@ import pytest
 
 NS = "http://checklists.nist.gov/xccdf/1.2"
 
+
 def import_arbitrary_file_as_module(path, module_name):
     spec = importlib.util.spec_from_loader(
         module_name, importlib.machinery.SourceFileLoader(module_name, path))
