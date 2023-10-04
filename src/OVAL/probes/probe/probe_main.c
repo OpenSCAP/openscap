@@ -87,10 +87,10 @@ static SEXP_t *probe_reset(SEXP_t *arg0, void *arg1)
          * FIXME: implement main loop locking & worker waiting
          */
 	probe_rcache_free(probe->rcache);
-        probe_ncache_free(probe->ncache);
 
         probe->rcache = probe_rcache_new();
-        probe->ncache = probe_ncache_new();
+        probe_ncache_clear(OSCAP_GSYM(ncache));
+        probe->ncache = OSCAP_GSYM(ncache);
 
         return(NULL);
 }
@@ -211,7 +211,7 @@ void *probe_common_main(void *arg)
 	if (probe.sd < 0)
 		fail(errno, "SEAP_openfd2", __LINE__ - 3);
 
-	if (SEAP_cmd_register(probe.SEAP_ctx, PROBECMD_RESET, 0, &probe_reset) != 0)
+	if (SEAP_cmd_register(probe.SEAP_ctx, PROBECMD_RESET, SEAP_CMDREG_USEARG, &probe_reset, &probe) != 0)
 		fail(errno, "SEAP_cmd_register", __LINE__ - 1);
 
 	/*
