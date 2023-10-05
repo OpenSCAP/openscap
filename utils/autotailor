@@ -81,26 +81,22 @@ class Tailoring:
         elif attribute == "severity":
             enumeration = SEVERITIES
         else:
-            msg = (
-                "Unsupported refine-rule attribute {attribute}".format(
-                    attribute=attribute))
+            msg = f"Unsupported refine-rule attribute {attribute}"
             raise ValueError(msg)
         return enumeration
 
     @staticmethod
     def _validate_rule_refinement_params(rule_id, attribute, value):
         if not is_valid_xccdf_id(rule_id):
-            msg = "Rule id '{rule_id}' is invalid!".format(rule_id=rule_id)
+            msg = f"Rule id '{rule_id}' is invalid!"
             raise ValueError(msg)
         enumeration = Tailoring._find_enumeration(attribute)
         if value in enumeration:
             return
         allowed = ", ".join(map(quote, enumeration))
         msg = (
-            "Can't refine {attribute} of rule '{rule_id}' to '{value}'. "
-            "Allowed {attribute} values are: {allowed}.".format(
-                attribute=attribute, rule_id=rule_id, value=value,
-                allowed=allowed))
+            f"Can't refine {attribute} of rule '{rule_id}' to '{value}'. "
+            f"Allowed {attribute} values are: {allowed}.")
         raise ValueError(msg)
 
     def _prevent_duplicate_rule_refinement(self, attribute, rule_id, value):
@@ -109,10 +105,8 @@ class Tailoring:
             return
         current = refinements[attribute]
         msg = (
-            "Can't refine {attribute} of rule '{rule_id}' to '{value}'. "
-            "This rule {attribute} is already refined to '{current}'.".format(
-                attribute=attribute, rule_id=rule_id, value=value,
-                current=current))
+            f"Can't refine {attribute} of rule '{rule_id}' to '{value}'. "
+            f"This rule {attribute} is already refined to '{current}'.")
         raise ValueError(msg)
 
     def refine_rule(self, rule_id, attribute, value):
@@ -140,9 +134,7 @@ class Tailoring:
     def _full_id(self, string, el_type):
         if is_valid_xccdf_id(string):
             return string
-        default_prefix = "xccdf_{namespace}_{el_type}_".format(
-            namespace=self.reverse_dns, el_type=el_type)
-        return default_prefix + string
+        return f"xccdf_{self.reverse_dns}_{el_type}_{string}"
 
     def _full_profile_id(self, string):
         return self._full_id(string, "profile")
