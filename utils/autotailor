@@ -18,6 +18,7 @@
 # Boston, MA 02110-1301 USA
 
 import argparse
+import collections
 import datetime
 import re
 import sys
@@ -26,24 +27,30 @@ import xml.etree.ElementTree as ET
 import xml.dom.minidom
 
 
-ALL_NS = {
-    "xccdf-1.1": "http://checklists.nist.gov/xccdf/1.1",
-    "xccdf-1.2": "http://checklists.nist.gov/xccdf/1.2",
-}
+NS = "http://checklists.nist.gov/xccdf/1.2"
 DEFAULT_PROFILE_SUFFIX = "_customized"
+DEFAULT_REVERSE_DNS = "org.ssgproject.content"
+ROLES = ["full", "unscored", "unchecked"]
+SEVERITIES = ["unknown", "info", "low", "medium", "high"]
+
+
+def quote(string):
+    return "\"" + string + "\""
 
 
 def is_valid_xccdf_id(string):
-    return re.match(r"^xccdf_", string) is not None
+    return re.match(
+        r"^xccdf_[a-zA-Z0-9.-]+_(benchmark|profile|rule|group|value|"
+        r"testresult|tailoring)_.+",
+        string) is not None
 
 
 class Tailoring:
-    ID_NAMESPACE = "org.ssgproject.content"
-
     def __init__(self):
-        self.id_suffix = "auto_tailoring_default"
+        self.id = "xccdf_auto_tailoring_default"
+        self.reverse_dns = DEFAULT_REVERSE_DNS
         self.version = 1
-        self.profile_name = ""
+        self._profile_id = None
         self.extends = ""
         self.original_ds_filename = ""
         self.profile_title = ""
@@ -51,13 +58,83 @@ class Tailoring:
         self.value_changes = []
         self.rules_to_select = []
         self.rules_to_unselect = []
+        self._rule_refinements = collections.defaultdict(dict)
+
+    @property
+    def profile_id(self):
+        if self._profile_id is not None:
+            return self._profile_id
+        else:
+            return self.extends + "_customized"
+
+    @profile_id.setter
+    def profile_id(self, new_profile_id):
+        self._profile_id = new_profile_id
+
+    def rule_refinements(self, rule_id, attribute):
+        return self._rule_refinements[rule_id][attribute]
+
+    @staticmethod
+    def _find_enumeration(attribute):
+        if attribute == "role":
+            enumeration = ROLES
+        elif attribute == "severity":
+            enumeration = SEVERITIES
+        else:
+            msg = f"Unsupported refine-rule attribute {attribute}"
+            raise ValueError(msg)
+        return enumeration
+
+    @staticmethod
+    def _validate_rule_refinement_params(rule_id, attribute, value):
+        if not is_valid_xccdf_id(rule_id):
+            msg = f"Rule id '{rule_id}' is invalid!"
+            raise ValueError(msg)
+        enumeration = Tailoring._find_enumeration(attribute)
+        if value in enumeration:
+            return
+        allowed = ", ".join(map(quote, enumeration))
+        msg = (
+            f"Can't refine {attribute} of rule '{rule_id}' to '{value}'. "
+            f"Allowed {attribute} values are: {allowed}.")
+        raise ValueError(msg)
+
+    def _prevent_duplicate_rule_refinement(self, attribute, rule_id, value):
+        refinements = self._rule_refinements[rule_id]
+        if attribute not in refinements:
+            return
+        current = refinements[attribute]
+        msg = (
+            f"Can't refine {attribute} of rule '{rule_id}' to '{value}'. "
+            f"This rule {attribute} is already refined to '{current}'.")
+        raise ValueError(msg)
+
+    def refine_rule(self, rule_id, attribute, value):
+        Tailoring._validate_rule_refinement_params(rule_id, attribute, value)
+        self._prevent_duplicate_rule_refinement(attribute, rule_id, value)
+        self._rule_refinements[rule_id][attribute] = value
+
+    def change_attributes(self, assignements, attribute):
+        for change in assignements:
+            rule_id, value = assignment_to_tuple(change)
+            full_rule_id = self._full_rule_id(rule_id)
+            self.refine_rule(full_rule_id, attribute, value)
+
+    def change_roles(self, assignements):
+        self.change_attributes(assignements, "role")
+
+    def change_severities(self, assignements):
+        self.change_attributes(assignements, "severity")
+
+    def change_values(self, assignements):
+        for change in assignements:
+            varname, value = assignment_to_tuple(change)
+            t.add_value_change(varname, value)
 
     def _full_id(self, string, el_type):
         if is_valid_xccdf_id(string):
             return string
-        default_prefix = "xccdf_{namespace}_{el_type}_".format(
-            namespace=self.ID_NAMESPACE, el_type=el_type)
-        return default_prefix + string
+        return f"xccdf_{self.reverse_dns}_{el_type}_{string}"
 
     def _full_profile_id(self, string):
         return self._full_id(string, "profile")
@@ -71,45 +148,58 @@ class Tailoring:
     def add_value_change(self, varname, value):
         self.value_changes.append((varname, value))
 
-    def to_xml(self, location=None):
-        root = ET.Element("xccdf-1.2:Tailoring")
-        root.set("xmlns:xccdf-1.2", ALL_NS["xccdf-1.2"])
-        root.set("id", "xccdf_" + self.id_suffix)
+    def _add_rule_select_operations(self, container_element):
+        for rule_id in self.rules_to_select:
+            change = ET.SubElement(container_element, "{%s}select" % NS)
+            change.set("idref", self._full_rule_id(rule_id))
+            change.set("selected", "true")
 
-        benchmark = ET.SubElement(root, "xccdf-1.2:benchmark")
-        datastream_uri = pathlib.Path(self.original_ds_filename).absolute().as_uri()
+        for rule_id in self.rules_to_unselect:
+            change = ET.SubElement(container_element, "{%s}select" % NS)
+            change.set("idref", self._full_rule_id(rule_id))
+            change.set("selected", "false")
+
+    def _add_value_selections(self, container_element):
+        for varname, value in self.value_changes:
+            change = ET.SubElement(container_element, "{%s}set-value" % NS)
+            change.set("idref", self._full_var_id(varname))
+            change.text = str(value)
+
+    def rule_refinements_to_xml(self, profile_el):
+        for rule_id, refinements in self._rule_refinements.items():
+            ref_rule_el = ET.SubElement(profile_el, "{%s}refine-rule" % NS)
+            ref_rule_el.set("idref", rule_id)
+            for attr, val in refinements.items():
+                ref_rule_el.set(attr, val)
+
+    def to_xml(self, location=None):
+        root = ET.Element("{%s}Tailoring" % NS)
+        root.set("id", self.id)
+
+        benchmark = ET.SubElement(root, "{%s}benchmark" % NS)
+        datastream_uri = pathlib.Path(
+            self.original_ds_filename).absolute().as_uri()
         benchmark.set("href", datastream_uri)
 
-        version = ET.SubElement(root, "xccdf-1.2:version")
+        version = ET.SubElement(root, "{%s}version" % NS)
         version.set("time", datetime.datetime.now().isoformat())
         version.text = str(self.version)
 
-        profile = ET.SubElement(root, "xccdf-1.2:Profile")
-        profile.set("id", self._full_profile_id(self.profile_name))
+        profile = ET.SubElement(root, "{%s}Profile" % NS)
+        profile.set("id", self._full_profile_id(self.profile_id))
         profile.set("extends", self._full_profile_id(self.extends))
 
         # Title has to be there due to the schema definition.
-        title = ET.SubElement(profile, "xccdf-1.2:title")
+        title = ET.SubElement(profile, "{%s}title" % NS)
         if self.profile_title:
             title.set("override", "true")
         else:
             title.set("override", "false")
         title.text = self.profile_title
 
-        for rule_id in self.rules_to_select:
-            change = ET.SubElement(profile, "xccdf-1.2:select")
-            change.set("idref", self._full_rule_id(rule_id))
-            change.set("selected", "true")
-
-        for rule_id in self.rules_to_unselect:
-            change = ET.SubElement(profile, "xccdf-1.2:select")
-            change.set("idref", self._full_rule_id(rule_id))
-            change.set("selected", "false")
-
-        for varname, value in self.value_changes:
-            change = ET.SubElement(profile, "xccdf-1.2:set-value")
-            change.set("idref", self._full_var_id(varname))
-            change.text = str(value)
+        self._add_rule_select_operations(profile)
+        self._add_value_selections(profile)
+        self.rule_refinements_to_xml(profile)
 
         root_str = ET.tostring(root)
         pretty_xml = xml.dom.minidom.parseString(root_str).toprettyxml()
@@ -126,21 +216,41 @@ def parse_args():
         help="The tailored data stream filename.")
     parser.add_argument(
         "profile", metavar="BASE_PROFILE_ID",
-        help="Specify ID of the base profile. "
-        "ID of the profile can be either its full ID, or the suffix, in which case "
-        "the 'xccdf_<id-namespace>_profile' prefix will be prepended internally.")
+        help="Specify ID of the base profile. ID of the profile can be "
+        "either its full ID, or the suffix, in which case the "
+        "'xccdf_<id-namespace>_profile' prefix will be prepended internally.")
     parser.add_argument(
         "--title", default="",
         help="Title of the new profile.")
     parser.add_argument(
-        "--id-namespace", default="org.ssgproject.content",
-        help="The reverse-DNS style string that is part of entities IDs in the corresponding data stream. If left out, the default value 'org.ssgproject.content' is used.")
+        "--id-namespace", default=DEFAULT_REVERSE_DNS,
+        help="The reverse-DNS style string that is part of entities IDs in "
+        "the corresponding data stream. If left out, the default value "
+        "'{reverse_dns}' is used.".format(reverse_dns=DEFAULT_REVERSE_DNS))
     parser.add_argument(
         "-v", "--var-value", metavar="VAR=VALUE", action="append", default=[],
-        help="Specify modification of the XCCDF value in form <varname>=<value>. "
-        "Name of the variable can be either its full name, or the suffix, in which case "
-        "the 'xccdf_<id-namespace>_value' prefix will be prepended internally. "
-        "Specify the argument multiple times if needed.")
+        help="Specify modification of the XCCDF value in form "
+        "<varname>=<value>. Name of the variable can be either its full name, "
+        "or the suffix, in which case the 'xccdf_<id-namespace>_value' prefix "
+        "will be prepended internally. Specify the argument multiple times "
+        "if needed.")
+    parser.add_argument(
+        "-r", "--rule-role", metavar="RULE=ROLE", action="append", default=[],
+        help="Specify refinement of the XCCDF rule role in form "
+        "<rule_id>=<role>. Name of the rule can be either its full name, or "
+        "the suffix, in which case the 'xccdf_<id-namespace>_rule_' prefix "
+        "will be prepended internally. The value of <role> can be one of "
+        "{options}. Specify the argument multiple times if "
+        "needed.".format(options=", ".join(ROLES)))
+    parser.add_argument(
+        "-e", "--rule-severity", metavar="RULE=SEVERITY", action="append",
+        default=[],
+        help="Specify refinement of the XCCDF rule severity in form "
+        "<rule_id>=<severity>. Name of the rule can be either its full name, "
+        "or the suffix, in which case the 'xccdf_<id-namespace>_rule_' "
+        "prefix will be prepended internally. The value of <severity> can be "
+        "one of {options}. Specify the argument multiple times if "
+        "needed.".format(options=", ".join(SEVERITIES)))
     parser.add_argument(
         "-s", "--select", metavar="RULE_ID", action="append", default=[],
         help="Specify what rules to select. "
@@ -154,14 +264,15 @@ def parse_args():
     parser.add_argument(
         "-p", "--new-profile-id",
         help="Specify the ID of the tailored profile. "
-        "The ID of the new profile can be either its full ID, or the suffix, in which case "
-        "the 'xccdf_<id-namespace>_profile_' prefix will be prepended internally. "
-        "If left out, the new ID will be obtained "
+        "The ID of the new profile can be either its full ID, or the suffix, "
+        "in which case the 'xccdf_<id-namespace>_profile_' prefix will be "
+        "prepended internally. If left out, the new ID will be obtained "
         "by appending '{suffix}' to the tailored profile ID."
         .format(suffix=DEFAULT_PROFILE_SUFFIX))
     parser.add_argument(
         "-o", "--output", default="-",
-        help="Where to save the tailoring file. If not supplied, write to standard output.")
+        help="Where to save the tailoring file. If not supplied, write to "
+        "standard output.")
     args = parser.parse_args()
     return args
 
@@ -173,20 +284,15 @@ def assignment_to_tuple(assignment):
 
 if __name__ == "__main__":
     args = parse_args()
-    for prefix, uri in ALL_NS.items():
-        ET.register_namespace(prefix, uri)
 
     t = Tailoring()
-    t.ID_NAMESPACE = args.id_namespace
+    t.reverse_dns = args.id_namespace
     t.extends = args.profile
-    if args.new_profile_id:
-        t.profile_name = args.new_profile_id
-    else:
-        t.profile_name = args.profile
+    t.profile_id = args.new_profile_id
     t.original_ds_filename = args.datastream
-    for change in args.var_value:
-        varname, value = assignment_to_tuple(change)
-        t.add_value_change(varname, value)
+    t.change_values(args.var_value)
+    t.change_roles(args.rule_role)
+    t.change_severities(args.rule_severity)
 
     t.profile_title = args.title
 
