@@ -16,9 +16,12 @@ SYSCTL_EXCLUDE='
 	fs.protected_fifos
 	fs.protected_regular
 	fs.protected_symlinks
+	kernel.apparmor_display_secid_mode
+	kernel.apparmor_restrict_unprivileged_userns
+	kernel.apparmor_restrict_unprivileged_userns_complain
+	kernel.apparmor_restrict_unprivileged_userns_force
 	kernel.cad_pid
 	kernel.unprivileged_userns_apparmor_policy
-	kernel.apparmor_display_secid_mode
 	kernel.usermodehelper.bset
 	kernel.usermodehelper.inheritable
 	net.core.bpf_jit_harden
