@@ -1,4 +1,4 @@
-.TH autotailor "8" "April 2020" "Red Hat, Inc." "System Administration Utilities"
+.TH autotailor "8" "October 2023" "Red Hat, Inc." "System Administration Utilities"
 .SH NAME
 autotailor \- CLI tool for tailoring of SCAP data streams.
 .SH DESCRIPTION
@@ -10,6 +10,53 @@ Tailoring can add, remove or refine rules, and it also can redefine contents of 
 The tool requires data stream location and ID of the base profile as inputs.
 Note however, that the referenced data stream is not opened, and the validity of tailoring is not checked against it.
 The tool doesn't prevent you from extending non-existent profiles, selecting non-existent rules, and so on.
+
+.SH SYNOPSIS
+autotailor [OPTION...] DS_FILENAME BASE_PROFILE_ID
+
+.SH OPTIONS
+.TP
+\fB--title TITLE\fR
+.RS
+Title of the new profile.
+.RE
+.TP
+\fB--id-namespace ID_NAMESPACE\fR
+.RS
+The reverse-DNS style string that is part of entities IDs in the corresponding data stream. If left out, the default value 'org.ssgproject.content' is used.
+.RE
+.TP
+\fB-v VAR=VALUE, --var-value VAR=VALUE\fR
+.RS
+Specify modification of the XCCDF value in form <varname>=<value>. Name of the variable can be either its full name, or the suffix, in which case the 'xccdf_<id-namespace>_value' prefix will be prepended internally. Specify the argument multiple times if needed.
+.RE
+.TP
+\fB-r RULE=ROLE, --rule-role RULE=ROLE\fR
+.RS
+Specify refinement of the XCCDF rule role in form <rule_id>=<role>. Name of the rule can be either its full name, or the suffix, in which case the 'xccdf_<id-namespace>_rule_' prefix will be prepended internally.
+The value of <role> can be one of full, unscored, unchecked. Specify the argument multiple times if needed.
+.RE
+.TP
+\fB-e RULE=SEVERITY, --rule-severity RULE=SEVERITY\fR
+.RS
+Specify refinement of the XCCDF rule severity in form <rule_id>=<severity>. Name of the rule can be either its full name, or the suffix, in which case the 'xccdf_<id-namespace>_rule_' prefix will be prepended internally. The value of <severity> can be one of unknown, info, low, medium, high. Specify the argument multiple times if needed.
+.RE
+.TP
+\fB-s RULE_ID, --select RULE_ID\fR
+.RS
+Specify what rules to select. The rule ID can be either full, or just the suffix, in which case the 'xccdf_<id-namespace>_rule' prefix will be prepended internally. Specify the argument multiple times if needed.
+.RE
+.TP
+\fB-u RULE_ID, --unselect RULE_ID\fR
+.RS
+Specify what rules to unselect. The argument works the same way as the --select argument.
+.RE
+.TP
+\fB-p NEW_PROFILE_ID, --new-profile-id NEW_PROFILE_ID\fR
+.RS
+Specify the ID of the tailored profile. The ID of the new profile can be either its full ID, or the suffix, in which case the 'xccdf_<id-namespace>_profile_' prefix will be prepended internally.
+If left out, the new ID will be obtained by appending '_customized' to the tailored profile ID.
+.RE
 
 .SH USAGE
 .SS Modify a variable value
@@ -26,8 +73,6 @@ The tailoring tailoring_file defines a new profile, xccdf_org.ssgproject.content
 
 .SS Perform more modifications
 $ autotailor --var-value var_screensaver_lock_delay=120 --select gconf_gnome_screensaver_idle_delay --var-value inactivity_timeout_value=600 ssg-rhel8-ds.xml pci_dss
-
-Use the --help option to learn about other options and their usage.
 
 .SH REPORTING BUGS
 .nf
