@@ -77,7 +77,7 @@ and {usgcb}[USGCB].
 You can also generate your own SCAP content if you have an understanding of at
 least XCCDF or OVAL. XCCDF content is also frequently published online under
 open source licenses, and you can customize this content to suit your needs
-instead. SCAP Workbench is a great tool to do the customization.
+instead.
 
 == Installing OpenSCAP
 
@@ -2210,10 +2210,17 @@ OSCAP_REMEDIATE_VERBOSE_LEVEL=INFO
 
 The downloaded guidance contains rule descriptions, but it doesn't contain OVAL checks which could be used for evaluation by OpenSCAP. You can find guidances with implemented OVAL checks and also with remediations at https://github.com/ComplianceAsCode/content[ComplianceAsCode] project, which contains wide range of profiles.
 
+*How can I create a tailoring file if I can't install SCAP Workbench?*
+
+Use the `autotailor` tool which allows you to create tailoring files using command line options.
+For more information, please refer to section <<_tailoring,Tailoring>>.
+
 *I try to apply a tailoring file, but OpenSCAP still evaluates rules that I have unselected. How can I enforce my changes of the profile?*
 
 Make sure that you provide the ID of the customized profile in `--profile` option instead of the ID of the original profile.
-If you created the tailoring file using SCAP Workbench, you were prompted to choose the ID of the customized profile. You can display the ID of the customized profile by running `oscap info <your_tailoring_file>`. By default, the ID of the customized profile ends with `_customized` suffix.
+If you created the tailoring file using `autotailor` and you haven't used the `-p` or `--new-profile-id` option, the ID of the customized profile is the original profile ID with `_customized` suffix appended.
+If you created the tailoring file using SCAP Workbench, you were prompted to choose the ID of the customized profile. By default, the ID of the customized profile is the original profile ID with `_customized` suffix appended.
+You can find the ID of the customized profile with `oscap info <your_tailoring_file>` command.
 
 *My SCAP source data stream contains rule `security_patches_up_to_date` which needs to download some data from the internet to work.*
 *But I'm in an air gapped environment so it can't download it.*
