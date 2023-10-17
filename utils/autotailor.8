@@ -12,7 +12,7 @@ Note however, that the referenced data stream is not opened, and the validity of
 The tool doesn't prevent you from extending non-existent profiles, selecting non-existent rules, and so on.
 
 .SH SYNOPSIS
-autotailor [OPTION...] DS_FILENAME BASE_PROFILE_ID
+autotailor [OPTION...] DATASTREAM_FILE BASE_PROFILE_ID
 
 .SH OPTIONS
 .TP
@@ -44,12 +44,12 @@ Specify refinement of the XCCDF rule severity in form <rule_id>=<severity>. Name
 .TP
 \fB-s RULE_ID, --select RULE_ID\fR
 .RS
-Specify what rules to select. The rule ID can be either full, or just the suffix, in which case the 'xccdf_<id-namespace>_rule' prefix will be prepended internally. Specify the argument multiple times if needed.
+Specify the rule to select. The rule ID can be either full, or just the suffix, in which case the 'xccdf_<id-namespace>_rule' prefix will be prepended internally. Specify the argument multiple times if needed.
 .RE
 .TP
 \fB-u RULE_ID, --unselect RULE_ID\fR
 .RS
-Specify what rules to unselect. The argument works the same way as the --select argument.
+Specify the rule to unselect. The argument works the same way as the --select argument.
 .RE
 .TP
 \fB-p NEW_PROFILE_ID, --new-profile-id NEW_PROFILE_ID\fR

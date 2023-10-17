@@ -2212,7 +2212,7 @@ The downloaded guidance contains rule descriptions, but it doesn't contain OVAL 
 
 *How can I create a tailoring file if I can't install SCAP Workbench?*
 
-Use the `autotailor` tool which allows you to create tailoring files on command line.
+Use the `autotailor` tool which allows you to create tailoring files using command line options.
 For more information, please refer to section <<_tailoring,Tailoring>>.
 
 *I try to apply a tailoring file, but OpenSCAP still evaluates rules that I have unselected. How can I enforce my changes of the profile?*
@@ -2220,7 +2220,7 @@ For more information, please refer to section <<_tailoring,Tailoring>>.
 Make sure that you provide the ID of the customized profile in `--profile` option instead of the ID of the original profile.
 If you created the tailoring file using `autotailor` and you haven't used the `-p` or `--new-profile-id` option, the ID of the customized profile is the original profile ID with `_customized` suffix appended.
 If you created the tailoring file using SCAP Workbench, you were prompted to choose the ID of the customized profile. By default, the ID of the customized profile is the original profile ID with `_customized` suffix appended.
-You can display the ID of the customized profile by running `oscap info <your_tailoring_file>`.
+You can find the ID of the customized profile with `oscap info <your_tailoring_file>` command.
 
 *My SCAP source data stream contains rule `security_patches_up_to_date` which needs to download some data from the internet to work.*
 *But I'm in an air gapped environment so it can't download it.*
