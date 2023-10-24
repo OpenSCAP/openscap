@@ -257,7 +257,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_INDEPENDENT_YAML_FILE_CONTENT, NULL, yamlfilecontent_probe_main, NULL, yamlfilecontent_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_DPKGINFO
-	{OVAL_LINUX_DPKG_INFO, dpkginfo_probe_init, dpkginfo_probe_main, dpkginfo_probe_fini, dpkginfo_probe_offline_mode_supported},
+	{OVAL_LINUX_DPKG_INFO, NULL, dpkginfo_probe_main, NULL, dpkginfo_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_IFLISTENERS
 	{OVAL_LINUX_IFLISTENERS, NULL, iflisteners_probe_main, NULL, NULL},

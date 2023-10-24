@@ -299,7 +299,7 @@ cmake_dependent_option(OPENSCAP_PROBE_UNIX_UNAME "Unix uname probe" ON "ENABLE_P
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_XINETD "Unix xinetd probe" ON "ENABLE_PROBES_UNIX" OFF)
 
 # LINUX PROBES
-cmake_dependent_option(OPENSCAP_PROBE_LINUX_DPKGINFO "Linux dpkginfo probe" ON "ENABLE_PROBES_LINUX; APTPKG_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_DPKGINFO "Linux dpkginfo probe" ON "ENABLE_PROBES_LINUX" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_IFLISTENERS "Linux iflisteners probe" ON "ENABLE_PROBES_LINUX" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_INETLISTENINGSERVERS "Linux inetlisteningservers probe" ON "ENABLE_PROBES_LINUX" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_PARTITION "Linux partition probe" ON "ENABLE_PROBES_LINUX; BLKID_FOUND" OFF)
@@ -433,7 +433,7 @@ message(STATUS "  Unix xinetd probe: ${OPENSCAP_PROBE_UNIX_XINETD}")
 message(STATUS " ")
 
 message(STATUS "Linux probes: ${ENABLE_PROBES_LINUX}")
-message(STATUS "  Linux dpkginfo probe (depends on aptpkg): ${OPENSCAP_PROBE_LINUX_DPKGINFO}")
+message(STATUS "  Linux dpkginfo probe: ${OPENSCAP_PROBE_LINUX_DPKGINFO}")
 message(STATUS "  Linux iflisteners probe: ${OPENSCAP_PROBE_LINUX_IFLISTENERS}")
 message(STATUS "  Linux inetlisteningservers probe: ${OPENSCAP_PROBE_LINUX_INETLISTENINGSERVERS}")
 message(STATUS "  Linux partition probe (depends on blkid): ${OPENSCAP_PROBE_LINUX_PARTITION}")
