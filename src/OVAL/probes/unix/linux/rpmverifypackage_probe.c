@@ -428,7 +428,7 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 		SEXP_free(value);
 	}
 	if (res->vflags & VERIFY_SCRIPT) {
-		dD("VERIFY_SCRIPT %d", res->vresults & VERIFY_SCRIPT);
+		dD("VERIFY_SCRIPT %lu", res->vresults & VERIFY_SCRIPT);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_SCRIPT ? "1" : "0"), 1);
 		probe_item_ent_add(item, "verification_script_successful", NULL, value);
 		SEXP_free(value);

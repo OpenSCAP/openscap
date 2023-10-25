@@ -965,6 +965,8 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
         } else {
 		family = item_name;
 		char *endptr = strchr(family, ':');
+		if (endptr == NULL)
+			goto cleanup;
 		*endptr = '\0';
 		name = endptr + 1;
 		endptr = strrchr(name, '_');
