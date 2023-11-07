@@ -559,6 +559,10 @@ int inetlisteningservers_probe_main(probe_ctx *ctx, void *arg)
 
         object = probe_ctx_getobject(ctx);
 	struct server_info *req = malloc(sizeof(struct server_info));
+	if (req == NULL)
+		return 0;
+	memset(req, 0, sizeof(*req));
+
 	req->protocol_ent = probe_obj_getent(object, "protocol", 1);
 	if (req->protocol_ent == NULL) {
 		err = PROBE_ENOVAL;

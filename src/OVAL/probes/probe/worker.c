@@ -1021,12 +1021,12 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 				dE("open(\".\") failed: %s", strerror(errno));
 				return NULL;
 			}
-			if (chdir(rootdir) != 0) {
-				dE("chdir failed: %s", strerror(errno));
-			}
 
 			if (chroot(rootdir) != 0) {
 				dE("chroot failed: %s", strerror(errno));
+			}
+			if (chdir("/") != 0) {
+				dE("chdir failed: %s", strerror(errno));
 			}
 			/* NOTE: We're running in a different root directory.
 			 * Unless /proc, /sys are somehow emulated for the new
