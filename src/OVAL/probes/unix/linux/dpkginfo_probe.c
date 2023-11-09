@@ -63,41 +63,8 @@
 
 #include "dpkginfo_probe.h"
 
-struct dpkginfo_global {
-        int init_done;
-        pthread_mutex_t mutex;
-};
-
-static struct dpkginfo_global g_dpkg = {
-	.mutex = PTHREAD_MUTEX_INITIALIZER,
-        .init_done = -1,
-};
-
 int dpkginfo_probe_offline_mode_supported(void) {
         return PROBE_OFFLINE_OWN;
-}
-
-void *dpkginfo_probe_init(void)
-{
-        pthread_mutex_lock (&(g_dpkg.mutex));
-        g_dpkg.init_done = dpkginfo_init();
-        pthread_mutex_unlock (&(g_dpkg.mutex));
-        if (g_dpkg.init_done < 0) {
-                dE("dpkginfo_init has failed.");
-        }
-
-        return ((void *)&g_dpkg);
-}
-
-void dpkginfo_probe_fini (void *ptr)
-{
-        struct dpkginfo_global *d = (struct dpkginfo_global *)ptr;
-
-        pthread_mutex_lock (&(d->mutex));
-        dpkginfo_fini();
-        pthread_mutex_unlock (&(d->mutex));
-
-        return;
 }
 
 int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
@@ -106,15 +73,6 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
         char *request_st = NULL;
         struct dpkginfo_reply_t *dpkginfo_reply = NULL;
         int errflag;
-
-	if (arg == NULL) {
-		return PROBE_EINIT;
-	}
-
-        if (g_dpkg.init_done < 0) {
-                probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_UNKNOWN);
-                return 0;
-        }
 
 	obj = probe_ctx_getobject(ctx);
 	ent = probe_obj_getent(obj, "name", 1);
@@ -153,9 +111,7 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
         }
 
         /* get info from debian apt cache */
-        pthread_mutex_lock (&(g_dpkg.mutex));
         dpkginfo_reply = dpkginfo_get_by_name(request_st, &errflag);
-        pthread_mutex_unlock (&(g_dpkg.mutex));
 
         if (dpkginfo_reply == NULL) {
                 switch (errflag) {

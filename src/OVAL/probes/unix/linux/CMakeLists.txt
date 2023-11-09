@@ -1,12 +1,9 @@
 if(OPENSCAP_PROBE_LINUX_DPKGINFO)
 	list(APPEND LINUX_PROBES_SOURCES
-		"dpkginfo-helper.cxx"
+		"dpkginfo-helper.c"
 		"dpkginfo-helper.h"
 		"dpkginfo_probe.c"
 		"dpkginfo_probe.h"
-	)
-	list(APPEND LINUX_PROBES_INCLUDE_DIRECTORIES
-		${APTPKG_INCLUDE_DIR}
 	)
 endif()
 
