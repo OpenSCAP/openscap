@@ -39,10 +39,13 @@
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "common/memusage.h"
+#include "oscap_helpers.h"
 
 #include "probe.h"
 #include "icache.h"
 #include "_sexp-ID.h"
+
+#define PROBE_ITEM_COLLECT_MAX 1000
 
 static volatile uint32_t next_ID = 0;
 
@@ -581,6 +584,16 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 	cobj_content = SEXP_listref_nth(ctx->probe_out, 3);
 	cobj_itemcnt = SEXP_list_length(cobj_content);
 	SEXP_free(cobj_content);
+
+	if (cobj_itemcnt >= PROBE_ITEM_COLLECT_MAX) {
+		char *message = oscap_sprintf("Object is incomplete because the object matches more than %d items.", PROBE_ITEM_COLLECT_MAX);
+		if (_mark_collected_object_as_incomplete(ctx, message) != 0) {
+			free(message);
+			return -1;
+		}
+		free(message);
+		return 2;
+	}
 
 	memcheck_ret = probe_cobj_memcheck(cobj_itemcnt, ctx->max_mem_ratio);
 	if (memcheck_ret == -1) {
