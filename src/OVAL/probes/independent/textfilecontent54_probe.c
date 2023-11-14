@@ -118,9 +118,8 @@ struct pfdata {
 	oscap_pcre_t *compiled_regex;
 };
 
-static int process_file(const char *prefix, const char *path, const char *file, void *arg, oval_schema_version_t over)
+static int process_file(const char *prefix, const char *path, const char *file, struct pfdata *pfd, oval_schema_version_t over)
 {
-	struct pfdata *pfd = (struct pfdata *) arg;
 	int ret = 0, path_len, file_len, cur_inst = 0, fd = -1, substr_cnt,
 		buf_size = 0, buf_used = 0, ofs = 0, buf_inc = 4096;
 	char **substrs = NULL;
