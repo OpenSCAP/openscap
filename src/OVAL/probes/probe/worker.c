@@ -972,6 +972,19 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	return result;
 }
 
+static void _add_blocked_paths(struct oscap_list *bpaths)
+{
+	char *envar = getenv("OSCAP_PROBE_IGNORE_PATHS");
+	if (envar == NULL) {
+		return;
+	}
+	char **paths = oscap_split(envar, ":");
+	for (int i = 0; paths[i]; ++i) {
+		oscap_list_add(bpaths, strdup(paths[i]));
+	}
+	free(paths);
+}
+
 /**
  * Worker thread function. This functions handles the evalution of objects and sets.
  * @param msg_in SEAP message with the request which contains the object to be evaluated
@@ -1083,6 +1096,9 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			}
 		}
 
+		pctx.blocked_paths = oscap_list_new();
+		_add_blocked_paths(pctx.blocked_paths);
+
 		/* simple object */
                 pctx.icache  = probe->icache;
 		pctx.filters = probe_prepare_filters(probe, probe_in);
@@ -1142,6 +1158,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 				SEXP_free(pctx.filters);
 				SEXP_free(probe_in);
 				SEXP_free(mask);
+				oscap_list_free(pctx.blocked_paths, free);
 				*ret = PROBE_EUNKNOWN;
 				return (NULL);
 			}
@@ -1181,6 +1198,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		}
 
                 SEXP_free(pctx.filters);
+		oscap_list_free(pctx.blocked_paths, free);
 	}
 
 	SEXP_free(probe_in);

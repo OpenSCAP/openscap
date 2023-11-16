@@ -304,7 +304,7 @@ static SEXP_t *has_extended_acl(const char *path)
 #endif
 }
 
-static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, oval_schema_version_t over, struct ID_cache *cache, struct gr_sexps *grs, SEXP_t *gr_lastpath)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, oval_schema_version_t over, struct ID_cache *cache, struct gr_sexps *grs, SEXP_t *gr_lastpath, struct oscap_list *blocked_paths)
 {
         char path_buffer[PATH_MAX];
         SEXP_t *item;
@@ -323,6 +323,10 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 			snprintf(path_buffer, sizeof path_buffer, "%s%c%s", p, FILE_SEPARATOR, f);
 		}
 		st_path = path_buffer;
+	}
+
+	if (probe_path_is_blocked(st_path, blocked_paths)) {
+		return 0;
 	}
 
 	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
@@ -509,7 +513,7 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
 
 	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, over, cache, grs, &gr_lastpath) != 0) {
+			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, over, cache, grs, &gr_lastpath, ctx->blocked_paths) != 0) {
 				oval_ftsent_free(ofts_ent);
 				break;
 			}

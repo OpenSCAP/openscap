@@ -1794,4 +1794,52 @@ SEXP_t *probe_obj_getmask(SEXP_t *obj)
     SEXP_free(objents);
     return (mask);
 }
+
+static bool path_startswith(const char *path, const char *prefix)
+{
+	bool res = true;
+	const char *del = "/";
+	char *path_dup = oscap_strdup(path);
+	char **path_split = oscap_split(path_dup, del);
+	char *prefix_dup = oscap_strdup(prefix);
+	char **prefix_split = oscap_split(prefix_dup, del);
+	int i = 0, j = 0;
+	while (prefix_split[i] && path_split[j]) {
+		if (!strcmp(prefix_split[i], "")) {
+			++i;
+			continue;
+		}
+		if (!strcmp(path_split[j], "")) {
+			++j;
+			continue;
+		}
+		if (strcmp(prefix_split[i], path_split[j])) {
+			res = false;
+			break;
+		}
+		++i;
+		++j;
+	}
+	free(path_dup);
+	free(path_split);
+	free(prefix_dup);
+	free(prefix_split);
+	return res;
+}
+
+bool probe_path_is_blocked(const char *path, struct oscap_list *blocked_paths)
+{
+	bool res = false;
+	struct oscap_iterator *it = oscap_iterator_new(blocked_paths);
+	while (oscap_iterator_has_more(it)) {
+		const char *item = oscap_iterator_next(it);
+		if (path_startswith(path, item)) {
+			res = true;
+			break;
+		}
+	}
+	oscap_iterator_free(it);
+	return res;
+}
+
 /// @}

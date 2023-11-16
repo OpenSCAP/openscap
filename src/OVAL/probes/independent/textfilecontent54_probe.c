@@ -53,6 +53,8 @@
 #include "common/debug_priv.h"
 #include "common/util.h"
 #include "common/oscap_pcre.h"
+#include "common/list.h"
+
 #include "textfilecontent54_probe.h"
 
 #define FILE_SEPARATOR '/'
@@ -118,7 +120,7 @@ struct pfdata {
 	oscap_pcre_t *compiled_regex;
 };
 
-static int process_file(const char *prefix, const char *path, const char *file, struct pfdata *pfd, oval_schema_version_t over)
+static int process_file(const char *prefix, const char *path, const char *file, struct pfdata *pfd, oval_schema_version_t over, struct oscap_list *blocked_paths)
 {
 	int ret = 0, path_len, file_len, cur_inst = 0, fd = -1, substr_cnt,
 		buf_size = 0, buf_used = 0, ofs = 0, buf_inc = 4096;
@@ -143,6 +145,9 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 
 	memcpy(whole_path + path_len, file, file_len + 1);
 
+	if (probe_path_is_blocked(whole_path, blocked_paths)) {
+		goto cleanup;
+	}
 	/*
 	 * If stat() fails, don't report an error and just skip the file.
 	 * This is an expected situation, because the fts_*() functions
@@ -360,7 +365,7 @@ int textfilecontent54_probe_main(probe_ctx *ctx, void *arg)
 			if (ofts_ent->fts_info == FTS_F
 			    || ofts_ent->fts_info == FTS_SL) {
 				// todo: handle return code
-				process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd, over);
+				process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd, over, ctx->blocked_paths);
 			}
 			oval_ftsent_free(ofts_ent);
 		}
