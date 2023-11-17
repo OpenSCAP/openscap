@@ -125,7 +125,7 @@ struct dpkginfo_reply_t* dpkginfo_get_by_name(const char *name, int *err)
 			}
 		} else if (reply != NULL) {
 			if (strcmp(key, "Status") == 0) {
-				if (strcmp(value, "install") != 0) {
+				if (strncmp(value, "install", 7) != 0) {
 					// Package deinstalled.
 					dD("Package \"%s\" has been deinstalled.", name);
 					dpkginfo_free_reply(reply);
