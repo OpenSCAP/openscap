@@ -45,8 +45,6 @@
 #include "icache.h"
 #include "_sexp-ID.h"
 
-#define PROBE_ITEM_COLLECT_MAX 1000
-
 static volatile uint32_t next_ID = 0;
 
 #if !defined(HAVE_ATOMIC_FUNCTIONS)
@@ -585,8 +583,8 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 	cobj_itemcnt = SEXP_list_length(cobj_content);
 	SEXP_free(cobj_content);
 
-	if (cobj_itemcnt >= PROBE_ITEM_COLLECT_MAX) {
-		char *message = oscap_sprintf("Object is incomplete because the object matches more than %d items.", PROBE_ITEM_COLLECT_MAX);
+	if (ctx->max_collected_items != OSCAP_PROBE_COLLECT_UNLIMITED && cobj_itemcnt >= ctx->max_collected_items) {
+		char *message = oscap_sprintf("Object is incomplete because the object matches more than %ld items.", ctx->max_collected_items);
 		if (_mark_collected_object_as_incomplete(ctx, message) != 0) {
 			free(message);
 			return -1;

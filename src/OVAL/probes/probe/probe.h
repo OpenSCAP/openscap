@@ -43,6 +43,11 @@
 #include "common/util.h"
 #include "common/compat_pthread_barrier.h"
 
+/* default max. memory usage ratio - used/total */
+/* can be overridden by environment variable OSCAP_PROBE_MEMORY_USAGE_RATIO */
+#define OSCAP_PROBE_MEMORY_USAGE_RATIO_DEFAULT 0.33
+#define OSCAP_PROBE_COLLECT_UNLIMITED 0
+
 typedef struct {
 	pthread_rwlock_t rwlock;
 	uint32_t         flags;
@@ -84,6 +89,7 @@ struct probe_ctx {
         probe_icache_t *icache;    /**< item cache */
 	int offline_mode;
 	double max_mem_ratio;
+	size_t max_collected_items;
 };
 
 typedef enum {
