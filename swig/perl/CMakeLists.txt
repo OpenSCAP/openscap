@@ -20,7 +20,7 @@ if (APPLE OR (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD"))
                 DESTINATION ${CMAKE_INSTALL_DATADIR}/perl5/vendor_perl)
 else()
         install(TARGETS ${SWIG_MODULE_openscap_pm_REAL_NAME}
-               DESTINATION ${PERL_VENDORLIB})
+               DESTINATION ${PERL_VENDORARCH})
         install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap_pm.pm
                DESTINATION ${PERL_VENDORARCH})
 endif()
