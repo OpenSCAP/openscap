@@ -46,6 +46,10 @@
 /* default max. memory usage ratio - used/total */
 /* can be overridden by environment variable OSCAP_PROBE_MEMORY_USAGE_RATIO */
 #define OSCAP_PROBE_MEMORY_USAGE_RATIO_DEFAULT 0.33
+
+/* By default, probes can collect unlimited amount of items. Ths behavior can
+ * be overridden by environment variable OSCAP_PROBE_MAX_COLLECTED_ITEMS.
+ */
 #define OSCAP_PROBE_COLLECT_UNLIMITED 0
 
 typedef struct {
