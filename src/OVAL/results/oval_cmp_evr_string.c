@@ -30,6 +30,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
 #include "oval_cmp_evr_string_impl.h"
 #include "oval_definitions.h"
 #include "oval_types.h"
