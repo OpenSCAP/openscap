@@ -224,7 +224,7 @@ Authors:
 <xsl:template mode='item-head' match='*'>
     <xsl:param name="resultColumn" select="false"/>
     <tr>
-        <xsl:if test='$resultColumn="true"'><th>Result</th></xsl:if>
+        <xsl:if test='$resultColumn="true"'><th>Result of item-state comparison</th></xsl:if>
         <xsl:for-each select='*'>
             <xsl:variable name='label' select='translate(local-name(), "_", " ")'/>
             <xsl:variable name='first_letter' select='translate(substring($label,1,1), "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")'/>
@@ -263,7 +263,7 @@ Authors:
 <!-- UNIX file item visualisation -->
 
 <xsl:template mode='item-head' match='ovalunixsc:file_item'>
-    <tr><th>Result</th><th>Path</th><th>Type</th><th>UID</th><th>GID</th><th>Size (B)</th><th>Permissions</th></tr>
+    <tr><th>Result of item-state comparison</th><th>Path</th><th>Type</th><th>UID</th><th>GID</th><th>Size (B)</th><th>Permissions</th></tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='ovalunixsc:file_item'>
@@ -326,7 +326,7 @@ Authors:
 <!-- textfilecontent visualisation -->
 
 <xsl:template mode='item-head' match='ovalindsc:textfilecontent_item'>
-    <tr><th>Result</th><th>Path</th><th>Content</th></tr>
+    <tr><th>Result of item-state comparison</th><th>Path</th><th>Content</th></tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='ovalindsc:textfilecontent_item'>
