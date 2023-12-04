@@ -531,7 +531,6 @@ static int probe_cobj_memcheck(size_t item_cnt, double max_ratio)
 
 static int _mark_collected_object_as_incomplete(struct probe_ctx *ctx, const char *message)
 {
-
 	/*
 	 * Don't set the message again if the collected object is
 	 * already flagged as incomplete.
