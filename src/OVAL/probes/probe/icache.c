@@ -39,6 +39,7 @@
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "common/memusage.h"
+#include "oscap_helpers.h"
 
 #include "probe.h"
 #include "icache.h"
@@ -528,6 +529,30 @@ static int probe_cobj_memcheck(size_t item_cnt, double max_ratio)
 	return (0);
 }
 
+static int _mark_collected_object_as_incomplete(struct probe_ctx *ctx, const char *message)
+{
+	/*
+	 * Don't set the message again if the collected object is
+	 * already flagged as incomplete.
+	 */
+	if (probe_cobj_get_flag(ctx->probe_out) == SYSCHAR_FLAG_INCOMPLETE) {
+		return 0;
+	}
+	/*
+	 * Sync with the icache thread before modifying the
+	 * collected object.
+	 */
+	if (probe_icache_nop(ctx->icache) != 0) {
+		return -1;
+	}
+
+	SEXP_t *sexp_msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_WARNING, (char *) message);
+	probe_cobj_add_msg(ctx->probe_out, sexp_msg);
+	probe_cobj_set_flag(ctx->probe_out, SYSCHAR_FLAG_INCOMPLETE);
+	SEXP_free(sexp_msg);
+	return 0;
+}
+
 /**
  * Collect an item
  * This function adds an item the collected object assosiated
@@ -557,6 +582,16 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 	cobj_itemcnt = SEXP_list_length(cobj_content);
 	SEXP_free(cobj_content);
 
+	if (ctx->max_collected_items != OSCAP_PROBE_COLLECT_UNLIMITED && cobj_itemcnt >= ctx->max_collected_items) {
+		char *message = oscap_sprintf("Object is incomplete because the object matches more than %ld items.", ctx->max_collected_items);
+		if (_mark_collected_object_as_incomplete(ctx, message) != 0) {
+			free(message);
+			return -1;
+		}
+		free(message);
+		return 2;
+	}
+
 	memcheck_ret = probe_cobj_memcheck(cobj_itemcnt, ctx->max_mem_ratio);
 	if (memcheck_ret == -1) {
 		dE("Failed to check available memory");
@@ -565,27 +600,9 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 	}
 	if (memcheck_ret == 1) {
 		SEXP_free(item);
-
-		/*
-		 * Don't set the message again if the collected object is
-		 * already flagged as incomplete.
-		 */
-		if (probe_cobj_get_flag(ctx->probe_out) != SYSCHAR_FLAG_INCOMPLETE) {
-			SEXP_t *msg;
-			/*
-			 * Sync with the icache thread before modifying the
-			 * collected object.
-			 */
-			if (probe_icache_nop(ctx->icache) != 0)
-				return -1;
-
-			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_WARNING,
-			                      "Object is incomplete due to memory constraints.");
-
-			probe_cobj_add_msg(ctx->probe_out, msg);
-			probe_cobj_set_flag(ctx->probe_out, SYSCHAR_FLAG_INCOMPLETE);
-
-			SEXP_free(msg);
+		const char *message = "Object is incomplete due to memory constraints.";
+		if (_mark_collected_object_as_incomplete(ctx, message) != 0) {
+			return -1;
 		}
 
 		return 2;

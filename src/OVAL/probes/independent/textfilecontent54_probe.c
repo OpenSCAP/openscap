@@ -240,11 +240,14 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 				item = create_item(path, file, pfd->pattern,
 						cur_inst, substrs, substr_cnt, over);
 
-                                probe_item_collect(pfd->ctx, item);
-
 				for (k = 0; k < substr_cnt; ++k)
 					free(substrs[k]);
 				free(substrs);
+				int pic_ret = probe_item_collect(pfd->ctx, item);
+				if (pic_ret == 2 || pic_ret == -1) {
+					ret = -4;
+					break;
+				}
 			}
 		}
 	} while (substr_cnt > 0 && ofs < buf_used);

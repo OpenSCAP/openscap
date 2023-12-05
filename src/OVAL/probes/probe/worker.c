@@ -52,10 +52,6 @@ extern int chroot(const char *);
 #include "probe-table.h"
 #include "probe.h"
 
-/* default max. memory usage ratio - used/total */
-/* can be overridden by environment variable OSCAP_PROBE_MEMORY_USAGE_RATIO */
-#define OSCAP_PROBE_MEMORY_USAGE_RATIO_DEFAULT 0.33
-
 extern bool  OSCAP_GSYM(varref_handling);
 extern void *OSCAP_GSYM(probe_arg);
 
@@ -1077,6 +1073,14 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			double max_ratio = strtod(max_ratio_str, NULL);
 			if (max_ratio > 0)
 				pctx.max_mem_ratio = max_ratio;
+		}
+		pctx.max_collected_items = OSCAP_PROBE_COLLECT_UNLIMITED;
+		char *max_collected_items_str = getenv("OSCAP_PROBE_MAX_COLLECTED_ITEMS");
+		if (max_collected_items_str != NULL) {
+			int max_collected_items = strtol(max_collected_items_str, NULL, 0);
+			if (max_collected_items > 0) {
+				pctx.max_collected_items = max_collected_items;
+			}
 		}
 
 		/* simple object */
