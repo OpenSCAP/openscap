@@ -99,7 +99,9 @@ Authors:
             <table class="table table-striped table-bordered">
                 <!-- table head (possibly item-type-specific) -->
                 <thead>
-                    <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'/>
+                    <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'>
+                        <xsl:with-param name='resultColumn' select='"true"'/>
+                    </xsl:apply-templates>
                 </thead>
 
                 <!-- table body (possibly item-type-specific) -->
@@ -107,8 +109,11 @@ Authors:
                 <tbody>
                     <xsl:for-each select='$items'>
                         <xsl:if test="not(position() > 100)">
+                            <xsl:variable name="currentResult" select="@result" />
                             <xsl:for-each select='key("oval-items", @item_id)'>
-                                <xsl:apply-templates select='.' mode='item-body'/>
+                                <xsl:apply-templates select='.' mode='item-body'>
+                                    <xsl:with-param name="result" select="$currentResult"/>
+                                </xsl:apply-templates>
                             </xsl:for-each>
                         </xsl:if>
                     </xsl:for-each>
@@ -217,7 +222,9 @@ Authors:
 <!-- generic item visualisation -->
 
 <xsl:template mode='item-head' match='*'>
+    <xsl:param name="resultColumn" select="false"/>
     <tr>
+        <xsl:if test='$resultColumn="true"'><th>Result of item-state comparison</th></xsl:if>
         <xsl:for-each select='*'>
             <xsl:variable name='label' select='translate(local-name(), "_", " ")'/>
             <xsl:variable name='first_letter' select='translate(substring($label,1,1), "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")'/>
@@ -228,7 +235,22 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='item-body' match='*'>
+    <xsl:param name="result"/>
     <tr>
+        <td>
+        <xsl:choose>
+            <xsl:when test="$result='true'">
+                <span class="label label-success">
+                    <xsl:value-of select="$result"/>
+                </span>
+            </xsl:when>
+            <xsl:otherwise>
+                <span class="label label-danger">
+                    <xsl:value-of select="$result"/>
+                </span>
+            </xsl:otherwise>
+        </xsl:choose>
+        </td>
         <xsl:for-each select='*'>
             <td>
                 <xsl:if test='@datatype="int" or @datatype="boolean"'><xsl:attribute name='role'>num</xsl:attribute></xsl:if>
@@ -241,12 +263,27 @@ Authors:
 <!-- UNIX file item visualisation -->
 
 <xsl:template mode='item-head' match='ovalunixsc:file_item'>
-    <tr><th>Path</th><th>Type</th><th>UID</th><th>GID</th><th>Size (B)</th><th>Permissions</th></tr>
+    <tr><th>Result of item-state comparison</th><th>Path</th><th>Type</th><th>UID</th><th>GID</th><th>Size (B)</th><th>Permissions</th></tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='ovalunixsc:file_item'>
+    <xsl:param name="result"/>
     <xsl:variable name='path' select='concat(ovalunixsc:path, "/", ovalunixsc:filename)'/>
     <tr>
+        <td>
+        <xsl:choose>
+            <xsl:when test="$result='true'">
+                <span class="label label-success">
+                    <xsl:value-of select="$result"/>
+                </span>
+            </xsl:when>
+            <xsl:otherwise>
+                <span class="label label-danger">
+                    <xsl:value-of select="$result"/>
+                </span>
+            </xsl:otherwise>
+        </xsl:choose>
+        </td>
         <td><xsl:value-of select='$path'/></td>
         <td><xsl:value-of select='ovalunixsc:type'/></td>
         <td><xsl:value-of select='ovalunixsc:user_id'/></td>
@@ -289,12 +326,29 @@ Authors:
 <!-- textfilecontent visualisation -->
 
 <xsl:template mode='item-head' match='ovalindsc:textfilecontent_item'>
-    <tr><th>Path</th><th>Content</th></tr>
+    <tr><th>Result of item-state comparison</th><th>Path</th><th>Content</th></tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='ovalindsc:textfilecontent_item'>
+    <xsl:param name="result"/>
     <xsl:variable name='path' select='concat(ovalindsc:path, "/", ovalindsc:filename)'/>
-    <tr><td><xsl:value-of select='$path'/></td><td><xsl:value-of select='ovalindsc:text'/></td></tr>
+    <tr>
+    <td>
+    <xsl:choose>
+        <xsl:when test="$result='true'">
+            <span class="label label-success">
+                <xsl:value-of select="$result"/>
+            </span>
+        </xsl:when>
+        <xsl:otherwise>
+            <span class="label label-danger">
+                <xsl:value-of select="$result"/>
+            </span>
+        </xsl:otherwise>
+    </xsl:choose>
+    </td>
+    <td><xsl:value-of select='$path'/></td><td><xsl:value-of select='ovalindsc:text'/></td>
+    </tr>
 </xsl:template>
 
 </xsl:stylesheet>
