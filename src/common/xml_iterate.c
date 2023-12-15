@@ -22,6 +22,7 @@
 #endif
 
 #include <string.h>
+#include <libxml/parser.h>
 #include "debug_priv.h"
 #include "xml_iterate.h"
 #include "oscap_helpers.h"
