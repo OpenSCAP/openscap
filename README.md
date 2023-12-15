@@ -1,4 +1,3 @@
-# OpenSCAP
 
 [![Gating](https://github.com/OpenSCAP/openscap/actions/workflows/build.yml/badge.svg?branch=maint-1.3)](https://github.com/OpenSCAP/openscap/actions/workflows/build.yml)
 [![Build status](https://ci.appveyor.com/api/projects/status/3o5fnld1m98bo0so/branch/maint-1.3?svg=true)](https://ci.appveyor.com/project/OpenSCAP/openscap)
