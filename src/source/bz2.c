@@ -26,6 +26,7 @@
 #endif
 
 #include <libxml/tree.h>
+#include <libxml/parser.h>
 #include <stdlib.h>
 #include <string.h>
 #ifdef OS_WINDOWS
