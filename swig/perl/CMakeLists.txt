@@ -4,8 +4,11 @@ include(FindPerlLibs)
 string(SUBSTRING "${PERL_VERSION_STRING}" 0 4 PERL_VERSION_MINOR)
 
 # process cmake vendor paths to respect install prefix, use as Linux defaults below
-STRING(REGEX REPLACE "^/usr/" "${CMAKE_INSTALL_PREFIX}/" PERL_VENDORARCH "${PERL_VENDORARCH}")
-STRING(REGEX REPLACE "^/usr/" "${CMAKE_INSTALL_PREFIX}/" PERL_VENDORLIB "${PERL_VENDORLIB}")
+if (NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        STRING(REGEX REPLACE "^/usr/" "${CMAKE_INSTALL_PREFIX}/" PERL_VENDORARCH "${PERL_VENDORARCH}")
+        STRING(REGEX REPLACE "^/usr/" "${CMAKE_INSTALL_PREFIX}/" PERL_VENDORLIB "${PERL_VENDORLIB}")
+endif()
+
 message(STATUS "perl install libdir: ${PERL_VENDORARCH}")
 message(STATUS "perl install archdir: ${PERL_VENDORLIB}")
 
