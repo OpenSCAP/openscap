@@ -30,5 +30,12 @@ assert_exists 1 '/oval_results/results/system/definitions/definition[@definition
 assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:4" and @flag="does not exist"]'
 assert_exists 0 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:textfilecontent_item/ind-sys:filepath[text()="/tmp/oscap_test_skip_paths/b/y"]'
 assert_exists 0 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:textfilecontent_item/ind-sys:filepath[text()="/tmp/oscap_test_skip_paths/c/z"]'
+assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:x:def:5" and @result="true"]'
+assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:5" and @flag="complete"]'
+assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:filehash58_item/ind-sys:filepath[text()="/tmp/oscap_test_skip_paths/a/x"]'
+assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:x:def:6" and @result="true"]'
+assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:6" and @flag="does not exist"]'
+assert_exists 0 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:filehash58_item/ind-sys:filepath[text()="/tmp/oscap_test_skip_paths/b/y"]'
+assert_exists 0 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:filehash58_item/ind-sys:filepath[text()="/tmp/oscap_test_skip_paths/c/z"]'
 rm -f $result
 rm -rf "$root"
