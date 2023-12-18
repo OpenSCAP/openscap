@@ -46,6 +46,12 @@
         <criterion test_ref="oval:0:tst:5"/>
       </criteria>
     </definition>
+    <definition class="compliance" version="1" id="oval:0:def:55"> <!-- comment="false" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:55"/>
+      </criteria>
+    </definition>
 
     <definition class="compliance" version="1" id="oval:0:def:6"> <!-- comment="false" -->
       <metadata><title></title><description></description></metadata>
@@ -96,6 +102,11 @@
 
     <!-- check that there doesn't exist systemd-journald.service unit with valid Conflicts property -->
     <systemdunitproperty_test id="oval:0:tst:5" check="all" check_existence="none_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
+      <object object_ref="oval:0:obj:5"/>
+    </systemdunitproperty_test>
+
+    <!-- check that there doesn't exist systemd-journald.service unit with valid Conflicts property -->
+    <systemdunitproperty_test id="oval:0:tst:55" check="all" check_existence="none_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
       <object object_ref="oval:0:obj:5"/>
     </systemdunitproperty_test>
 

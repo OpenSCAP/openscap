@@ -22,7 +22,7 @@ function test_probes_systemdunitproperty {
 
     [ -f $RF ] && rm -f $RF
 
-    $OSCAP oval eval --results $RF $DF 2>$stderr
+    $OSCAP oval eval --results $RF $DF 
 
     [ -f $RF ]
     verify_results "def" $DF $RF 8
