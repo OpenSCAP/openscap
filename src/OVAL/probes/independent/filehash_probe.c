@@ -105,6 +105,10 @@ static int filehash_cb (const char *prefix, const char *p, const char *f, probe_
         pbuf[plen+flen] = '\0';
 	include_filepath = oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.6)) >= 0;
 
+	if (probe_path_is_blocked(pbuf, ctx->blocked_paths)) {
+		return 0;
+	}
+
         /*
          * Open the file
          */
