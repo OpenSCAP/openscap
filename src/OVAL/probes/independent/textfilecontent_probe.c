@@ -136,7 +136,7 @@ struct pfdata {
         probe_ctx *ctx;
 };
 
-static int process_file(const char *prefix, const char *path, const char *filename, void *arg, oval_schema_version_t over)
+static int process_file(const char *prefix, const char *path, const char *filename, void *arg, oval_schema_version_t over, struct oscap_list *blocked_paths)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
 	int ret = 0, path_len, filename_len;
@@ -169,6 +169,10 @@ static int process_file(const char *prefix, const char *path, const char *filena
 		++path_len;
 	}
 	memcpy(whole_path + path_len, filename, filename_len + 1);
+
+	if (probe_path_is_blocked(whole_path, blocked_paths)) {
+		goto cleanup;
+	}
 
 	/*
 	 * If stat() fails, don't report an error and just skip the file.
@@ -294,7 +298,7 @@ int textfilecontent_probe_main(probe_ctx *ctx, void *arg)
 			if (ofts_ent->fts_info == FTS_F
 			    || ofts_ent->fts_info == FTS_SL) {
 				// todo: handle return code
-				process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd, over);
+				process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd, over, ctx->blocked_paths);
 			}
 			oval_ftsent_free(ofts_ent);
 		}
