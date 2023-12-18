@@ -31,16 +31,16 @@
     </definition>
   </definitions>
   <tests>
-    <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check_existence="at_least_one_exists" version="1" id="oval:x:tst:1" check="all" comment="a file">
+    <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check_existence="at_least_one_exists" version="1" id="oval:x:tst:1" check="all" comment="read file from directory 'a' - should be read">
       <object object_ref="oval:x:obj:1"/>
     </file_test>
-    <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check_existence="none_exist" version="1" id="oval:x:tst:2" check="all" comment="a file">
+    <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check_existence="none_exist" version="1" id="oval:x:tst:2" check="all" comment="read file from directory 'b' - should be skip">
       <object object_ref="oval:x:obj:2"/>
     </file_test>
-    <textfilecontent54_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="at_least_one_exists" version="1" id="oval:x:tst:3" check="all" comment="a file">
+    <textfilecontent54_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="at_least_one_exists" version="1" id="oval:x:tst:3" check="all" comment="read file from directory 'a' - should be read">
       <object object_ref="oval:x:obj:3"/>
     </textfilecontent54_test>
-    <textfilecontent54_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="none_exist" version="1" id="oval:x:tst:4" check="all" comment="a file">
+    <textfilecontent54_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="none_exist" version="1" id="oval:x:tst:4" check="all" comment="read file from directory 'b' - should be skip">
       <object object_ref="oval:x:obj:4"/>
     </textfilecontent54_test>
   </tests>
