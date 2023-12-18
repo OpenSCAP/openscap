@@ -142,9 +142,8 @@ static xmlDocPtr strip_ns(xmlDocPtr doc)
 	return result;
 }
 
-static int process_file(const char *prefix, const char *path, const char *filename, void *arg)
+static int process_file(const char *prefix, const char *path, const char *filename, struct pfdata *pfd)
 {
-	struct pfdata *pfd = (struct pfdata *) arg;
 	int ret = 0, path_len, filename_len;
 	char *whole_path = NULL;
 	xmlDoc *doc = NULL;
