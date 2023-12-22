@@ -94,12 +94,12 @@
       <state state_ref="oval:0:ste:3"/>
     </systemdunitproperty_test>
 
-    <!-- check that there doesn't exist systemd-journald.service unit with valid Conflicts property -->
+    <!-- check that there doesn't exist systemd-journald.service unit with valid OscapTestingProperty property -->
     <systemdunitproperty_test id="oval:0:tst:5" check="all" check_existence="none_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
       <object object_ref="oval:0:obj:5"/>
     </systemdunitproperty_test>
 
-    <!-- check if there is at least one systemd-journald.service unit it has value of Conflicts property equal to empty string -->
+    <!-- check if there is at least one systemd-journald.service unit it has value of OscapTestingProperty property equal to empty string -->
     <systemdunitproperty_test id="oval:0:tst:6" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="false" version="1">
       <object object_ref="oval:0:obj:5"/>
       <state state_ref="oval:0:ste:4"/>
@@ -145,7 +145,7 @@
 
     <systemdunitproperty_object id="oval:0:obj:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <unit>systemd-journald.service</unit>
-      <property>Conflicts</property>
+      <property>OscapTestingProperty</property>
     </systemdunitproperty_object>
 
     <systemdunitproperty_object id="oval:0:obj:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
