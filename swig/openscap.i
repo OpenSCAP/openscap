@@ -64,9 +64,9 @@
 }
 
 %typemap(in) void * {
-    $result = SWIG_ConvertPtr($input,%as_voidptrptr(&$1), 0, $disown);
-    if (!SWIG_IsOK($result)) {
-        %argument_fail($result, "$type", $symname, $argnum);
+    int ptrres = SWIG_ConvertPtr($input,%as_voidptrptr(&$1), 0, $disown);
+    if (!SWIG_IsOK(ptrres)) {
+        %argument_fail(ptrres, "$type", $symname, $argnum);
     }
 }
 
