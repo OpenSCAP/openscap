@@ -46,7 +46,7 @@ struct ctxt {
 	char *filename;
 };
 
-static void oscap_xml_validity_handler(void *user, xmlErrorPtr error)
+static void oscap_xml_validity_handler(void *user, const xmlError *error)
 {
 	struct ctxt * context = (struct ctxt *) user;
 
@@ -111,7 +111,7 @@ static inline int oscap_validate_xml(struct oscap_source *source, const char *sc
 		goto cleanup;
 	}
 
-	xmlSchemaSetParserStructuredErrors(parser_ctxt, oscap_xml_validity_handler, &context);
+	xmlSchemaSetParserStructuredErrors(parser_ctxt, (xmlStructuredErrorFunc) oscap_xml_validity_handler, &context);
 
 	schema = xmlSchemaParse(parser_ctxt);
 	if (schema == NULL) {
@@ -125,7 +125,7 @@ static inline int oscap_validate_xml(struct oscap_source *source, const char *sc
 		goto cleanup;
 	}
 
-	xmlSchemaSetValidStructuredErrors(ctxt, oscap_xml_validity_handler, &context);
+	xmlSchemaSetValidStructuredErrors(ctxt, (xmlStructuredErrorFunc) oscap_xml_validity_handler, &context);
 
 	doc = oscap_source_get_xmlDoc(source);
 	if (!doc)
