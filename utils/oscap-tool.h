@@ -176,6 +176,8 @@ struct oscap_action {
 	char *verbosity_level;
 	char *fix_type;
 	char *local_files;
+	char *reference;
+	int references;
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);

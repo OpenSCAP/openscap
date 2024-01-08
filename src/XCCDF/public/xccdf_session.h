@@ -644,6 +644,13 @@ OSCAP_API int xccdf_session_generate_guide(struct xccdf_session *session, const 
  */
 OSCAP_API int xccdf_session_export_all(struct xccdf_session *session);
 
+/**
+ * Set reference filter to the XCCDF session. If this filter is set,
+ * the XCCDF session will evaluate only rules that conform to the filter.
+ * @param session XCCDF session
+ * @param reference_filter a string in a form "key:identifier"
+ */
+OSCAP_API void xccdf_session_set_reference_filter(struct xccdf_session *session, const char *reference_filter);
 /// @}
 /// @}
 #endif

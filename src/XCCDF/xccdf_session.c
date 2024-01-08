@@ -70,6 +70,7 @@ struct xccdf_session {
 	const char *filename;				///< File name of SCAP (SDS or XCCDF) file for this session.
 	struct oscap_list *rules;
 	struct oscap_list *skip_rules;
+	const char *reference_parameter;
 	struct oscap_source *source;                    ///< Main source assigned with the main file (SDS or XCCDF)
 	char *temp_dir;					///< Temp directory used for decomposed component files.
 	struct {
@@ -1384,6 +1385,9 @@ int xccdf_session_evaluate(struct xccdf_session *session)
 	}
 	oscap_iterator_free(sit);
 
+	if (session->reference_parameter) {
+		xccdf_policy_set_reference_filter(policy, session->reference_parameter);
+	}
 	session->xccdf.result = xccdf_policy_evaluate(policy);
 	if (session->xccdf.result == NULL)
 		return 1;
@@ -2058,4 +2062,9 @@ int xccdf_session_export_all(struct xccdf_session *session)
 cleanup:
 	oscap_source_free(arf_source);
 	return ret;
+}
+
+void xccdf_session_set_reference_filter(struct xccdf_session *session, const char *reference_filter)
+{
+	session->reference_parameter = reference_filter;
 }
