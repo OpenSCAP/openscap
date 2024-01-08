@@ -809,14 +809,9 @@ Authors:
                     </xsl:call-template>
                 </td>
             </tr>
-            <tr><td>Identifiers and References</td><td class="identifiers">
-                <!-- XCCDF 1.2 spec says that idents in rule-result should be copied from
-                    the Rule itself. That means that we can just use the same code as guide
-                    and just use idents from Rule. -->
-                <xsl:call-template name="item-idents-refs">
-                    <xsl:with-param name="item" select="$item"/>
-                </xsl:call-template>
-            </td></tr>
+            <xsl:call-template name="item-idents-refs">
+                <xsl:with-param name="item" select="$item"/>
+            </xsl:call-template>
             <xsl:if test="cdf:override">
                 <tr><td colspan="2">
                     <xsl:for-each select="cdf:override">

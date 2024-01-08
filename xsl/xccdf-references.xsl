@@ -41,6 +41,9 @@ Authors:
 <xsl:template name="convert-reference-url-to-name">
     <xsl:param name="href"/>
     <xsl:choose>
+        <xsl:when test="key('reference_names', $href)">
+            <xsl:value-of select="key('reference_names', $href)"/>
+        </xsl:when>
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
             <xsl:text>NIST SP 800-53</xsl:text>
         </xsl:when>
