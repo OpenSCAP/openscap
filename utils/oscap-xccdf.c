@@ -153,6 +153,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"   --profile <name>              - The name of Profile to be evaluated.\n"
 		"   --rule <name>                 - The name of a single rule to be evaluated.\n"
 		"   --skip-rule <name>            - The name of the rule to be skipped.\n"
+		"   --reference <NAME:ID>         - Evaluate only rules that have the given reference.\n"
 		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
 		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
@@ -637,6 +638,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_session_skip_rule(session, rid);
 	}
 	oscap_string_iterator_free(sit);
+	if (action->reference) {
+		if (strchr(action->reference, ':') == NULL) {
+			fprintf(stderr, "The --reference argument needs to be in form NAME:IDENTIFIER, using a colon as a separator.\n");
+			goto cleanup;
+		}
+		xccdf_session_set_reference_filter(session, action->reference);
+	}
 
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
@@ -1200,7 +1208,8 @@ enum oval_opt {
     XCCDF_OPT_OUTPUT = 'o',
     XCCDF_OPT_RESULT_ID = 'i',
 	XCCDF_OPT_FIX_TYPE,
-	XCCDF_OPT_LOCAL_FILES
+	XCCDF_OPT_LOCAL_FILES,
+	XCCDF_OPT_REFERENCE
 };
 
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
@@ -1234,6 +1243,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
 		{"fix-type", required_argument, NULL, XCCDF_OPT_FIX_TYPE},
 		{"local-files", required_argument, NULL, XCCDF_OPT_LOCAL_FILES},
+		{"reference", required_argument, NULL, XCCDF_OPT_REFERENCE},
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
@@ -1296,6 +1306,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 			break;
 		case XCCDF_OPT_LOCAL_FILES:
 			action->local_files = optarg;
+			break;
+		case XCCDF_OPT_REFERENCE:
+			action->reference = optarg;
 			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);

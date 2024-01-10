@@ -36,6 +36,7 @@
 #include "xccdf_policy_engine_priv.h"
 #include "reporter_priv.h"
 #include "public/xccdf_policy.h"
+#include "public/xccdf_session.h"
 #include "public/xccdf_benchmark.h"
 #include "public/oscap_text.h"
 
@@ -1031,6 +1032,25 @@ static void _warn_about_required_rules(const struct xccdf_policy *policy, const 
 	oscap_stringlist_iterator_free(requires_it);
 }
 
+static bool _matches_references(struct xccdf_policy *policy, const struct xccdf_rule *rule)
+{
+	if (!policy->reference_filter.active) {
+		return true;
+	}
+	bool matched = false;
+	struct oscap_reference_iterator *references = xccdf_item_get_references((struct xccdf_item *)rule);
+	while (oscap_reference_iterator_has_more(references) && !matched) {
+		struct oscap_reference *ref = oscap_reference_iterator_next(references);
+		const char *href = oscap_reference_get_href(ref);
+		const char *title = oscap_reference_get_title(ref);
+		if (!strcmp(href, policy->reference_filter.href) && !strcmp(title, policy->reference_filter.title)) {
+			matched = true;
+		}
+	}
+	oscap_reference_iterator_free(references);
+	return matched;
+}
+
 /**
  * Evaluate given check which is immediate child of the rule.
  * A possibe child checks will be evaluated by xccdf_policy_check_evaluate.
@@ -1072,6 +1092,10 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 			xccdf_policy_resolve_item(policy, XITEM(rule), false);
 			return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 		}
+	}
+
+	if (!_matches_references(policy, rule)) {
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 	}
 
 	/* Otherwise start reporting */
@@ -1882,6 +1906,10 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	policy->refine_rules_internal = oscap_htable_new();
 	policy->model = model;
 
+	policy->reference_filter.active = false;
+	policy->reference_filter.href = NULL;
+	policy->reference_filter.title = NULL;
+
 	benchmark = xccdf_policy_model_get_benchmark(model);
 
 	if (profile) {
@@ -2253,6 +2281,48 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
         free(model);
 }
 
+static const char *_find_reference_uri_by_key(struct xccdf_benchmark *benchmark, const char *key)
+{
+	const char *uri = NULL;
+	struct oscap_reference_iterator *benchmark_references = xccdf_item_get_references((struct xccdf_item *)benchmark);
+	while (oscap_reference_iterator_has_more(benchmark_references)) {
+		struct oscap_reference *ref = oscap_reference_iterator_next(benchmark_references);
+		const char *title = oscap_reference_get_title(ref);
+		if (!strcmp(key, title)) {
+			uri = oscap_reference_get_href(ref);
+			break;
+		}
+	}
+	oscap_reference_iterator_free(benchmark_references);
+	return uri;
+}
+
+void xccdf_policy_set_reference_filter(struct xccdf_policy *policy, const char *reference_parameter)
+{
+	if (!reference_parameter) {
+		return;
+	}
+	char *reference_parameter_dup = strdup(reference_parameter);
+	char **split = oscap_split(reference_parameter_dup, ":");
+	struct xccdf_benchmark *benchmark = policy->model->benchmark;
+	char *key = split[0];
+	const char *uri = _find_reference_uri_by_key(benchmark, key);
+	if (!uri) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Reference type '%s' isn't available in this benchmark", key);
+		goto cleanup;
+	}
+	char *title = split[1];
+	if (!title) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Reference identifier hasn't been provided");
+		goto cleanup;
+	}
+	policy->reference_filter.active = true;
+	policy->reference_filter.href = strdup(uri);
+	policy->reference_filter.title = strdup(title);
+cleanup:
+	free(split);
+	free(reference_parameter_dup);
+}
 
 
 void xccdf_policy_free(struct xccdf_policy * policy) {
@@ -2278,6 +2348,8 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 	oscap_htable_free0(policy->selected_internal);
 	oscap_htable_free0(policy->selected_final);
 	oscap_htable_free(policy->refine_rules_internal, (oscap_destruct_func) xccdf_refine_rule_internal_free);
+	free(policy->reference_filter.href);
+	free(policy->reference_filter.title);
         free(policy);
 }
 

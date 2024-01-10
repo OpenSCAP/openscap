@@ -696,6 +696,34 @@ STIG by DISA. When evaluating a STIG provided by DISA using `oscap`, use the
 `scap-security-guide` content in STIG Viewer and evaluating
 `scap-security-guide` by oscap, use `--results` instead of `--stig-viewer`.
 
+=== Checking for compliance with a particular requirement coverage
+
+A common theme is to check system status based on requirements of a particular policy.
+OpenSCAP can select rules that are related to a specific requirement based on the references in the rules.
+
+1) List references that are supported in your scap content using the `oscap info --references` command.
+This will list of available reference names and their URIs.
+For example:
+
+----
+$ oscap info --references /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
+... snip ...
+		References:
+			anssi: http://www.ssi.gouv.fr/administration/bonnes-pratiques/
+			cis: https://www.cisecurity.org/benchmark/red_hat_linux/
+			disa: https://public.cyber.mil/stigs/cci/
+... snip ...
+----
+
+2) Run the evaluation with the `--reference` option, using the name obtained in the previous step and the requirement ID, separated by a colon.
+That will filter the list of rules so that only rules that have the given reference ID assigned would be evaluated.
+For example:
+
+----
+$ oscap xccdf eval --profile cis --reference cis:3.3.2 /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
+----
+
+NOTE: If the `oscap info --references` command doesn't list any reference names in the `References` section of its output, it means that the provided SCAP content doesn't support this feature.
 
 == Remediating system
 

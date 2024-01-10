@@ -72,6 +72,11 @@ struct xccdf_policy {
 	struct oscap_htable		*selected_final;
 	/* The hash-table contains the latest refine-rule for specified item-id. */
 	struct oscap_htable		*refine_rules_internal;
+	struct {
+		bool active;
+		char *href;
+		char *title;
+	} reference_filter;
 };
 
 
@@ -136,5 +141,6 @@ int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, voi
  */
 struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *policy);
 
+void xccdf_policy_set_reference_filter(struct xccdf_policy *policy, const char *reference_parameter);
 
 #endif
