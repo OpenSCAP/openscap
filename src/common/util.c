@@ -442,3 +442,35 @@ int oscap_open_writable(const char *filename)
 	}
 	return fd;
 }
+
+bool oscap_path_startswith(const char *path, const char *prefix)
+{
+	bool res = true;
+	const char *del = "/";
+	char *path_dup = oscap_strdup(path);
+	char **path_split = oscap_split(path_dup, del);
+	char *prefix_dup = oscap_strdup(prefix);
+	char **prefix_split = oscap_split(prefix_dup, del);
+	int i = 0, j = 0;
+	while (prefix_split[i] && path_split[j]) {
+		if (!strcmp(prefix_split[i], "")) {
+			++i;
+			continue;
+		}
+		if (!strcmp(path_split[j], "")) {
+			++j;
+			continue;
+		}
+		if (strcmp(prefix_split[i], path_split[j])) {
+			res = false;
+			break;
+		}
+		++i;
+		++j;
+	}
+	free(path_dup);
+	free(path_split);
+	free(prefix_dup);
+	free(prefix_split);
+	return res;
+}
