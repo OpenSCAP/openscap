@@ -637,10 +637,14 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		const char *rid = oscap_string_iterator_next(sit);
 		xccdf_session_skip_rule(session, rid);
 	}
+	oscap_string_iterator_free(sit);
 	if (action->reference) {
+		if (strchr(action->reference, ':') == NULL) {
+			fprintf(stderr, "The --reference argument needs to be in form NAME:IDENTIFIER, using a colon as a separator.\n");
+			goto cleanup;
+		}
 		xccdf_session_set_reference_filter(session, action->reference);
 	}
-	oscap_string_iterator_free(sit);
 
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;

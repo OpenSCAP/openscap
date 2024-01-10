@@ -95,3 +95,10 @@ assert_exists 1 "//rule-result[@idref=\"$r3\"]/result[text()=\"pass\"]"
 assert_exists 1 "//rule-result[@idref=\"$r4\"]/result[text()=\"pass\"]"
 :> $stdout
 :> $result
+
+# Tests that when a wrong '--reference' option with a valid name but missing
+# identifier is provided OpenSCAP prints an errror message.
+$OSCAP xccdf eval --results $result --profile $p1 --reference "animals" $ds > $stdout 2> $stderr || [[ $? -eq 1 ]]
+grep -q "The --reference argument needs to be in form NAME:IDENTIFIER, using a colon as a separator." $stderr
+:> $stdout
+:> $result

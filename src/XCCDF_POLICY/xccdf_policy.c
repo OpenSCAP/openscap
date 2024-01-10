@@ -2309,13 +2309,17 @@ void xccdf_policy_set_reference_filter(struct xccdf_policy *policy, const char *
 	const char *uri = _find_reference_uri_by_key(benchmark, key);
 	if (!uri) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Reference type '%s' isn't available in this benchmark", key);
-		free(reference_parameter_dup);
-		free(split);
-		return;
+		goto cleanup;
+	}
+	char *title = split[1];
+	if (!title) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Reference identifier hasn't been provided");
+		goto cleanup;
 	}
 	policy->reference_filter.active = true;
 	policy->reference_filter.href = strdup(uri);
-	policy->reference_filter.title = strdup(split[1]);
+	policy->reference_filter.title = strdup(title);
+cleanup:
 	free(split);
 	free(reference_parameter_dup);
 }
