@@ -153,7 +153,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"   --profile <name>              - The name of Profile to be evaluated.\n"
 		"   --rule <name>                 - The name of a single rule to be evaluated.\n"
 		"   --skip-rule <name>            - The name of the rule to be skipped.\n"
-		"   --reference <URL=ID>          - Evaluate only rules that have the given reference.\n"
+		"   --reference <NAME:ID>         - Evaluate only rules that have the given reference.\n"
 		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
 		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
