@@ -29,7 +29,43 @@
 #include <string.h>
 #include "common/util.h"
 
+int test_oscap_path_startswith(void);
 int test_oscap_strrm(void);
+
+int test_oscap_path_startswith()
+{
+	if (!oscap_path_startswith("/", "/"))
+		return 1;
+	if (!oscap_path_startswith("/aaa", "/"))
+		return 2;
+	if (!oscap_path_startswith("/aaa", "/aaa"))
+		return 3;
+	if (!oscap_path_startswith("/aaa/bbb", "/aaa"))
+		return 4;
+	if (!oscap_path_startswith("/aaa/bbb/ccc", "/aaa"))
+		return 5;
+	if (!oscap_path_startswith("/aaa/bbb/ccc/", "/aaa/"))
+		return 6;
+	if (!oscap_path_startswith("/aaa/bbb/ccc", "/aaa/bbb/ccc"))
+		return 7;
+	if (!oscap_path_startswith("/aaa/bbb/ccc", ""))
+		return 8;
+	if (!oscap_path_startswith("", ""))
+		return 9;
+	if (!oscap_path_startswith("", "/"))
+		return 10;
+
+	if (oscap_path_startswith("/bbb", "/aaa"))
+		return 101;
+	if (oscap_path_startswith("/bbb/aaa", "/aaa"))
+		return 102;
+	if (oscap_path_startswith("/bbb/aaa/", "/aaa"))
+		return 103;
+	if (oscap_path_startswith("/bbb/aaa/", "/aaa/"))
+		return 104;
+
+	return 0;
+}
 
 int test_oscap_strrm()
 {
@@ -59,6 +95,8 @@ int main (int argc, char *argv[])
 {
 	int retval = 0;
 
+	if ((retval = test_oscap_path_startswith()) != 0)
+		return retval;
 	if ((retval = test_oscap_strrm()) != 0)
 		return retval;
 

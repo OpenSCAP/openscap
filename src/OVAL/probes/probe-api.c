@@ -1794,4 +1794,20 @@ SEXP_t *probe_obj_getmask(SEXP_t *obj)
     SEXP_free(objents);
     return (mask);
 }
+
+bool probe_path_is_blocked(const char *path, struct oscap_list *blocked_paths)
+{
+	bool res = false;
+	struct oscap_iterator *it = oscap_iterator_new(blocked_paths);
+	while (oscap_iterator_has_more(it)) {
+		const char *item = oscap_iterator_next(it);
+		if (oscap_path_startswith(path, item)) {
+			res = true;
+			break;
+		}
+	}
+	oscap_iterator_free(it);
+	return res;
+}
+
 /// @}

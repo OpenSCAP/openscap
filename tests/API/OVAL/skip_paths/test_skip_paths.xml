@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd">
+  <generator>
+    <oval:schema_version>5.11.1</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="compliance" version="1" id="oval:x:def:1">
+      <metadata><title/><description/></metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:x:tst:1"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:2">
+      <metadata><title/><description/></metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:x:tst:2"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:3">
+      <metadata><title/><description/></metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:x:tst:3"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:4">
+      <metadata><title/><description/></metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:x:tst:4"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:5">
+      <metadata><title/><description/></metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:x:tst:5"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:6">
+      <metadata><title/><description/></metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:x:tst:6"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:7">
+      <metadata><title/><description/></metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:x:tst:7"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:8">
+      <metadata><title/><description/></metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:x:tst:8"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check_existence="at_least_one_exists" version="1" id="oval:x:tst:1" check="all" comment="read file from directory 'a' - should be read">
+      <object object_ref="oval:x:obj:1"/>
+    </file_test>
+    <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check_existence="none_exist" version="1" id="oval:x:tst:2" check="all" comment="read file from directory 'b' - should be skip">
+      <object object_ref="oval:x:obj:2"/>
+    </file_test>
+    <textfilecontent54_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="at_least_one_exists" version="1" id="oval:x:tst:3" check="all" comment="read file from directory 'a' - should be read">
+      <object object_ref="oval:x:obj:3"/>
+    </textfilecontent54_test>
+    <textfilecontent54_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="none_exist" version="1" id="oval:x:tst:4" check="all" comment="read file from directory 'b' - should be skip">
+      <object object_ref="oval:x:obj:4"/>
+    </textfilecontent54_test>
+    <filehash58_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="at_least_one_exists" version="1" id="oval:x:tst:5" check="all" comment="read file from directory 'a' - should be read">
+      <object object_ref="oval:x:obj:5"/>
+    </filehash58_test>
+    <filehash58_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="none_exist" version="1" id="oval:x:tst:6" check="all" comment="read file from directory 'b' - should be skip">
+      <object object_ref="oval:x:obj:6"/>
+    </filehash58_test>
+    <xmlfilecontent_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="at_least_one_exists" version="1" id="oval:x:tst:7" check="all" comment="read file from directory 'a' - should be read">
+      <object object_ref="oval:x:obj:7"/>
+    </xmlfilecontent_test>
+    <xmlfilecontent_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check_existence="none_exist" version="1" id="oval:x:tst:8" check="all" comment="read file from directory 'b' - should be skip">
+      <object object_ref="oval:x:obj:8"/>
+    </xmlfilecontent_test>
+  </tests>
+  <objects>
+    <file_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" version="1" id="oval:x:obj:1">
+      <filepath>/tmp/oscap_test_skip_paths/a/x</filepath>
+    </file_object>
+    <file_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" version="1" id="oval:x:obj:2">
+      <filepath>/tmp/oscap_test_skip_paths/b/y</filepath>
+    </file_object>
+    <textfilecontent54_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" version="1" id="oval:x:obj:3">
+      <filepath>/tmp/oscap_test_skip_paths/a/x</filepath>
+      <pattern>^.*$</pattern>
+      <instance datatype="int" operation="greater than or equal">1</instance>
+    </textfilecontent54_object>
+    <textfilecontent54_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" version="1" id="oval:x:obj:4">
+      <filepath>/tmp/oscap_test_skip_paths/b/y</filepath>
+      <pattern>^.*$</pattern>
+      <instance datatype="int" operation="greater than or equal">1</instance>
+    </textfilecontent54_object>
+    <filehash58_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" version="1" id="oval:x:obj:5">
+      <filepath>/tmp/oscap_test_skip_paths/a/x</filepath>
+      <hash_type>SHA-512</hash_type>
+    </filehash58_object>
+    <filehash58_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" version="1" id="oval:x:obj:6">
+      <filepath>/tmp/oscap_test_skip_paths/b/y</filepath>
+      <hash_type>SHA-512</hash_type>
+    </filehash58_object>
+    <xmlfilecontent_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" version="1" id="oval:x:obj:7">
+      <filepath>/tmp/oscap_test_skip_paths/a/test.xml</filepath>
+      <xpath>/parent</xpath>
+    </xmlfilecontent_object>
+    <xmlfilecontent_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" version="1" id="oval:x:obj:8">
+      <filepath>/tmp/oscap_test_skip_paths/b/test.xml</filepath>
+      <xpath>/parent</xpath>
+    </xmlfilecontent_object>
+  </objects>
+</oval_definitions>

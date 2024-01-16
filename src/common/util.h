@@ -540,4 +540,12 @@ char *oscap_windows_error_message(unsigned long error_code);
  */
 int oscap_open_writable(const char *filename);
 
+/**
+ * Check if a path starts with the given prefix
+ * @param path file system path
+ * @param prefix file system path that will be tested if it's a prefix of the path parameter
+ * @return true or false
+ */
+bool oscap_path_startswith(const char *path, const char *prefix);
+
 #endif              /* OSCAP_UTIL_H_ */

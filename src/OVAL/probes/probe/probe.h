@@ -94,6 +94,7 @@ struct probe_ctx {
 	int offline_mode;
 	double max_mem_ratio;
 	size_t max_collected_items;
+	struct oscap_list *blocked_paths;
 };
 
 typedef enum {

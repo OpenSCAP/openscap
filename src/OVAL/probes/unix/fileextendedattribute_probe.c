@@ -77,7 +77,7 @@ struct cbargs {
 };
 
 #if defined(OS_FREEBSD)
-static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, SEXP_t *gr_lastpath)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, SEXP_t *gr_lastpath, struct oscap_list *blocked_paths)
 {
 	char path_buffer[PATH_MAX];
 	SEXP_t *item;
@@ -108,6 +108,10 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 			snprintf(path_buffer, sizeof path_buffer, "%s%c%s", p, FILE_SEPARATOR, f);
 		}
 		st_path = path_buffer;
+	}
+
+	if (probe_path_is_blocked(st_path, blocked_paths)) {
+		return 0;
 	}
 
 	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
@@ -205,7 +209,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 }
 
 #else
-static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, SEXP_t *gr_lastpath)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, SEXP_t *gr_lastpath, struct oscap_list *blocked_paths)
 {
 	char path_buffer[PATH_MAX];
 	SEXP_t *item, xattr_name;
@@ -230,6 +234,10 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 	}
 
 	SEXP_init(&xattr_name);
+
+	if (probe_path_is_blocked(st_path, blocked_paths)) {
+		return 0;
+	}
 
 	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
 	do {
@@ -441,7 +449,7 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
 
 	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, &gr_lastpath);
+			file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, &gr_lastpath, ctx->blocked_paths);
 			oval_ftsent_free(ofts_ent);
 		}
 		oval_fts_close(ofts);

@@ -396,6 +396,9 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 	yaml_parser_initialize(&parser);
 
 	char *filepath = oscap_path_join(path, filename);
+	if (probe_path_is_blocked(filepath, ctx->blocked_paths)) {
+		goto cleanup;
+	}
 	char *filepath_with_prefix = oscap_path_join(prefix, filepath);
 
 	FILE *yaml_file = fopen(filepath_with_prefix, "r");

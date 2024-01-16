@@ -152,6 +152,10 @@ static int filehash58_cb(const char *prefix, const char *p, const char *f, const
 	memcpy (pbuf + plen, f, sizeof (char) * flen);
 	pbuf[plen+flen] = '\0';
 
+	if (probe_path_is_blocked(pbuf, ctx->blocked_paths)) {
+		return 0;
+	}
+
 	/*
 	 * Open the file
 	 */
