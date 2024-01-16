@@ -295,3 +295,27 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 	debug_message_devel_metadata(file, fn, line);
 	debug_message_end();
 }
+
+void oscap_print_env_vars()
+{
+	const char *known_env_vars[] = {
+		"OSCAP_CHECK_ENGINE_PLUGIN_DIR",
+		"OSCAP_CONTAINER_VARS",
+		"OSCAP_EVALUATION_TARGET",
+		"OSCAP_FULL_VALIDATION",
+		"OSCAP_OVAL_COMMAND_OPTIONS",
+		"OSCAP_PCRE_EXEC_RECURSION_LIMIT",
+		"OSCAP_PROBE_ROOT",
+		"SEXP_VALIDATE_DISABLE",
+		"SOURCE_DATE_EPOCH",
+		"OSCAP_PROBE_MEMORY_USAGE_RATIO",
+		"OSCAP_PROBE_MAX_COLLECTED_ITEMS",
+		"OSCAP_PROBE_IGNORE_PATHS",
+		NULL
+	};
+	dI("Using environment variables:");
+	for (int i = 0; known_env_vars[i]; i++) {
+		char *env_var_val = getenv(known_env_vars[i]);
+		dI("%s='%s'", known_env_vars[i], env_var_val ? env_var_val : "");
+	}
+}
