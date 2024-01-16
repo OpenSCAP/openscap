@@ -978,11 +978,15 @@ static void _add_blocked_paths(struct oscap_list *bpaths)
 	if (envar == NULL) {
 		return;
 	}
+#ifdef OS_WINDOWS
+	dW("OSCAP_PROBE_IGNORE_PATHS isn't effective on Windows.");
+#else
 	char **paths = oscap_split(envar, ":");
 	for (int i = 0; paths[i]; ++i) {
 		oscap_list_add(bpaths, strdup(paths[i]));
 	}
 	free(paths);
+#endif
 }
 
 /**
