@@ -1636,6 +1636,9 @@ not considered local by the scanner:
 
 == List of accepted environment variables
 
+OpenSCAP accepts the following environment variables.
+If OpenSCAP is executed with verbosity level INFO or DEVEL their runtime values will be listed at the beginning of the log.
+
 * `OSCAP_CHECK_ENGINE_PLUGIN_DIR` - Defines path to a directory that contains plug-in libraries implementing additional check engines, eg. SCE.
 * `OSCAP_CONTAINER_VARS` - Additional environment variables read by environmentvariable58_probe. The variables are separated by `\n`. It is used by `oscap-podman` and `oscap-docker` scripts during container scanning.
 * `OSCAP_EVALUATION_TARGET` - Change value of target facts `urn:xccdf:fact:identifier` and `urn:xccdf:fact:asset:identifier:ein` in XCCDF results. Used during offline scanning to pass the name of the target system.
