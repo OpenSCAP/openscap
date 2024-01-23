@@ -102,49 +102,102 @@ static int crapi_sha2_fd (HASH_HashType algo, int fd, void *dst, size_t *size)
         return (0);
 }
 
+struct crapi_sha2_ctx {
+        HASHContext *ctx;
+        void        *dst;
+        size_t      *size;
+};
+
+static void *crapi_sha2_init (void *dst, void *size, int alg)
+{
+        struct crapi_sha2_ctx *ctx = malloc(sizeof(struct crapi_sha2_ctx));
+
+        ctx->ctx  = HASH_Create (alg);
+        ctx->dst  = dst;
+        ctx->size = size;
+
+        if (ctx->ctx != NULL) {
+                HASH_Begin (ctx->ctx);
+        } else {
+                free (ctx);
+                ctx = NULL;
+        }
+
+        return (ctx);
+}
+
+static int crapi_sha2_update (void *ctxp, void *bptr, size_t blen)
+{
+        struct crapi_sha2_ctx *ctx = (struct crapi_sha1_ctx *)ctxp;
+
+        HASH_Update (ctx->ctx, (const unsigned char *)bptr, (unsigned int)blen);
+        return (0);
+}
+
+static int crapi_sha2_fini (void *ctxp)
+{
+        struct crapi_sha2_ctx *ctx = (struct crapi_sha2_ctx *)ctxp;
+
+        HASH_End (ctx->ctx, ctx->dst, (unsigned int *)ctx->size, *ctx->size);
+        HASH_Destroy (ctx->ctx);
+        free (ctx);
+
+        return (0);
+}
+
+static void crapi_sha2_free (void *ctxp)
+{
+        struct crapi_sha2_ctx *ctx = (struct crapi_sha1_ctx *)ctxp;
+
+        HASH_Destroy (ctx->ctx);
+        free (ctx);
+
+        return;
+}
+
 void *crapi_sha224_init (void *dst, void *size)
 {
-        return (NULL);
+        return crapi_sha2_init(dst, size, HASH_AlgSHA224);
 }
 
 int crapi_sha224_update (void *ctxp, void *bptr, size_t blen)
 {
-        return (-1);
+        return crapi_sha2_update(ctxp, bptr, blen);
 }
 
 int crapi_sha224_fini (void *ctxp)
 {
-        return (-1);
+        return crapi_sha2_fini(ctxp);
 }
 
 void crapi_sha224_free (void *ctxp)
 {
-        return;
+        crapi_sha2_free(ctxp);
 }
 
 int crapi_sha224_fd (int fd, void *dst, size_t *size)
 {
-        return (-1);
+        return crapi_sha2_fd (HASH_AlgSHA224, fd, dst, size);
 }
 
 void *crapi_sha256_init (void *dst, void *size)
 {
-        return (NULL);
+        return crapi_sha2_init(dst, size, HASH_AlgSHA256);
 }
 
 int crapi_sha256_update (void *ctxp, void *bptr, size_t blen)
 {
-        return (-1);
+        return crapi_sha2_update(ctxp, bptr, blen);
 }
 
 int crapi_sha256_fini (void *ctxp)
 {
-        return (-1);
+        return crapi_sha2_fini(ctxp);
 }
 
 void crapi_sha256_free (void *ctxp)
 {
-        return;
+        crapi_sha2_free(ctxp);
 }
 
 int crapi_sha256_fd (int fd, void *dst, size_t *size)
@@ -154,47 +207,47 @@ int crapi_sha256_fd (int fd, void *dst, size_t *size)
 
 void *crapi_sha384_init (void *dst, void *size)
 {
-        return (NULL);
+        return crapi_sha2_init(dst, size, HASH_AlgSHA384);
 }
 
 int crapi_sha384_update (void *ctxp, void *bptr, size_t blen)
 {
-        return (-1);
+        return crapi_sha2_update(ctxp, bptr, blen);
 }
 
 int crapi_sha384_fini (void *ctxp)
 {
-        return (-1);
+        return crapi_sha2_fini(ctxp);
 }
 
 void crapi_sha384_free (void *ctxp)
 {
-        return;
+        crapi_sha2_free(ctxp);
 }
 
 int crapi_sha384_fd (int fd, void *dst, size_t *size)
 {
-        return (-1);
+        return crapi_sha2_fd (HASH_AlgSHA384, fd, dst, size);
 }
 
 void *crapi_sha512_init (void *dst, void *size)
 {
-        return (NULL);
+        return crapi_sha2_init(dst, size, HASH_AlgSHA512);
 }
 
 int crapi_sha512_update (void *ctxp, void *bptr, size_t blen)
 {
-        return (-1);
+        return crapi_sha2_update(ctxp, bptr, blen);
 }
 
 int crapi_sha512_fini (void *ctxp)
 {
-        return (-1);
+        return crapi_sha2_fini(ctxp);
 }
 
 void crapi_sha512_free (void *ctxp)
 {
-        return;
+        crapi_sha2_free(ctxp);
 }
 
 int crapi_sha512_fd (int fd, void *dst, size_t *size)
