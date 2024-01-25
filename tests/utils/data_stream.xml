@@ -65,11 +65,19 @@
         <select idref="xccdf_com.example.www_rule_R2" selected="true"/>
       </Profile>
       <Value id="xccdf_com.example.www_value_V1" operator="equals" type="number">
-        <title>value</title>
+        <title>value 1</title>
         <description xml:lang="en">cccc</description>
         <question xml:lang="en">ssss</question>
         <value>5</value>
         <value selector="thirty">30</value>
+      </Value>
+      <Value id="xccdf_com.example.www_value_V2" operator="equals" type="string">
+        <title>value 2</title>
+        <description xml:lang="en">22222</description>
+        <question xml:lang="en">Q2</question>
+        <value>Default</value>
+        <value selector="some">Some Value</value>
+        <value selector="other">Other Value</value>
       </Value>
       <Rule selected="false" id="xccdf_com.example.www_rule_R1">
         <title>Rule R1</title>

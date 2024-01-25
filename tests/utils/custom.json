@@ -1,0 +1,27 @@
+{
+  "profiles": [
+    {
+      "id": "JSON_P1",
+      "title": "JSON Tailored Profile P1",
+      "base_profile_id": "P1",
+      "rules": {
+        "R1": {
+          "evaluate": false
+        },
+        "R3": {
+          "evaluate": true,
+          "role": "unchecked",
+          "severity": "unknown"
+        }
+      },
+      "variables": {
+        "V1": {
+          "value": "New Value"
+        },
+        "V2": {
+          "option_id": "some"
+        }
+      }
+    }
+  ]
+}
