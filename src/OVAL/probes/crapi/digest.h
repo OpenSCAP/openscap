@@ -40,20 +40,7 @@ typedef enum {
         CRAPI_DIGEST_SHA384 = 0x40
 } crapi_alg_t;
 
-#include "md5.h"
-#include "sha1.h"
-#include "sha2.h"
-#include "rmd160.h"
-
 int crapi_digest_fd (int fd, crapi_alg_t alg, void *dst, size_t *size);
-
-struct digest_ctbl_t {
-        void *ctx;
-        void *(*init)  (void *, void *);
-        int   (*update)(void *, void *, size_t);
-        int   (*fini)  (void *);
-        void  (*free)  (void *);
-};
 
 int crapi_mdigest_fd (int fd, int num, ... /*crapi_alg_t alg, void *dst, size_t *size, ...*/);
 
