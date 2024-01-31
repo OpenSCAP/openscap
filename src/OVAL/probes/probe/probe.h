@@ -93,6 +93,7 @@ struct probe_ctx {
         probe_icache_t *icache;    /**< item cache */
 	int offline_mode;
 	double max_mem_ratio;
+	size_t collected_items;
 	size_t max_collected_items;
 	struct oscap_list *blocked_paths;
 };

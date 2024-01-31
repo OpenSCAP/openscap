@@ -1091,6 +1091,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			if (max_ratio > 0)
 				pctx.max_mem_ratio = max_ratio;
 		}
+		pctx.collected_items = 0;
 		pctx.max_collected_items = OSCAP_PROBE_COLLECT_UNLIMITED;
 		char *max_collected_items_str = getenv("OSCAP_PROBE_MAX_COLLECTED_ITEMS");
 		if (max_collected_items_str != NULL) {
