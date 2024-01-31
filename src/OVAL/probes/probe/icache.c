@@ -570,19 +570,11 @@ static int _mark_collected_object_as_incomplete(struct probe_ctx *ctx, const cha
  */
 int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 {
-	SEXP_t *cobj_content;
-	size_t  cobj_itemcnt;
-	int memcheck_ret;
-
 	if (ctx == NULL || ctx->probe_out == NULL || item == NULL) {
 		return -1;
 	}
 
-	cobj_content = SEXP_listref_nth(ctx->probe_out, 3);
-	cobj_itemcnt = SEXP_list_length(cobj_content);
-	SEXP_free(cobj_content);
-
-	if (ctx->max_collected_items != OSCAP_PROBE_COLLECT_UNLIMITED && cobj_itemcnt >= ctx->max_collected_items) {
+	if (ctx->max_collected_items != OSCAP_PROBE_COLLECT_UNLIMITED && ctx->collected_items >= ctx->max_collected_items) {
 		char *message = oscap_sprintf("Object is incomplete because the object matches more than %ld items.", ctx->max_collected_items);
 		if (_mark_collected_object_as_incomplete(ctx, message) != 0) {
 			free(message);
@@ -592,7 +584,7 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 		return 2;
 	}
 
-	memcheck_ret = probe_cobj_memcheck(cobj_itemcnt, ctx->max_mem_ratio);
+	int memcheck_ret = probe_cobj_memcheck(ctx->collected_items, ctx->max_mem_ratio);
 	if (memcheck_ret == -1) {
 		dE("Failed to check available memory");
 		SEXP_free(item);
@@ -619,6 +611,7 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
                 return (-1);
         }
 
+        ctx->collected_items++;
         return (0);
 }
 
