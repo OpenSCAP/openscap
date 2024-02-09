@@ -1150,15 +1150,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"profile_id = \"%s\"\n"
 			"# If your hardening data stream is not part of the 'scap-security-guide' package\n"
 			"# provide the absolute path to it (from the root of the image filesystem).\n"
-			"# datastream = \"/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml\"\n\n"
-			"# If your hardening data stream is not part of the 'scap-security-guide' package\n"
-			"# you don't need this package to be installed in the image (section can be removed).\n"
-			"[[packages]]\n"
-			"name = \"scap-security-guide\"\n"
-			"version = \"*\"\n\n"
-			"[[packages]]\n"
-			"name = \"openscap-scanner\"\n"
-			"version = \"*\"\n\n",
+			"# datastream = \"/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml\"\n\n",
 			fix_header, profile_id, profile_title, benchmark_version_info, profile_id);
 		free(fix_header);
 		free(profile_title);
