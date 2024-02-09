@@ -239,6 +239,16 @@ Authors:
                             </div></td></tr>
                         </xsl:if>
 
+                        <xsl:if test="count($profile/cdf:select[@idref=$item/@id]/cdf:remark) > 0">
+                            <tr><td>Remarks</td><td class="remarks">
+                                <xsl:for-each select="$profile/cdf:select[@idref=$item/@id]/cdf:remark">
+                                    <blockquote class="small">
+                                        <xsl:value-of select="text()" />
+                                    </blockquote>
+                            </xsl:for-each>
+                            </td></tr>
+                        </xsl:if>
+
                         <tr><td><span class="label label-warning">Severity:</span>&#160;</td><td><div class="severity">
                             <xsl:call-template name="item-severity">
                                 <xsl:with-param name="item" select="$item" />
