@@ -91,8 +91,8 @@ static inline int rpmevrcmp(const char *a, const char *b)
 	/* This mimics rpmevrcmp which is not exported by rpmlib version 4.
 	 * Code inspired by rpm.labelCompare() from rpm4/python/header-py.c
 	 */
-	const char *a_epoch, *a_version, *a_release;
-	const char *b_epoch, *b_version, *b_release;
+	const char *a_epoch = NULL, *a_version = NULL, *a_release = NULL;
+	const char *b_epoch = NULL, *b_version = NULL, *b_release = NULL;
 	char *a_copy, *b_copy;
 	int result;
 
@@ -399,8 +399,8 @@ static int dpkg_version_compare(struct dpkg_version *a, struct dpkg_version *b)
 oval_result_t oval_debian_evr_string_cmp(const char *state, const char *sys, oval_operation_t operation)
 {
 	struct dpkg_version a, b;
-	const char *a_epoch, *a_version, *a_release;
-	const char *b_epoch, *b_version, *b_release;
+	const char *a_epoch = NULL, *a_version = NULL, *a_release = NULL;
+	const char *b_epoch = NULL, *b_version = NULL, *b_release = NULL;
 	char *a_copy, *b_copy;
 	long aux;
 

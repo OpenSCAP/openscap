@@ -5,7 +5,7 @@ include_directories(${PYTHON_INCLUDE_PATH})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_SWIG_FLAGS "-module" "openscap_py" "-py3")
+set(CMAKE_SWIG_FLAGS "-module" "openscap_py")
 if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
 	swig_add_module(openscap_py python ../openscap.i)
 else()

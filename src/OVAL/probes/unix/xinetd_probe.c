@@ -746,7 +746,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 				switch (inctype) {
 				case XICONF_INCTYPE_FILE:
-					strncpy (pathbuf, inclarg, sizeof(pathbuf));
+					strncpy (pathbuf, inclarg, sizeof(pathbuf)-1);
 
 					dD("includefile: %s", pathbuf);
 
