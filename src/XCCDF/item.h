@@ -92,7 +92,7 @@ struct xccdf_rule_item {
 	xccdf_role_t role;
 	xccdf_level_t severity;
 
-	struct oscap_list *requires;
+	struct oscap_list *requires_;
 	struct oscap_list *conflicts;
 
 	struct oscap_list *profile_notes;
@@ -103,7 +103,7 @@ struct xccdf_rule_item {
 };
 
 struct xccdf_group_item {
-	struct oscap_list *requires;
+	struct oscap_list *requires_;
 	struct oscap_list *conflicts;
 
 	struct oscap_list *values;

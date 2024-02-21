@@ -3343,11 +3343,11 @@ OSCAP_API bool xccdf_item_add_warning(struct xccdf_item *item, struct xccdf_warn
 OSCAP_API bool xccdf_refine_rule_add_remark(struct xccdf_refine_rule *obj, struct oscap_text *item);
 
 /// @memberof xccdf_rule
-OSCAP_API bool xccdf_rule_add_requires(struct xccdf_rule *rule, struct oscap_stringlist *requires);
+OSCAP_API bool xccdf_rule_add_requires(struct xccdf_rule *rule, struct oscap_stringlist *requires_);
 /// @memberof xccdf_group
-OSCAP_API bool xccdf_group_add_requires(struct xccdf_group *group, struct oscap_stringlist *requires);
+OSCAP_API bool xccdf_group_add_requires(struct xccdf_group *group, struct oscap_stringlist *requires_);
 /// @memberof xccdf_item
-OSCAP_API bool xccdf_item_add_requires(struct xccdf_item *item, struct oscap_stringlist *requires);
+OSCAP_API bool xccdf_item_add_requires(struct xccdf_item *item, struct oscap_stringlist *requires_);
 /// @memberof xccdf_rule
 OSCAP_API bool xccdf_rule_add_conflicts(struct xccdf_rule *rule, const char *conflicts);
 /// @memberof xccdf_group

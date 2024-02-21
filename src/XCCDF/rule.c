@@ -83,13 +83,13 @@ static void xccdf_deps_get(struct xccdf_item *item, struct oscap_list **conflict
 		if (conflicts)
 			*conflicts = item->sub.rule.conflicts;
 		if (requires)
-			*requires = item->sub.rule.requires;
+			*requires = item->sub.rule.requires_;
 		break;
 	case XCCDF_GROUP:
 		if (conflicts)
 			*conflicts = item->sub.group.conflicts;
 		if (requires)
-			*requires = item->sub.group.requires;
+			*requires = item->sub.group.requires_;
 		break;
 	default:
 		assert(false);
@@ -182,7 +182,7 @@ struct xccdf_item *xccdf_group_new_internal(struct xccdf_item *parent)
 {
 	struct xccdf_item *group = xccdf_item_new(XCCDF_GROUP, parent);
 	group->sub.group.content = oscap_list_new();
-	group->sub.group.requires = oscap_list_new();
+	group->sub.group.requires_ = oscap_list_new();
 	group->sub.group.conflicts = oscap_list_new();
 	group->sub.group.values = oscap_list_new();
 	return group;
@@ -265,7 +265,7 @@ void xccdf_group_free(struct xccdf_item *group)
 	if (group) {
 		oscap_list_free(group->sub.group.content, (oscap_destruct_func) xccdf_item_free);
 		oscap_list_free(group->sub.group.values, (oscap_destruct_func) xccdf_value_free);
-		oscap_list_free(group->sub.group.requires, (oscap_destruct_func) xccdf_free_strlist);
+		oscap_list_free(group->sub.group.requires_, (oscap_destruct_func) xccdf_free_strlist);
 		oscap_list_free(group->sub.group.conflicts, free);
 		xccdf_item_release(group);
 	}
@@ -279,7 +279,7 @@ struct xccdf_item *xccdf_rule_new_internal(struct xccdf_item *parent)
 
 	rule->sub.rule.idents = oscap_list_new();
 	rule->sub.rule.checks = oscap_list_new();
-	rule->sub.rule.requires = oscap_list_new();
+	rule->sub.rule.requires_ = oscap_list_new();
 	rule->sub.rule.conflicts = oscap_list_new();
 	rule->sub.rule.profile_notes = oscap_list_new();
 	rule->sub.rule.fixes = oscap_list_new();
@@ -393,7 +393,7 @@ void xccdf_rule_free(struct xccdf_item *rule)
 		oscap_list_free(rule->sub.rule.profile_notes, (oscap_destruct_func) xccdf_profile_note_free);
 		oscap_list_free(rule->sub.rule.fixes, (oscap_destruct_func) xccdf_fix_free);
 		oscap_list_free(rule->sub.rule.fixtexts, (oscap_destruct_func) xccdf_fixtext_free);
-		oscap_list_free(rule->sub.rule.requires, (oscap_destruct_func) xccdf_free_strlist);
+		oscap_list_free(rule->sub.rule.requires_, (oscap_destruct_func) xccdf_free_strlist);
 		oscap_list_free(rule->sub.rule.conflicts, free);
 		xccdf_item_release(rule);
 	}
@@ -883,28 +883,28 @@ struct oscap_stringlist_iterator *xccdf_item_get_requires(const struct xccdf_ite
 }
 struct oscap_stringlist_iterator *xccdf_rule_get_requires(const struct xccdf_rule* rule)
 {
-	return oscap_iterator_new(XITEM(rule)->sub.rule.requires);
+	return oscap_iterator_new(XITEM(rule)->sub.rule.requires_);
 }
 struct oscap_stringlist_iterator *xccdf_group_get_requires(const struct xccdf_group* group)
 {
-	return oscap_iterator_new(XITEM(group)->sub.group.requires);
+	return oscap_iterator_new(XITEM(group)->sub.group.requires_);
 }
 
-bool xccdf_rule_add_requires(struct xccdf_rule* rule, struct oscap_stringlist* requires)
+bool xccdf_rule_add_requires(struct xccdf_rule* rule, struct oscap_stringlist* requires_)
 {
-    oscap_list_add(XITEM(rule)->sub.rule.requires, requires);
+    oscap_list_add(XITEM(rule)->sub.rule.requires_, requires_);
     return true;
 }
-bool xccdf_group_add_requires(struct xccdf_group* group, struct oscap_stringlist* requires)
+bool xccdf_group_add_requires(struct xccdf_group* group, struct oscap_stringlist* requires_)
 {
-    oscap_list_add(XITEM(group)->sub.group.requires, requires);
+    oscap_list_add(XITEM(group)->sub.group.requires_, requires_);
     return true;
 }
-bool xccdf_item_add_requires(struct xccdf_item* item, struct oscap_stringlist* requires)
+bool xccdf_item_add_requires(struct xccdf_item* item, struct oscap_stringlist* requires_)
 {
 	if (item == NULL) return NULL;
-	if (item->type == XCCDF_RULE)  return xccdf_rule_add_requires ( XRULE(item), requires);
-	if (item->type == XCCDF_GROUP) return xccdf_group_add_requires(XGROUP(item), requires);
+	if (item->type == XCCDF_RULE)  return xccdf_rule_add_requires ( XRULE(item), requires_);
+	if (item->type == XCCDF_GROUP) return xccdf_group_add_requires(XGROUP(item), requires_);
     return false;
 }
 

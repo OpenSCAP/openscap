@@ -1190,7 +1190,7 @@ void xccdf_rule_item_clone(struct xccdf_rule_item *clone, const struct xccdf_rul
 	clone->idents = oscap_list_clone(item->idents, (oscap_clone_func) xccdf_ident_clone );
 	clone->checks = oscap_list_clone(item->checks, (oscap_clone_func) xccdf_check_clone );
 	//requires is an oscap_list of oscap_lists of char *
-	clone->requires = oscap_list_clone(item->requires, (oscap_clone_func) oscap_stringlist_clone);
+	clone->requires_ = oscap_list_clone(item->requires_, (oscap_clone_func) oscap_stringlist_clone);
 	//conflicts is an oscap_list of char *
 	clone->conflicts = oscap_list_clone(item->conflicts, (oscap_clone_func) oscap_strdup);
 	clone->profile_notes = oscap_list_clone(item->profile_notes, (oscap_clone_func) xccdf_profile_note_clone);
@@ -1202,7 +1202,7 @@ void xccdf_group_item_clone(struct xccdf_item *parent, const struct xccdf_group_
 {
     struct xccdf_group_item *clone = &parent->sub.group;
 	//requires is an oscap_list of oscap_lists of char *
-	clone->requires = oscap_list_clone(item->requires, (oscap_clone_func) oscap_stringlist_clone);
+	clone->requires_ = oscap_list_clone(item->requires_, (oscap_clone_func) oscap_stringlist_clone);
 	//conflicts is an oscap_list of char *
 	clone->conflicts = oscap_list_clone(item->conflicts, (oscap_clone_func) oscap_strdup);
 	clone->values = oscap_list_clone(item->values, (oscap_clone_func) xccdf_value_clone);
