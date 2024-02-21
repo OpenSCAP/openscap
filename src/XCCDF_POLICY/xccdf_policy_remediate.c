@@ -1143,10 +1143,15 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 	} else if (oscap_streq(sys, "urn:redhat:osbuild:blueprint")) {
 		char *blueprint_fix_header = oscap_sprintf(
 			"%s"
-			"name = \"%s\"\n"
+			"name = \"hardened_%s\"\n"
 			"description = \"%s\"\n"
-			"version = \"%s\"\n",
-			fix_header, profile_id, profile_title, benchmark_version_info);
+			"version = \"%s\"\n\n"
+			"[customizations.openscap]\n"
+			"profile_id = \"%s\"\n"
+			"# If your hardening data stream is not part of the 'scap-security-guide' package\n"
+			"# provide the absolute path to it (from the root of the image filesystem).\n"
+			"# datastream = \"/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml\"\n\n",
+			fix_header, profile_id, profile_title, benchmark_version_info, profile_id);
 		free(fix_header);
 		free(profile_title);
 		return _write_text_to_fd_and_free(output_fd, blueprint_fix_header);

@@ -19,9 +19,16 @@
 #
 ###############################################################################
 
-name = "xccdf_moc.elpmaxe.www_profile_common"
+name = "hardened_xccdf_moc.elpmaxe.www_profile_common"
 description = "Profile title on one line"
 version = "1.0"
+
+[customizations.openscap]
+profile_id = "xccdf_moc.elpmaxe.www_profile_common"
+# If your hardening data stream is not part of the 'scap-security-guide' package
+# provide the absolute path to it (from the root of the image filesystem).
+# datastream = "/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml"
+
 distro = rhel-80
 
 [[packages]]
