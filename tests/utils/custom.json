@@ -4,14 +4,22 @@
       "id": "JSON_P1",
       "title": "JSON Tailored Profile P1",
       "base_profile_id": "P1",
+      "groups": {
+        "G34": {
+          "evaluate": false
+        }
+      },
       "rules": {
         "R1": {
           "evaluate": false
         },
         "R3": {
           "evaluate": true,
-          "role": "unchecked",
           "severity": "unknown"
+        },
+        "R4": {
+          "evaluate": true,
+          "role": "unchecked"
         }
       },
       "variables": {

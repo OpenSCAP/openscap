@@ -25,6 +25,7 @@ import sys
 import pathlib
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
+import json
 
 
 NS = "http://checklists.nist.gov/xccdf/1.2"
@@ -64,6 +65,8 @@ class Tailoring:
         self.value_changes = []
         self.rules_to_select = []
         self.rules_to_unselect = []
+        self.groups_to_select = []
+        self.groups_to_unselect = []
         self._rule_refinements = collections.defaultdict(dict)
         self._value_refinements = collections.defaultdict(dict)
 
@@ -187,8 +190,22 @@ class Tailoring:
     def _full_rule_id(self, string):
         return self._full_id(string, "rule")
 
+    def _full_group_id(self, string):
+        return self._full_id(string, "group")
+
     def add_value_change(self, varname, value):
         self.value_changes.append((varname, value))
+
+    def _add_group_select_operations(self, container_element):
+        for group_id in self.groups_to_select:
+            change = ET.SubElement(container_element, "{%s}select" % NS)
+            change.set("idref", self._full_group_id(group_id))
+            change.set("selected", "true")
+
+        for group_id in self.groups_to_unselect:
+            change = ET.SubElement(container_element, "{%s}select" % NS)
+            change.set("idref", self._full_group_id(group_id))
+            change.set("selected", "false")
 
     def _add_rule_select_operations(self, container_element):
         for rule_id in self.rules_to_select:
@@ -246,6 +263,7 @@ class Tailoring:
             title.set("override", "false")
         title.text = self.profile_title
 
+        self._add_group_select_operations(profile)
         self._add_rule_select_operations(profile)
         self._add_value_overrides(profile)
         self.rule_refinements_to_xml(profile)
@@ -257,12 +275,12 @@ class Tailoring:
             f.write(pretty_xml)
 
     def import_json_tailoring(self, json_tailoring):
-        import json
         with open(json_tailoring, "r") as jf:
             all_tailorings = json.load(jf)
 
         if 'profiles' in all_tailorings and all_tailorings['profiles']:
-            # We currently support tailoring of one profile only
+            if len(all_tailorings['profiles']) > 1:
+                raise ValueError("The autotailor tool currently does not support multi-profile JSON tailoring.")
             tailoring = all_tailorings['profiles'][0]
         else:
             raise ValueError("JSON Tailoring does not define any profiles.")
@@ -271,6 +289,14 @@ class Tailoring:
 
         self.profile_id = tailoring.get("id", self.profile_id)
         self.profile_title = tailoring.get("title", self.profile_title)
+
+        if "groups" in tailoring:
+            for group_id, props in tailoring["groups"].items():
+                if "evaluate" in props:
+                    if props["evaluate"]:
+                        self.groups_to_select.append(group_id)
+                    else:
+                        self.groups_to_unselect.append(group_id)
 
         if "rules" in tailoring:
             for rule_id, props in tailoring["rules"].items():
@@ -304,7 +330,7 @@ def get_parser():
         "either its full ID, or the suffix, in which case the "
         "'xccdf_<id-namespace>_profile' prefix will be prepended internally.")
     parser.add_argument(
-        "--json-tailoring", metavar="JSON_TAILORING_FILENAME", default="",
+        "-j", "--json-tailoring", metavar="JSON_TAILORING_FILENAME", default="",
         help="JSON Tailoring (https://github.com/ComplianceAsCode/schemas/blob/main/tailoring/schema.json) "
         "filename.")
     parser.add_argument(
