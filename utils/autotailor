@@ -274,6 +274,35 @@ class Tailoring:
         with open(location, "w") if location != "-" else sys.stdout as f:
             f.write(pretty_xml)
 
+    def _import_groups_from_tailoring(self, tailoring):
+        if "groups" in tailoring:
+            for group_id, props in tailoring["groups"].items():
+                if "evaluate" in props:
+                    if props["evaluate"]:
+                        self.groups_to_select.append(group_id)
+                    else:
+                        self.groups_to_unselect.append(group_id)
+
+    def _import_variables_from_tailoring(self, tailoring):
+        if "variables" in tailoring:
+            for variable_id, props in tailoring["variables"].items():
+                if "value" in props:
+                    self.add_value_change(variable_id, props["value"])
+                if "option_id" in props:
+                    self.change_value_attribute(variable_id, "selector", props["option_id"])
+
+    def _import_rules_from_tailoring(self, tailoring):
+        if "rules" in tailoring:
+            for rule_id, props in tailoring["rules"].items():
+                if "evaluate" in props:
+                    if props["evaluate"]:
+                        self.rules_to_select.append(rule_id)
+                    else:
+                        self.rules_to_unselect.append(rule_id)
+                for attr in ATTRIBUTES:
+                    if attr in props:
+                        self.change_rule_attribute(rule_id, attr, props[attr])
+
     def import_json_tailoring(self, json_tailoring):
         with open(json_tailoring, "r") as jf:
             all_tailorings = json.load(jf)
@@ -290,31 +319,9 @@ class Tailoring:
         self.profile_id = tailoring.get("id", self.profile_id)
         self.profile_title = tailoring.get("title", self.profile_title)
 
-        if "groups" in tailoring:
-            for group_id, props in tailoring["groups"].items():
-                if "evaluate" in props:
-                    if props["evaluate"]:
-                        self.groups_to_select.append(group_id)
-                    else:
-                        self.groups_to_unselect.append(group_id)
-
-        if "rules" in tailoring:
-            for rule_id, props in tailoring["rules"].items():
-                if "evaluate" in props:
-                    if props["evaluate"]:
-                        self.rules_to_select.append(rule_id)
-                    else:
-                        self.rules_to_unselect.append(rule_id)
-                for attr in ATTRIBUTES:
-                    if attr in props:
-                        self.change_rule_attribute(rule_id, attr, props[attr])
-
-        if "variables" in tailoring:
-            for variable_id, props in tailoring["variables"].items():
-                if "value" in props:
-                    self.add_value_change(variable_id, props["value"])
-                if "option_id" in props:
-                    self.change_value_attribute(variable_id, "selector", props["option_id"])
+        self._import_groups_from_tailoring(tailoring)
+        self._import_rules_from_tailoring(tailoring)
+        self._import_variables_from_tailoring(tailoring)
 
 
 def get_parser():
