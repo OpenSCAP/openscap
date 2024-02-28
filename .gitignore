@@ -17,6 +17,7 @@ build/
 *.a
 *.la
 .cproject
+.idea
 .project
 .settings/language.settings.xml
 

@@ -1,6 +1,7 @@
 = OpenSCAP User Manual
 :imagesdir: ./images
 :workbench_url: https://www.open-scap.org/tools/scap-workbench/
+:json_tailoring_url: https://github.com/ComplianceAsCode/schemas/tree/main/tailoring
 :sce_web:       https://www.open-scap.org/features/other-standards/sce/
 :openscap_web: https://open-scap.org/
 :oscap_git:     https://github.com/OpenSCAP/openscap
@@ -866,6 +867,12 @@ In the following example, we will create a customized profile with ID `custom` b
 ----
 $ autotailor --unselect service_usbguard_enabled --output /tmp/tailoring.xml \
 --new-profile-id custom /usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml ospp
+----
+
+The `autotailor` tool can also consume {json_tailoring_url}[JSON tailoring] files and convert them into XCCDF Tailoring.
+
+----
+$ autotailor --json-tailoring custom.json /usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml
 ----
 
 For more details about other options of the `autotailor` program please read the `autotailor(8)` man page or run `autotailor --help`.

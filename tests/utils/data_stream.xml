@@ -65,11 +65,19 @@
         <select idref="xccdf_com.example.www_rule_R2" selected="true"/>
       </Profile>
       <Value id="xccdf_com.example.www_value_V1" operator="equals" type="number">
-        <title>value</title>
+        <title>value 1</title>
         <description xml:lang="en">cccc</description>
         <question xml:lang="en">ssss</question>
         <value>5</value>
         <value selector="thirty">30</value>
+      </Value>
+      <Value id="xccdf_com.example.www_value_V2" operator="equals" type="string">
+        <title>value 2</title>
+        <description xml:lang="en">22222</description>
+        <question xml:lang="en">Q2</question>
+        <value>Default</value>
+        <value selector="some">Some Value</value>
+        <value selector="other">Other Value</value>
       </Value>
       <Rule selected="false" id="xccdf_com.example.www_rule_R1">
         <title>Rule R1</title>
@@ -85,20 +93,24 @@
           <check-content-ref href="test_single_rule.oval.xml" name="oval:x:def:1"/>
         </check>
       </Rule>
-      <Rule selected="false" id="xccdf_com.example.www_rule_R3">
-        <title>Rule R3</title>
-        <description>Description</description>
-        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref href="test_single_rule.oval.xml" name="oval:x:def:1"/>
-        </check>
-      </Rule>
-      <Rule selected="false" id="xccdf_com.example.www_rule_R4">
-        <title>Rule R4</title>
-        <description>Description</description>
-        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref href="test_single_rule.oval.xml" name="oval:x:def:1"/>
-        </check>
-      </Rule>
-    </Benchmark>
+      <Group selected="true" id="xccdf_com.example.www_group_G34">
+        <title>group R3, R4</title>
+        <description>description</description>
+        <Rule selected="false" id="xccdf_com.example.www_rule_R3">
+          <title>Rule R3</title>
+          <description>Description</description>
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref href="test_single_rule.oval.xml" name="oval:x:def:1"/>
+          </check>
+        </Rule>
+        <Rule selected="false" id="xccdf_com.example.www_rule_R4">
+          <title>Rule R4</title>
+          <description>Description</description>
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref href="test_single_rule.oval.xml" name="oval:x:def:1"/>
+          </check>
+        </Rule>
+      </Group>
+      </Benchmark>
   </ds:component>
 </ds:data-stream-collection>
