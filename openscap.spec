@@ -14,7 +14,7 @@ BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  swig libxml2-devel libxslt-devel perl-generators perl-XML-Parser
 BuildRequires:  rpm-devel
-BuildRequires:  nss-devel
+BuildRequires:  libgcrypt-devel
 %if 0%{?fedora}
 BuildRequires:  pcre2-devel
 %else

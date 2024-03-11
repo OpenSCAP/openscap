@@ -176,7 +176,7 @@ check_library_exists(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
 check_library_exists(pthread pthread_getname_np "" HAVE_PTHREAD_GETNAME_NP)
 
 # WITH_CRYPTO
-set(WITH_CRYPTO "nss" CACHE STRING "gcrypt|nss")
+set(WITH_CRYPTO "gcrypt" CACHE STRING "gcrypt|nss")
 if(${WITH_CRYPTO} STREQUAL "nss")
 	message("-- Using NSS")
 	find_package(NSS)
