@@ -49,4 +49,5 @@ append = "foo=bar audit=1"
 [customizations.services]
 enabled = ["sshd","usbguard"]
 disabled = ["kdump"]
+masked = ["evil"]
 

@@ -667,19 +667,28 @@ struct blueprint_entries {
 	oscap_pcre_t *re;
 };
 
-static inline int _parse_blueprint_fix(const char *fix_text, struct oscap_list *generic, struct oscap_list *services_enable, struct oscap_list *services_disable, struct oscap_list *kernel_append)
+struct blueprint_customizations {
+	struct oscap_list *generic;
+	struct oscap_list *services_enable;
+	struct oscap_list *services_disable;
+	struct oscap_list *services_mask;
+	struct oscap_list *kernel_append;
+};
+
+static inline int _parse_blueprint_fix(const char *fix_text, struct blueprint_customizations *customizations)
 {
 	char *err;
 	int errofs;
 	int ret = 0;
 
 	struct blueprint_entries tab[] = {
-		{"\\[customizations\\.services\\]\\s+enabled[=\\s]+\\[([^\\]]+)\\]\\s+", services_enable, NULL},
-		{"\\[customizations\\.services\\]\\s+disabled[=\\s]+\\[([^\\]]+)\\]\\s+", services_disable, NULL},
-		{"\\[customizations\\.kernel\\]\\s+append[=\\s\"]+([^\"]+)[\\s\"]+", kernel_append, NULL},
+		{"\\[customizations\\.services\\]\\s+enabled[=\\s]+\\[([^\\]]+)\\]\\s+", customizations->services_enable, NULL},
+		{"\\[customizations\\.services\\]\\s+disabled[=\\s]+\\[([^\\]]+)\\]\\s+", customizations->services_disable, NULL},
+		{"\\[customizations\\.services\\]\\s+masked[=\\s]+\\[([^\\]]+)\\]\\s+", customizations->services_mask, NULL},
+		{"\\[customizations\\.kernel\\]\\s+append[=\\s\"]+([^\"]+)[\\s\"]+", customizations->kernel_append, NULL},
 		// We do this only to pop the 'distro' entry to the top of the generic list,
 		// effectively placing it to the root of the TOML document.
-		{"\\s+(distro[=\\s\"]+[^\"]+[\\s\"]+)", generic, NULL},
+		{"\\s+(distro[=\\s\"]+[^\"]+[\\s\"]+)", customizations->generic, NULL},
 		{NULL, NULL, NULL}
 	};
 
@@ -714,7 +723,7 @@ static inline int _parse_blueprint_fix(const char *fix_text, struct oscap_list *
 			memcpy(val, &fix_text[ovector[2]], ovector[3] - ovector[2]);
 			val[ovector[3] - ovector[2]] = '\0';
 
-			if (!oscap_list_contains(kernel_append, val, (oscap_cmp_func) oscap_streq)) {
+			if (!oscap_list_contains(customizations->kernel_append, val, (oscap_cmp_func) oscap_streq)) {
 				oscap_list_prepend(tab[i].list, val);
 			} else {
 				free(val);
@@ -725,7 +734,7 @@ static inline int _parse_blueprint_fix(const char *fix_text, struct oscap_list *
 	}
 
 	if (start_offset < fix_text_len-1) {
-		oscap_list_add(generic, strdup(fix_text + start_offset));
+		oscap_list_add(customizations->generic, strdup(fix_text + start_offset));
 	}
 
 exit:
@@ -872,14 +881,14 @@ static int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct x
 	return ret;
 }
 
-static int _xccdf_policy_rule_generate_blueprint_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct oscap_list *generic, struct oscap_list *services_enable, struct oscap_list *services_disable, struct oscap_list *kernel_append)
+static int _xccdf_policy_rule_generate_blueprint_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct blueprint_customizations *customizations)
 {
 	char *fix_text = NULL;
 	int ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
 	if (fix_text == NULL) {
 		return ret;
 	}
-	ret = _parse_blueprint_fix(fix_text, generic, services_enable, services_disable, kernel_append);
+	ret = _parse_blueprint_fix(fix_text, customizations);
 	free(fix_text);
 	return ret;
 }
@@ -1161,67 +1170,68 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 	}
 }
 
+static inline void _format_and_write_list_into_blueprint_fd(struct oscap_list *list_, const char *separator, int output_fd)
+{
+	struct oscap_iterator *it = oscap_iterator_new(list_);
+	while(oscap_iterator_has_more(it)) {
+		char *var_line = (char *)oscap_iterator_next(it);
+		_write_text_to_fd(output_fd, var_line);
+		if (oscap_iterator_has_more(it))
+			_write_text_to_fd(output_fd, separator);
+	}
+	oscap_iterator_free(it);
+}
+
 static int _xccdf_policy_generate_fix_blueprint(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
 {
 	int ret = 0;
-	struct oscap_list *generic = oscap_list_new();
-	struct oscap_list *services_enable = oscap_list_new();
-	struct oscap_list *services_disable = oscap_list_new();
-	struct oscap_list *kernel_append = oscap_list_new();
+	struct blueprint_customizations customizations = {
+		.generic = oscap_list_new(),
+		.services_enable = oscap_list_new(),
+		.services_disable = oscap_list_new(),
+		.services_mask = oscap_list_new(),
+		.kernel_append = oscap_list_new()
+	};
+
 	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
 	while (oscap_iterator_has_more(rules_to_fix_it)) {
 		struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
-		ret = _xccdf_policy_rule_generate_blueprint_fix(policy, rule, sys, generic, services_enable, services_disable, kernel_append);
+		ret = _xccdf_policy_rule_generate_blueprint_fix(policy, rule, sys, &customizations);
 		if (ret != 0)
 			break;
 	}
 	oscap_iterator_free(rules_to_fix_it);
 
-	struct oscap_iterator *generic_it = oscap_iterator_new(generic);
+	struct oscap_iterator *generic_it = oscap_iterator_new(customizations.generic);
 	while(oscap_iterator_has_more(generic_it)) {
 		char *var_line = (char *) oscap_iterator_next(generic_it);
 		_write_text_to_fd(output_fd, var_line);
 	}
 	_write_text_to_fd(output_fd, "\n");
 	oscap_iterator_free(generic_it);
-	oscap_list_free(generic, free);
 
 	_write_text_to_fd(output_fd, "[customizations.kernel]\nappend = \"");
-	struct oscap_iterator *kernel_append_it = oscap_iterator_new(kernel_append);
-	while(oscap_iterator_has_more(kernel_append_it)) {
-		char *var_line = (char *) oscap_iterator_next(kernel_append_it);
-		_write_text_to_fd(output_fd, var_line);
-		if (oscap_iterator_has_more(kernel_append_it))
-			_write_text_to_fd(output_fd, " ");
-	}
+	_format_and_write_list_into_blueprint_fd(customizations.kernel_append, " ", output_fd);
 	_write_text_to_fd(output_fd, "\"\n\n");
-	oscap_iterator_free(kernel_append_it);
-	oscap_list_free(kernel_append, free);
 
 	_write_text_to_fd(output_fd, "[customizations.services]\n");
 	_write_text_to_fd(output_fd, "enabled = [");
-	struct oscap_iterator *services_enable_it = oscap_iterator_new(services_enable);
-	while(oscap_iterator_has_more(services_enable_it)) {
-		char *var_line = (char *) oscap_iterator_next(services_enable_it);
-		_write_text_to_fd(output_fd, var_line);
-		if (oscap_iterator_has_more(services_enable_it))
-			_write_text_to_fd(output_fd, ",");
-	}
+	_format_and_write_list_into_blueprint_fd(customizations.services_enable, ",", output_fd);
 	_write_text_to_fd(output_fd, "]\n");
-	oscap_iterator_free(services_enable_it);
-	oscap_list_free(services_enable, free);
 
 	_write_text_to_fd(output_fd, "disabled = [");
-	struct oscap_iterator *services_disable_it = oscap_iterator_new(services_disable);
-	while(oscap_iterator_has_more(services_disable_it)) {
-		char *var_line = (char *) oscap_iterator_next(services_disable_it);
-		_write_text_to_fd(output_fd, var_line);
-		if (oscap_iterator_has_more(services_disable_it))
-			_write_text_to_fd(output_fd, ",");
-	}
+	_format_and_write_list_into_blueprint_fd(customizations.services_disable, ",", output_fd);
+	_write_text_to_fd(output_fd, "]\n");
+
+	_write_text_to_fd(output_fd, "masked = [");
+	_format_and_write_list_into_blueprint_fd(customizations.services_mask, ",", output_fd);
 	_write_text_to_fd(output_fd, "]\n\n");
-	oscap_iterator_free(services_disable_it);
-	oscap_list_free(services_disable, free);
+
+	oscap_list_free(customizations.services_mask, free);
+	oscap_list_free(customizations.services_disable, free);
+	oscap_list_free(customizations.kernel_append, free);
+	oscap_list_free(customizations.services_enable, free);
+	oscap_list_free(customizations.generic, free);
 
 	return ret;
 }
