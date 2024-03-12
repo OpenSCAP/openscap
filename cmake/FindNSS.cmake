@@ -11,8 +11,6 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
-include(FindLibraryWithDebug)
-
 if (NSS_LIBRARIES)
    set(NSS_FIND_QUIETLY TRUE)
 endif ()

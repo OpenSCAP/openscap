@@ -19,8 +19,8 @@
 #cmakedefine HAVE_GCRYCTL_SET_ENFORCED_FIPS_FLAG
 #endif
 
-#cmakedefine NSS3_FOUND
-#if defined(NSS3_FOUND)
+#cmakedefine NSS_FOUND
+#if defined(NSS_FOUND)
 #define HAVE_NSS3
 #endif
 
