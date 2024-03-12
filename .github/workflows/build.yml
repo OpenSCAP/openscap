@@ -73,6 +73,29 @@ jobs:
         export $(dbus-launch)
         ctest --output-on-failure
 
+  build-fedora-nss:
+    name: Build with NSS, Test on Fedora Latest (Container)
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    steps:
+    - name: Install Deps
+      run: dnf install -y cmake git dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel nss-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre2-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace python3-pytest
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Build
+      working-directory: ./build
+      run: |
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_PCRE2=True -DWITH_CRYPTO=nss ../
+        make all
+    - name: Test
+      working-directory: ./build
+      run: |
+        export $(dbus-launch)
+        ctest --output-on-failure
+
   build-macos:
     # The type of runner that the job will run on
     name: Build, Test on macOS Latest
