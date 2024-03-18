@@ -92,7 +92,7 @@ struct xccdf_rule_item {
 	xccdf_role_t role;
 	xccdf_level_t severity;
 
-	struct oscap_list *requires;
+	struct oscap_list *requires_;
 	struct oscap_list *conflicts;
 
 	struct oscap_list *profile_notes;
@@ -103,7 +103,7 @@ struct xccdf_rule_item {
 };
 
 struct xccdf_group_item {
-	struct oscap_list *requires;
+	struct oscap_list *requires_;
 	struct oscap_list *conflicts;
 
 	struct oscap_list *values;
@@ -437,6 +437,7 @@ void xccdf_item_dump(struct xccdf_item *item, int depth);
 struct xccdf_item* xccdf_item_get_benchmark_internal(struct xccdf_item* item);
 bool xccdf_benchmark_parse(struct xccdf_item *benchmark, xmlTextReaderPtr reader);
 void xccdf_benchmark_dump(struct xccdf_benchmark *benchmark);
+int xccdf_benchmark_include_tailored_profiles(struct xccdf_benchmark *benchmark);
 struct oscap_htable_iterator *xccdf_benchmark_get_cluster_items(struct xccdf_benchmark *benchmark, const char *cluster_id);
 bool xccdf_benchmark_register_item(struct xccdf_benchmark *benchmark, struct xccdf_item *item);
 bool xccdf_benchmark_unregister_item(struct xccdf_item *item);

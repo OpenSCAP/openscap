@@ -13707,7 +13707,7 @@
             <reference item_ref="137"/>
           </object>
           <object id="oval:gov.irs.rhel5:obj:33" version="1" flag="error">
-            <message level="fatal">An unknown error occured while collecting data.</message>
+            <message level="fatal">An unknown error occurred while collecting data.</message>
           </object>
           <object id="oval:gov.irs.rhel5:obj:329" version="1" flag="complete">
             <reference item_ref="136"/>
@@ -14234,7 +14234,7 @@
             <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
           </object>
           <object id="oval:gov.irs.rhel5:obj:135" version="1" flag="error">
-            <message level="fatal">An unknown error occured while collecting data.</message>
+            <message level="fatal">An unknown error occurred while collecting data.</message>
           </object>
           <object id="oval:gov.irs.rhel5:obj:134" version="1" flag="not collected">
             <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>

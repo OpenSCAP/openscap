@@ -62,7 +62,6 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <limits.h>
-#include <pcre.h>
 
 #include "_seap.h"
 #include <probe-api.h>
@@ -72,6 +71,7 @@
 #include <oval_fts.h>
 #include "common/debug_priv.h"
 #include "common/util.h"
+#include "common/oscap_pcre.h"
 #include "textfilecontent_probe.h"
 
 #define FILE_SEPARATOR '/'
@@ -136,7 +136,7 @@ struct pfdata {
         probe_ctx *ctx;
 };
 
-static int process_file(const char *prefix, const char *path, const char *filename, void *arg, oval_schema_version_t over)
+static int process_file(const char *prefix, const char *path, const char *filename, void *arg, oval_schema_version_t over, struct oscap_list *blocked_paths)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
 	int ret = 0, path_len, filename_len;
@@ -148,11 +148,12 @@ static int process_file(const char *prefix, const char *path, const char *filena
 
 // todo: move to probe_main()?
 	int erroffset = -1;
-	pcre *re = NULL;
-	const char *error;
+	oscap_pcre_t *re = NULL;
+	char *error;
 
-	re = pcre_compile(pfd->pattern, PCRE_UTF8, &error, &erroffset, NULL);
+	re = oscap_pcre_compile(pfd->pattern, OSCAP_PCRE_OPTS_UTF8, &error, &erroffset);
 	if (re == NULL) {
+		oscap_pcre_err_free(error);
 		return -1;
 	}
 
@@ -168,6 +169,10 @@ static int process_file(const char *prefix, const char *path, const char *filena
 		++path_len;
 	}
 	memcpy(whole_path + path_len, filename, filename_len + 1);
+
+	if (probe_path_is_blocked(whole_path, blocked_paths)) {
+		goto cleanup;
+	}
 
 	/*
 	 * If stat() fails, don't report an error and just skip the file.
@@ -195,7 +200,7 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	int ofs = 0;
 
 	while (fgets(line, sizeof(line), fp) != NULL) {
-		substr_cnt = oscap_get_substrings(line, &ofs, re, 1, &substrs);
+		substr_cnt = oscap_pcre_get_substrings(line, &ofs, re, 1, &substrs);
 		if (substr_cnt > 0) {
 			int k;
 			SEXP_t *item;
@@ -208,8 +213,8 @@ static int process_file(const char *prefix, const char *path, const char *filena
 
 			for (k = 0; k < substr_cnt; ++k)
 				free(substrs[k]);
-			free(substrs);
 		}
+		free(substrs);
 	}
 
  cleanup:
@@ -218,7 +223,7 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	if (whole_path != NULL)
 		free(whole_path);
 	if (re != NULL)
-		pcre_free(re);
+		oscap_pcre_free(re);
 	free(whole_path_with_prefix);
 
 	return ret;
@@ -293,7 +298,7 @@ int textfilecontent_probe_main(probe_ctx *ctx, void *arg)
 			if (ofts_ent->fts_info == FTS_F
 			    || ofts_ent->fts_info == FTS_SL) {
 				// todo: handle return code
-				process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd, over);
+				process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd, over, ctx->blocked_paths);
 			}
 			oval_ftsent_free(ofts_ent);
 		}

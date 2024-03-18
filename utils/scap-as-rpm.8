@@ -1,6 +1,6 @@
 .TH scap-as-rpm "8" "November 2013" "scap-as-rpm" "System Administration Utilities"
 .SH NAME
-scap-as-rpm \- manual page for scap-as-rpm
+scap-as-rpm \- takes given SCAP input(s) and packs them in an RPM package
 .SH DESCRIPTION
 usage: scap\-as\-rpm [\-h] [\-\-pkg\-name PKG_NAME] [\-\-pkg\-version PKG_VERSION]
 .IP
@@ -13,8 +13,9 @@ FILE [FILE ...]
 .PP
 Takes given SCAP input(s) and makes an RPM package that contains them. The
 result RPM can be installed using # yum install ./package\-name\-1\-1.rpm which
-will put the contents into \fI/usr/share/xml/scap\fP. No dependency on openscap or scapworkbench is enforced in the output package so you can use any SCAP\-capable
-scanner to evaluate the content.
+will put the contents into \fI/usr/share/xml/scap\fP. No dependency on OpenSCAP
+is enforced in the output package, so you can use any SCAP\-capable scanner to
+evaluate the content.
 .SS "positional arguments:"
 .TP
 FILE
@@ -24,14 +25,14 @@ requirement is not enforced.
 .SS "optional arguments:"
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-show this help message and exit
+Show this help message and exit.
 .TP
 \fB\-\-pkg\-name\fR PKG_NAME
-Name of the RPM package, if none is provided the
+Name of the RPM package, if none is provided, the
 basename of the first SCAP input is used. Ex.: xyzsecurity\-guide
-.HP
+.TP
 \fB\-\-pkg\-version\fR PKG_VERSION
-.HP
+.TP
 \fB\-\-pkg\-release\fR PKG_RELEASE
 .TP
 \fB\-\-pkg\-summary\fR PKG_SUMMARY

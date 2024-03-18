@@ -29,12 +29,11 @@
 #include <string.h>
 #include <sys/types.h>
 #include "common/util.h"
+#include "common/oscap_pcre.h"
 #include "common/debug_priv.h"
 #include "public/oval_schema_version.h"
 
-#include <pcre.h>
-
-#define OVECTOR_LEN 30 // must be a multiple of 30
+#define OVECTOR_LEN 60 // must be a multiple of 30
 
 static int _parse_int(const char *substring, size_t substring_length)
 {
@@ -55,16 +54,17 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 		return version;
 	}
 	const char *pattern = "([0-9]+)\\.([0-9]+)(?:\\.([0-9]+))?(?::([0-9]+)\\.([0-9]+)(?:\\.([0-9]+))?)?";
-	const char *error;
+	char *error;
 	int erroffset;
-	pcre *re = pcre_compile(pattern, 0, &error, &erroffset, NULL);
+	oscap_pcre_t *re = oscap_pcre_compile(pattern, 0, &error, &erroffset);
 	if (re == NULL) {
 		dE("Regular expression compilation failed with %s", pattern);
+		oscap_pcre_err_free(error);
 		return version;
 	}
 	int ovector[OVECTOR_LEN];
-	int rc = pcre_exec(re, NULL, ver_str, strlen(ver_str), 0, 0, ovector, OVECTOR_LEN);
-	pcre_free(re);
+	int rc = oscap_pcre_exec(re, ver_str, strlen(ver_str), 0, 0, ovector, OVECTOR_LEN);
+	oscap_pcre_free(re);
 	if (rc < 0) {
 		dE("Regular expression %s did not match string %s", pattern, ver_str);
 		return version;

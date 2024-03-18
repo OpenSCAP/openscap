@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<oval:oval_definitions xmlns:ns2="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns3="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <oval:generator>
+    <ns2:product_name>jcerny</ns2:product_name>
+    <ns2:product_version>2.0</ns2:product_version>
+    <ns2:schema_version>5.11</ns2:schema_version>
+    <ns2:timestamp>2023-01-10T14:25:10</ns2:timestamp>
+  </oval:generator>
+  <oval:definitions>
+    <oval:definition class="compliance" id="oval:x:def:1" version="1">
+      <oval:metadata>
+        <oval:title>Test rhbz#2126882</oval:title>
+        <oval:description>This definition contains a filter that references a variable that depends on an entity that does not exist on the system.</oval:description>
+      </oval:metadata>
+      <oval:criteria operator="AND">
+        <oval:criterion comment="file_test" test_ref="oval:x:tst:1"/>
+      </oval:criteria>
+    </oval:definition>
+  </oval:definitions>
+  <oval:tests>
+    <ns3:file_test check="all" comment="file_test" id="oval:x:tst:1" version="1">
+      <ns3:object object_ref="oval:x:obj:1"/>
+    </ns3:file_test>
+  </oval:tests>
+  <oval:objects>
+    <ns3:file_object comment="object with a filter" id="oval:x:obj:1" version="1">
+      <ns3:path>/tmp</ns3:path>
+      <ns3:filename operation="pattern match">^key_file$</ns3:filename>
+      <oval:filter action="exclude">oval:x:ste:1</oval:filter>
+    </ns3:file_object>
+    <ns4:textfilecontent54_object comment="object that doesn't exist, used in variable that is used in filter" id="oval:x:obj:2" version="1" >
+      <ns4:filepath>/nonexistent</ns4:filepath>
+      <ns4:pattern operation="pattern match">^ssh_keys:\w+:(\w+):.*</ns4:pattern>
+      <ns4:instance datatype="int" operation="equals">1</ns4:instance>
+    </ns4:textfilecontent54_object>
+  </oval:objects>
+  <oval:states>
+    <ns3:file_state comment="state used in filter, references a variable" id="oval:x:ste:1" version="1">
+      <ns3:path>/tmp</ns3:path>
+      <ns3:filename operation="pattern match">^key_file$</ns3:filename>
+      <ns3:group_id datatype="int" var_ref="oval:x:var:1"/>
+      <ns3:user_id datatype="int">0</ns3:user_id>
+      <ns3:suid datatype="boolean">false</ns3:suid>
+      <ns3:sgid datatype="boolean">false</ns3:sgid>
+      <ns3:sticky datatype="boolean">false</ns3:sticky>
+      <ns3:uexec datatype="boolean">false</ns3:uexec>
+      <ns3:gwrite datatype="boolean">false</ns3:gwrite>
+      <ns3:gexec datatype="boolean">false</ns3:gexec>
+      <ns3:oread datatype="boolean">false</ns3:oread>
+      <ns3:owrite datatype="boolean">false</ns3:owrite>
+      <ns3:oexec datatype="boolean">false</ns3:oexec>
+    </ns3:file_state>
+  </oval:states>
+  <oval:variables>
+    <oval:local_variable id="oval:x:var:1" datatype="int" version="1" comment="variable used in state, referencing object that doesn't exist">
+      <oval:object_component item_field="subexpression" object_ref="oval:x:obj:2"/>
+    </oval:local_variable>
+  </oval:variables>
+</oval:oval_definitions>

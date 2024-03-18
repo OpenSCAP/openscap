@@ -45,6 +45,10 @@
 #include <oscap_debug.h>
 #include "debug_priv.h"
 
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
 #ifdef OS_WINDOWS
 #define STDIN_FILENO _fileno(stdin)
 #define STDOUT_FILENO _fileno(stdout)
@@ -83,10 +87,10 @@ static SEXP_t *probe_reset(SEXP_t *arg0, void *arg1)
          * FIXME: implement main loop locking & worker waiting
          */
 	probe_rcache_free(probe->rcache);
-        probe_ncache_free(probe->ncache);
 
         probe->rcache = probe_rcache_new();
-        probe->ncache = probe_ncache_new();
+        probe_ncache_clear(OSCAP_GSYM(ncache));
+        probe->ncache = OSCAP_GSYM(ncache);
 
         return(NULL);
 }
@@ -115,8 +119,12 @@ static int probe_opthandler_varref(int option, int op, va_list args)
 	if (o_temp != NULL)
 		return (0);
 
-	OSCAP_GSYM(no_varref_ents) = realloc(OSCAP_GSYM(no_varref_ents),
-						   sizeof (char *) * ++OSCAP_GSYM(no_varref_ents_cnt));
+	void *new_no_varref_ents = realloc(OSCAP_GSYM(no_varref_ents),
+						   sizeof (char *) * (OSCAP_GSYM(no_varref_ents_cnt)+1));
+	if (new_no_varref_ents == NULL)
+		return -2;
+	OSCAP_GSYM(no_varref_ents_cnt)++;
+	OSCAP_GSYM(no_varref_ents) = new_no_varref_ents;
 	OSCAP_GSYM(no_varref_ents)[OSCAP_GSYM(no_varref_ents_cnt) - 1] = strdup(o_name);
 
 	qsort(OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
@@ -203,17 +211,16 @@ void *probe_common_main(void *arg)
 	if (probe.sd < 0)
 		fail(errno, "SEAP_openfd2", __LINE__ - 3);
 
-	if (SEAP_cmd_register(probe.SEAP_ctx, PROBECMD_RESET, 0, &probe_reset) != 0)
+	if (SEAP_cmd_register(probe.SEAP_ctx, PROBECMD_RESET, SEAP_CMDREG_USEARG, &probe_reset, &probe) != 0)
 		fail(errno, "SEAP_cmd_register", __LINE__ - 1);
 
 	/*
 	 * Initialize result & name caching
 	 */
 	probe.rcache = probe_rcache_new();
-	probe.ncache = probe_ncache_new();
-        probe.icache = probe_icache_new();
-
-        OSCAP_GSYM(ncache) = probe.ncache;
+	probe.icache = probe_icache_new();
+	probe_ncache_clear(OSCAP_GSYM(ncache));
+	probe.ncache = OSCAP_GSYM(ncache);
 
 	/*
 	 * Initialize probe option handlers

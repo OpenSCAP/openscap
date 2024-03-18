@@ -1,13 +1,13 @@
 # OpenSCAP
 
-[![Build status](https://ci.appveyor.com/api/projects/status/3o5fnld1m98bo0so/branch/master?svg=true)](https://ci.appveyor.com/project/OpenSCAP/openscap/branch/master)
-[![Build Status](https://travis-ci.org/OpenSCAP/openscap.svg?branch=master)](https://travis-ci.org/OpenSCAP/openscap)
+[![Gating](https://github.com/OpenSCAP/openscap/actions/workflows/build.yml/badge.svg?branch=maint-1.3)](https://github.com/OpenSCAP/openscap/actions/workflows/build.yml)
+[![Join the chat at https://gitter.im/OpenSCAP/openscap](https://badges.gitter.im/OpenSCAP/openscap.svg)](https://gitter.im/OpenSCAP/openscap?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Open Source Security Compliance Solution
 
 ## About
 
-The oscap program is a command line tool that allows users to load, scan,
+The `oscap` program is a command line tool that allows users to load, scan,
 validate, edit, and export SCAP documents.
 
  * Homepage of the project: [www.open-scap.org](http://www.open-scap.org)
@@ -17,8 +17,13 @@ validate, edit, and export SCAP documents.
 
 ## Contributing
 
-We welcome all contributions to the OpenSCAP project. If you would like to contribute, either by fixing existing issues or adding new features, please check out our [contribution guide](docs/contribute/contribute.adoc) to get started. If you would like to discuss anything, ask questions, or if you need additional help getting started, you can either send a message to our FreeNode IRC channel, **#openscap**, or to our [mailing list](https://www.redhat.com/mailman/listinfo/open-scap-list).
+We welcome all contributions to the OpenSCAP project.
+If you would like to contribute, either by fixing existing issues or adding new features, please check out our [contribution guide](docs/contribute/contribute.adoc) to get started.
+If you would like to discuss anything, ask questions, or if you need additional help getting started, you can either send a message to our libera.chat IRC channel, **#openscap**, or to our [mailing list](https://www.redhat.com/mailman/listinfo/open-scap-list).
 
+## Microsoft Windows Support
+
+The Microsoft Windows support [is officially void](docs/windows.md) as of Febuary 1, 2022.
 
 ## Use cases
 

@@ -7,11 +7,14 @@ Brent Baude <bbaude@redhat.com>
 Brian Kolbay <Brian.Kolbay@g2-inc.com>
 Bruno Ducrot <bruno@poupinou.org>
 Bryan Schneiders <pschneiders@trisept.com>
+Carlos Matos <matosc15@gmail.com>
 Charles Bushong <bushong1@gmail.com>
 Chris Lundquist <rampantdurandal@gmail.com>
 Dan Kopeček <dkopecek@redhat.com>
+David du Colombier <djc@datadoghq.com>
 David Niemoller <David.Niemoller@g2-inc.com>
 De Huo <De.Huo@windriver.com>
+Dirk Müller <dirk@dmllr.de>
 Dmitry Teselkin <dteselkin@mirantis.com>
 DominiqueDevinci <dominique.blaze@edu.devinci.fr>
 Ed Sealing <esealing@tresys.com>
@@ -25,6 +28,7 @@ Gabriel Gaspar Becker <ggasparb@redhat.com>
 Gary Gapinski <gary@garygapinski.com>
 Gautam Satish <gautams@hpe.com>
 Greg Elin <greg@fotonotes.net>
+Hideki Yamane <henrich@debian.org>
 Ilya Okomin <ilya.okomin@oracle.com>
 Jacob Varughese <jacob.varughese@oracle.com>
 Jakub Jelen <jjelen@redhat.com>
@@ -33,15 +37,18 @@ Ján Lieskovský <jlieskov@redhat.com>
 Janzen Brewer <Janzen.Brewer@gtri.gatech.edu>
 Jason Newton <nevion@gmail.com>
 Jean-Louis Charton <jean-louis.charton@oveliane.com>
+Jiri Odehnal <jodehnal@redhat.com>
 John Whipple <john@whipple.org>
 Jonathan Zember <zember@gmail.com>
 Josh Kayse <Joshua.Kayse@gtri.gatech.edu>
 Joshua Adams <jadams@tresys.com>
 Julian Andres Klode <julian.klode@canonical.com>
+Kai Kang <kai.kang@windriver.com>
 Katarina Jankov <kjankov@redhat.com>
 Lenka Horáková <lhorakov@redhat.com>
 Lukáš Kuklínek <lkuklinek@redhat.com>
 Malte Kraus <malte.kraus@suse.com>
+Marco De Donno <mdedonno1337@gmail.com>
 Marcus Meissner <meissner@suse.de>
 Marek Haičman <mhaicman@redhat.com>
 Maroš Barabas <mbarabas@redhat.com>
@@ -49,6 +56,7 @@ Marshall Miller <mmiller@tresys.com>
 Martin Preisler <mpreisle@redhat.com>
 Matěj Týč <matyc@redhat.com>
 matsushima <m-matsushima@bk.jp.nec.com>
+Matthew Burket <m@tthewburket.com>
 Matthew Keeler <mkeeler@tresys.com>
 Matus Marhefka <mmarhefk@redhat.com>
 Michaël Zaoui <mzaoui@localhost.localdomain>
@@ -65,6 +73,7 @@ Panu Matilainen <pmatilai@redhat.com>
 Peter Vrabec <pvrabec@redhat.com>
 Petr Lautrbach <plautrba@redhat.com>
 Pierre Chifflier <chifflier@edenwall.com>
+pinkgothic <pinkgothic@gmail.com>
 Prasanth R <prasanth.r@timesys.com>
 Quey-Liang Kao <s101062801@m101.nthu.edu.tw>
 Radzy Radzykewycz <radzy@windriver.com>
@@ -74,10 +83,14 @@ Richard W.M. Jones <rjones@redhat.com>
 Riley C. Porter <Riley.Porter@g2-inc.com>
 Robert Frohl <rfrohl@suse.com>
 Ryan E Haggerty <rhaggerty@tresys.com>
+Sam S Wang <sam_s_wang@trendmicro.com>
 Shawn Wells <shawn@redhat.com>
 Šimon Lukašík <slukasik@redhat.com>
 Spencer Shimko <sshimko@tresys.com>
+Stephen L Arnold <sarnold@vctlabs.com>
 Steve Grubb <sgrubb@redhat.com>
+Timothy Brackett <brackett.tc@gmail.com>
+Tom Seewald <tseewald@gmail.com>
 Tomas Heinrich <theinric@redhat.com>
 T.O. Radzy Radzykewycz <radzy@windriver.com>
 Trey Henefield <trey.henefield@ultra-ats.com>

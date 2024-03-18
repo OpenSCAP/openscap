@@ -95,6 +95,8 @@ extern char const *_cap_names[];
 #include "process58-capability.h"
 #endif /* CAP_FOUND */
 
+#include <probe/probe.h>
+
 #include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
@@ -156,12 +158,14 @@ static unsigned long ticks, boot;
 
 static void get_boot_time(void)
 {
-	char buf[100];
+	char buf[PATH_MAX];
 	FILE *sf;
 	int line;
 
 	boot = 0;
-	sf = fopen("/proc/stat", "rt");
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	snprintf(buf, sizeof(buf), "%s/proc/stat", prefix ? prefix : "");
+	sf = fopen(buf, "rt");
 	if (sf == NULL)
 		return;
 
@@ -182,14 +186,16 @@ static void get_boot_time(void)
 
 static int get_uids(int pid, struct result_info *r)
 {
-	char buf[100];
+	char buf[PATH_MAX];
 	FILE *sf;
 
 	r->ruid = -1;
 	r->user_id = -1;
 	r->loginuid = -1;
 
-	snprintf(buf, sizeof(buf), "/proc/%d/status", pid);
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+
+	snprintf(buf, sizeof(buf), "%s/proc/%d/status", prefix ? prefix : "", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
 		int line = 0;
@@ -207,7 +213,7 @@ static int get_uids(int pid, struct result_info *r)
 		fclose(sf);
 	}
 
-	snprintf(buf, sizeof(buf), "/proc/%d/loginuid", pid);
+	snprintf(buf, sizeof(buf), "%s/proc/%d/loginuid", prefix ? prefix : "", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
 		if (fscanf(sf, "%u", &r->loginuid) < 1) {
@@ -240,7 +246,7 @@ static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
 #ifdef SELINUX_FOUND
 static char *get_selinux_label(int pid) {
 	char *selinux_label;
-	security_context_t pid_context;
+	char *pid_context;
 	context_t context;
 
 	if (is_selinux_enabled() == 1) {
@@ -316,7 +322,15 @@ static char **get_posix_capability(int pid, int max_cap_id) {
 
 				cap_id = oscap_string_to_enum(CapabilityType, cap_name);
 				if (cap_id > -1 && cap_id <= max_cap_id) {
-					ret = realloc(ret, (ret_index + 1) * sizeof(char *));
+					void *new_ret = realloc(ret, (ret_index + 1) * sizeof(char *));
+					if (new_ret == NULL) {
+						dE("Unable to re-allocate memory for ret");
+						cap_free(cap_name);
+						free(ret);
+						ret = NULL;
+						goto exit;
+					}
+					ret = new_ret;
 					ret[ret_index] = strdup(cap_name);
 					ret_index++;
 				}
@@ -324,9 +338,17 @@ static char **get_posix_capability(int pid, int max_cap_id) {
 			}
 		}
 	}
-	ret = realloc(ret, (ret_index + 1) * sizeof(char *));
+	void *new_ret = realloc(ret, (ret_index + 1) * sizeof(char *));
+	if (new_ret == NULL) {
+		dE("Unable to re-allocate memory for ret");
+		free(ret);
+		ret = NULL;
+		goto exit;
+	}
+	ret = new_ret;
 	ret[ret_index] = NULL;
 
+exit:
 	cap_free(pid_caps);
 	return ret;
 #else
@@ -337,7 +359,7 @@ static char **get_posix_capability(int pid, int max_cap_id) {
 /* get exec shield status according to http://people.redhat.com/sgrubb/files/lsexec
  * return value: -1 - not detected, 0 - disabled, 1 - enabled */
 static int get_exec_shield_status(int pid) {
-	char buf[501];
+	char buf[PATH_MAX];
 	FILE *sf;
 	long unsigned low, high, inode;
 	long long unsigned offset;
@@ -345,7 +367,8 @@ static int get_exec_shield_status(int pid) {
 	char perm[3], trim;
 	int ret = -1, read_items;
 
-	snprintf(buf, sizeof(buf), "/proc/%d/maps", pid);
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	snprintf(buf, sizeof(buf), "%s/proc/%d/maps", prefix ? prefix : "", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
 		while (fgets(buf, 500, sf)) {
@@ -448,14 +471,18 @@ static inline char *make_defunc_str(char* const cmd_buffer){
 
 static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 {
-	int err = 1, max_cap_id;
+	char buf[PATH_MAX];
+	int max_cap_id;
 	DIR *d;
 	struct dirent *ent;
 	oval_schema_version_t oval_version;
 
-	d = opendir("/proc");
-	if (d == NULL)
-		return err;
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	snprintf(buf, PATH_MAX, "%s/proc", prefix ? prefix : "");
+	d = opendir(buf);
+	if (d == NULL) {
+		return prefix ? PROBE_ESUCCESS : PROBE_EACCESS;
+	}
 
 	// Get the time tick hertz
 	ticks = (unsigned long)sysconf(_SC_CLK_TCK);
@@ -474,9 +501,9 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	cmd_buffer[0] = '[';
 
 	// Scan the directories
+	bool any_pid_dir_found = false;
 	while (( ent = readdir(d) )) {
 		int fd, len;
-		char buf[256];
 		char *tmp, state, tty_dev[128];
 		int pid, ppid, pgrp, session, tty_nr, tpgid;
 		unsigned flags, sched_policy;
@@ -494,7 +521,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 			continue;
 
 		// Parse up the stat file for the proc
-		snprintf(buf, 32, "/proc/%d/stat", pid);
+		snprintf(buf, PATH_MAX, "%s/proc/%d/stat", prefix ? prefix : "", pid);
 		fd = open(buf, O_RDONLY, 0);
 		if (fd < 0)
 			continue;
@@ -528,7 +555,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 		if (state == 'Z') { // zombie
 			cmd = make_defunc_str(cmd_buffer);
 		} else {
-			snprintf(buf, 32, "/proc/%d/cmdline", pid);
+			snprintf(buf, PATH_MAX, "%s/proc/%d/cmdline", prefix ? prefix : "", pid);
 			if (get_process_cmdline(buf, cmdline_buffer)) {
 				cmd = oscap_buffer_get_raw(cmdline_buffer); // use full cmdline
 			} else {
@@ -536,9 +563,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 			}
 		}
 
-
-		err = 0; // If we get this far, no permission problems
-		dI("Have command: %s", cmd);
+		any_pid_dir_found = true;
 		cmd_sexp = SEXP_string_newf("%s", cmd);
 		pid_sexp = SEXP_number_newu_32(pid);
 		if ((cmd_sexp == NULL || probe_entobj_cmp(cmd_ent, cmd_sexp) == OVAL_RESULT_TRUE) &&
@@ -636,7 +661,21 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	}
         closedir(d);
 	oscap_buffer_free(cmdline_buffer);
-	return err;
+
+	if (!any_pid_dir_found) {
+		dW("No data about processes could be read from '%s'.", buf);
+	}
+	// In offline mode, empty /proc might be a normal situation and doesn't
+	// have to mean permissions problems
+	if (prefix)
+		return PROBE_ESUCCESS;
+	else
+		return any_pid_dir_found ? PROBE_ESUCCESS : PROBE_EACCESS;
+}
+
+int process58_probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_OWN;
 }
 
 int process58_probe_main(probe_ctx *ctx, void *arg)
@@ -649,10 +688,11 @@ int process58_probe_main(probe_ctx *ctx, void *arg)
 		return PROBE_ENOVAL;
 	}
 
-	if (read_process(command_line_ent, pid_ent, ctx)) {
+	int err = read_process(command_line_ent, pid_ent, ctx);
+	if (err) {
 		SEXP_free(command_line_ent);
 		SEXP_free(pid_ent);
-		return PROBE_EACCESS;
+		return err;
 	}
 
 	SEXP_free(command_line_ent);
@@ -780,6 +820,11 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
         closedir(d);
 
 	return err;
+}
+
+int process58_probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_NONE;
 }
 
 int process58_probe_main(probe_ctx *ctx, void *arg)

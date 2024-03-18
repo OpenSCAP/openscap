@@ -3402,7 +3402,7 @@
           <tested_item item_id="21" result="false"/>
         </test>
       </tests>
-      <oval_system_characteristics xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix" xmlns:ind-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" xmlns:lin-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux" xmlns:win-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 oval-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent independent-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix unix-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux linux-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+      <oval_system_characteristics xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix" xmlns:ind-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" xmlns:lin-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux" xmlns:win-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 oval-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent independent-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix unix-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux linux-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows windows-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#macos macos-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
         <generator>
           <oval:product_name>OVAL Definition Interpreter</oval:product_name>
           <oval:product_version>5.5 Build: 16</oval:product_version>
@@ -3536,7 +3536,7 @@
             <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
           </object>
           <object id="oval:gov.irs.rhel5:obj:135" version="1" flag="error">
-            <message level="fatal">An unknown error occured while collecting data.</message>
+            <message level="fatal">An unknown error occurred while collecting data.</message>
           </object>
           <object id="oval:gov.irs.rhel5:obj:136" version="1" flag="not collected">
             <message level="info">This type of object (textfilecontent54_object) is not currently supported by this OVAL Definition Interpreter data collector.</message>
@@ -4063,7 +4063,7 @@
             <reference item_ref="136"/>
           </object>
           <object id="oval:gov.irs.rhel5:obj:33" version="1" flag="error">
-            <message level="fatal">An unknown error occured while collecting data.</message>
+            <message level="fatal">An unknown error occurred while collecting data.</message>
           </object>
           <object id="oval:gov.irs.rhel5:obj:330" version="1" flag="complete">
             <reference item_ref="137"/>

@@ -117,9 +117,11 @@ int SEAP_packetq_put(SEAP_packetq_t *queue, SEAP_packet_t *packet)
 		queue->last  = queue->first;
 	} else {
 		if (queue->last == NULL) {
-			return -1; /* XXX: unlock */
+			pthread_mutex_unlock(&queue->lock);
+			return -1;
 		}
 		if (queue->last->next != NULL) {
+			pthread_mutex_unlock(&queue->lock);
 			return -1;
 		}
 

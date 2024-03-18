@@ -5775,31 +5775,31 @@
         <unix-def:object object_ref="oval:org.open-scap.f14:obj:20034"/>
         <unix-def:state state_ref="oval:org.open-scap.f14:ste:20034"/>
       </unix-def:file_test>
-      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20033" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for udf">
+      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20033" version="1" check="at least one" comment="Check /etc/modprobe.d/denylist.conf for udf">
         <ind-def:object object_ref="oval:org.open-scap.f14:obj:20027"/>
         <ind-def:state state_ref="oval:org.open-scap.f14:ste:20033"/>
       </ind-def:textfilecontent54_test>
-      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20032" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for squashfs">
+      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20032" version="1" check="at least one" comment="Check /etc/modprobe.d/denylist.conf for squashfs">
         <ind-def:object object_ref="oval:org.open-scap.f14:obj:20027"/>
         <ind-def:state state_ref="oval:org.open-scap.f14:ste:20032"/>
       </ind-def:textfilecontent54_test>
-      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20031" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for hfsplus">
+      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20031" version="1" check="at least one" comment="Check /etc/modprobe.d/denylist.conf for hfsplus">
         <ind-def:object object_ref="oval:org.open-scap.f14:obj:20027"/>
         <ind-def:state state_ref="oval:org.open-scap.f14:ste:20031"/>
       </ind-def:textfilecontent54_test>
-      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20030" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for hfs">
+      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20030" version="1" check="at least one" comment="Check /etc/modprobe.d/denylist.conf for hfs">
         <ind-def:object object_ref="oval:org.open-scap.f14:obj:20027"/>
         <ind-def:state state_ref="oval:org.open-scap.f14:ste:20030"/>
       </ind-def:textfilecontent54_test>
-      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20029" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for jffs2">
+      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20029" version="1" check="at least one" comment="Check /etc/modprobe.d/denylist.conf for jffs2">
         <ind-def:object object_ref="oval:org.open-scap.f14:obj:20027"/>
         <ind-def:state state_ref="oval:org.open-scap.f14:ste:20029"/>
       </ind-def:textfilecontent54_test>
-      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20028" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for freevxfs">
+      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20028" version="1" check="at least one" comment="Check /etc/modprobe.d/denylist.conf for freevxfs">
         <ind-def:object object_ref="oval:org.open-scap.f14:obj:20027"/>
         <ind-def:state state_ref="oval:org.open-scap.f14:ste:20028"/>
       </ind-def:textfilecontent54_test>
-      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20027" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for cramfs">
+      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20027" version="1" check="at least one" comment="Check /etc/modprobe.d/denylist.conf for cramfs">
         <ind-def:object object_ref="oval:org.open-scap.f14:obj:20027"/>
         <ind-def:state state_ref="oval:org.open-scap.f14:ste:20027"/>
       </ind-def:textfilecontent54_test>
@@ -5816,7 +5816,7 @@
       <unix-def:file_test id="oval:org.open-scap.f14:tst:20022" version="1" check_existence="none_exist" check="all" comment="Actual file existence test">
         <unix-def:object object_ref="oval:org.open-scap.f14:obj:20022"/>
       </unix-def:file_test>
-      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20021" version="1" check="at least one" comment="Check /etc/modprobe.d/blacklist.conf for usb_storage">
+      <ind-def:textfilecontent54_test id="oval:org.open-scap.f14:tst:20021" version="1" check="at least one" comment="Check /etc/modprobe.d/denylist.conf for usb_storage">
         <ind-def:object object_ref="oval:org.open-scap.f14:obj:20027"/>
         <ind-def:state state_ref="oval:org.open-scap.f14:ste:20021"/>
       </ind-def:textfilecontent54_test>
@@ -8006,8 +8006,8 @@
       </unix-def:file_object>
       <ind-def:textfilecontent54_object id="oval:org.open-scap.f14:obj:20027" version="1" comment="Check in /etc/modprobe.conf for modules being loaded">
         <ind-def:path>/etc/modprobe.d</ind-def:path>
-        <ind-def:filename>blacklist.conf</ind-def:filename>
-        <ind-def:pattern operation="pattern match">^[^#]*blacklist[[:space:]]+([^#]*)$</ind-def:pattern>
+        <ind-def:filename>denylist.conf</ind-def:filename>
+        <ind-def:pattern operation="pattern match">^[^#]*denylist[[:space:]]+([^#]*)$</ind-def:pattern>
         <ind-def:instance operation="greater than or equal" datatype="int">1</ind-def:instance>
       </ind-def:textfilecontent54_object>
       <ind-def:xmlfilecontent_object id="oval:org.open-scap.f14:obj:20026" version="1">

@@ -41,7 +41,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <pcre.h>
 
 #include "rpm-helper.h"
 #include "probe-chroot.h"
@@ -271,6 +270,17 @@ static int rpmverify_collect(probe_ctx *ctx,
 			// so we have to reload everything again
 			rpmReadConfigFiles ((const char *)NULL, (const char *)NULL);
 
+			/*
+			* Fedora >=36 changed the default dbpath in librpm from /var/lib/rpm to /usr/lib/sysimage/rpm
+			* See: https://fedoraproject.org/wiki/Changes/RelocateRPMToUsr
+			* Therefore, when running openscap on a Fedora >=36 system scanning another systems (such as RHEL, SLES, Fedora<36)
+			* openscap's librpm will try to read the rpm db from /usr/lib/sysimage/rpm which doesn't exist and therefore won't work.
+			* In implementing this change, /var/lib/rpm is still a symlink to /usr/lib/sysimage/rpm
+			* so /var/lib/rpm still works. So /var/lib/rpm is a dbpath that will work on all systems.
+			* Therefore, set the dbpath to be /var/lib/rpm, allow openscap running on any system to scan any system.
+			*/
+			rpmPushMacro(NULL, "_dbpath", NULL, "/var/lib/rpm", RMIL_CMDLINE);
+
 			rpmts ts = rpmtsCreate();
 			char* const * args = (char* const *)poptGetArgs(rpmcli_context);
 
@@ -344,6 +354,17 @@ void *rpmverifypackage_probe_init(void)
 		return ((void *)g_rpm);
 	}
 
+	/*
+	* Fedora >=36 changed the default dbpath in librpm from /var/lib/rpm to /usr/lib/sysimage/rpm
+	* See: https://fedoraproject.org/wiki/Changes/RelocateRPMToUsr
+	* Therefore, when running openscap on a Fedora >=36 system scanning another systems (such as RHEL, SLES, Fedora<36)
+	* openscap's librpm will try to read the rpm db from /usr/lib/sysimage/rpm which doesn't exist and therefore won't work.
+	* In implementing this change, /var/lib/rpm is still a symlink to /usr/lib/sysimage/rpm
+	* so /var/lib/rpm still works. So /var/lib/rpm is a dbpath that will work on all systems.
+	* Therefore, set the dbpath to be /var/lib/rpm, allow openscap running on any system to scan any system.
+	*/
+	rpmPushMacro(NULL, "_dbpath", NULL, "/var/lib/rpm", RMIL_CMDLINE);
+
 	g_rpm->rpm.rpmts = rpmtsCreate();
 
 	if (CHROOT_IS_SET()) {
@@ -407,7 +428,7 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 		SEXP_free(value);
 	}
 	if (res->vflags & VERIFY_SCRIPT) {
-		dD("VERIFY_SCRIPT %d", res->vresults & VERIFY_SCRIPT);
+		dD("VERIFY_SCRIPT %lu", res->vresults & VERIFY_SCRIPT);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_SCRIPT ? "1" : "0"), 1);
 		probe_item_ent_add(item, "verification_script_successful", NULL, value);
 		SEXP_free(value);

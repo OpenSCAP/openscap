@@ -32,6 +32,8 @@
 
 #include <probe-api.h>
 #include <string.h>
+#include <probe/probe.h>
+
 #include "probe/entcmp.h"
 #include "systemdshared.h"
 #include "systemdunitproperty_probe.h"
@@ -129,7 +131,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 			dbus_message_iter_recurse(&value_variant, &array);
 
 			do {
-				char *element = dbus_value_to_string(&array);
+				char *element = oval_dbus_value_to_string(&array);
 				if (element == NULL)
 					continue;
 
@@ -142,7 +144,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 			while (dbus_message_iter_next(&array));
 		}
 		else {
-			char *property_value = dbus_value_to_string(&value_variant);
+			char *property_value = oval_dbus_value_to_string(&value_variant);
 			cbret = callback(property_name, property_value, cbarg);
 			free(property_value);
 		}
@@ -240,6 +242,7 @@ static int unit_callback(const char *unit, void *cbarg)
 
 	get_all_properties_by_unit_path(vars->dbus_conn, unit_path,
 					property_callback, vars);
+	free(unit_path);
 
 	if (vars->item != NULL) {
 		probe_item_collect(vars->ctx, vars->item);
@@ -250,6 +253,11 @@ static int unit_callback(const char *unit, void *cbarg)
 
 	SEXP_free(se_unit);
 	return 0;
+}
+
+int systemdunitproperty_probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_OWN;
 }
 
 int systemdunitproperty_probe_main(probe_ctx *ctx, void *probe_arg)
@@ -269,12 +277,12 @@ int systemdunitproperty_probe_main(probe_ctx *ctx, void *probe_arg)
 	DBusConnection *dbus_conn;
 
 	dbus_error_init(&dbus_error);
-	dbus_conn = connect_dbus();
+	dbus_conn = oval_connect_dbus();
 
 	if (dbus_conn == NULL) {
 		dbus_error_free(&dbus_error);
 		SEXP_t *msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_INFO, "DBus connection failed, could not identify systemd units.");
-		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), ctx->offline_mode == PROBE_OFFLINE_NONE ? SYSCHAR_FLAG_ERROR : SYSCHAR_FLAG_NOT_COLLECTED);
 		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
 		return 0;
@@ -295,7 +303,7 @@ int systemdunitproperty_probe_main(probe_ctx *ctx, void *probe_arg)
 	SEXP_free(unit_entity);
 	SEXP_free(property_entity);
 	dbus_error_free(&dbus_error);
-	disconnect_dbus(dbus_conn);
+	oval_disconnect_dbus(dbus_conn);
 
 	return 0;
 }

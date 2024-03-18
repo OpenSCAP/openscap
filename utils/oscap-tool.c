@@ -58,6 +58,10 @@ static void oscap_action_init(struct oscap_action *action)
     assert(action != NULL);
     memset(action, 0, sizeof(*action));
     action->validate = 1;
+    action->schematron = 1;
+    action->validate_signature = 1;
+    action->rules = oscap_stringlist_new();
+    action->skip_rules = oscap_stringlist_new();
 }
 
 static void oscap_action_release(struct oscap_action *action)
@@ -65,13 +69,16 @@ static void oscap_action_release(struct oscap_action *action)
 	assert(action != NULL);
 	free(action->f_ovals);
 	cvss_impact_free(action->cvss_impact);
+    oscap_stringlist_free(action->rules);
+    oscap_stringlist_free(action->skip_rules);
 }
 
 static size_t paramlist_size(const char **p) { size_t s = 0; if (!p) return s; while (p[s]) s += 2; return s; }
 
 static size_t paramlist_cpy(const char **to, const char **p) {
     size_t s = 0;
-    if (!p) return s;
+    if (!to || !p)
+        return s;
     for (;p && p[s]; s += 2) to[s] = p[s], to[s+1] = p[s+1];
     to[s] = p[s];
     return s;
@@ -186,7 +193,7 @@ static const char *common_opts_help =
 	"Common options:\n"
 	"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
 	"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
-	"   --verbose-log-file <file>     - Write verbose informations into file.\n";
+	"   --verbose-log-file <file>     - Write verbose information into file.\n";
 
 static void oscap_module_print_help(struct oscap_module *module, FILE *out)
 {
@@ -257,24 +264,20 @@ static enum oscap_common_opts oscap_parse_common_opts(int argc, char **argv, str
     };
 
 	int r;
-	int optind_bak = optind;
-	int opterr_bak = opterr;
 	opterr = 0;
 	while ((r = getopt_long(argc, argv, "+h", opts, NULL)) != -1) {
 		switch (r) {
 		case OPT_VERBOSE:
-			optind_bak += 2;
 			action->verbosity_level = optarg;
 			break;
 		case OPT_VERBOSE_LOG_FILE:
-			optind_bak += 2;
 			action->f_verbose_log = optarg;
 			break;
 		case 0:
 			break;
 		case '?':
-			optind = optind_bak;
-			opterr = opterr_bak;
+			optind--;
+			opterr--;
 			return OPT_NONE;
 		default:
 			return r;
@@ -315,7 +318,10 @@ static void getopt_parse_env(struct oscap_module *module, int *argc, char ***arg
 	opt = oscap_strtok_r(opts, delim, &state);
 	while (opt != NULL) {
 		eargc++;
-		eargv = realloc(eargv, eargc * sizeof(char *));
+		void *new_eargv = realloc(eargv, eargc * sizeof(char *));
+		if (new_eargv == NULL)
+			goto exit;
+		eargv = new_eargv;
 		eargv[eargc - 1] = strdup(opt);
 		opt = oscap_strtok_r(NULL, delim, &state);
 	}
@@ -334,6 +340,7 @@ static void getopt_parse_env(struct oscap_module *module, int *argc, char ***arg
 
 	*argc = nargc;
 	*argv = nargv;
+exit:
 	free(opts);
 	free(eargv);
 }
@@ -379,6 +386,7 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
 			if (!oscap_set_verbose(action.verbosity_level, action.f_verbose_log)) {
 				goto cleanup;
 			}
+            oscap_print_env_vars();
             ret = oscap_module_call(&action);
             goto cleanup;
         }

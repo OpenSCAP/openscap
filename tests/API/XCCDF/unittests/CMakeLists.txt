@@ -2,6 +2,9 @@ add_oscap_test_executable(test_oscap_common
 	"test_oscap_common.c"
 	${CMAKE_SOURCE_DIR}/src/common/util.c
 	${CMAKE_SOURCE_DIR}/src/common/list.c
+	${CMAKE_SOURCE_DIR}/src/common/error.c
+	${CMAKE_SOURCE_DIR}/src/common/err_queue.c
+	${CMAKE_SOURCE_DIR}/src/common/oscap_pcre.c
 )
 
 add_oscap_test_executable(test_xccdf_overrides
@@ -62,7 +65,9 @@ add_oscap_test("test_default_selector.sh")
 add_oscap_test("test_inherit_selector.sh")
 add_oscap_test("test_xccdf_refine_value_bad.sh")
 add_oscap_test("test_xccdf_resolve.sh")
+add_oscap_test("test_xccdf_resolve_profile_platform.sh")
 add_oscap_test("test_xccdf_results_arf_no_oval.sh")
+add_oscap_test("test_xccdf_results_arf_asset.sh")
 add_oscap_test("test_xccdf_sub_title.sh")
 add_oscap_test("test_xccdf_test_system.sh")
 add_oscap_test("test_profile_selection_by_suffix.sh")
@@ -73,6 +78,7 @@ add_oscap_test("test_single_rule_stigw.sh")
 add_oscap_test("test_remediation_simple.sh")
 add_oscap_test("test_remediation_offline.sh")
 add_oscap_test("test_remediation_metadata.sh")
+add_oscap_test("test_remediation_blueprint.sh")
 add_oscap_test("test_remediation_bad_fix.sh")
 add_oscap_test("test_remediation_subs_plain_text.sh")
 add_oscap_test("test_remediation_subs_plain_text_empty.sh")
@@ -98,3 +104,9 @@ add_oscap_test("test_fix_script_header.sh")
 add_oscap_test("test_fix_arf.sh")
 add_oscap_test("test_fix_resultid_by_suffix.sh")
 add_oscap_test("test_generate_fix_ansible_vars.sh")
+add_oscap_test("test_xccdf_requires_conflicts.sh")
+add_oscap_test("test_results_hostname.sh")
+add_oscap_test("test_skip_rule.sh")
+add_oscap_test("test_no_newline_between_select_elements.sh")
+add_oscap_test("test_single_line_tailoring.sh")
+add_oscap_test("test_reference.sh")

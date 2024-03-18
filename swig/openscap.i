@@ -64,9 +64,9 @@
 }
 
 %typemap(in) void * {
-    $result = SWIG_ConvertPtr($input,%as_voidptrptr(&$1), 0, $disown);
-    if (!SWIG_IsOK($result)) {
-        %argument_fail($result, "$type", $symname, $argnum);
+    int ptrres = SWIG_ConvertPtr($input,%as_voidptrptr(&$1), 0, $disown);
+    if (!SWIG_IsOK(ptrres)) {
+        %argument_fail(ptrres, "$type", $symname, $argnum);
     }
 }
 
@@ -475,7 +475,7 @@ char * sub_callback_wrapper(xccdf_subst_type_t type, const char *id, void *arg)
     arglist = Py_BuildValue("isO", type, id, usrdata);
     if (!PyCallable_Check(func)) {
       PyGILState_Release(state);
-      return 1;
+      return NULL;
     }
     result = PyEval_CallObject(func, arglist);
     if (result == NULL) {
@@ -559,8 +559,7 @@ struct xccdf_session {
 };
 
 void xccdf_session_set_rule_py(struct xccdf_session  *sess, char *rule) {
-    char *n_rule = strdup(rule);
-    xccdf_session_set_rule(sess, n_rule);
+    xccdf_session_set_rule(sess, rule);
 }
 
 void xccdf_session_free_py(struct xccdf_session *sess){

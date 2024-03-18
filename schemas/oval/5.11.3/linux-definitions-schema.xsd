@@ -2508,6 +2508,97 @@
                </xsd:complexContent>
           </xsd:complexType>
      </xsd:element>
+     <!-- =============================================================== -->
+     <!-- =================   FWUPD SECURITY ATTRIBUTE   ================ -->
+     <!-- =============================================================== -->
+     <xsd:element name="fwupdsecattr_test" substitutionGroup="oval-def:test">
+          <xsd:annotation>
+               <xsd:documentation>The fwupdsecattr_test element is used to retrieve the firmware and hardware security configuration and status through fwupd. The detailed results can be found by executing the command "fwupdtool --force security" and make sure fwupd is properly installed.</xsd:documentation>
+               <xsd:appinfo>
+                    <oval:element_mapping>
+                         <oval:test>fwupdsecattr_test</oval:test>
+                         <oval:object>fwupdsecattr_object</oval:object>
+                         <oval:state>fwupdsecattr_state</oval:state>
+                         <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux">fwupdsecattr_item</oval:item>
+                    </oval:element_mapping>
+               </xsd:appinfo>
+               <xsd:appinfo>
+                    <sch:pattern id="linux-def_fwupdsecattrtst">
+                         <sch:rule context="linux-def:fwupdsecattr_test/linux-def:object">
+                              <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/linux-def:fwupdsecattr_object/@id"><sch:value-of select="../@id"/> - the object child element of a fwupdsecattr_test must reference a fwupdsecattr_object</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="linux-def:fwupdsecattr_test/linux-def:state">
+                              <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/linux-def:fwupdsecattr_state/@id"><sch:value-of select="../@id"/> - the state child element of a fwupdsecattr_test must reference a fwupdsecattr_state</sch:assert>
+                         </sch:rule>
+                    </sch:pattern>
+               </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:TestType">
+                         <xsd:sequence>
+                              <xsd:element name="object" type="oval-def:ObjectRefType" />
+                              <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="fwupdsecattr_object" substitutionGroup="oval-def:object">
+          <xsd:annotation>
+               <xsd:documentation>The fwupdsecattr_object element is used by a fwupdsecattr_test to define the specific test for the firmware and hardware status, for example secure boot is properly set and version of Intel ME is greater than a specific version. The specific test, called AppStream-id is defined by fwupd. The detail information can be found in https://lvfs.readthedocs.io/en/latest/metainfo.html#appstream-id. </xsd:documentation>
+               <xsd:appinfo>
+                    <sch:pattern id="linux-def_fwupdsecattr_object_verify_filter_state">
+                         <sch:rule context="linux-def:fwupdsecattr_object//oval-def:filter">
+                              <sch:let name="parent_object" value="ancestor::linux-def:fwupdsecattr_object"/>
+                              <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                              <sch:let name="state_ref" value="."/>
+                              <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                              <sch:let name="state_name" value="local-name($reffed_state)"/>
+                              <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                              <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#linux') and ($state_name='fwupdsecattr_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                         </sch:rule>
+                    </sch:pattern>
+               </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:ObjectType">
+                         <xsd:sequence>
+                              <xsd:choice>
+                                   <xsd:element ref="oval-def:set"/>
+                                   <xsd:sequence>
+                                        <xsd:element name="stream_id" type="oval-def:EntityObjectStringType">
+                                             <xsd:annotation>
+                                                  <xsd:documentation>This refers to a specific firmware, hardware, and fw/hw configurations and is defined by fwupd.</xsd:documentation>
+                                             </xsd:annotation>
+                                        </xsd:element>
+                                        <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                   </xsd:sequence>
+                              </xsd:choice>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <xsd:element name="fwupdsecattr_state" substitutionGroup="oval-def:state">
+          <xsd:annotation>
+               <xsd:documentation>The fwupdsecattr_state element holds information about test results for the specific AppStream-id.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-def:StateType">
+                         <xsd:sequence>
+                              <xsd:element name="security_attr" type="oval-def:EntityObjectStringType">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the current firmware security status defined by fwupd.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
      <!-- =============================================================================== -->
      <!-- =============================================================================== -->
      <!-- =============================================================================== -->

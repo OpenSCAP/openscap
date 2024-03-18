@@ -27,7 +27,6 @@ Authors:
 -->
 
 <xsl:stylesheet version="1.1"
-    xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
     exclude-result-prefixes="xsl cdf">
@@ -210,12 +209,12 @@ Authors:
 
                         <tr><td colspan="2">
                             <xsl:if test="$item/cdf:description">
-                                <div class="description"><p>
+                                <div class="description">
                                     <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
                                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                         <xsl:with-param name="profile" select="$profile"/>
                                     </xsl:apply-templates>
-                                 </p></div>
+                                 </div>
                             </xsl:if>
 
                             <xsl:for-each select="$item/cdf:warning">
@@ -233,18 +232,27 @@ Authors:
 
                         <xsl:if test="$item/cdf:rationale">
                             <tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">
-                                <p>
                                     <xsl:apply-templates mode="sub-testresult" select="$item/cdf:rationale">
                                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                         <xsl:with-param name="profile" select="$profile"/>
                                     </xsl:apply-templates>
-                                </p>
                             </div></td></tr>
+                        </xsl:if>
+
+                        <xsl:if test="count($profile/cdf:select[@idref=$item/@id]/cdf:remark) > 0">
+                            <tr><td>Remarks</td><td class="remarks">
+                                <xsl:for-each select="$profile/cdf:select[@idref=$item/@id]/cdf:remark">
+                                    <blockquote class="small">
+                                        <xsl:value-of select="text()" />
+                                    </blockquote>
+                            </xsl:for-each>
+                            </td></tr>
                         </xsl:if>
 
                         <tr><td><span class="label label-warning">Severity:</span>&#160;</td><td><div class="severity">
                             <xsl:call-template name="item-severity">
                                 <xsl:with-param name="item" select="$item" />
+                                <xsl:with-param name="profile" select="$profile"/>
                             </xsl:call-template>
                         </div></td></tr>
 
@@ -256,11 +264,9 @@ Authors:
                         </tr>
 
 
-                        <tr><td>Identifiers and References</td><td class="identifiers">
-                            <xsl:call-template name="item-idents-refs">
-                                <xsl:with-param name="item" select="$item"/>
-                            </xsl:call-template>
-                        </td></tr>
+                        <xsl:call-template name="item-idents-refs">
+                            <xsl:with-param name="item" select="$item"/>
+                        </xsl:call-template>
 
                         <tr><td colspan="2"><div class="remediation-description">
                             <xsl:for-each select="$item/cdf:fixtext">
@@ -462,7 +468,7 @@ Authors:
                 </xsl:attribute>
             </xsl:if>
 
-            <td style="padding-left: {$indent * 19}px" colspan="2">
+            <td style="padding-left: {$indent * 19}px">
                 <xsl:attribute name="id">
                     <xsl:value-of select="$item/@id"/>
                 </xsl:attribute>
@@ -492,14 +498,14 @@ Authors:
                     </xsl:attribute>
                 </xsl:if>
 
-                <td style="padding-left: {$indent * 19}px" colspan="2">
-                    <p>
+                <td style="padding-left: {$indent * 19}px">
+                    <div>
                         <a class="small" href="{concat('#', $item/@id)}">[ref]</a>&#160;&#160;
                         <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
                         </xsl:apply-templates>
-                    </p>
+                    </div>
 
                     <xsl:for-each select="$item/cdf:warning">
                         <div class="panel panel-warning">
@@ -517,7 +523,10 @@ Authors:
                         <table class="table table-striped table-bordered">
                             <tbody>
                                 <tr><td>Identifiers and References</td><td class="identifiers">
-                                    <xsl:call-template name="item-idents-refs">
+                                    <xsl:call-template name="item-idents">
+                                        <xsl:with-param name="item" select="$item"/>
+                                    </xsl:call-template>
+                                    <xsl:call-template name="item-refs">
                                         <xsl:with-param name="item" select="$item"/>
                                     </xsl:call-template>
                                 </td></tr>
@@ -574,14 +583,14 @@ Authors:
                             </xsl:otherwise>
                         </xsl:choose>
                     </a>
+                    <xsl:if test="cdf:Group and $levels&gt;1">
+                        <xsl:call-template name="table-of-contents-items">
+                            <xsl:with-param name="item" select="."/>
+                            <xsl:with-param name="levels" select="$levels - 1"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:call-template>
+                    </xsl:if>
                 </li>
-                <xsl:if test="cdf:Group and $levels&gt;1">
-                    <xsl:call-template name="table-of-contents-items">
-                        <xsl:with-param name="item" select="."/>
-                        <xsl:with-param name="levels" select="$levels - 1"/>
-                        <xsl:with-param name="profile" select="$profile"/>
-                    </xsl:call-template>
-                </xsl:if>
             </xsl:if>
         </xsl:for-each>
     </ol>
@@ -633,7 +642,6 @@ Authors:
     <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
     <html lang="en">
     <head>
-        <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>

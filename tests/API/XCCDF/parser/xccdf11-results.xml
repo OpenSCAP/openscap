@@ -48,7 +48,7 @@
       <value selector="5_minutes">300</value>
       <value selector="10_minutes">600</value>
     </Value>
-    <Rule id="ssh_server_disabled" selected="true" severity="low">
+    <Rule id="ssh_server_disabled" selected="true" severity="low" role="full">
       <title xml:lang="en-US">Disable SSH Server If Possible (Unusual)</title>
       <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Bla bla</description>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">

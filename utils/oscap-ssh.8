@@ -3,7 +3,7 @@
 oscap-ssh \- Tool for running oscap over SSH and collecting results.
 .SH DESCRIPTION
 oscap-ssh runs oscap tool on a remote system through SSH connection. The input files are
-transfered to the target system and after the scan finishes result files are transfered
+transferred to the target system and after the scan finishes result files are transferred
 back. No temporary data remains on the remote machine.
 
 The tool requires bash, ssh, scp and mktemp to perform OVAL and XCCDF evaluation of remote
@@ -16,7 +16,7 @@ Usage of the tool mimics usage and options of oscap(8) tool.
 .SS Evaluation of XCCDF content
 $ oscap-ssh user@host 22 xccdf eval [options] INPUT_CONTENT
 
-Only source datastreams are supported as INPUT_CONTENT!
+Only source data streams are supported as INPUT_CONTENT!
 
 Supported options are:
   --profile
@@ -27,7 +27,9 @@ Supported options are:
   --results-arf
   --report
   --skip-valid
+  --skip-validation
   --fetch-remote-resources
+  --local-files
   --progress
   --datastream-id
   --xccdf-id
@@ -44,6 +46,7 @@ Supported options are:
   --results
   --report
   --skip-valid
+  --skip-validation
   --datastream-id
   --oval-id
 
@@ -55,6 +58,7 @@ Supported options are:
   --syschar
   --variables
   --skip-valid
+  --skip-validation
 
 Specific option for oscap-ssh (must be first argument):
   --sudo
@@ -62,6 +66,9 @@ Specific option for oscap-ssh (must be first argument):
 .SS Environment variables
 oscap-ssh checks out the SSH_ADDITIONAL_OPTIONS environment variable, and pastes its contents into the command-line of ssh to the location where options are expected.
 Supply the variable in form of a string that corresponds to a section of the ssh command-line and that consists of options you want to pass.
+
+.SS Using --local-files option
+The oscap-ssh command supports the --local-files option, but it isn't possible to pass './' and '../' as an argument. Use a full directory path instead.
 
 .SH EXAMPLE USAGE
 .SS Simple XCCDF evaluation

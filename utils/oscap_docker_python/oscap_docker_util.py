@@ -16,293 +16,214 @@
 # Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301 USA
 
-''' Utilities for oscap-docker '''
-
 from __future__ import print_function
 
 import os
+import io
+from pathlib import Path
+from itertools import chain
+import tarfile
 import tempfile
-import subprocess
-import platform
 import shutil
 from oscap_docker_python.get_cve_input import getInputCVE
 import sys
 import docker
+import uuid
 import collections
-from oscap_docker_python.oscap_docker_util_noatomic import OscapDockerScan
 from oscap_docker_python.oscap_docker_common import oscap_chroot, get_dist, \
     OscapResult, OscapError
 
-atomic_loaded = False
+
+class OscapError(Exception):
+    ''' oscap Error'''
+    pass
 
 
-class AtomicError(Exception):
-    """Exception raised when an error happens in atomic import
-    """
-    def __init__(self, message):
-        self.message = message
+OscapResult = collections.namedtuple("OscapResult", ("returncode", "stdout", "stderr"))
 
 
-try:
-    from Atomic.mount import DockerMount
-    from Atomic.mount import MountError
-    import inspect
+class OscapDockerScan(object):
 
-    if "mnt_mkdir" not in inspect.getargspec(DockerMount.__init__).args:
-        raise AtomicError(
-            "\"Atomic.mount.DockerMount\" has been successfully imported but "
-            "it doesn't support the mnt_mkdir argument. Please upgrade your "
-            "Atomic installation to 1.4 or higher.\n"
-        )
+    def __init__(self, target, is_image=False, oscap_binary='oscap'):
 
-    # we only care about method names
-    member_methods = [
-        x[0] for x in
-        inspect.getmembers(
-            DockerMount, predicate=lambda member:
-                inspect.isfunction(member) or inspect.ismethod(member)
-        )
-    ]
-
-    if "_clean_temp_container_by_path" not in member_methods:
-        raise AtomicError(
-            "\"Atomic.mount.DockerMount\" has been successfully imported but "
-            "it doesn't have the _clean_temp_container_by_path method. Please "
-            "upgrade your Atomic installation to 1.4 or higher.\n"
-        )
-
-    # if all imports are ok we can use atomic
-    atomic_loaded = True
-
-except ImportError:
-    sys.stderr.write(
-        "Failed to import \"Atomic.mount.DockerMount\". It seems Atomic has "
-        "not been installed.\n"
-    )
-
-except AtomicError as err:
-    sys.stderr.write(err.message)
-
-
-def isAtomicLoaded():
-    return atomic_loaded
-
-
-class OscapHelpers(object):
-    ''' oscap class full of helpers for scanning '''
-    CPE = 'oval:org.open-scap.cpe.rhel:def:'
-    DISTS = ["8", "7", "6", "5"]
-
-    def __init__(self, cve_input_dir, oscap_binary):
-        self.cve_input_dir = cve_input_dir
+        # init docker high level API (to deal with start/stop/run containers/image)
+        self.client_api = docker.from_env()
+        self.is_image = is_image
         self.oscap_binary = oscap_binary or 'oscap'
+        self.container_name = None
+        self.image_name = None
+        self.extracted_container = False
 
-    @staticmethod
-    def _mk_tmp_dir(tmp_dir):
-        '''
-        Creates a temporary directory and returns the whole
-        path name
-        '''
-        tempfile.tempdir = tmp_dir
-        return tempfile.mkdtemp()
+        # init docker low level api (useful for deep details like container pid)
+        self.client = self.client_api.api
 
-    @staticmethod
-    def _rm_tmp_dir(tmp_dir):
-        '''
-        Deletes the temporary directory created for the purposes
-        of mount
-        '''
-        shutil.rmtree(tmp_dir)
+        if self.is_image:
+            self.image_name, self.config = self._get_image_name_and_config(target)
+            if self.image_name:
+                print("Creating a temporary container for the image...")
 
-    def _get_target_name_and_config(self, target):
+                try:
+                    tmp_cont = self.client.create_container(
+                        self.image_name, name=self.container_name)
+
+                    self.container_name = tmp_cont["Id"]
+                    self.config = self.client.inspect_container(self.container_name)
+                except Exception as e:
+                    sys.stderr.write("Cannot create container for image {0}.\n".format(self.image_name))
+                    raise e
+                
+                self._extract_container()
+            else:
+                raise ValueError("Image {0} not found.\n".format(target))
+
+        else:
+            self.container_name, self.config = \
+                self._get_container_name_and_config(target)
+            if not self.container_name:
+                raise ValueError("Container {0} not found.\n".format(target))
+
+            # is the container running ?
+            if int(self.config["State"]["Pid"]) == 0:
+                print("Container {0} is stopped"
+                      .format(self.container_name))
+
+                self._extract_container()
+            else:
+                print("Container {0} is running, using its existing mount..."
+                      .format(self.container_name))
+                self.mountpoint = "/proc/{0}/root".format(self.config["State"]["Pid"])
+
+        if self._check_container_mountpoint():
+            print("Docker container {0} ready to be scanned."
+                  .format(self.container_name))
+        else:
+            self._end()
+            raise RuntimeError(
+                "Cannot access mountpoint of container {0}, "
+                "please RUN WITH ROOT privileges.\n"
+                .format(self.container_name))
+
+    def _end(self):
+        if self.is_image:
+            # remove the temporary container
+            self.client.remove_container(self.container_name)
+            print("Temporary container {0} cleaned".format(self.container_name))
+        if self.extracted_container:
+            print("Cleaning temporary extracted container...")
+            shutil.rmtree(self.mountpoint)
+
+    def _extract_container(self):
         '''
-        Determines if target is image or container. For images returns full
-        image name if exists or image ID otherwise. For containers returns
+        Extracts the container and sets mountpoint to the extracted directory
+        '''
+        with tempfile.TemporaryFile() as tar:
+            for chunk in self.client.export(self.container_name):
+                tar.write(chunk)
+            tar.seek(0)
+            self.mountpoint = tempfile.mkdtemp()
+            self.extracted_container = True
+            with tarfile.open(fileobj=tar) as tf:
+                tf.extractall(path=self.mountpoint)
+            Path(os.path.join(self.mountpoint, '.dockerenv')).touch()
+
+
+    def _get_image_name_and_config(self, target):
+        '''
+        Ensure that target is an image.
+        Returns full image name if exists or image ID otherwise.
+        For containers returns
         container name if exists or container ID otherwise.
         '''
+
         try:
-            client = docker.APIClient()
-        except AttributeError:
-            client = docker.Client()
-        try:
-            image = client.inspect_image(target)
+            image = self.client.inspect_image(target)
             if image["RepoTags"]:
                 name = ", ".join(image["RepoTags"])
             else:
                 name = image["Id"][len("sha256:"):][:10]
-            return "docker-image://{}".format(name), image["Config"]
+            return name, image
         except docker.errors.NotFound:
-            try:
-                container = client.inspect_container(target)
-                if container["Name"]:
-                    name = container["Name"].lstrip("/")
-                else:
-                    name = container["Id"][:10]
-                return "docker-container://{}".format(name), container["Config"]
-            except docker.errors.NotFound:
-                return "unknown", {}
+            return None, {}
 
-    def _scan_cve(self, chroot, target, dist, scan_args):
+    def _get_container_name_and_config(self, target):
         '''
-        Scan a chroot for cves
+        Ensure that target is a container.
+        Returns container name if exists or container ID otherwise.
         '''
-        cve_input = getInputCVE.dist_cve_name.format(dist)
+        try:
+            container = self.client.inspect_container(target)
+            if container["Name"]:
+                name = container["Name"].lstrip("/")
+            else:
+                name = container["Id"][:10]
+            return name, container
+        except docker.errors.NotFound:
+            return None, {}
+
+    def _check_container_mountpoint(self):
+        '''
+        Ensure that the container fs is well mounted and return its path
+        '''
+        return os.access(self.mountpoint, os.R_OK)
+
+    def scan_cve(self, scan_args):
+        '''
+        Wrapper function for scanning cve of a mounted container
+        '''
+
+        tmp_dir = tempfile.mkdtemp()
+
+        # Figure out which RHEL dist is in the chroot
+        dist = get_dist(self.mountpoint, self.oscap_binary,
+                        self.config["Config"].get("Env", []) or [])
+
+        if dist is None:
+            sys.stderr.write("{0} is not based on RHEL\n"
+                             .format(self.image_name or self.container_name))
+            return None
+
+        # Fetch the CVE input data for the dist
+        fetch = getInputCVE(tmp_dir)
+        cve_file = fetch._fetch_single(dist)
+
+        print("CVEs downloaded in " + cve_file)
 
         args = ("oval", "eval")
         for a in scan_args:
             args += (a,)
-        args += (os.path.join(self.cve_input_dir, cve_input),)
+        args += (cve_file,)
 
-        name, conf = self._get_target_name_and_config(target)
+        scan_result = oscap_chroot(
+            self.mountpoint, self.oscap_binary, args,
+            self.image_name or self.container_name,
+            self.config["Config"].get("Env", []) or []  # because Env can exists but be None
+        )
 
-        return oscap_chroot(chroot, self.oscap_binary, args, name,
-                            conf.get("Env", []) or [])
+        print(scan_result.stdout)
+        print(scan_result.stderr, file=sys.stderr)
 
-    def _scan(self, chroot, target, scan_args):
-        '''
-        Scan a container or image
-        '''
+        # cleanup
 
-        name, conf = self._get_target_name_and_config(target)
-        return oscap_chroot(chroot, self.oscap_binary, scan_args, name,
-                            conf.get("Env", []) or [])
-
-    def resolve_image(self, image):
-        '''
-        Given an image or container name, uuid, or partial, return the
-        uuid or iid or False if cannot be identified
-        '''
-        # TODO
-        pass
-
-    def _cleanup_by_path(self, path, DM):
-        '''
-        Cleans up the mounted chroot by umounting it and
-        removing the temporary directory
-        '''
-        # Sometimes when this def is called, path will have 'rootfs'
-        # appended.  If it does, strip it and proceed
-        _no_rootfs = path
-        if os.path.basename(path) == 'rootfs':
-            _no_rootfs = os.path.dirname(path)
-
-        # umount chroot
-        DM.unmount_path(_no_rootfs)
-
-        # clean up temporary container
-        DM._clean_temp_container_by_path(_no_rootfs)
-        os.rmdir(_no_rootfs)
-
-
-def mount_image_filesystem():
-    _tmp_mnt_dir = DM.mount(image)
-
-
-class OscapAtomicScan(object):
-    def __init__(self, tmp_dir=tempfile.gettempdir(), mnt_dir=None,
-                 hours_old=2, oscap_binary=''):
-        self.tmp_dir = tmp_dir
-        self.helper = OscapHelpers(tmp_dir, oscap_binary)
-        self.mnt_dir = mnt_dir
-        self.hours_old = hours_old
-
-    def _ensure_mnt_dir(self):
-        '''
-        Ensure existing temporary directory
-        '''
-        if self.mnt_dir is None:
-            return tempfile.mkdtemp()
-        else:
-            return self.mnt_dir
-
-    def _remove_mnt_dir(self, mnt_dir):
-        '''
-        Remove temporary directory, but only if the directory was not
-        passed through __init__
-        '''
-        if self.mnt_dir is None:
-            os.rmdir(mnt_dir)
-
-    def _find_chroot_path(self, mnt_dir):
-        '''
-        Remember actual mounted fs in 'rootfs' for devicemapper
-        '''
-        rootfs_path = os.path.join(mnt_dir, 'rootfs')
-        if os.path.exists(rootfs_path):
-            chroot = rootfs_path
-        else:
-            chroot = mnt_dir
-        return chroot
-
-    def scan_cve(self, image, scan_args):
-        '''
-        Wrapper function for scanning a container or image
-        '''
-
-        mnt_dir = self._ensure_mnt_dir()
-
-        # Mount the temporary image/container to the dir
-        DM = DockerMount(mnt_dir, mnt_mkdir=True)
-        try:
-            _tmp_mnt_dir = DM.mount(image)
-        except MountError as e:
-            sys.stderr.write(str(e) + "\n")
-            return None
-
-        try:
-            chroot = self._find_chroot_path(_tmp_mnt_dir)
-
-            # Figure out which RHEL dist is in the chroot
-            name, conf = self.helper._get_target_name_and_config(image)
-            dist = get_dist(chroot, self.helper.oscap_binary, conf.get("Env", []) or [])
-
-            if dist is None:
-                sys.stderr.write("{0} is not based on RHEL\n".format(image))
-                return None
-
-            # Fetch the CVE input data for the dist
-            fetch = getInputCVE(self.tmp_dir)
-            fetch._fetch_single(dist)
-
-            # Scan the chroot
-            scan_result = self.helper._scan_cve(chroot, image, dist, scan_args)
-            print(scan_result.stdout)
-            print(scan_result.stderr, file=sys.stderr)
-
-        finally:
-            # Clean up
-            self.helper._cleanup_by_path(_tmp_mnt_dir, DM)
-            self._remove_mnt_dir(mnt_dir)
+        print("Cleaning temporary files ...")
+        shutil.rmtree(tmp_dir)
+        self._end()
 
         return scan_result.returncode
 
-    def scan(self, image, scan_args):
+    def scan(self, scan_args):
         '''
-        Wrapper function for basic security scans using
-        openscap
+        Wrapper function forwarding oscap args for an offline scan
         '''
+        scan_result = oscap_chroot(
+            self.mountpoint,
+            self.oscap_binary, scan_args,
+            self.image_name or self.container_name,
+            self.config["Config"].get("Env", []) or []  # because Env can exists but be None
+        )
 
-        mnt_dir = self._ensure_mnt_dir()
+        print(scan_result.stdout)
+        print(scan_result.stderr, file=sys.stderr)
 
-        # Mount the temporary image/container to the dir
-        DM = DockerMount(mnt_dir, mnt_mkdir=True)
-        try:
-            _tmp_mnt_dir = DM.mount(image)
-        except MountError as e:
-            sys.stderr.write(str(e) + "\n")
-            return None
-
-        try:
-            chroot = self._find_chroot_path(_tmp_mnt_dir)
-
-            # Scan the chroot
-            scan_result = self.helper._scan(chroot, image, scan_args)
-            print(scan_result.stdout)
-            print(scan_result.stderr, file=sys.stderr)
-
-        finally:
-            # Clean up
-            self.helper._cleanup_by_path(_tmp_mnt_dir, DM)
-            self._remove_mnt_dir(mnt_dir)
+        self._end()
 
         return scan_result.returncode

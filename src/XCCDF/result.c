@@ -48,14 +48,26 @@
 #ifdef OSCAP_UNIX
 #include <sys/utsname.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <sys/socket.h>
+#include <pwd.h>
+#include <sys/types.h>
 #endif
 
 #if defined(OS_LINUX)
 #include <ifaddrs.h>
 #include <net/if.h>
-#include <netdb.h>
 #include <sys/ioctl.h>
+#endif
+
+#if defined(OS_FREEBSD)
+#include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <sys/ioctl.h>
+#include <sys/sockio.h>
 #endif
 
 #include "item.h"
@@ -71,6 +83,10 @@
 
 #ifdef OS_WINDOWS
 #define timezone _timezone
+#endif
+
+#ifndef HOST_NAME_MAX
+#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
 #endif
 
 // References containing STIG Rule IDs can be found by their href attribute, it must match the following url
@@ -159,6 +175,23 @@ XCCDF_LISTMANIP(result, score, scores)
 OSCAP_ITERATOR_GEN(xccdf_result)
 OSCAP_ITERATOR_REMOVE_F(xccdf_result)
 
+static inline void _xccdf_result_add_target_fact_uniq(struct xccdf_result *result, struct xccdf_target_fact *fact)
+{
+	struct xccdf_target_fact_iterator *target_facts = xccdf_result_get_target_facts(result);
+	while (xccdf_target_fact_iterator_has_more(target_facts)) {
+			struct xccdf_target_fact *target_fact = xccdf_target_fact_iterator_next(target_facts);
+			if (target_fact->type == fact->type)
+				if (target_fact->name != NULL && fact->name != NULL && !strcmp(target_fact->name, fact->name))
+					if (target_fact->value != NULL && fact->value != NULL && !strcmp(target_fact->value, fact->value)) {
+						xccdf_target_fact_free(fact);
+						goto exit;
+					}
+	}
+	xccdf_result_add_target_fact(result, fact);
+exit:
+	xccdf_target_fact_iterator_free(target_facts);
+}
+
 static inline void _xccdf_result_fill_scanner(struct xccdf_result *result)
 {
 	struct xccdf_target_fact *fact = NULL;
@@ -173,6 +206,21 @@ static inline void _xccdf_result_fill_scanner(struct xccdf_result *result)
 	xccdf_result_add_target_fact(result, fact);
 }
 
+#if defined(OSCAP_UNIX)
+static inline char *_unix_get_name_fallback(void) {
+	struct passwd *passwd;
+
+	errno = 0;
+	passwd = getpwuid(getuid());
+	if (passwd == NULL || passwd->pw_name == NULL) {
+		dW("Error when calling getpwuid(): %d, %s\n", errno, strerror(errno));
+		return "\0";
+	}
+
+	return passwd->pw_name;
+}
+#endif
+
 static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
 {
 	struct xccdf_identity *id = xccdf_identity_new();
@@ -185,7 +233,10 @@ static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
 	xccdf_identity_set_authenticated(id, 0);
 	xccdf_identity_set_privileged(id, 0);
 #ifdef OSCAP_UNIX
-	xccdf_identity_set_name(id, getlogin());
+	char *name = getlogin();
+	if (name == NULL)
+		name = _unix_get_name_fallback();
+	xccdf_identity_set_name(id, name);
 #elif defined(OS_WINDOWS)
 	GetUserName((TCHAR *) w32_username, &w32_usernamesize); /* XXX: Check the return value? */
 	xccdf_identity_set_name(id, w32_username);
@@ -209,100 +260,213 @@ static inline void _xccdf_result_clear_metadata(struct xccdf_item *result)
 		NULL);
 }
 
+#ifdef OSCAP_UNIX
+static char *_get_etc_hostname(const char *oscap_probe_root)
+{
+	FILE *fp;
+	char hname[HOST_NAME_MAX+1] = { '\0' };
+	char *ret = NULL;
+	int rc;
+
+	fp = oscap_fopen_with_prefix(oscap_probe_root, "/etc/hostname");
+
+	if (fp == NULL) {
+		dD("Trying to use /proc/sys/kernel/hostname instead of /etc/hostname");
+		fp = oscap_fopen_with_prefix(oscap_probe_root, "/proc/sys/kernel/hostname");
+	}
+
+	if (fp == NULL)
+		goto fail;
+
+	rc = fread(hname, 1, HOST_NAME_MAX, fp);
+	/* If file is empty, we don't want to allocate an empty string for it */
+	if (ferror(fp) || rc == 0 )
+		goto finish;
+
+	hname[strcspn(hname, "\n")] = '\0';
+	ret = strdup(hname);
+
+finish:
+	fclose(fp);
+fail:
+	return ret;
+}
+#endif
+
 void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 {
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_FREEBSD)
 	struct ifaddrs *ifaddr, *ifa;
 	int fd;
 #endif
-
-#ifdef OSCAP_UNIX
-	struct utsname sname;
-
-	if (uname(&sname) == -1)
-		return;
+	struct xccdf_target_fact *fact = NULL;
+	const char *probe_root = getenv("OSCAP_PROBE_ROOT");
 
 	_xccdf_result_clear_metadata(XITEM(result));
+	_xccdf_result_fill_scanner(result);
 
-	/* override target name by environment variable */
-	const char *target_hostname = getenv("OSCAP_EVALUATION_TARGET");
-	if (target_hostname == NULL) {
-		target_hostname = sname.nodename;
+#ifdef OSCAP_UNIX
+	char *hostname = NULL;
+	char *fqdn = NULL;
+	if (probe_root) {
+		hostname = _get_etc_hostname(probe_root);
+	} else {
+		char hname[_POSIX_HOST_NAME_MAX+1] = {0};
+		if (gethostname(hname, _POSIX_HOST_NAME_MAX)) {
+			dW("Unable to get hostname: %s", strerror(errno));
+		} else {
+			hostname = strdup(hname);
+		}
+
+		if (hostname) {
+			struct addrinfo hints, *info, *p;
+			int gai_res;
+
+			memset(&hints, 0, sizeof hints);
+			hints.ai_family = AF_UNSPEC;
+			hints.ai_socktype = SOCK_STREAM;
+			hints.ai_flags = AI_CANONNAME;
+
+			if (!(gai_res = getaddrinfo(hostname, NULL, &hints, &info))) {
+				for(p = info; p != NULL; p = p->ai_next) {
+					if (!p->ai_canonname)
+						continue;
+					fact = xccdf_target_fact_new();
+					xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:fqdn");
+					xccdf_target_fact_set_string(fact, p->ai_canonname);
+					/* store FQDN under XCCDF1.2 (6.6.3) predefined name */
+					_xccdf_result_add_target_fact_uniq(result, fact);
+					if (!fqdn)
+						fqdn = strdup(p->ai_canonname);
+				}
+				freeaddrinfo(info);
+			} else {
+				dI("Unable to get FQDN(s) via getaddrinfo: %s", gai_strerror(gai_res));
+			}
+		}
 	}
-
-	/* store target name */
-	xccdf_result_add_target(result, target_hostname);
+	/* store target's host name */
+	xccdf_result_add_target(result, fqdn ? fqdn : (hostname ? hostname : "unknown"));
+	if (hostname) {
+		fact = xccdf_target_fact_new();
+		xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:host_name");
+		xccdf_target_fact_set_string(fact, hostname);
+		/* store host name under XCCDF1.2 (6.6.3) predefined name */
+		xccdf_result_add_target_fact(result, fact);
+	}
+	free(hostname);
+	free(fqdn);
 #elif defined(OS_WINDOWS)
 	TCHAR computer_name[MAX_COMPUTERNAME_LENGTH + 1];
 	DWORD computer_name_size = MAX_COMPUTERNAME_LENGTH + 1;
 	GetComputerName(computer_name, &computer_name_size);
 	/* store target name */
 	xccdf_result_add_target(result, computer_name);
+
+	fact = xccdf_target_fact_new();
+	xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:host_name");
+	xccdf_target_fact_set_string(fact, computer_name);
+	/* store host name under XCCDF1.2 (6.6.3) predefined name */
+	xccdf_result_add_target_fact(result, fact);
 #endif
 
-	_xccdf_result_fill_scanner(result);
-	_xccdf_result_fill_identity(result);
+	const char *ev_target = getenv("OSCAP_EVALUATION_TARGET");
+	if (ev_target) {
+		fact = xccdf_target_fact_new();
+		xccdf_target_fact_set_name(fact, "urn:xccdf:fact:identifier");
+		xccdf_target_fact_set_string(fact, ev_target);
+		xccdf_result_add_target_fact(result, fact);
 
-#if defined(OS_LINUX)
-
-	/* get network interfaces */
-	if (getifaddrs(&ifaddr) == -1)
-		return;
-
-	fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
-	if (fd == -1)
-		goto out1;
-
-	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-		int family;
-		char hostip[NI_MAXHOST];
-		struct ifreq ifr;
-
-		if (!ifa->ifa_addr)
-			continue;
-		family = ifa->ifa_addr->sa_family;
-		if (family != AF_INET && family != AF_INET6)
-			continue;
-
-		if (family == AF_INET) {
-			if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
-					hostip, sizeof(hostip), NULL, 0, NI_NUMERICHOST))
-				goto out2;
-		} else {
-			struct sockaddr_in6 *sin6;
-
-			sin6 = (struct sockaddr_in6 *) ifa->ifa_addr;
-			if (!inet_ntop(family, (const void *) &sin6->sin6_addr,
-				       hostip, sizeof(hostip)))
-				goto out2;
-		}
-		/* store ip address */
-		xccdf_result_add_target_address(result, hostip);
-
-		memset(&ifr, 0, sizeof(ifr));
-		strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
-		ifr.ifr_name[IFNAMSIZ - 1] = 0;
-		if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
-			struct xccdf_target_fact *fact;
-			unsigned char mac[6];
-			char macbuf[20];
-
-			memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
-			snprintf(macbuf, sizeof(macbuf), "%02X:%02X:%02X:%02X:%02X:%02X",
-				 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-			fact = xccdf_target_fact_new();
-			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
-			xccdf_target_fact_set_string(fact, macbuf);
-			/* store mac address */
-			xccdf_result_add_target_fact(result, fact);
-		}
+		fact = xccdf_target_fact_new();
+		xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:ein");
+		xccdf_target_fact_set_string(fact, ev_target);
+		/* store target id under XCCDF1.2 (6.6.3) predefined name */
+		xccdf_result_add_target_fact(result, fact);
 	}
 
- out2:
-	close(fd);
- out1:
-	freeifaddrs(ifaddr);
+	if (!probe_root)
+		_xccdf_result_fill_identity(result);
 
+#if defined(OS_LINUX) || defined(OS_FREEBSD)
+	if (!probe_root) {
+		/* get network interfaces */
+		if (getifaddrs(&ifaddr) == -1)
+			return;
+
+		fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+		if (fd == -1)
+			goto out1;
+
+		for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+			int family;
+			char hostip[NI_MAXHOST];
+			struct ifreq ifr;
+
+			if (!ifa->ifa_addr)
+				continue;
+			family = ifa->ifa_addr->sa_family;
+
+			if (family == AF_INET || family == AF_INET6) {
+				if (family == AF_INET) {
+					if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+							hostip, sizeof(hostip), NULL, 0, NI_NUMERICHOST))
+						goto out2;
+				} else if (family == AF_INET6) {
+					struct sockaddr_in6 *sin6;
+
+					sin6 = (struct sockaddr_in6 *) ifa->ifa_addr;
+					if (!inet_ntop(family, (const void *) &sin6->sin6_addr,
+							hostip, sizeof(hostip)))
+						goto out2;
+				}
+				/* store ip address */
+				xccdf_result_add_target_address(result, hostip);
+				fact = xccdf_target_fact_new();
+				xccdf_target_fact_set_name(fact, family == AF_INET ? "urn:xccdf:fact:asset:identifier:ipv4" : "urn:xccdf:fact:asset:identifier:ipv6");
+				xccdf_target_fact_set_string(fact, hostip);
+				/* store ipv4(6) address under XCCDF1.2 (6.6.3) predefined name */
+				_xccdf_result_add_target_fact_uniq(result, fact);
+			}
+
+			memset(&ifr, 0, sizeof(ifr));
+			strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
+			ifr.ifr_name[IFNAMSIZ - 1] = 0;
+#if defined(OS_LINUX)
+			if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
+				unsigned char mac[6];
+				char macbuf[20];
+
+				memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
+				snprintf(macbuf, sizeof(macbuf), "%02X:%02X:%02X:%02X:%02X:%02X",
+					 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+#elif defined(OS_FREEBSD)
+			if (ioctl(fd, SIOCGHWADDR, &ifr) >= 0) {
+				unsigned char mac[6];
+				char macbuf[20];
+
+				memcpy(mac, ifr.ifr_addr.sa_data, sizeof(mac));
+				snprintf(macbuf, sizeof(macbuf), "%02X:%02X:%02X:%02X:%02X:%02X",
+					 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+#endif
+				fact = xccdf_target_fact_new();
+				xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
+				xccdf_target_fact_set_string(fact, macbuf);
+				/* store mac address */
+				_xccdf_result_add_target_fact_uniq(result, fact);
+
+				fact = xccdf_target_fact_new();
+				xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:mac");
+				xccdf_target_fact_set_string(fact, macbuf);
+				/* store mac address under XCCDF1.2 (6.6.3) predefined name */
+				_xccdf_result_add_target_fact_uniq(result, fact);
+			}
+		}
+
+	out2:
+		close(fd);
+	out1:
+		freeifaddrs(ifaddr);
+	}
 #elif defined(OS_WINDOWS)
 
 #define VERSION_LEN 32
@@ -377,12 +541,19 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 				}
 			}
 
-			/* Add the IP address to XCCDF TestResult/target-facts */
+			/* Add the MAC address to XCCDF TestResult/target-facts */
 			struct xccdf_target_fact *fact = xccdf_target_fact_new();
 			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
 			xccdf_target_fact_set_string(fact, mac_address_str);
 			/* store mac address */
-			xccdf_result_add_target_fact(result, fact);
+			_xccdf_result_add_target_fact_uniq(result, fact);
+
+			fact = xccdf_target_fact_new();
+			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:mac");
+			xccdf_target_fact_set_string(fact, mac_address_str);
+			/* store mac address under XCCDF1.2 (6.6.3) predefined name */
+			_xccdf_result_add_target_fact_uniq(result, fact);
+
 			free(mac_address_str);
 		}
 
@@ -402,6 +573,13 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 			/* Add the IP address to XCCDF TestResult/target-address */
 			char *ip_address_str = oscap_windows_wstr_to_str(ip_address_wstr);
 			xccdf_result_add_target_address(result, ip_address_str);
+
+			fact = xccdf_target_fact_new();
+			xccdf_target_fact_set_name(fact, socket_address.lpSockaddr->sa_family == AF_INET ? "urn:xccdf:fact:asset:identifier:ipv4" : "urn:xccdf:fact:asset:identifier:ipv6");
+			xccdf_target_fact_set_string(fact, ip_address_str);
+			/* store ipv4(6) address under XCCDF1.2 (6.6.3) predefined name */
+			_xccdf_result_add_target_fact_uniq(result, fact);
+
 			free(ip_address_str);
 
 			unicast_address = unicast_address->Next;
@@ -1098,8 +1276,9 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 			struct oscap_reference_iterator *references = xccdf_item_get_references(item);
 			while (oscap_reference_iterator_has_more(references)) {
 				struct oscap_reference *ref = oscap_reference_iterator_next(references);
-				if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[0]) == 0 ||
-				    strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[1]) == 0) {
+				const char *href = oscap_reference_get_href(ref);
+				if (href && (strcmp(href, DISA_STIG_VIEWER_HREF[0]) == 0 ||
+							strcmp(href, DISA_STIG_VIEWER_HREF[1]) == 0)) {
 					const char *stig_rule_id = oscap_reference_get_title(ref);
 
 					xccdf_test_result_type_t other_res = (xccdf_test_result_type_t)oscap_htable_detach(nodes_by_rule_id, stig_rule_id);
@@ -1306,8 +1485,9 @@ void xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xml
 		struct oscap_reference_iterator *references = xccdf_item_get_references(item);
 		while (oscap_reference_iterator_has_more(references)) {
 			struct oscap_reference *ref = oscap_reference_iterator_next(references);
-			if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[0]) == 0 ||
-			    strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[1]) == 0) {
+			const char *href = oscap_reference_get_href(ref);
+			if (href && (strcmp(href, DISA_STIG_VIEWER_HREF[0]) == 0 ||
+					strcmp(href, DISA_STIG_VIEWER_HREF[1]) == 0)) {
 				const char *stig_rule_id = oscap_reference_get_title(ref);
 
 				xccdf_test_result_type_t expected_res = (xccdf_test_result_type_t)oscap_htable_get(nodes_by_rule_id, stig_rule_id);
@@ -1381,8 +1561,8 @@ static void _xccdf_rule_result_to_dom_idref(struct xccdf_rule_result *result, xm
 		xmlNode *message_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "message", encoded_content);
 		xmlFree(encoded_content);
 
-                xccdf_level_t message_severity = xccdf_message_get_severity(message);
-		if (message_severity != XCCDF_LEVEL_NOT_DEFINED)
+		xccdf_message_severity_t message_severity = xccdf_message_get_severity(message);
+		if (message_severity != XCCDF_MSG_NOT_DEFINED)
                     xmlNewProp(message_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[message_severity - 1].string);
 	}
 	xccdf_message_iterator_free(messages);
@@ -1592,6 +1772,26 @@ static inline const char *_get_timestamp(void)
 
 	tm = time(NULL);
 	lt = localtime(&tm);
+
+	if (!lt)
+		return NULL;
+
+#if defined(OS_FREEBSD)
+	tz_diff = lt->tm_gmtoff;
+
+	if (tz_diff < 0) {
+		tz_sign = '-';
+		tz_diff *= -1;
+	} else {
+		tz_sign = '+';
+	}
+
+        /*  glibc's timezone offset does not account for daylight savings time.
+         *  So we match that behavior here by adding 3600 seconds
+         */
+        if (lt->tm_isdst)
+		tz_diff += 3600;
+#else
 	/* timezone is a global variable set by localtime(3) */
 	if (timezone <= 0) {
 		tz_sign = '+';
@@ -1600,13 +1800,17 @@ static inline const char *_get_timestamp(void)
 		tz_sign = '-';
 		tz_diff = timezone;
 	}
+#endif
 	tz_diff /= 60;
+
 	int ret = snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d%c%02d:%02d",
 		1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday,
 		lt->tm_hour, lt->tm_min, lt->tm_sec, tz_sign, tz_diff / 60, tz_diff % 60);
+
 	if (ret < 0) {
 		return NULL;
 	}
+
 	return timestamp;
 }
 

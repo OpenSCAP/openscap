@@ -61,7 +61,7 @@ oval_filter_action_t oval_filter_action_parse(xmlTextReaderPtr, char *, oval_fil
 oval_variable_type_t oval_variable_type_parse(xmlTextReaderPtr);
 oval_component_type_t oval_component_type_parse(xmlTextReaderPtr);
 oval_arithmetic_operation_t oval_arithmetic_operation_parse(xmlTextReaderPtr, char *, oval_arithmetic_operation_t);
-oval_datetime_format_t oval_datetime_format_parse(xmlTextReaderPtr, char *, oval_arithmetic_operation_t);
+oval_datetime_format_t oval_datetime_format_parse(xmlTextReaderPtr, char *, oval_datetime_format_t);
 oval_message_level_t oval_message_level_parse(xmlTextReaderPtr, char *, oval_message_level_t);
 void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t type);
 

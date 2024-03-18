@@ -171,7 +171,10 @@ void oval_generator_update_timestamp(struct oval_generator *generator)
 
 void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version)
 {
-	oscap_htable_add(generator->platform_schema_versions, platform, oscap_strdup(schema_version));
+	char *schema_version_dup = oscap_strdup(schema_version);
+	if (!oscap_htable_add(generator->platform_schema_versions, platform, schema_version_dup)) {
+		free(schema_version_dup);
+	}
 }
 
 

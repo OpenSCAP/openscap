@@ -30,6 +30,9 @@ set(RPM_VERSION ${RPM_PKGCONF_VERSION})
 if(RPM_VERSION)
 	string(COMPARE GREATER "4.6" ${RPM_VERSION} RPM46_FOUND)
 	string(COMPARE GREATER "4.7" ${RPM_VERSION} RPM47_FOUND)
+	if(RPM_VERSION VERSION_GREATER_EQUAL "4.18")
+		set(RPM418_FOUND 1)
+	endif()
 endif()
 
 # Set the include dir variables and the libraries and let libfind_process do the rest.

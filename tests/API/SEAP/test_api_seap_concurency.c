@@ -47,7 +47,7 @@ void *worker_thread (void *arg);
                 if (gettimeofday (&(t1), &(tz)) != 0) abort();          \
                                                                         \
                 flockfile (stdout);                                     \
-                fprintf (stdout, "[%u][%s] t= %.3g\n", (unsigned int)(pthread_self ()), ident, \
+                fprintf (stdout, "[%zu][%s] t= %.3g\n", (uintptr_t)(pthread_self ()), ident, \
                          ((double)t1.tv_sec + ((double)t1.tv_usec / 1000000.0)) - \
                          ((double)t0.tv_sec + ((double)t0.tv_usec / 1000000.0))); \
                 funlockfile(stdout);                                    \

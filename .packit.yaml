@@ -1,0 +1,27 @@
+downstream_package_name: openscap
+upstream_package_name: openscap
+specfile_path: openscap.spec
+
+actions:
+  get-current-version:
+  - bash -c "source release_tools/versions.sh && echo ${version}"
+
+srpm_build_deps:
+  - bash
+
+jobs:
+- job: copr_build
+  trigger: pull_request
+  metadata:
+    targets:
+    - fedora-all-x86_64
+    - centos-stream-8-x86_64
+    - centos-stream-9-x86_64
+
+- job: tests
+  trigger: pull_request
+  metadata:
+    targets:
+    - fedora-all-x86_64
+    - centos-stream-8-x86_64
+    - centos-stream-9-x86_64

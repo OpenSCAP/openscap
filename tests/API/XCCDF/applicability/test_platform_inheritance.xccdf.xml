@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_moc.elpmaxe.www_benchmark_test" resolved="1">
+  <status>accepted</status>
+  <version>1.0</version>
+  <model system="urn:xccdf:scoring:default"/>
+
+  <Group id="xccdf_moc.eplmaxe.www_group_true">
+    <title>Applicable group</title>
+    <description>This group is applicable</description>
+    <platform idref="cpe:/a:true"/>
+    <Rule id="xccdf_moc.elpmaxe.www_rule_gtrue_rtrue" selected="true">
+      <title>This rule is applicable</title>
+      <platform idref="cpe:/a:true"/>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:rule:def:1" href="test_platform_inheritance.oval.xml"/>
+      </check>
+    </Rule>
+    <Rule id="xccdf_moc.elpmaxe.www_rule_gtrue_rfalse" selected="true">
+      <title>This rule is not applicable</title>
+      <platform idref="cpe:/a:false"/>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:rule:def:1" href="test_platform_inheritance.oval.xml"/>
+      </check>
+    </Rule>
+    <Rule id="xccdf_moc.elpmaxe.www_rule_gtrue_rnone" selected="true">
+      <title>This rule inherits from group</title>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:rule:def:1" href="test_platform_inheritance.oval.xml"/>
+      </check>
+    </Rule>
+  </Group>
+
+  <Group id="xccdf_moc.eplmaxe.www_group_false">
+    <title>Not applicable group</title>
+    <description>This group is not applicable</description>
+    <platform idref="cpe:/a:false"/>
+    <Rule id="xccdf_moc.elpmaxe.www_rule_gfalse_rtrue" selected="true">
+      <title>This rule is applicable</title>
+      <platform idref="cpe:/a:true"/>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:rule:def:1" href="test_platform_inheritance.oval.xml"/>
+      </check>
+    </Rule>
+    <Rule id="xccdf_moc.elpmaxe.www_rule_gfalse_rfalse" selected="true">
+      <title>This rule is not applicable</title>
+      <platform idref="cpe:/a:false"/>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:rule:def:1" href="test_platform_inheritance.oval.xml"/>
+      </check>
+    </Rule>
+    <Rule id="xccdf_moc.elpmaxe.www_rule_gfalse_rnone" selected="true">
+      <title>This rule inherits from group</title>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:rule:def:1" href="test_platform_inheritance.oval.xml"/>
+      </check>
+    </Rule>
+  </Group>
+
+</Benchmark>

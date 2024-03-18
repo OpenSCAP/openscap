@@ -75,7 +75,7 @@ struct oscap_module {
 // standard oscap CLI exit statuses
 enum oscap_exitcode {
     OSCAP_OK             =   0, // successful exit
-    OSCAP_ERROR          =   1, // an error occured
+    OSCAP_ERROR          =   1, // an error occurred
     OSCAP_FAIL           =   2, // a process (e.g. scan or validation) failed
     OSCAP_ERR_FETCH      =   1, // cold not fetch input file (same as error for now)
     OSCAP_BADARGS        = 100, // bad commandline arguments
@@ -134,7 +134,8 @@ struct oscap_action {
 	char *f_verbose_log;
 	/* others */
         char *profile;
-	const char *rule;
+	struct oscap_stringlist *rules;
+	struct oscap_stringlist *skip_rules;
         char *format;
         const char *tmpl;
         char *id;
@@ -159,6 +160,8 @@ struct oscap_action {
 	int doctype;
 	int force;
 	int validate;
+	int validate_signature;
+	int enforce_signature;
 	int schematron;
 	int remote_resources;
 	int progress;
@@ -172,6 +175,9 @@ struct oscap_action {
         int list_dynamic;
 	char *verbosity_level;
 	char *fix_type;
+	char *local_files;
+	char *reference;
+	int references;
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);

@@ -1,3 +1,158 @@
+openscap-1.3.10                                                 18-03-2024
+- New features
+  - Dump all env. variables that affects the behaviour on INFO log level
+  - Support Blueprint services customization for masking
+  - Fix Blueprint template to be self-contained
+  - Add a refine-rule tailoring ability to autotailor
+  - Introduce JSON tailoring import option for autotailor
+  - Select rules based on reference
+  - Skip certain paths from scanning (controlled via env. variable)
+  - Introduce a limit of collected items (controlled via env. variable)
+- Maintenance, bug fix
+  - Fix partition probe for PCRE2
+  - Fix NSS crypto backend
+  - Wrap Bash snippets in a subshell when generating a fix script
+  - Improve references in HTML guides and reports
+  - Update html report with OVAL details
+  - Rewrite dpkginfo probe without using APT
+  - Fix incorrect openscap-cpe-oval result filename
+  - Implement xccdf_session_get_rule_results function in XCCDF session API
+  - Implement xccdf_session_result_reset function in XCCDF session API
+
+openscap-1.3.9                                                  06-09-2023
+- New features
+  - OpenSCAP can now use PCRE2 library
+- Maintenance, bug fix
+  - Fix offline mode (OVAL/sysctl)
+  - Fix leak of dpkg cache when dpkginfo_init is called multiple times
+  - Fix un-expanded variable in xccdf report output
+  - Fix issues when parsing profiles
+  - Fix minor problems and resource leaks
+
+openscap-1.3.8                                                  21-06-2023
+- New features
+  - The boot-time remediation service for systemd's Offline Update mode is now disabled by default
+  - Add offline capabilities to the shadow OVAL probe
+  - Add offline capabilities to the sysctl OVAL probe
+  - Add 'auristorfs' to list of network fileystems
+  - Add new experimental linux-bound fwupdsecattr probe for system firmware security attributes (fwupd-based)
+- Maintenance, bug fix
+  - Use ListUnitFiles D-Bus method to fetch all units in systemd OVAL probe
+  - Fix minor resource leaks
+
+openscap-1.3.7                                                  26-01-2023
+- Maintenance, bug fix
+  - Fix error when processing OVAL filters (rhbz#2126882, rhbz#2126883)
+  - Don't emit xmlfilecontent items if XPath doesn't match (rhbz#2138884, rhbz#2139060)
+  - Prevent "Failed to check available memory" errors (rhbz#2109485, rhbz#2111040)
+  - Make epoch comparison less strict for dpkg
+  - Generate graphs when creating Doxygen documentation
+  - Fix build on Fedora 37 and Rawhide
+  - Fix some compiler warnings
+  - Infrastructure and test suite fixes
+  - Use more conscious language
+  - Fix typos and update documentation
+
+openscap-1.3.6                                                  19-01-2022
+  - New features
+    - Select and exclude groups of rules on the command line
+    - The boot-time remediation service for systemd's Offline Update mode
+    - Memory limit control using OSCAP_PROBE_MEMORY_USAGE_RATIO environment variable
+    - Allow disablement of SHA-1 and MD5
+    - Allow providing pre-downloaded components
+    - Introduce OSBuild Blueprint fix type
+  - Maintenance, bug fix
+    - Fix coverity issues
+    - Patch the `segfault` in dpkginfo_fini()
+    - Add an alternative source of hostname
+    - Fail download on HTTP errors
+    - Compile "environmentvariable_probe" on Windows
+    - FreeBSD build and test fixes
+    - Add offline mode for password probe
+    - Initialize crypto API only once
+    - Fix UBI 9 scan
+    - oval/yamlfilecontent: Add 'null' values handling
+    - Do not set Rpath
+    - Do not split `XCCDF:requires` with multiple `idrefs`
+    - Allow empty /proc in offline mode
+
+openscap-1.3.5                                                  23-04-2021
+  - New features
+    - Made schematron-based validation enabled by default for validate command of oval and xccdf modules
+    - Added SCAP 1.3 source data stream Schematron
+    - Added XML Signature Validation
+    - Added --enforce-signature option for eval, guide, and fix modules
+    - Added <content> entity support (OVAL/yamlfilecontent)
+    - Allowed to clamp mtime to SOURCE_DATE_EPOCH
+    - Added severity and role attributes
+    - Added support for requires/conflicts elements of the Rule and Group (XCCDF)
+    - Added Kubernetes remediation to HTML report
+  - Maintenance, bug fix
+    - Fixed CMake warnings
+    - Made 'gpfs', 'proc' and 'sysfs' filesystems non-local
+    - Fixed handling of '--arg=val'-styled common options
+    - Documented used environment variables
+    - Updated man page and help texts
+    - Added --skip-validation option synonym for --skip-valid
+    - Fixed behavior of StateType operator
+    - Fixed some of the coverity warnings
+    - Ignoring namespace in XPath expressions
+    - Fixed how oval_probe_ext_eval checks absence of the response from the probe (obtrusive data warning)
+    - Described SWID tags detection
+    - Improved documentation about --stig-viewer option
+    - File probe behaviour fixed (symlink traversal now behaves as defined by OVAL)
+    - Fixed multiple segfaults and broken test in --stig-viewer feature
+    - Added dpkg version comparison algorithm
+    - Pluged some memory leaks
+    - Fixed TestResult/benchmark/@href attribute
+    - Fixed memory allocation
+    - Fixed field names for cases where key selection section is followed by a set section (probes/yamfilecontent)
+    - Changing hard coded libperl path in favor of FindPerlLibs method
+    - Check local filesystems when using 'filepath' element
+
+openscap-1.3.4                                                  01-10-2020
+  - New features
+    - Add support for FreeBSD
+    - Make a use of HTTP header content-encoding: gzip if available
+    - Improved yamlfilecontent: updated yaml-filter, extend the schema and probe to be able to work with a set of values in maps
+  - Maintenance, bug fixes
+    - Fixed a lot of warnings (GCC and Clang)
+    - Cmake now can find mingw32-winpthreads
+    - A lot of memory managements fixes
+    - A lot of memory leaks have been plugged
+    - Refactored rpmverifyfile probe and fixed memory leaks
+    - Fixed SEGFAULT caused by recursive and circular dependencies between OVAL definitions
+    - Fixed DOM representation of the profile platform
+    - Test suit: better portability, more granularity in results, inclusion of memory-related tests
+    - Compatibility with uClibc
+    - Local and remote file system detection method was improved
+    - Fixed dpkginfo probe to use pkgCacheFile instead of manually opening the cache
+    - Make the report a valid HTML5 document
+    - oscap-podman: force unmount and removal of temporary container
+    - Fixed unwanted recursion in file probe
+    - oscap-docker: fixed for the case when Atomic is not present
+
+openscap-1.3.3                                                  29-04-2020
+  - New features
+    - Added a Python script that can be used for CLI tailoring (autotailor)
+    - Added timezone to XCCDF TestResult start/end time
+    - Added yamlfilecontent independent probe (proposal/draft implementation),
+      see https://github.com/OVAL-Community/OVAL/issues/91 for more information
+    - Introduced `urn:xccdf:fix:script:kubernetes` fix type in XCCDF
+    - Added ability to generate `machineconfig` fix
+  - Maintenance, bug fixes
+    - utils/oscap-podman: Detect ambiguous scan target
+    - Fixed #170: The rpmverifyfile probe can't verify files from '/bin' directory
+    - The data system_info probe return for offline and online modes is consistent and actual
+    - Prevent crashes when complicated regexes are executed in textfilecontent58 probe
+    - Fixed #1512: Severity refinement lost in generated guide
+    - Fixed #1453: Pointer lost in Swig API
+    - Evaluation Characteristics of the XCCDF report are now consistent with OVAL entities
+      from system_info probe
+    - Fixed filepath pattern matching in offline mode in textfilecontent58 probe
+    - Fixed infinite recursion in systemdunitdependency probe
+    - Fixed the case when CMake couldn't find libacl or xattr.h
+
 openscap-1.3.2                                                  13-01-2020
   - New features
     - Offline mode support for environmentvariable58 probe

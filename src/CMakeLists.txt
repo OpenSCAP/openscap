@@ -81,7 +81,7 @@ set_target_properties(openscap PROPERTIES
 	C_VISIBILITY_PRESET hidden
 )
 
-target_link_libraries(openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${XMLSEC_LIBRARIES} ${OPENSSL_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${PCRE2_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 if (BZIP2_FOUND)
 	target_link_libraries(openscap ${BZIP2_LIBRARIES})
 endif()
@@ -114,9 +114,6 @@ if(BLKID_FOUND)
 endif()
 if(DBUS_FOUND)
 	target_link_libraries(openscap ${DBUS_LIBRARIES})
-endif()
-if(APTPKG_FOUND)
-	target_link_libraries(openscap ${APTPKG_LIBRARIES})
 endif()
 if(ACL_FOUND)
 	target_link_libraries(openscap ${ACL_LIBRARY})

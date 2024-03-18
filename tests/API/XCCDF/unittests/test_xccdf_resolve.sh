@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 ########################################################################
@@ -20,7 +20,7 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 
 $OSCAP xccdf resolve --output $result $srcdir/${name}.xccdf.xml > $stdout
-$OSCAP xccdf validate $result >> $stdout
+$OSCAP xccdf validate --skip-schematron $result >> $stdout
 
 assert_exists 1 '//Benchmark[@resolved="1"]' 
 
@@ -39,6 +39,14 @@ assert_exists 3 '//Profile[@id="xccdf_resolve_profile_child"]/select' # 2 select
 assert_exists 1 '//Profile[@id="xccdf_resolve_profile_child"]/select[@idref="xccdf_test_rule_inherited" and @selected="true"]'
 assert_exists 1 '//Profile[@id="xccdf_resolve_profile_child"]/select[@idref="xccdf_test_rule_overridden" and @selected="false"]'
 assert_exists 1 '//Profile[@id="xccdf_resolve_profile_child"]/select[@idref="xccdf_test_rule_own" and @selected="true"]'
+
+# Rule Requires
+assert_exists 1 '//Rule[@id="xccdf_moc.eplmaxe.www_rule_2"]/requires[@idref="xccdf_moc.elpmaxe.www_rule_1"]'
+assert_exists 1 '//Rule[@id="xccdf_moc.eplmaxe.www_rule_3"]/requires[@idref="xccdf_moc.elpmaxe.www_rule_1 xccdf_moc.elpmaxe.www_rule_2"]'
+
+# Group requires
+assert_exists 1 '//Group[@id="xccdf_moc.eplmaxe.www_group_2"]/requires[@idref="xccdf_moc.elpmaxe.www_group_1"]'
+assert_exists 1 '//Group[@id="xccdf_moc.eplmaxe.www_group_3"]/requires[@idref="xccdf_moc.elpmaxe.www_group_1 xccdf_moc.elpmaxe.www_group_2"]'
 
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 rm $result

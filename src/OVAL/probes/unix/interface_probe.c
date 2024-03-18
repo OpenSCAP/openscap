@@ -60,8 +60,15 @@
 
 #include <probe-api.h>
 #include <probe/entcmp.h>
+#include "interface_probe.h"
 
-#if defined(OS_LINUX)
+#if defined(OS_FREEBSD)
+#include <netinet/in.h>
+
+#define NUM_IF_FLAGS 24
+#endif
+
+#if defined(OS_LINUX) || defined(OS_FREEBSD)
 #include <unistd.h>
 #include <sys/socket.h>
 #include <ifaddrs.h>
@@ -71,7 +78,6 @@
 #include <net/if.h>
 #include <net/if_arp.h>
 #include <arpa/inet.h>
-#include "interface_probe.h"
 
 static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp, int fd)
 {
@@ -84,12 +90,15 @@ static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp, int fd)
 
 	memset(&ifr, 0, sizeof(struct ifreq));
 	strcpy(ifr.ifr_name, ifa->ifa_name);
+
+#if defined(OS_LINUX)
 	if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
 		memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
 		snprintf(mac_buf, sizeof(mac_buf),
 			"%02X:%02X:%02X:%02X:%02X:%02X",
 			mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 		switch (ifr.ifr_hwaddr.sa_family) {
+
 		case ARPHRD_ETHER:
 			*tp = "ARPHRD_ETHER";
 			break;
@@ -112,11 +121,27 @@ static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp, int fd)
 			*tp = "ARPHRD_VOID";
 			break;
 		}
+#elif defined(OS_FREEBSD)
+	if (ioctl(fd, SIOCGHWADDR, &ifr) >= 0) {
+		memcpy(mac, ifr.ifr_addr.sa_data, sizeof(mac));
+		snprintf(mac_buf, sizeof(mac_buf),
+			"%02X:%02X:%02X:%02X:%02X:%02X",
+			mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+		switch(ifr.ifr_addr.sa_family) {
+
+		case ARPHRD_ETHER:
+			*tp = "ARPHRD_ETHER";
+			break;
+		case ARPHRD_INFINIBAND:
+			*tp = "ARPHDR_INFINIBAND";
+			break;
+		}
+#endif
 	} else
 		mac_buf[0] = 0;
 }
 
-
+#if defined(OS_LINUX)
 static void get_flags(const struct ifaddrs *ifa, char ***fp) {
 	static char *flags_buf[17];
 	int i = 0;
@@ -193,6 +218,93 @@ static void get_flags(const struct ifaddrs *ifa, char ***fp) {
 	flags_buf[i] = NULL;
 
 }
+#elif defined(OS_FREEBSD)
+static void get_flags(const struct ifaddrs *ifa, char ***fp) {
+        int i = 0;
+        static char *flags_buf[NUM_IF_FLAGS + 1];
+        *fp = flags_buf;
+
+        if (ifa != NULL) {
+                /* follow values from net/if.h */
+                if (ifa->ifa_flags & IFF_UP)
+                        flags_buf[i++] = "UP";
+
+                if (ifa->ifa_flags & IFF_BROADCAST)
+                        flags_buf[i++] = "BROADCAST";
+
+                if (ifa->ifa_flags & IFF_DEBUG)
+                        flags_buf[i++] = "DEBUG";
+
+                if (ifa->ifa_flags & IFF_LOOPBACK)
+                        flags_buf[i++] = "LOOPBACK";
+
+                if (ifa->ifa_flags & IFF_POINTOPOINT)
+                        flags_buf[i++] = "POINTOPOINT";
+
+		/* Defined on FreeBSD 13+ */
+#ifdef IFF_KNOWSEPOCH
+                if (ifa->ifa_flags & IFF_KNOWSEPOCH)
+                        flags_buf[i++] = "KNOWSEPOCH";
+#endif
+
+                if (ifa->ifa_flags & IFF_DRV_RUNNING)
+                        flags_buf[i++] = "DRV_RUNNING";
+
+                if (ifa->ifa_flags & IFF_NOARP)
+                        flags_buf[i++] = "NOARP";
+
+                if (ifa->ifa_flags & IFF_PROMISC)
+                        flags_buf[i++] = "PROMISC";
+
+                if (ifa->ifa_flags & IFF_ALLMULTI)
+                        flags_buf[i++] = "ALLMULTI";
+
+                if (ifa->ifa_flags & IFF_DRV_OACTIVE)
+                        flags_buf[i++] = "DRV_OACTIVE";
+
+                if (ifa->ifa_flags & IFF_SIMPLEX)
+                        flags_buf[i++] = "SIMPLEX";
+
+                if (ifa->ifa_flags & IFF_LINK0)
+                        flags_buf[i++] = "LINK0";
+
+                if (ifa->ifa_flags & IFF_LINK1)
+                        flags_buf[i++] = "LINK1";
+
+                if (ifa->ifa_flags & IFF_LINK2)
+                        flags_buf[i++] = "LINK2";
+
+                if (ifa->ifa_flags & IFF_ALTPHYS)
+                        flags_buf[i++] = "ALTPHYS";
+
+                if (ifa->ifa_flags & IFF_MULTICAST)
+                        flags_buf[i++] = "MULTICAST";
+
+                if (ifa->ifa_flags & IFF_CANTCONFIG)
+                        flags_buf[i++] = "CANTCONFIG";
+
+                if (ifa->ifa_flags & IFF_PPROMISC)
+                        flags_buf[i++] = "PPROMISC";
+
+                if (ifa->ifa_flags & IFF_MONITOR)
+                        flags_buf[i++] = "MONITOR";
+
+                if (ifa->ifa_flags & IFF_STATICARP)
+                        flags_buf[i++] = "STATICARP";
+
+                if (ifa->ifa_flags & IFF_DYING)
+                        flags_buf[i++] = "DYING";
+
+                if (ifa->ifa_flags & IFF_RENAMING)
+                        flags_buf[i++] = "RENAMING";
+
+                if (ifa->ifa_flags & IFF_NOGROUP)
+                        flags_buf[i++] = "NOGROUP";
+	}
+
+	flags_buf[i] = NULL;
+}
+#endif /* end of #ifdef for get_flags */
 
 static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 {
@@ -290,8 +402,8 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 		else {
 			struct sockaddr_in6 *sin6p;
 			char host_tmp[NI_MAXHOST];
-			int bit, byte, prefix = 0;
-			u_int32_t tmp;
+			int byte, prefix = 0;
+			u_int32_t bit, tmp;
 			int host_len;
 
 			sin6p = (struct sockaddr_in6 *) ifa->ifa_addr;
@@ -314,6 +426,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 			/* count prefix */
 			sin6p = (struct sockaddr_in6 *) ifa->ifa_netmask;
 
+#if defined(OS_LINUX)
 			for (byte = 0; byte < 4 && sin6p->sin6_addr.s6_addr32[byte] == 0xffffffff; byte++) {
 			        prefix += 32;
 			}
@@ -322,7 +435,16 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 			        for (bit = 31; tmp & (1 << bit); bit--)
 			                prefix++;
 			}
-
+#elif defined(OS_FREEBSD)
+			for (byte = 0; byte < 4 && sin6p->sin6_addr.__u6_addr.__u6_addr32[byte] == 0xffffffff; byte++) {
+				prefix += 32;
+			}
+			if (byte < 4) {
+				tmp = ntohl(sin6p->sin6_addr.__u6_addr.__u6_addr32[byte]);
+				for (bit = 31; tmp & (1 << bit); bit--)
+					prefix++;
+			}
+#endif
 			host_len = strlen(host);
 			if (host_len + 1 + 11 >= NI_MAXHOST) {
 				/*

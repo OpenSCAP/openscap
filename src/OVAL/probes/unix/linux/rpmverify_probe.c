@@ -39,7 +39,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <pcre.h>
 
 #include "rpm-helper.h"
 
@@ -54,6 +53,7 @@
 
 #include <probe/probe.h>
 #include <probe/option.h>
+#include "common/oscap_pcre.h"
 
 #include "rpmverify_probe.h"
 
@@ -83,18 +83,19 @@ static int rpmverify_collect(probe_ctx *ctx,
 	rpmdbMatchIterator match;
         rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
 	Header pkgh;
-        pcre *re = NULL;
+	oscap_pcre_t *re = NULL;
 	int  ret = -1;
 
         /* pre-compile regex if needed */
         if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
-                const char *errmsg;
+                char *errmsg;
                 int erroff;
 
-                re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
+                re = oscap_pcre_compile(file, OSCAP_PCRE_OPTS_UTF8, &errmsg,  &erroff);
 
                 if (re == NULL) {
                         /* TODO */
+                        oscap_pcre_err_free(errmsg);
                         return (-1);
                 }
         }
@@ -213,7 +214,7 @@ static int rpmverify_collect(probe_ctx *ctx,
         ret   = 0;
 ret:
         if (re != NULL)
-                pcre_free(re);
+                oscap_pcre_free(re);
 
         RPMVERIFY_UNLOCK;
         return (ret);
@@ -234,6 +235,18 @@ void *rpmverify_probe_init(void)
                 dD("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
                 return (NULL);
         }
+
+        /*
+        * Fedora >=36 changed the default dbpath in librpm from /var/lib/rpm to /usr/lib/sysimage/rpm
+        * See: https://fedoraproject.org/wiki/Changes/RelocateRPMToUsr
+        * Therefore, when running openscap on a Fedora >=36 system scanning another systems (such as RHEL, SLES, Fedora<36)
+        * openscap's librpm will try to read the rpm db from /usr/lib/sysimage/rpm which doesn't exist and therefore won't work.
+        * In implementing this change, /var/lib/rpm is still a symlink to /usr/lib/sysimage/rpm
+        * so /var/lib/rpm still works. So /var/lib/rpm is a dbpath that will work on all systems.
+        * Therefore, set the dbpath to be /var/lib/rpm, allow openscap running on any system to scan any system.
+        */
+        rpmPushMacro(NULL, "_dbpath", NULL, "/var/lib/rpm", RMIL_CMDLINE);
+
 	struct rpm_probe_global *g_rpm = malloc(sizeof(struct rpm_probe_global));
 	g_rpm->rpmts = rpmtsCreate();
 

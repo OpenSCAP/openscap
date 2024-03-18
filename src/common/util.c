@@ -25,17 +25,19 @@
 #include <config.h>
 #endif
 
+#include <fcntl.h>
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <math.h>
-#include <pcre.h>
+#include <sys/stat.h>
 
 #include "util.h"
 #include "_error.h"
 #include "oscap.h"
 #include "oscap_helpers.h"
+#include "oscap_pcre.h"
 #include "debug_priv.h"
 
 #ifdef OS_WINDOWS
@@ -47,7 +49,6 @@
 #endif
 
 #define PATH_SEPARATOR '/'
-#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 5000
 
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str)
 {
@@ -324,6 +325,9 @@ char *oscap_strerror_r(int errnum, char *buf, size_t buflen)
 #ifdef OS_WINDOWS
 	strerror_s(buf, buflen, errnum);
 	return buf;
+#elif defined(OS_FREEBSD)
+	strerror_r(errnum, buf, buflen);
+	return buf;
 #else
 	return strerror_r(errnum, buf, buflen);
 #endif
@@ -356,75 +360,20 @@ char *oscap_path_join(const char *path1, const char *path2)
 	return joined_path;
 }
 
-int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings) {
-	int i, ret, rc;
-	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
-	char **substrs;
-
-	// todo: max match count check
-
-	for (i = 0; i < ovector_len; ++i) {
-		ovector[i] = -1;
+#ifndef OS_WINDOWS
+FILE *oscap_fopen_with_prefix(const char *prefix, const char *path)
+{
+	FILE *fp;
+	if (prefix != NULL) {
+		char *path_with_prefix = oscap_sprintf("%s%s", prefix, path);
+		fp = fopen(path_with_prefix, "r");
+		free(path_with_prefix);
+	} else {
+		fp = fopen(path, "r");
 	}
-
-	struct pcre_extra extra;
-	extra.match_limit_recursion = OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT;
-	char *limit_str = getenv("OSCAP_PCRE_EXEC_RECURSION_LIMIT");
-	if (limit_str != NULL) {
-		unsigned long limit;
-		if (sscanf(limit_str, "%lu", &limit) == 1) {
-			extra.match_limit_recursion = limit;
-		}
-	}
-	extra.flags = PCRE_EXTRA_MATCH_LIMIT_RECURSION;
-#if defined(OS_SOLARIS)
-	rc = pcre_exec(re, &extra, str, strlen(str), *ofs, PCRE_NO_UTF8_CHECK, ovector, ovector_len);
-#else
-	rc = pcre_exec(re, &extra, str, strlen(str), *ofs, 0, ovector, ovector_len);
-#endif
-
-	if (rc < -1) {
-		dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%s'.", rc, str);
-		return rc;
-	} else if (rc == -1) {
-		/* no match */
-		return 0;
-	}
-
-	*ofs = (*ofs == ovector[1]) ? ovector[1] + 1 : ovector[1];
-
-	if (!want_substrs) {
-		/* just report successful match */
-		return 1;
-	}
-
-	ret = 0;
-	if (rc == 0) {
-		/* vector too small */
-		// todo: report partial results
-		rc = ovector_len / 3;
-	}
-
-	substrs = malloc(rc * sizeof (char *));
-	for (i = 0; i < rc; ++i) {
-		int len;
-		char *buf;
-
-		if (ovector[2 * i] == -1) {
-			continue;
-		}
-		len = ovector[2 * i + 1] - ovector[2 * i];
-		buf = malloc(len + 1);
-		memcpy(buf, str + ovector[2 * i], len);
-		buf[len] = '\0';
-		substrs[ret] = buf;
-		++ret;
-	}
-
-	*substrings = substrs;
-
-	return ret;
+	return fp;
 }
+#endif
 
 #ifdef OS_WINDOWS
 char *oscap_windows_wstr_to_str(const wchar_t *wstr)
@@ -464,3 +413,64 @@ char *oscap_windows_error_message(unsigned long error_code)
 	return error_message;
 }
 #endif
+
+int oscap_open_writable(const char *filename)
+{
+#ifdef OS_WINDOWS
+	int fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC, S_IREAD|S_IWRITE);
+#else
+	int fd = open(filename, O_WRONLY|O_CREAT|O_TRUNC,
+			S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+#endif
+	if (fd == -1) {
+		if (errno == EACCES) {
+			/* File already exists and we aren't allowed to create a new one
+			with the same name */
+#ifdef OS_WINDOWS
+			fd = open(filename, O_WRONLY|O_TRUNC, S_IREAD|S_IWRITE);
+#else
+			fd = open(filename, O_WRONLY|O_TRUNC,
+					S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
+#endif
+		}
+		if (fd == -1) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP,
+					"Could not open output file '%s': %s",
+					filename, strerror(errno));
+			return -1;
+		}
+	}
+	return fd;
+}
+
+bool oscap_path_startswith(const char *path, const char *prefix)
+{
+	bool res = true;
+	const char *del = "/";
+	char *path_dup = oscap_strdup(path);
+	char **path_split = oscap_split(path_dup, del);
+	char *prefix_dup = oscap_strdup(prefix);
+	char **prefix_split = oscap_split(prefix_dup, del);
+	int i = 0, j = 0;
+	while (prefix_split[i] && path_split[j]) {
+		if (!strcmp(prefix_split[i], "")) {
+			++i;
+			continue;
+		}
+		if (!strcmp(path_split[j], "")) {
+			++j;
+			continue;
+		}
+		if (strcmp(prefix_split[i], path_split[j])) {
+			res = false;
+			break;
+		}
+		++i;
+		++j;
+	}
+	free(path_dup);
+	free(path_split);
+	free(prefix_dup);
+	free(prefix_split);
+	return res;
+}

@@ -68,6 +68,7 @@
 #include <oval_types.h>
 #include "sexp-types.h"
 #include "oscap_export.h"
+#include "list.h"
 
 /*
  * items
@@ -537,5 +538,12 @@ OSCAP_API oval_schema_version_t probe_obj_get_platform_schema_version(const SEXP
  * @returns a list of masked entities
  */
 OSCAP_API SEXP_t *probe_obj_getmask(SEXP_t *obj);
+
+/**
+ * Check if the given path matches any of the paths in the blocked paths list
+ * @param path path to be examined
+ * @param blocked_paths list of blocked paths
+ */
+OSCAP_API bool probe_path_is_blocked(const char *path, struct oscap_list *blocked_paths);
 
 /// @}

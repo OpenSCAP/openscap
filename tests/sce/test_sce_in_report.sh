@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Author:
 #	Jan Černý <jcerny@redhat.com>

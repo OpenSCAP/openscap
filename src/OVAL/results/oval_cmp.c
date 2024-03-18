@@ -104,15 +104,15 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 		intmax_t state_val, syschar_val;
 
 		if (!cstr_to_intmax(state_data, &state_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
-				"Conversion of the string \"%s\" to an integer (%u bits) failed: %s",
+			dW(
+				"Conversion of the string \"%s\" to an integer (%zu bits) failed: %s",
 				state_data, sizeof(intmax_t)*8, strerror(errno));
 			return OVAL_RESULT_ERROR;
 		}
 
 		if (!cstr_to_intmax(sys_data, &syschar_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
-				"Conversion of the string \"%s\" to an integer (%u bits) failed: %s",
+			dW(
+				"Conversion of the string \"%s\" to an integer (%zu bits) failed: %s",
 				sys_data, sizeof(intmax_t)*8, strerror(errno));
 			return OVAL_RESULT_ERROR;
 		}
@@ -121,14 +121,14 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 		double state_val, sys_val;
 
 		if (!cstr_to_double(state_data, &state_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			dW(
 				"Conversion of the string \"%s\" to a floating type (double) failed: %s",
 				state_data, strerror(errno));
 			return OVAL_RESULT_ERROR;
 		}
 
 		if (!cstr_to_double(sys_data, &sys_val)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL,
+			dW(
 				"Conversion of the string \"%s\" to a floating type (double) failed: %s",
 				sys_data, strerror(errno));
 			return OVAL_RESULT_ERROR;
@@ -145,7 +145,7 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
 		return oval_evr_string_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_DEBIAN_EVR_STRING) {
-		return oval_evr_string_cmp(state_data, sys_data, operation);
+		return oval_debian_evr_string_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_VERSION) {
 		return oval_versiontype_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_IPV4ADDR) {
@@ -160,10 +160,4 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 
 	oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid OVAL data type: %d.", state_data_type);
 	return OVAL_RESULT_ERROR;
-}
-
-oval_result_t oval_ent_cmp_str(char *state_data, oval_datatype_t state_data_type, struct oval_sysent *sysent, oval_operation_t operation)
-{
-	const char *sys_data = oval_sysent_get_value(sysent);
-	return oval_str_cmp_str(state_data, state_data_type, sys_data, operation);
 }

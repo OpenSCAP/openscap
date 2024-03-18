@@ -1,14 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
 set -o pipefail
 
 name=$(basename $0 _ds.sh)
-sds=$(mktemp -t ${name}.sds.XXXXXX)
 xccdf=${name}.xccdf.xml
-stderr=$(mktemp -t ${name}_ds.err.XXXXXX)
-result=$(mktemp -t ${name}_ds.out.XXXXXX)
+sds=$(make_temp_file /tmp ${name}.sds)
+stderr=$(make_temp_file /tmp ${name}_ds.err)
+result=$(make_temp_file /tmp ${name}_ds.out)
+
 echo "sds file: $sds"
 echo "Stderr file = $stderr"
 echo "Results file = $result"
@@ -34,7 +35,9 @@ $OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
 grep "$line1" $result
 grep "$line2" $result
 grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3"
-[ "`grep -v "$line1" $result | grep -v "$line2" | sed 's/\W//g'`"x == x ]
+
+[ "`grep -v "$line1" $result | grep -v "$line2" | xsed 's/\W//g'`"x == x ]
+
 :> $result
 
 $OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
@@ -45,6 +48,7 @@ grep "$line1" $result
 grep "$line2" $result
 grep "$line3" $result
 grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3"
-[ "`grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3" | sed 's/\W//g'`"x == x ]
+
+[ "`grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3" | xsed 's/\W//g'`"x == x ]
 
 rm $result $sds

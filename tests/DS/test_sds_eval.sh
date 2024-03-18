@@ -12,6 +12,7 @@ set -e -o pipefail
 
 function test_eval {
     probecheck "rpminfo" || return 255
+    [ -e "/var/lib/rpm" ] || return 255
     local stderr=$(mktemp -t ${name}.out.XXXXXX)
     $OSCAP xccdf eval "${srcdir}/$1" 2> $stderr
     diff /dev/null $stderr; rm $stderr
@@ -95,6 +96,9 @@ function test_eval_complex()
 	local result="$arf"
 	assert_exists 1 '//rule-result'
 	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second" and @role="full"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second" and @severity="unknown"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second" and @weight]'
 	assert_exists 1 '//rule-result/result'
 	assert_exists 1 '//rule-result/result[text()="pass"]'
 	rm $arf

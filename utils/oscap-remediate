@@ -1,0 +1,142 @@
+#!/bin/bash
+
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2021 Red Hat Inc., Durham, North Carolina.
+#
+# Evgenii Kolesnikov <ekolesni@redhat.com>
+#
+# This is OpenSCAP's offline system remediation service wrapper script and
+# it is supposed to be executed by systemd. Not sutable for manual invocation.
+
+
+UCHAR_MAX=255
+SYSTEMD_SYSTEM_UPDATE_LINK="/system-update"
+OSCAP_REMEDIATE_CONF_BASENAME="oscap-remediate-offline.conf.sh"
+
+
+display() {
+	# Plymouth does not like messages longer than UCHAR_MAX
+	plymouth display-message --text="${1:0:${UCHAR_MAX}}"
+}
+
+log() {
+	echo "${@}"
+}
+
+err() {
+	echo "${@}" >&2
+}
+
+die() {
+	err "${@}"
+	display "OpenSCAP has failed to evaluate or remediate the system, please check the journal for the details."$'\n'"The system will now restart..."
+	sleep 5
+	systemctl reboot
+	exit 1
+}
+
+
+config=$(readlink -f "${SYSTEMD_SYSTEM_UPDATE_LINK}")
+
+if [[ "$(basename ${config})" != "${OSCAP_REMEDIATE_CONF_BASENAME}" ]]; then
+	log "The ${SYSTEMD_SYSTEM_UPDATE_LINK} symlink does not point to an oscap offline remediation configuration file, ignoring"
+	exit 0
+fi
+
+rm -f "${SYSTEMD_SYSTEM_UPDATE_LINK}"
+log "Removed ${SYSTEMD_SYSTEM_UPDATE_LINK}"
+log "Found the config file: ${config}"
+
+source "$config"
+
+
+log "OSCAP_REMEDIATE_DS: ${OSCAP_REMEDIATE_DS}"
+
+log "OSCAP_REMEDIATE_PROFILE_ID: ${OSCAP_REMEDIATE_PROFILE_ID}"
+log "OSCAP_REMEDIATE_DATASTREAM_ID: ${OSCAP_REMEDIATE_DATASTREAM_ID}"
+log "OSCAP_REMEDIATE_XCCDF_ID: ${OSCAP_REMEDIATE_XCCDF_ID}"
+log "OSCAP_REMEDIATE_BENCHMARK_ID: ${OSCAP_REMEDIATE_BENCHMARK_ID}"
+
+log "OSCAP_REMEDIATE_TAILORING: ${OSCAP_REMEDIATE_TAILORING}"
+log "OSCAP_REMEDIATE_TAILORING_ID: ${OSCAP_REMEDIATE_TAILORING_ID}"
+
+log "OSCAP_REMEDIATE_ARF_RESULT: ${OSCAP_REMEDIATE_ARF_RESULT}"
+log "OSCAP_REMEDIATE_HTML_REPORT: ${OSCAP_REMEDIATE_HTML_REPORT}"
+
+log "OSCAP_REMEDIATE_VERBOSE_LOG: ${OSCAP_REMEDIATE_VERBOSE_LOG}"
+log "OSCAP_REMEDIATE_VERBOSE_LEVEL: ${OSCAP_REMEDIATE_VERBOSE_LEVEL}"
+
+
+[[ -r "${OSCAP_REMEDIATE_DS}" ]] || {
+	die "The data stream file does not exists: ${OSCAP_REMEDIATE_DS}"
+}
+
+[[ -n "${OSCAP_REMEDIATE_PROFILE_ID}" ]] || {
+	die "The profile identifier is not defined"
+}
+
+[[ -z "${OSCAP_REMEDIATE_TAILORING}" || -r "${OSCAP_REMEDIATE_TAILORING}" ]] || {
+	die "The tailoring file does not exists: ${OSCAP_REMEDIATE_TAILORING}"
+}
+
+oscap xccdf validate --skip-schematron "${OSCAP_REMEDIATE_DS}" || {
+	die "Invalid data stream file: ${OSCAP_REMEDIATE_DS}"
+}
+
+profile=${OSCAP_REMEDIATE_PROFILE_ID}
+profile_id_arg="--profile=${OSCAP_REMEDIATE_PROFILE_ID}"
+profile_title_line=$(oscap info "${profile_id_arg}" "${OSCAP_REMEDIATE_DS}" | grep Title) || {
+	die "Can not find the profile: ${profile}"
+}
+profile_title=${profile_title_line#*Title: }
+log "Profile: ${profile} (${profile_title})"
+
+args+=( ${OSCAP_REMEDIATE_VERBOSE_LOG:+"--verbose-log-file=${OSCAP_REMEDIATE_VERBOSE_LOG}"} )
+# We don't want to create havok in the output, so no verbose messages unless they are redirected
+args+=( ${OSCAP_REMEDIATE_VERBOSE_LOG:+"--verbose=${OSCAP_REMEDIATE_VERBOSE_LEVEL:-INFO}"} )
+args+=( "xccdf" )
+args+=( "eval" )
+args+=( "${profile_id_arg}" )
+args+=( ${OSCAP_REMEDIATE_DATASTREAM_ID:+"--datastream-id=${OSCAP_REMEDIATE_DATASTREAM_ID}"} )
+args+=( ${OSCAP_REMEDIATE_BENCHMARK_ID:+"--datastream-id=${OSCAP_REMEDIATE_BENCHMARK_ID}"} )
+args+=( ${OSCAP_REMEDIATE_XCCDF_ID:+"--xccdf-id=${OSCAP_REMEDIATE_XCCDF_ID}"} )
+args+=( ${OSCAP_REMEDIATE_TAILORING:+"--tailoring-file=${OSCAP_REMEDIATE_TAILORING}"} )
+args+=( ${OSCAP_REMEDIATE_TAILORING_ID:+"--tailoring-id=${OSCAP_REMEDIATE_TAILORING_ID}"} )
+args+=( ${OSCAP_REMEDIATE_ARF_RESULT:+"--results-arf=${OSCAP_REMEDIATE_ARF_RESULT}"} )
+args+=( ${OSCAP_REMEDIATE_HTML_REPORT:+"--report=${OSCAP_REMEDIATE_HTML_REPORT}"} )
+args+=( "--progress-full" )
+args+=( "--remediate" )
+args+=( "${OSCAP_REMEDIATE_DS}" )
+log "Args: ${args[*]}"
+
+# Now we are good to go
+header="OpenSCAP is checking the system for compliance using"$'\n'"${profile_title}"$'\n\n'"Evaluating..."
+display "$header"
+
+while read -r line; do
+	if [[ "${line}" =~ "---evaluation" ]]; then
+		header="OpenSCAP is checking the system for compliance using"$'\n'"${profile_title}"$'\n\n'
+		log "Evaluating..."
+	elif [[ "${line}" =~ "---remediation" ]]; then
+		header="OpenSCAP is remediating the system using"$'\n'"${profile_title}"$'\n\n'
+		log "Remediating..."
+	else
+		# The line is: "rule_id|Rule Title|result"
+		IFS="|" read -ra fields <<< "${line}"
+		mark=$([[ "${fields[2]}" == "pass" ]] && echo "✔ " || echo "✘ ")
+
+		display "${header}${mark}${fields[1]}"
+		log "Rule: ${fields[0]} ${fields[2]}"
+	fi
+done < <(oscap "${args[@]}" || {
+	# Resturn value of 2 and more could mean partial remediation and whatnot,
+	# no reason to frighten the user in those cases.
+	if [[ $? == 1 ]]; then
+		die "Result: 1, processing error"
+	fi
+	err "Result: $?"
+})
+
+display "The system will now restart..."
+log "Done. Rebooting..."
+systemctl reboot

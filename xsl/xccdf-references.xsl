@@ -24,14 +24,13 @@ Authors:
 -->
 
 <xsl:stylesheet version="1.1"
-    xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
     xmlns:sceres="http://open-scap.org/page/SCE_result_file"
     xmlns:exsl="http://exslt.org/common"
     xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1"
-    exclude-result-prefixes="xsl cdf ovalres sceres exsl">
+    exclude-result-prefixes="xsl cdf ovalres sceres exsl arf">
 
 <!-- This selects all the references, even if the SDS has multiple benchmarks.
      That is fine because we will go through just the benchmark references
@@ -42,6 +41,9 @@ Authors:
 <xsl:template name="convert-reference-url-to-name">
     <xsl:param name="href"/>
     <xsl:choose>
+        <xsl:when test="key('reference_names', $href)">
+            <xsl:value-of select="key('reference_names', $href)"/>
+        </xsl:when>
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
             <xsl:text>NIST SP 800-53</xsl:text>
         </xsl:when>

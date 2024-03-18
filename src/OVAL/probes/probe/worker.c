@@ -32,6 +32,18 @@
 #include <pthread.h>
 #include <errno.h>
 
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
+#if defined(OS_OSX)
+/* XXX: please see https://github.com/OpenSCAP/openscap/pull/1626 for the
+ *      reason of explicitly defining an external here instead of simply
+ *      including the unistd.h header file.
+ */
+extern int chroot(const char *);
+#endif
+
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "entcmp.h"
@@ -202,6 +214,9 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 	/* varref_cnt = SEXP_number_getu_32(r0 = SEXP_list_nth(varrefs, 2)); */
 	ent_cnt = SEXP_number_getu_32(r1 = SEXP_list_nth(varrefs, 3));
 	SEXP_free(r1);
+
+	if (ent_cnt == UINT32_MAX)
+		return -1;
 
 	struct probe_varref_ctx *ctx = malloc(sizeof(struct probe_varref_ctx));
 	ctx->pi2 = SEXP_softref((SEXP_t *)probe_in);
@@ -957,6 +972,23 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 	return result;
 }
 
+static void _add_blocked_paths(struct oscap_list *bpaths)
+{
+	char *envar = getenv("OSCAP_PROBE_IGNORE_PATHS");
+	if (envar == NULL) {
+		return;
+	}
+#ifdef OS_WINDOWS
+	dW("OSCAP_PROBE_IGNORE_PATHS isn't effective on Windows.");
+#else
+	char **paths = oscap_split(envar, ":");
+	for (int i = 0; paths[i]; ++i) {
+		oscap_list_add(bpaths, strdup(paths[i]));
+	}
+	free(paths);
+#endif
+}
+
 /**
  * Worker thread function. This functions handles the evalution of objects and sets.
  * @param msg_in SEAP message with the request which contains the object to be evaluated
@@ -992,13 +1024,22 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 
 		} else if (probe->supported_offline_mode & PROBE_OFFLINE_CHROOT) {
 			probe->real_root_fd = open("/", O_RDONLY);
+			if (probe->real_root_fd == -1) {
+				dE("open(\"/\") failed: %s", strerror(errno));
+				return NULL;
+			}
 			probe->real_cwd_fd = open(".", O_RDONLY);
-			if (chdir(rootdir) != 0) {
-				dE("chdir failed: %s", strerror(errno));
+			if (probe->real_cwd_fd == -1) {
+				close(probe->real_root_fd);
+				dE("open(\".\") failed: %s", strerror(errno));
+				return NULL;
 			}
 
 			if (chroot(rootdir) != 0) {
 				dE("chroot failed: %s", strerror(errno));
+			}
+			if (chdir("/") != 0) {
+				dE("chdir failed: %s", strerror(errno));
 			}
 			/* NOTE: We're running in a different root directory.
 			 * Unless /proc, /sys are somehow emulated for the new
@@ -1042,6 +1083,26 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		SEXP_t *varrefs, *mask;
 
 		pctx.offline_mode = probe->selected_offline_mode;
+
+		pctx.max_mem_ratio = OSCAP_PROBE_MEMORY_USAGE_RATIO_DEFAULT;
+		char *max_ratio_str = getenv("OSCAP_PROBE_MEMORY_USAGE_RATIO");
+		if (max_ratio_str != NULL) {
+			double max_ratio = strtod(max_ratio_str, NULL);
+			if (max_ratio > 0)
+				pctx.max_mem_ratio = max_ratio;
+		}
+		pctx.collected_items = 0;
+		pctx.max_collected_items = OSCAP_PROBE_COLLECT_UNLIMITED;
+		char *max_collected_items_str = getenv("OSCAP_PROBE_MAX_COLLECTED_ITEMS");
+		if (max_collected_items_str != NULL) {
+			int max_collected_items = strtol(max_collected_items_str, NULL, 0);
+			if (max_collected_items > 0) {
+				pctx.max_collected_items = max_collected_items;
+			}
+		}
+
+		pctx.blocked_paths = oscap_list_new();
+		_add_blocked_paths(pctx.blocked_paths);
 
 		/* simple object */
                 pctx.icache  = probe->icache;
@@ -1102,6 +1163,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 				SEXP_free(pctx.filters);
 				SEXP_free(probe_in);
 				SEXP_free(mask);
+				oscap_list_free(pctx.blocked_paths, free);
 				*ret = PROBE_EUNKNOWN;
 				return (NULL);
 			}
@@ -1141,6 +1203,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		}
 
                 SEXP_free(pctx.filters);
+		oscap_list_free(pctx.blocked_paths, free);
 	}
 
 	SEXP_free(probe_in);

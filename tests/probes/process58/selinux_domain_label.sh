@@ -1,6 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e -o pipefail
+
+. $builddir/tests/test_common.sh
+probecheck "process58" || exit 255
 
 name=$(basename $0 .sh)
 result=$(mktemp ${name}.out.XXXXXX)
@@ -72,7 +75,7 @@ assert_exists 1 '/oval_system_characteristics/system_data/unix-sys:process58_ite
 assert_exists 1 '/oval_system_characteristics/system_data/unix-sys:process58_item/unix-sys:loginuid/@*'
 assert_exists 1 '/oval_system_characteristics/system_data/unix-sys:process58_item/unix-sys:loginuid[@datatype="int"]'
 
-if which getenforce; then
+if require selinuxenabled && selinuxenabled; then
 	# How do we query if selinux exists in a portable way?
 	# We rather fail if someone has selinux but not selinux-devel.
 	assert_exists 1 '/oval_system_characteristics/system_data/unix-sys:process58_item/unix-sys:selinux_domain_label'

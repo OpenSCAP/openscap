@@ -30,6 +30,10 @@
 #include "_seap.h"
 #include <probe-api.h>
 
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
 #include "common/debug_priv.h"
 #include "../SEAP/generic/rbt/rbt.h"
 #include "probe.h"
@@ -168,7 +172,7 @@ void *probe_input_handler(void *arg)
 							*/
 						dW("Attempt to evaluate an object "
 							"(ID=%u) " // TODO: 64b IDs
-							"which is already being evaluated by an other thread.", pair->pth->sid);
+							"which is already being evaluated by another thread.", pair->pth->sid);
 
 						free(pair->pth);
 						free(pair);
@@ -222,6 +226,7 @@ void *probe_input_handler(void *arg)
 
 				break;
 			}
+			SEXP_free(probe_in);
 		} else {
 			SEXP_VALIDATE(probe_out);
 

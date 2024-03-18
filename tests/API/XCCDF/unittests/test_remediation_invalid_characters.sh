@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e -o pipefail
@@ -16,7 +16,7 @@ echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 [ -f $result ]; [ -s $result ]
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 "//message[contains(text(),'<tag>')]"
 

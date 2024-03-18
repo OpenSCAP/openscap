@@ -5,7 +5,7 @@ include_directories(${PYTHON_INCLUDE_PATH})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_SWIG_FLAGS "-module" "openscap_py" "-py3")
+set(CMAKE_SWIG_FLAGS "-module" "openscap_py")
 if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
 	swig_add_module(openscap_py python ../openscap.i)
 else()
@@ -26,7 +26,7 @@ add_custom_target(python3_compile ALL DEPENDS ${PYTHON_COMPILED_FILES})
 
 if(NOT PYTHON_SITE_PACKAGES_INSTALL_DIR)
 execute_process(COMMAND
-	${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(True, prefix='${CMAKE_INSTALL_PREFIX}'))"
+	${PYTHON_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_path('platlib'))"
 	OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_INSTALL_DIR
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 )

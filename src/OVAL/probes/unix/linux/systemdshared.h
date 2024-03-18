@@ -35,38 +35,12 @@
 #include <config.h>
 #endif
 
-#include <dbus/dbus.h>
+#include <limits.h>
+#include <stdio.h>
 #include "common/debug_priv.h"
 #include "oscap_helpers.h"
+#include "oval_dbus.h"
 
-// Old versions of libdbus API don't have DBusBasicValue and DBus8ByteStruct
-// as a public typedefs.
-// These two typedefs were copied from libdbus 1.8 branch, see
-// http://cgit.freedesktop.org/dbus/dbus/tree/dbus/dbus-types.h?h=dbus-1.8#n137
-typedef struct
-{
-	dbus_uint32_t first32;
-	dbus_uint32_t second32;
-} _DBus8ByteStruct;
-
-typedef union
-{
-	unsigned char bytes[8]; /**< as 8 individual bytes */
-	dbus_int16_t  i16;   /**< as int16 */
-	dbus_uint16_t u16;   /**< as int16 */
-	dbus_int32_t  i32;   /**< as int32 */
-	dbus_uint32_t u32;   /**< as int32 */
-	dbus_bool_t   bool_val; /**< as boolean */
-#ifdef DBUS_HAVE_INT64
-	dbus_int64_t  i64;   /**< as int64 */
-	dbus_uint64_t u64;   /**< as int64 */
-#endif
-	_DBus8ByteStruct eight; /**< as 8-byte struct */
-	double dbl;          /**< as double */
-	unsigned char byt;   /**< as byte */
-	char *str;           /**< as char* (string, object path or signature) */
-	int fd;              /**< as Unix file descriptor */
-} _DBusBasicValue;
 
 static char *get_path_by_unit(DBusConnection *conn, const char *unit)
 {
@@ -83,6 +57,8 @@ static char *get_path_by_unit(DBusConnection *conn, const char *unit)
 		// if it hasn't been loaded yet.
 		"LoadUnit"
 	);
+	dD("LoadUnit: %s", unit);
+
 	if (msg == NULL) {
 		dD("Failed to create dbus_message via dbus_message_new_method_call!");
 		goto cleanup;
@@ -122,7 +98,7 @@ static char *get_path_by_unit(DBusConnection *conn, const char *unit)
 	}
 
 	if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_OBJECT_PATH) {
-		dD("Expected string argument in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
+		dD("Expected object path argument in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
 		goto cleanup;
 	}
 
@@ -150,7 +126,7 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 		"org.freedesktop.systemd1",
 		"/org/freedesktop/systemd1",
 		"org.freedesktop.systemd1.Manager",
-		"ListUnits"
+		"ListUnitFiles"
 	);
 	if (msg == NULL) {
 		dD("Failed to create dbus_message via dbus_message_new_method_call!");
@@ -199,17 +175,18 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 			goto cleanup;
 		}
 
-		DBusMessageIter unit_name;
-		dbus_message_iter_recurse(&unit_iter, &unit_name);
+		DBusMessageIter unit_full_path_and_name;
+		dbus_message_iter_recurse(&unit_iter, &unit_full_path_and_name);
 
-		if (dbus_message_iter_get_arg_type(&unit_name) != DBUS_TYPE_STRING) {
-			dD("Expected string as the first element in the unit struct. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&unit_name)));
+		if (dbus_message_iter_get_arg_type(&unit_full_path_and_name) != DBUS_TYPE_STRING) {
+			dD("Expected string as the first element in the unit struct. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&unit_full_path_and_name)));
 			goto cleanup;
 		}
 
 		_DBusBasicValue value;
-		dbus_message_iter_get_basic(&unit_name, &value);
-		char *unit_name_s = oscap_strdup(value.str);
+		dbus_message_iter_get_basic(&unit_full_path_and_name, &value);
+		char *unit_name_s = oscap_strdup(basename(value.str));
+		oscap_strrm(unit_name_s, "@");
 		int cbret = callback(unit_name_s, cbarg);
 		free(unit_name_s);
 		if (cbret != 0) {
@@ -230,133 +207,6 @@ cleanup:
 		dbus_message_unref(msg);
 
 	return ret;
-}
-
-static char *dbus_value_to_string(DBusMessageIter *iter)
-{
-	const int arg_type = dbus_message_iter_get_arg_type(iter);
-	if (dbus_type_is_basic(arg_type)) {
-		_DBusBasicValue value;
-		dbus_message_iter_get_basic(iter, &value);
-
-		switch (arg_type)
-		{
-			case DBUS_TYPE_BYTE:
-				return oscap_sprintf("%c", value.byt);
-
-			case DBUS_TYPE_BOOLEAN:
-				return oscap_strdup(value.bool_val ? "true" : "false");
-
-			case DBUS_TYPE_INT16:
-				return oscap_sprintf("%i", value.i16);
-
-			case DBUS_TYPE_UINT16:
-				return oscap_sprintf("%u", value.u16);
-
-			case DBUS_TYPE_INT32:
-				return oscap_sprintf("%i", value.i32);
-
-			case DBUS_TYPE_UINT32:
-				return oscap_sprintf("%u", value.u32);
-
-#ifdef DBUS_HAVE_INT64
-			case DBUS_TYPE_INT64:
-				return oscap_sprintf("%lli", value.i64);
-
-			case DBUS_TYPE_UINT64:
-				return oscap_sprintf("%llu", value.u64);
-#endif
-
-			case DBUS_TYPE_DOUBLE:
-				return oscap_sprintf("%g", value.dbl);
-
-			case DBUS_TYPE_STRING:
-			case DBUS_TYPE_OBJECT_PATH:
-			case DBUS_TYPE_SIGNATURE:
-				return oscap_strdup(value.str);
-
-			// non-basic types
-			//case DBUS_TYPE_ARRAY:
-			//case DBUS_TYPE_STRUCT:
-			//case DBUS_TYPE_DICT_ENTRY:
-			//case DBUS_TYPE_VARIANT:
-
-			//case DBUS_TYPE_UNIX_FD:
-			//	return oscap_sprintf("%i", value.fd);
-
-			default:
-				dD("Encountered unknown dbus basic type!");
-				return oscap_strdup("error, unknown basic type!");
-		}
-	}
-	else if (arg_type == DBUS_TYPE_ARRAY) {
-		DBusMessageIter array;
-		dbus_message_iter_recurse(iter, &array);
-
-		char *ret = NULL;
-		do {
-			char *element = dbus_value_to_string(&array);
-
-			if (element == NULL)
-				continue;
-
-			char *old_ret = ret;
-			if (old_ret == NULL)
-				ret = oscap_sprintf("%s", element);
-			else
-				ret = oscap_sprintf("%s, %s", old_ret, element);
-
-			free(old_ret);
-			free(element);
-		}
-		while (dbus_message_iter_next(&array));
-
-		return ret;
-	}/*
-	else if (arg_type == DBUS_TYPE_VARIANT) {
-		DBusMessageIter inner;
-		dbus_message_iter_recurse(iter, &inner);
-		return dbus_value_to_string(&inner);
-	}*/
-
-	return NULL;
-}
-
-static DBusConnection *connect_dbus()
-{
-	DBusConnection *conn = NULL;
-
-	DBusError err;
-	dbus_error_init(&err);
-
-	conn = dbus_bus_get(DBUS_BUS_SYSTEM, &err);
-	if (dbus_error_is_set(&err)) {
-		dD("Failed to get DBUS_BUS_SYSTEM connection - %s", err.message);
-		goto cleanup;
-	}
-	if (conn == NULL) {
-		dD("DBusConnection == NULL!");
-		goto cleanup;
-	}
-
-	dbus_bus_register(conn, &err);
-	if (dbus_error_is_set(&err)) {
-		dD("Failed to register on dbus - %s", err.message);
-		goto cleanup;
-	}
-
-cleanup:
-	dbus_error_free(&err);
-
-	return conn;
-}
-
-static void disconnect_dbus(DBusConnection *conn)
-{
-	// NOOP
-
-	// Connections retrieved via dbus_bus_get shall not be destroyed,
-	// these connections are shared.
 }
 
 #endif

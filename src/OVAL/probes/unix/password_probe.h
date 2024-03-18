@@ -25,6 +25,7 @@
 
 #include "probe-api.h"
 
+int password_probe_offline_mode_supported(void);
 int password_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_PASSWORD_PROBE_H */

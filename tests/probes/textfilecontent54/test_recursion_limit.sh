@@ -16,7 +16,7 @@ stderr=$(mktemp)
 
 $OSCAP oval eval --results $result $input > $stdout 2> $stderr
 
-grep -q "Function pcre_exec() failed to match a regular expression with return code -21" $stderr
+grep -q "Function oscap_pcre_exec() failed to match a regular expression with return code -21" $stderr
 
 assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:x:def:1" and @result="error"]'
 

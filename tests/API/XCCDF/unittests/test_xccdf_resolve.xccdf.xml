@@ -18,6 +18,26 @@
 		<title>Child profile</title>
 		<select idref="xccdf_test_rule_own" selected="true" /> 
 	</Profile>
+	<Group id="xccdf_moc.eplmaxe.www_group_1" selected="true">
+		<Rule selected="true" id="xccdf_moc.eplmaxe.www_rule_1">
+		</Rule>
+		<Rule selected="true" id="xccdf_moc.eplmaxe.www_rule_2">
+			<requires idref="xccdf_moc.elpmaxe.www_rule_1"/>
+		</Rule>
+		<Rule selected="true" id="xccdf_moc.eplmaxe.www_rule_3">
+			<requires idref="xccdf_moc.elpmaxe.www_rule_1 xccdf_moc.elpmaxe.www_rule_2"/>
+		</Rule>
+	</Group>
+	<Group id="xccdf_moc.eplmaxe.www_group_2" selected="true">
+		<requires idref="xccdf_moc.elpmaxe.www_group_1"/>
+		<Rule selected="true" id="xccdf_moc.eplmaxe.www_rule_4">
+		</Rule>
+	</Group>
+	<Group id="xccdf_moc.eplmaxe.www_group_3" selected="true">
+		<requires idref="xccdf_moc.elpmaxe.www_group_1 xccdf_moc.elpmaxe.www_group_2"/>
+		<Rule selected="true" id="xccdf_moc.eplmaxe.www_rule_5">
+		</Rule>
+	</Group>
 
 </Benchmark>
 

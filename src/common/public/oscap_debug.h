@@ -51,7 +51,7 @@ OSCAP_API void __oscap_dlprintf(int level, const char *file, const char *fn, siz
  * @param verbosity_level Verbosity level
  * @param filename Name of file used as output file for store debugging
  *                 and other additional information.
- * @return When an error occured, returns false, otherwise true.
+ * @return When an error occurred, returns false, otherwise true.
  */
 OSCAP_API bool oscap_set_verbose(const char *verbosity_level, const char *filename);
 
@@ -61,6 +61,13 @@ OSCAP_API bool oscap_set_verbose(const char *verbosity_level, const char *filena
  * @return Verbosity level number (or -1 on error).
  */
 OSCAP_API oscap_verbosity_levels oscap_verbosity_level_from_cstr(const char *level_name);
+
+/**
+ * Print an informational message (verbose level INFO) listing the values
+ * of all environment variables known by oscap.
+ * See the "List of accepted environment variables" section of the OpenSCAP User Manual.
+ */
+OSCAP_API void oscap_print_env_vars(void);
 
 #if defined(_WIN32)
 int setenv(const char *name, const char *value, int overwrite);

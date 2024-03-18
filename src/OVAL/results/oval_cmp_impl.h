@@ -30,16 +30,6 @@
 
 
 /**
- * Compare state entity (or variable/value) to sysent object collected from system.
- * This function does not support @datatype="record".
- * @param state_value Value defined within state/entity/value or variable/value
- * @param sysent Value collected from system
- * @operation Comparison type operation
- * @returns OVAL Result of comparison
- */
-oval_result_t oval_ent_cmp_str(char *state_data, oval_datatype_t state_data_type, struct oval_sysent *sysent, oval_operation_t operation);
-
-/**
  * Compare state entity (or variable/value) to data collected from system.
  * This function does not support @datatype="record".
  * @param state_data Value defined within state/entity/value or variable/value

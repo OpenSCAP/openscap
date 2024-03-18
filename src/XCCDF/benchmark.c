@@ -866,6 +866,19 @@ xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *benchmark, xccd
 	return XITEM(benchmark)->sub.benchmark.items_dict;
 }
 
+int xccdf_benchmark_include_tailored_profiles(struct xccdf_benchmark *benchmark)
+{
+	struct oscap_list *profiles = XITEM(benchmark)->sub.benchmark.profiles;
+	struct oscap_htable_iterator *it = oscap_htable_iterator_new(XITEM(benchmark)->sub.benchmark.profiles_dict);
+	while(oscap_htable_iterator_has_more(it)) {
+		struct xccdf_profile *profile = oscap_htable_iterator_next_value(it);
+		if (xccdf_profile_get_tailoring(profile)) {
+			oscap_list_add(profiles, xccdf_profile_clone(profile));
+		}
+	}
+	oscap_htable_iterator_free(it);
+	return 0;
+}
 
 struct xccdf_plain_text *xccdf_plain_text_new(void)
 {

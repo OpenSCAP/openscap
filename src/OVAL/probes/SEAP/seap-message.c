@@ -29,7 +29,6 @@
 #include "_sexp-types.h"
 #include "_seap-types.h"
 #include "_seap-message.h"
-#include "_sexp-manip.h"
 #include "debug_priv.h"
 
 SEAP_msg_t *SEAP_msg_new (void)
@@ -119,7 +118,10 @@ int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
         if (value != NULL)
                 SEXP_VALIDATE(value);
 #endif
-	msg->attrs = realloc(msg->attrs, sizeof(SEAP_attr_t) * (++msg->attrs_cnt));
+        void *new_attrs = realloc(msg->attrs, sizeof(SEAP_attr_t) * (++msg->attrs_cnt));
+        if (new_attrs == NULL)
+                return -1;
+        msg->attrs = new_attrs;
         msg->attrs[msg->attrs_cnt - 1].name  = strdup (attr);
         msg->attrs[msg->attrs_cnt - 1].value = (value != NULL ? SEXP_ref (value) : NULL);
 

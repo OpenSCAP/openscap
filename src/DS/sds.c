@@ -136,9 +136,8 @@ xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* id)
 	return NULL;
 }
 
-xmlNodePtr lookup_component_in_collection(xmlDocPtr doc, const char *component_id)
+xmlNodePtr lookup_component_in_collection(xmlNodePtr root, const char *component_id)
 {
-	xmlNodePtr root = xmlDocGetRootElement(doc);
 	xmlNodePtr component = NULL;
 	xmlNodePtr candidate = root->children;
 
@@ -249,7 +248,9 @@ static int ds_sds_register_xmlDoc(struct ds_sds_session *session, xmlDoc* doc, x
 
 	struct oscap_source *component_source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
 
-	ds_sds_session_register_component_source(session, relative_filepath, component_source);
+	if (ds_sds_session_register_component_source(session, relative_filepath, component_source) != 0) {
+		oscap_source_free(component_source);
+	}
 	return 0; // TODO: Return value of ds_sds_session_register_component_source(). (commit message)
 }
 
@@ -278,7 +279,8 @@ static xmlNodePtr ds_sds_get_component_root_by_id(xmlDoc *doc, const char* compo
 	if (component_id == NULL) {
 		component = (xmlNodePtr)doc;
 	} else {
-		component = lookup_component_in_collection(doc, component_id);
+		xmlNodePtr root = xmlDocGetRootElement(doc);
+		component = lookup_component_in_collection(root, component_id);
 		if (component == NULL)
 		{
 			oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
@@ -369,6 +371,71 @@ static char *compose_target_filename_dirname(const char *relative_filepath, cons
 	return target_filename_dirname;
 }
 
+static int _handle_disabled_downloads(struct ds_sds_session *session, const char *relative_filepath, const char *xlink_href, const char *component_id, const char *target_filename_dirname, const char *cref_id, const char *url)
+{
+	/*
+	 * If fetching remote resources isn't allowed by the user let's take a look
+	 * whether there exists a file whose file name is equal to @name attribute
+	 * of the uri element within the catalog of the previously processed
+	 * component-ref which pointed us to the currently processed component-ref.
+	 * Note that the @name attribute value has been passed as relative_filepath
+	 * in the recursive call of ds_sds_dump_component_ref_as. If such file
+	 * exists, we will assume that it's a local copy of the remote component
+	 * located at the URL defined in @xlink:href. This way people can provide
+	 * the previously downloaded component which might be useful on systems with
+	 * limited internet access. This behavior is allowed only when --local-files
+	 * is used on the command line.
+	 * See: https://bugzilla.redhat.com/show_bug.cgi?id=1970527
+	 * See: https://access.redhat.com/solutions/5185891
+	 */
+	const char *local_files = ds_sds_session_local_files(session);
+	if (local_files == NULL) {
+		static bool fetch_remote_resources_suggested = false;
+		if (!fetch_remote_resources_suggested) {
+			fetch_remote_resources_suggested = true;
+			ds_sds_session_remote_resources_progress(session)(true,
+				"WARNING: Datastream component '%s' points out to the remote '%s'. Use '--fetch-remote-resources' option to download it.\n",
+				cref_id, url);
+		}
+
+		ds_sds_session_remote_resources_progress(session)(true,
+			"WARNING: Skipping '%s' file which is referenced from datastream\n",
+			url);
+		// -2 means that remote resources were not downloaded
+		return -2;
+	}
+	char *local_filepath = oscap_path_join(local_files, relative_filepath);
+	struct stat sb;
+	if (stat(local_filepath, &sb) == 0) {
+		ds_sds_session_remote_resources_progress(session)(true,
+			"WARNING: Using local file '%s' instead of '%s'",
+			local_filepath, xlink_href);
+		struct oscap_source *source_file = oscap_source_new_from_file(local_filepath);
+		xmlDoc *doc = oscap_source_pop_xmlDoc(source_file);
+		if (doc == NULL) {
+			free(local_filepath);
+			oscap_source_free(source_file);
+			return -1;
+		}
+		xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
+
+		if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
+			oscap_source_free(source_file);
+			free(local_filepath);
+			return -1;
+		}
+		free(local_filepath);
+		oscap_source_free(source_file);
+		return 0;
+	}
+	ds_sds_session_remote_resources_progress(session)(true,
+		"WARNING: Data stream component '%s' points out to the remote '%s'. " \
+		"The option --local-files '%s' has been provided, but the file '%s' can't be used locally: %s.\n",
+		cref_id, url, local_files, local_filepath, strerror(errno));
+	free(local_filepath);
+	return -2;
+}
+
 static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* xlink_href, char *target_filename_dirname, const char* relative_filepath, char* cref_id, char **component_id)
 {
 	if (!xlink_href || strlen(xlink_href) < 2)
@@ -411,17 +478,9 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 		}
 
 		if (!ds_sds_session_fetch_remote_resources(session)) {
-			static bool fetch_remote_resources_suggested = false;
-
-			if (!fetch_remote_resources_suggested) {
-				fetch_remote_resources_suggested = true;
-				ds_sds_session_remote_resources_progress(session)(true, "WARNING: Datastream component '%s' points out to the remote '%s'. "
-									"Use '--fetch-remote-resources' option to download it.\n", cref_id, url);
-			}
-
-			ds_sds_session_remote_resources_progress(session)(true, "WARNING: Skipping '%s' file which is referenced from datastream\n", url);
-			// -2 means that remote resources were not downloaded
-			return -2;
+			return _handle_disabled_downloads(
+				session, relative_filepath, xlink_href, *component_id,
+				target_filename_dirname, cref_id, url);
 		}
 
 		return ds_dsd_dump_remote_component(url, *component_id, session, target_filename_dirname, relative_filepath);
@@ -448,7 +507,12 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 
 	char* component_id = NULL;
 
+	// make a copy of xlink_href because ds_sds_dump_component_by_href modifies its second argument
+	char *xlink_href_copy = oscap_strdup(xlink_href);
 	int ret = ds_sds_dump_component_by_href(session, xlink_href, target_filename_dirname, relative_filepath, cref_id, &component_id);
+	if (!oscap_htable_add(ds_sds_session_get_component_uris(session), cref_id, xlink_href_copy)) {
+		free(xlink_href_copy);
+	}
 
 	xmlFree(xlink_href);
 	xmlFree(cref_id);
@@ -621,9 +685,15 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 
 	const char *filepath = oscap_source_get_filepath(component_source);
 	struct stat file_stat;
-	if (stat(filepath, &file_stat) == 0)
-		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
-	else {
+	if (stat(filepath, &file_stat) == 0) {
+		time_t mtime;
+		char *source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+		if (source_date_epoch == NULL ||
+			(mtime = (time_t)strtoll(source_date_epoch, NULL, 10)) <= 0 ||
+			mtime > file_stat.st_mtime)
+			mtime = file_stat.st_mtime;
+		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&mtime));
+	} else {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Could not find file %s: %s.", filepath, strerror(errno));
 		// Return positive number, indicating less severe problem.
 		// Rationale: When an OVAL file is missing during a scan it it not considered
@@ -730,7 +800,7 @@ static int ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, con
 
 	if (xpathObj == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evaluate XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
 
 		return -1;
@@ -819,7 +889,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 			xpathCtx);
 	if (xpathObj == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evaluate XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
 
 		return -1;
@@ -951,7 +1021,7 @@ static int ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream
 
 	if (xpathObj == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evaluate XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
 
 		return -1;
@@ -1044,7 +1114,8 @@ static int ds_sds_compose_add_component_source_with_ref(xmlDocPtr doc, xmlNodePt
 		extended_component ? "e" : "", mangled_filepath);
 
 	int counter = 0;
-	while (lookup_component_in_collection(doc, comp_id) != NULL) {
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	while (lookup_component_in_collection(root, comp_id) != NULL) {
 		// While a component of the given ID already exists, generate a new one
 		free(comp_id);
 		comp_id = oscap_sprintf("scap_org.open-scap_%scomp_%s%03d",
@@ -1102,7 +1173,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 			oscap_sprintf("Could not find any datastream of id '%s'", datastream_id) :
 			oscap_sprintf("Could not find any datastream inside the file");
 
-		oscap_seterr(OSCAP_EFAMILY_XML, error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "%s", error);
 		free(error);
 		oscap_source_free(sds_source);
 		return 1;

@@ -24,13 +24,14 @@ Authors:
 -->
 
 <xsl:stylesheet version="1.1"
-    xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:cdf="http://checklists.nist.gov/xccdf/1.2">
+    xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
+    exclude-result-prefixes="xsl cdf">
 
 <xsl:param name="verbosity"/>
 
 <xsl:key name="values" match="//cdf:Value" use="concat(ancestor::cdf:Benchmark/@id, '|', @id)"/>
+<xsl:key name="reference_names" match="//cdf:Benchmark/cdf:reference" use="@href"/>
 
 <xsl:template name="rule-result-tooltip">
     <xsl:param name="ruleresult"/>
@@ -64,26 +65,6 @@ Authors:
     </xsl:choose>
 </xsl:template>
 
-<xsl:template match="cdf:reference" mode="reference">
-    <xsl:choose>
-        <xsl:when test="@href">
-            <a href="{@href}">
-                <xsl:choose>
-                    <xsl:when test="text()">
-                        <xsl:value-of select="text()"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="@href"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </a>
-        </xsl:when>
-        <xsl:otherwise>
-            <xsl:value-of select="text()"/>
-        </xsl:otherwise>
-    </xsl:choose>
-</xsl:template>
-
 <xsl:template name="item-title">
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
@@ -104,31 +85,91 @@ Authors:
 
 <xsl:template name="item-idents-refs">
     <xsl:param name="item"/>
-
     <xsl:if test="$item/cdf:ident">
+        <tr>
+            <td>
+                <span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span>
+            </td>
+            <td class="identifiers">
+                <xsl:call-template name="item-idents">
+                    <xsl:with-param name="item" select="$item"/>
+                </xsl:call-template>
+            </td>
+        </tr>
+    </xsl:if>
+    <xsl:if test="$item/cdf:reference">
+        <tr>
+            <td>
+                <span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span>
+            </td>
+            <td class="identifiers">
+                <xsl:call-template name="item-refs">
+                    <xsl:with-param name="item" select="$item"/>
+                </xsl:call-template>
+            </td>
+        </tr>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template name="item-idents">
+    <xsl:param name="item"/>
         <p>
-            <span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span>&#160;
             <xsl:for-each select="$item/cdf:ident">
                 <xsl:apply-templates mode="ident" select="."/>
                 <xsl:if test="position() != last()">, </xsl:if>
             </xsl:for-each>
         </p>
-    </xsl:if>
-    <xsl:if test="$item/cdf:reference">
-        <p>
-            <span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span>&#160;
-            <xsl:for-each select="$item/cdf:reference">
-                <xsl:apply-templates mode="reference" select="."/>
-                <xsl:if test="position() != last()">, </xsl:if>
-            </xsl:for-each>
-        </p>
-    </xsl:if>
+</xsl:template>
+
+<xsl:template name="item-refs">
+    <xsl:param name="item"/>
+    <table class="table table-striped table-bordered">
+        <xsl:for-each select="$item/cdf:reference">
+            <xsl:variable name="href" select="@href"/>
+            <xsl:if test="not(preceding-sibling::cdf:reference[@href=$href])">
+                <tr>
+                    <td>
+                        <a href="{@href}">
+                            <xsl:choose>
+                                <xsl:when test="key('reference_names', $href)">
+                                    <xsl:value-of select="key('reference_names', $href)"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="@href"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </a>
+                    </td>
+                    <td>
+                        <xsl:for-each select="$item/cdf:reference[@href=$href]">
+                            <xsl:value-of select="text()"/>
+                            <xsl:if test="position() != last()">, </xsl:if>
+                        </xsl:for-each>
+                    </td>
+                </tr>
+            </xsl:if>
+        </xsl:for-each>
+    </table>
 </xsl:template>
 
 <!-- works for both XCCDF Rule elements and rule-result elements -->
 <xsl:template name="item-severity">
     <xsl:param name="item"/>
-    <xsl:choose><xsl:when test="$item/@severity"><xsl:value-of select="$item/@severity"/></xsl:when><xsl:otherwise>unknown</xsl:otherwise></xsl:choose>
+    <xsl:param name="profile"/>
+    <xsl:variable name="refine-rule" select="$profile/cdf:refine-rule[@idref=$item/@id]" />
+    <xsl:choose>
+        <xsl:when test="$refine-rule/@severity">
+            <xsl:value-of select="$refine-rule/@severity"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:choose>
+                <xsl:when test="$item/@severity">
+                    <xsl:value-of select="$item/@severity"/>
+                </xsl:when>
+                <xsl:otherwise>unknown</xsl:otherwise>
+            </xsl:choose>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 <!-- substitution for testresults, used in HTML report -->
@@ -280,6 +321,8 @@ Authors:
             <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:ansible'">Ansible snippet</xsl:when>
             <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:puppet'">Puppet snippet</xsl:when>
             <xsl:when test="$fix/@system = 'urn:redhat:anaconda:pre'">Anaconda snippet</xsl:when>
+            <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:kubernetes'">Kubernetes snippet</xsl:when>
+            <xsl:when test="$fix/@system = 'urn:redhat:osbuild:blueprint'">OSBuild Blueprint snippet</xsl:when>
             <xsl:otherwise>script</xsl:otherwise>
         </xsl:choose>
     </xsl:variable>

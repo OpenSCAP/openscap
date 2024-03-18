@@ -11,6 +11,12 @@ NOTE: This guide also applies for adding a new feature, the process is the same
 as for fixing an issue described below.
 
 
+== Code style
+
+OpenSCAP project is following link:https://www.kernel.org/doc/html/v4.10/process/coding-style.html[Linux kernel coding style]
+for newly-written code and preserves formatting of the existing codebase between major releases.
+
+
 == Fork and setup the OpenSCAP repository
 Before you start working on a fix it's a good practice to leave a
 comment in the issue that you work on the fix so other contributors know that
@@ -63,13 +69,13 @@ $ git checkout maint-1.2
 $ git checkout -b fix_455
 ----
 
-On the other hand, if you decided that the fix will go into the `master` branch
+On the other hand, if you decided that the fix will go into the `main` branch
 you have to switch to this branch first before creating a new one:
 [source,bash]
 ----
-# create a new local branch to track the remote master branch
-$ git checkout -b master remotes/origin/master
-# and now create a new branch from the master branch which will contain your fix
+# create a new local branch to track the remote main branch
+$ git checkout -b main remotes/origin/main
+# and now create a new branch from the main branch which will contain your fix
 $ git checkout -b fix_455
 ----
 

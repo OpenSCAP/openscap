@@ -32,7 +32,6 @@
 #include <sys/stat.h>
 #include <limits.h>
 #include <errno.h>
-#include <pcre.h>
 
 #include "oscap_helpers.h"
 #include "fsdev.h"
@@ -379,150 +378,20 @@ static char *extract_fixed_path_prefix(char *path)
 	return strdup("/");
 }
 
-static int badpartial_check_slash(const char *pattern)
-{
-	pcre *regex;
-	const char *errptr = NULL;
-	int errofs = 0, fb, ret;
-
-	regex = pcre_compile(pattern + 1 /* skip '^' */, 0, &errptr, &errofs, NULL);
-	if (regex == NULL) {
-		dE("Failed to validate the pattern: pcre_compile(): "
-		   "error: '%s', error offset: %d, pattern: '%s'.\n",
-		   errptr, errofs, pattern);
-		return -1;
-	}
-	ret = pcre_fullinfo(regex, NULL, PCRE_INFO_FIRSTBYTE, &fb);
-	pcre_free(regex);
-	regex = NULL;
-	if (ret != 0) {
-		dE("Failed to validate the pattern: pcre_fullinfo(): "
-		   "return code: %d, pattern: '%s'.\n", ret, pattern);
-		return -1;
-	}
-	if (fb != '/') {
-		dE("Failed to validate the pattern: pcre_fullinfo(): "
-		   "first byte: %d '%c', pattern: '%s' - the first "
-		   "byte should be a '/'.\n", fb, fb, pattern);
-		return -2;
-	}
-
-	return 0;
-}
-
 #define TEST_PATH1 "/"
 #define TEST_PATH2 "x"
-
-static int badpartial_transform_pattern(char *pattern, pcre **regex_out)
-{
-	/*
-	  PCREPARTIAL(3)
-	  http://pcre.org/pcre.txt
-	  Last updated: 21 January 2012
-
-	  For releases of PCRE prior to 8.00, because of the way
-	  certain internal optimizations were implemented in the
-	  pcre_exec() function, the PCRE_PARTIAL option (predecessor
-	  of PCRE_PARTIAL_SOFT) could not be used with all patterns.
-
-	  Items that were formerly restricted were repeated single
-	  characters and repeated metasequences. If PCRE_PARTIAL was
-	  set for a pattern that did not conform to the restrictions,
-	  pcre_exec() returned the error code PCRE_ERROR_BADPARTIAL
-	  (-13).
-	*/
-
-	int ret, brkt_lvl = 0, errofs = 0;
-	const char *rchars = "\\[]()*+{"; /* probably incomplete */
-	const char *test_path1 = TEST_PATH1;
-	const char *errptr = NULL;
-	char *s, *brkt_mark;
-	bool bracketed = false, found_regex = false;
-	pcre *regex;
-
-	/* The processing bellow builds upon the assumption that
-	   the pattern has been validated by pcre_compile() */
-	for (s = brkt_mark = pattern; (s = strpbrk(s, rchars)) != NULL; s++) {
-		switch (*s) {
-		case '\\':
-			s++;
-			break;
-		case '[':
-			if (!bracketed) {
-				bracketed = true;
-				if (s[1] == ']')
-					s++;
-			}
-			break;
-		case ']':
-			bracketed = false;
-			break;
-		case '(':
-			if (!bracketed) {
-				if (brkt_lvl++ == 0)
-					brkt_mark = s;
-			}
-			break;
-		case ')':
-			if (!bracketed)
-				brkt_lvl--;
-			break;
-		default:
-			if (!bracketed)
-				found_regex = true;
-			break;
-		}
-		if (found_regex)
-			break;
-	}
-
-	if (s == NULL) {
-		dW("Nonfatal failure: can't transform the pattern for partial "
-		   "match optimization: none of the suspected culprits found, "
-		   "pattern: '%s'.", pattern);
-		return -1;
-	}
-
-	if (brkt_lvl > 0)
-		*brkt_mark = '\0';
-	else
-		*s = '\0';
-
-	regex = pcre_compile(pattern, 0, &errptr, &errofs, NULL);
-	if (regex == NULL) {
-		dW("Nonfatal failure: can't transform the pattern for partial "
-		   "match optimization, error: '%s', error offset: %d, "
-		   "pattern: '%s'.", errptr, errofs, pattern);
-		return -1;
-	}
-
-	ret = pcre_exec(regex, NULL, test_path1, strlen(test_path1), 0,
-		PCRE_PARTIAL, NULL, 0);
-	if (ret != PCRE_ERROR_PARTIAL && ret < 0) {
-		pcre_free(regex);
-		dW("Nonfatal failure: can't transform the pattern for partial "
-		   "match optimization, pcre_exec() return code: %d, pattern: "
-		   "'%s'.", ret, pattern);
-		return -1;
-	}
-
-	if (regex_out != NULL)
-		*regex_out = regex;
-
-	return 0;
-}
 
 /* Verify that the path is usable and try to craft a regex to speed up
    the filesystem traversal. If the path to match is ill-designed, an
    ugly heuristic is employed to obtain something meaningfull. */
-static int process_pattern_match(const char *path, pcre **regex_out)
+static int process_pattern_match(const char *path, oscap_pcre_t **regex_out)
 {
 	int ret, errofs = 0;
 	char *pattern;
 	const char *test_path1 = TEST_PATH1;
 	//const char *test_path2 = TEST_PATH2;
-	const char *errptr = NULL;
-	pcre *regex;
+	char *errptr = NULL;
+	oscap_pcre_t *regex;
 
 	if (path[0] != '^') {
 		/* Matching has to have a fixed starting point and thus
@@ -540,19 +409,20 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 		pattern = strdup(path);
 	}
 
-	regex = pcre_compile(pattern, 0, &errptr, &errofs, NULL);
+	regex = oscap_pcre_compile(pattern, 0, &errptr, &errofs);
 	if (regex == NULL) {
-		dE("Failed to validate the pattern: pcre_compile(): "
+		dE("Failed to validate the pattern: oscap_pcre_compile(): "
 		   "error offset: %d, error: '%s', pattern: '%s'.\n",
 		   errofs, errptr, pattern);
 		free(pattern);
+		oscap_pcre_err_free(errptr);
 		return -1;
 	}
-	ret = pcre_exec(regex, NULL, test_path1, strlen(test_path1), 0,
-		PCRE_PARTIAL, NULL, 0);
+	ret = oscap_pcre_exec(regex, test_path1, strlen(test_path1), 0,
+		OSCAP_PCRE_OPTS_PARTIAL, NULL, 0);
 
 	switch (ret) {
-	case PCRE_ERROR_PARTIAL:
+	case OSCAP_PCRE_ERR_PARTIAL:
 		/* The pattern has matched a prefix of the test path
 		   and probably begins with a slash. Make sure that it
 		   doesn't match an arbitrary prefix. */
@@ -577,35 +447,15 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 		}
 		*/
 		break;
-	case PCRE_ERROR_BADPARTIAL:
-		dD("pcre_exec() returned PCRE_ERROR_BADPARTIAL for pattern "
-		   "'%s' and a test path '%s'. Falling back to "
-		   "pcre_fullinfo().\n", pattern, test_path1);
-		pcre_free(regex);
-		regex = NULL;
-
-		/* Fallback to first byte check to determin if
-		   the pattern begins with a slash. */
-		ret = badpartial_check_slash((const char *) pattern);
-		if (ret != 0) {
-			free(pattern);
-			return ret;
-		}
-		/* The pattern contains features that this version of
-		   PCRE can't handle for partial matching. At least
-		   try to find the longest well-bracketed prefix that
-		   can be handled. */
-		badpartial_transform_pattern(pattern, &regex);
-		break;
-	case PCRE_ERROR_NOMATCH:
+	case OSCAP_PCRE_ERR_NOMATCH:
 		/* The pattern doesn't contain a leading slash (or
 		   some part of this code is broken). Apologise to the
 		   user and fail. */
-		dE("Failed to validate the pattern: pcre_exec() returned "
+		dE("Failed to validate the pattern: oscap_pcre_exec() returned "
 		   "PCRE_ERROR_NOMATCH for pattern '%s' and a test path '%s'. "
 		   "This indicates the pattern doesn't match a leading '/'.\n",
 		   pattern, test_path1);
-		pcre_free(regex);
+		oscap_pcre_free(regex);
 		free(pattern);
 		return -2;
 	default:
@@ -634,10 +484,10 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 			break;
 		}
 		/* Some other error. */
-		dE("Failed to validate the pattern: pcre_exec() return "
+		dE("Failed to validate the pattern: oscap_pcre_exec() return "
 		   "code: %d, pattern '%s', test path '%s'.\n", ret,
 		   pattern, test_path1);
-		pcre_free(regex);
+		oscap_pcre_free(regex);
 		free(pattern);
 		return -1;
 	}
@@ -649,6 +499,8 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 		   "pattern: '%s'.", pattern);
 		if (regex_out != NULL)
 			*regex_out = regex;
+		else
+			oscap_pcre_free(regex);
 	}
 
 	free(pattern);
@@ -685,7 +537,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 
 	uint32_t path_op;
 	bool nilfilename = false;
-	pcre *regex = NULL;
+	oscap_pcre_t *regex = NULL;
 	struct stat st;
 
 	if ((path != NULL || filename != NULL || filepath == NULL)
@@ -729,6 +581,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 	/* max_depth */
 	PROBE_ENT_AREF(behaviors, r0, "max_depth", return NULL;);
 	SEXP_string_cstr_r(r0, cstr_buff, sizeof cstr_buff - 1);
+	errno = 0;
 	max_depth = strtol(cstr_buff, NULL, 10);
 	if (errno == EINVAL || errno == ERANGE) {
 		dE("Invalid value of the `%s' attribute: %s", "recurse_direction", cstr_buff);
@@ -844,6 +697,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 			   errno, strerror(errno));
 		}
 		free((void *) paths[0]);
+		oscap_pcre_free(regex);
 		return NULL;
 	}
 
@@ -859,16 +713,15 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 	if (ofts->ofts_match_path_fts == NULL || errno != 0) {
 		dE("fts_open() failed, errno: %d \"%s\".", errno, strerror(errno));
 		OVAL_FTS_free(ofts);
+		oscap_pcre_free(regex);
 		return (NULL);
 	}
 
 	ofts->ofts_recurse_path_fts_opts = rec_fts_options;
 	ofts->ofts_path_op = path_op;
 	if (regex != NULL) {
-		const char *errptr = NULL;
-
 		ofts->ofts_path_regex = regex;
-		ofts->ofts_path_regex_extra = pcre_study(regex, 0, &errptr);
+		oscap_pcre_optimize(regex);
 	}
 
 	if (filesystem == OVAL_RECURSE_FS_LOCAL) {
@@ -989,24 +842,25 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			continue;
 		}
 
+		const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
 		/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH operation on path and filepath */
 		if (ofts->ofts_path_regex != NULL && fts_ent->fts_info == FTS_D) {
 			int ret, svec[3];
 
-			ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
-					fts_ent->fts_path, fts_ent->fts_pathlen, 0, PCRE_PARTIAL,
+			ret = oscap_pcre_exec(ofts->ofts_path_regex,
+					fts_ent->fts_path+shift, fts_ent->fts_pathlen-shift, 0, OSCAP_PCRE_OPTS_PARTIAL,
 					svec, sizeof(svec) / sizeof(svec[0]));
 			if (ret < 0) {
 				switch (ret) {
-				case PCRE_ERROR_NOMATCH:
+				case OSCAP_PCRE_ERR_NOMATCH:
 					dD("Partial match optimization: PCRE_ERROR_NOMATCH, skipping.");
 					fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_SKIP);
 					continue;
-				case PCRE_ERROR_PARTIAL:
+				case OSCAP_PCRE_ERR_PARTIAL:
 					dD("Partial match optimization: PCRE_ERROR_PARTIAL, continuing.");
 					continue;
 				default:
-					dE("pcre_exec() error: %d.", ret);
+					dE("oscap_pcre_exec() error: %d.", ret);
 					return NULL;
 				}
 			}
@@ -1016,7 +870,6 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 		    || (!ofts->ofts_sfilepath && fts_ent->fts_info != FTS_D))
 			continue;
 
-		const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
 		stmp = SEXP_string_newf("%s", fts_ent->fts_path + shift);
 
 		if (ofts->ofts_sfilepath)
@@ -1029,6 +882,15 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 
 		if (ores == OVAL_RESULT_TRUE)
 			break;
+		if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS) {
+			/* At this point the comparison result isn't OVAL_RESULT_TRUE. Since
+			we passed the exact path (from filepath or path elements) to
+			fts_open() we surely know that we can't find other items that would
+			be equal. Therefore we can terminate the matching. This can happen
+			if the filepath or path element references a variable that has
+			multiple different values. */
+			return NULL;
+		}
 	} /* for (;;) */
 
 	/*
@@ -1163,10 +1025,11 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				/* limit recursion only to selected file types */
 				switch (fts_ent->fts_info) {
 				case FTS_D:
-					if (!(ofts->recurse & OVAL_RECURSE_DIRS)) {
+					if (!(ofts->recurse & OVAL_RECURSE_DIRS) && !(ofts->recurse & OVAL_RECURSE_SYMLINKS && ofts->following)) {
 						fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
 						continue;
 					}
+					ofts->following = 0;
 					break;
 				case FTS_SL:
 					if (!(ofts->recurse & OVAL_RECURSE_SYMLINKS)) {
@@ -1174,6 +1037,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 						continue;
 					}
 					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_FOLLOW);
+					ofts->following = 1;
 					break;
 				default:
 					continue;
@@ -1273,7 +1137,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 						break;
 					}
 				} else {
-					if (fts_ent->fts_info != FTS_D) {
+					if (fts_ent->fts_info != FTS_D && fts_ent->fts_info != FTS_DP && fts_ent->fts_info != FTS_DC) {
 						SEXP_t *stmp;
 
 						stmp = SEXP_string_newf("%s", fts_ent->fts_name);
@@ -1335,6 +1199,12 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 		if (ofts->ofts_sfilepath) {
 			fts_ent = ofts->ofts_match_path_fts_ent;
 			ofts->ofts_match_path_fts_ent = NULL;
+			if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
+				&& (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+					(fts_ent->fts_statp != NULL) ?
+					&fts_ent->fts_statp->st_dev : NULL))) {
+				continue;
+			}
 			break;
 		} else {
 			fts_ent = oval_fts_read_recurse_path(ofts);
@@ -1364,9 +1234,7 @@ int oval_fts_close(OVAL_FTS *ofts)
 		free(ofts->ofts_recurse_path_pthcpy);
 
 	if (ofts->ofts_path_regex)
-		pcre_free(ofts->ofts_path_regex);
-	if (ofts->ofts_path_regex_extra)
-		pcre_free(ofts->ofts_path_regex_extra);
+		oscap_pcre_free(ofts->ofts_path_regex);
 
 	if (ofts->ofts_spath != NULL)
 		SEXP_free(ofts->ofts_spath);

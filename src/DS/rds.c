@@ -271,39 +271,13 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 	xmlNodePtr test_result_child = test_result->children;
 
 	xmlNodePtr last_fqdn = NULL;
+	xmlNodePtr last_hostname = NULL;
 	for (; test_result_child != NULL; test_result_child = test_result_child->next)
 	{
 		if (test_result_child->type != XML_ELEMENT_NODE)
 			continue;
 
-		// Order for the output to be valid:
-		// 1) All fqdn-s
-		// 2) All hostnames
-		if (strcmp((const char*)(test_result_child->name), "target") == 0)
-		{
-			// content is a full copy
-			char *content = (char*)xmlNodeGetContent(test_result_child);
-			xmlNodePtr fqdn = xmlNewNode(ai_ns, BAD_CAST "fqdn");
-			xmlNodeSetContent(fqdn, BAD_CAST content);
-
-			if (!last_fqdn) {
-				xmlAddChild(computing_device, fqdn);
-			}
-			else {
-				xmlAddNextSibling(last_fqdn, fqdn);
-			}
-			last_fqdn = fqdn;
-
-			// now we need to change content so that it represents just the hostname part of FQDN
-			char *delimiter = strchr(content, '.');
-			if (delimiter)
-				*delimiter = '\0';
-
-			xmlNewTextChild(computing_device, ai_ns, BAD_CAST "hostname", BAD_CAST content);
-
-			free(content);
-		}
-		else if (strcmp((const char*)(test_result_child->name), "target-address") == 0)
+		if (strcmp((const char*)(test_result_child->name), "target-address") == 0)
 		{
 			xmlNodePtr connection = xmlNewNode(ai_ns, BAD_CAST "connection");
 			xmlAddChild(connections, connection);
@@ -339,19 +313,43 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 					continue;
 
 				xmlChar *name = xmlGetProp(target_fact_child, BAD_CAST "name");
-				if (!name || strcmp((const char*)name, "urn:xccdf:fact:ethernet:MAC") != 0) {
-					xmlFree(name);
-					continue;
+				if (name) {
+					if (!strcmp((const char*)name, "urn:xccdf:fact:asset:identifier:mac")) {
+						xmlChar *content = xmlNodeGetContent(target_fact_child);
+						xmlNodePtr connection = xmlNewNode(ai_ns, BAD_CAST "connection");
+						xmlAddChild(connections, connection);
+						xmlNewTextChild(connection, ai_ns, BAD_CAST "mac-address", content);
+						xmlFree(content);
+					}
+
+					// Order for the output to be valid: fqdn then hostname, just one of each kind
+
+					if (!strcmp((const char*)name, "urn:xccdf:fact:asset:identifier:fqdn")) {
+						xmlChar *content = xmlNodeGetContent(target_fact_child);
+						xmlNodePtr fqdn = xmlNewNode(ai_ns, BAD_CAST "fqdn");
+						xmlNodeSetContent(fqdn, BAD_CAST content);
+						if (!last_fqdn)
+							last_fqdn = last_hostname ? xmlAddPrevSibling(last_hostname, fqdn) : xmlAddChild(computing_device, fqdn);
+						xmlFree(content);
+					}
+
+					if (!strcmp((const char*)name, "urn:xccdf:fact:asset:identifier:host_name")) {
+						xmlChar *content = xmlNodeGetContent(target_fact_child);
+						xmlNodePtr hostname = xmlNewNode(ai_ns, BAD_CAST "hostname");
+						xmlNodeSetContent(hostname, BAD_CAST content);
+						if (!last_hostname)
+							last_hostname = last_fqdn ? xmlAddNextSibling(last_fqdn, hostname) : xmlAddChild(computing_device, hostname);
+						xmlFree(content);
+					}
 				}
 				xmlFree(name);
-
-				xmlChar *content = xmlNodeGetContent(target_fact_child);
-				xmlNodePtr connection = xmlNewNode(ai_ns, BAD_CAST "connection");
-				xmlAddChild(connections, connection);
-				xmlNewTextChild(connection, ai_ns, BAD_CAST "mac-address", content);
-				xmlFree(content);
 			}
 		}
+	}
+
+	if (xmlGetLastChild(connections) == NULL) {
+		xmlUnlinkNode(connections);
+		xmlFreeNode(connections);
 	}
 
 	return asset;
@@ -658,12 +656,18 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 				"Unknown root element '%s' in given XCCDF result document, expected TestResult or Benchmark.",
 				(const char*)root_element->name);
 
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "%s", error);
 		free(error);
 	}
 }
 
-static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr tailoring_doc, const char* tailoring_filepath, char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources, struct oscap_htable* oval_result_mapping, struct oscap_htable *arf_report_mapping)
+static int _ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
+		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
+		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
+		struct oscap_htable *oval_result_sources,
+		struct oscap_htable *oval_result_mapping,
+		struct oscap_htable *arf_report_mapping,
+		bool clone)
 {
 	*ret = NULL;
 
@@ -694,8 +698,13 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 
 	xmlDOMWrapCtxtPtr sds_wrap_ctxt = xmlDOMWrapNewCtxt();
 	xmlNodePtr sds_res_node = NULL;
-	xmlDOMWrapCloneNode(sds_wrap_ctxt, sds_doc, xmlDocGetRootElement(sds_doc),
-			&sds_res_node, doc, NULL, 1, 0);
+	if (clone) {
+		xmlDOMWrapCloneNode(sds_wrap_ctxt, sds_doc, xmlDocGetRootElement(sds_doc),
+				&sds_res_node, doc, NULL, 1, 0);
+	} else {
+		sds_res_node = xmlDocGetRootElement(sds_doc);
+		xmlDOMWrapAdoptNode(sds_wrap_ctxt, sds_doc, sds_res_node, doc, NULL, 0);
+	}
 	xmlAddChild(arf_content, sds_res_node);
 	xmlDOMWrapReconcileNamespaces(sds_wrap_ctxt, sds_res_node, 0);
 	xmlDOMWrapFreeCtxt(sds_wrap_ctxt);
@@ -707,7 +716,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 
 		// Need unique id (ref_id) - if generated already exists, then create new one
 		int counter = 0;
-		while (lookup_component_in_collection(sds_doc, tailoring_component_id) != NULL) {
+		while (lookup_component_in_collection(sds_res_node, tailoring_component_id) != NULL) {
 			free(tailoring_component_id);
 			tailoring_component_id = oscap_sprintf("scap_org.open-scap_comp_%s_tailoring%03d", mangled_tailoring_filepath, counter++);
 		}
@@ -745,15 +754,18 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 
 		xmlNodePtr tailoring_component_ref = xmlNewNode(sds_ns, BAD_CAST "component-ref");
 		xmlSetProp(tailoring_component_ref, BAD_CAST "id", BAD_CAST tailoring_component_ref_id);
+		free(tailoring_component_ref_id);
 		xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, sds_res_node, BAD_CAST xlink_ns_uri);
 		if (!xlink_ns) {
 			oscap_seterr(OSCAP_EFAMILY_XML,
 					"Unable to find namespace '%s' in the XML DOM tree. "
 					"This is most likely an internal error!.",
 					xlink_ns_uri);
+			free(tailoring_component_id);
 			return -1;
 		}
 		char *tailoring_cref_href = oscap_sprintf("#%s", tailoring_component_id);
+		free(tailoring_component_id);
 		xmlSetNsProp(tailoring_component_ref, xlink_ns, BAD_CAST "href", BAD_CAST tailoring_cref_href);
 		free(tailoring_cref_href);
 		xmlAddChild(checklists_element, tailoring_component_ref);
@@ -790,6 +802,32 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 	return 0;
 }
 
+int ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
+		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
+		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
+		struct oscap_htable *oval_result_sources,
+		struct oscap_htable *oval_result_mapping,
+		struct oscap_htable *arf_report_mapping)
+{
+	return _ds_rds_create_from_dom(ret, sds_doc, tailoring_doc,
+			tailoring_filepath, tailoring_doc_timestamp,
+			xccdf_result_file_doc, oval_result_sources, oval_result_mapping,
+			arf_report_mapping, false);
+}
+
+static int ds_rds_create_from_dom_clone(xmlDocPtr *ret, xmlDocPtr sds_doc,
+		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
+		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
+		struct oscap_htable *oval_result_sources,
+		struct oscap_htable *oval_result_mapping,
+		struct oscap_htable *arf_report_mapping)
+{
+	return _ds_rds_create_from_dom(ret, sds_doc, tailoring_doc,
+			tailoring_filepath, tailoring_doc_timestamp,
+			xccdf_result_file_doc, oval_result_sources, oval_result_mapping,
+			arf_report_mapping, true);
+}
+
 struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *tailoring_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, struct oscap_htable *oval_result_mapping, struct oscap_htable *arf_report_mapping, const char *target_file)
 {
 	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
@@ -821,8 +859,8 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 
 	xmlDocPtr rds_doc = NULL;
 
-	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
-				oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
+	if (ds_rds_create_from_dom_clone(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
+			oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
 		free(tailoring_doc_timestamp);
 		return NULL;
 	}
@@ -850,7 +888,10 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 				result = -1;
 				oscap_source_free(oval_source);
 			} else {
-				oscap_htable_add(oval_result_sources, *oval_result_files, oval_source);
+				if (!oscap_htable_add(oval_result_sources, *oval_result_files, oval_source)) {
+					result = -1;
+					oscap_source_free(oval_source);
+				}
 			}
 			oval_result_files++;
 		}

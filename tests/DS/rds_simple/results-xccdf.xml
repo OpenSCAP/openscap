@@ -1396,7 +1396,7 @@ purposes.</description>
               <title xml:lang="en">Disable Modprobe Loading of USB Storage Driver</title>
               <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">The USB device support module should not be loaded</description>
               <ident system="http://cce.mitre.org">CCE-4187-1</ident>
-              <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo -e "\nblacklist usb_storage" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+              <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo -e "\ndenylist usb_storage" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
               <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <check-content-ref name="oval:org.open-scap.f14:def:20021" href="scap-fedora14-oval.xml"/>
               </check>
@@ -1548,13 +1548,13 @@ purposes.</description>
         <Group id="xccdf_cdf_group_group-2.2.2.4" hidden="false">
           <title xml:lang="en">Disable Mounting of Uncommon Filesystem Types</title>
           <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">
-            Specifying kernel module in /etc/modprobe.d/blacklist.conf will prevent
+            Specifying kernel module in /etc/modprobe.d/denylist.conf will prevent
             kernel module loading system from inserting the modele into the kernel. 
             This mechanism effectively prevents usage of these uncommon ﬁlesystems.</description>
           <Rule id="xccdf_cdf_rule_rule-2.2.2.4.a" selected="false" weight="10.000000">
             <title xml:lang="en">Disable Mounting of cramfs</title>
             <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">cramfs is uncommon ﬁlesystems</description>
-            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist cramfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist cramfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:org.open-scap.f14:def:20027" href="scap-fedora14-oval.xml"/>
             </check>
@@ -1562,7 +1562,7 @@ purposes.</description>
           <Rule id="xccdf_cdf_rule_rule-2.2.2.4.b" selected="false" weight="10.000000">
             <title xml:lang="en">Disable Mounting of freevxfs</title>
             <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">freevxfs is uncommon ﬁlesystems</description>
-            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist freevxfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist freevxfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:org.open-scap.f14:def:20028" href="scap-fedora14-oval.xml"/>
             </check>
@@ -1570,7 +1570,7 @@ purposes.</description>
           <Rule id="xccdf_cdf_rule_rule-2.2.2.4.c" selected="false" weight="10.000000">
             <title xml:lang="en">Disable Mounting of jffs2</title>
             <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">jffs2 is uncommon ﬁlesystems</description>
-            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist jffs2" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist jffs2" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:org.open-scap.f14:def:20029" href="scap-fedora14-oval.xml"/>
             </check>
@@ -1578,7 +1578,7 @@ purposes.</description>
           <Rule id="xccdf_cdf_rule_rule-2.2.2.4.d" selected="false" weight="10.000000">
             <title xml:lang="en">Disable Mounting of hfs</title>
             <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">hfs is uncommon ﬁlesystems</description>
-            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist hfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist hfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:org.open-scap.f14:def:20030" href="scap-fedora14-oval.xml"/>
             </check>
@@ -1586,7 +1586,7 @@ purposes.</description>
           <Rule id="xccdf_cdf_rule_rule-2.2.2.4.e" selected="false" weight="10.000000">
             <title xml:lang="en">Disable Mounting of hfsplus</title>
             <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">hfsplus is uncommon ﬁlesystems</description>
-            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist hfsplus" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist hfsplus" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:org.open-scap.f14:def:20031" href="scap-fedora14-oval.xml"/>
             </check>
@@ -1594,7 +1594,7 @@ purposes.</description>
           <Rule id="xccdf_cdf_rule_rule-2.2.2.4.f" selected="false" weight="10.000000">
             <title xml:lang="en">Disable Mounting of squashfs</title>
             <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">squashfs is uncommon ﬁlesystems</description>
-            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist squashfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist squashfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:org.open-scap.f14:def:20032" href="scap-fedora14-oval.xml"/>
             </check>
@@ -1602,7 +1602,7 @@ purposes.</description>
           <Rule id="xccdf_cdf_rule_rule-2.2.2.4.g" selected="false" weight="10.000000">
             <title xml:lang="en">Disable Mounting of udf</title>
             <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en">udf is uncommon ﬁlesystems</description>
-            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist udf" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+            <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist udf" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:org.open-scap.f14:def:20033" href="scap-fedora14-oval.xml"/>
             </check>
@@ -10505,7 +10505,7 @@ purposes.</description>
             workstation. If the MTA is running very old software or is configured poorly, it can be
             possible for attackers to take advantage of this feature, using your MTA to relay their
             spam from one remote site to another. This is undesirable for many reasons, not least
-            that your site will quickly be blacklisted as a spam source, leaving you unable to send
+            that your site will quickly be denylisted as a spam source, leaving you unable to send
             legitimate e-mail to your correspondents. <xhtml:br/>
             <xhtml:br/>
             The simplest solution described in this guide
@@ -12482,7 +12482,7 @@ purposes.</description>
             };<xhtml:br/>
             <xhtml:br/>
             zone "example.com " IN { <xhtml:br/>
-            type master; <xhtml:br/>
+            type primary; <xhtml:br/>
             allow-transfer { key zone-transfer-key; }; <xhtml:br/>
             ... <xhtml:br/>
             }<xhtml:br/>
@@ -12494,13 +12494,13 @@ purposes.</description>
             secret "base64-key-string "; <xhtml:br/>
             }; <xhtml:br/>
             <xhtml:br/>
-            server IP-OF-MASTER { <xhtml:br/>
+            server IP-OF-PRIMARY { <xhtml:br/>
             keys { zone-transfer-key; }; <xhtml:br/>
             }; <xhtml:br/>
             <xhtml:br/>
             zone "example.com " IN { <xhtml:br/>
-            type slave;<xhtml:br/>
-            masters { IP-OF-MASTER ; }; <xhtml:br/>
+            type secondary;<xhtml:br/>
+            primaries { IP-OF-PRIMARY ; }; <xhtml:br/>
             ... <xhtml:br/>
             }; <xhtml:br/>
             <xhtml:br/>
@@ -15341,7 +15341,7 @@ purposes.</description>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.1.1.a" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
       <ident system="http://cce.mitre.org">CCE-4187-1</ident>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo -e "\nblacklist usb_storage" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo -e "\ndenylist usb_storage" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.1.2.a" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
@@ -15367,31 +15367,31 @@ purposes.</description>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.a" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist cramfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist cramfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.b" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist freevxfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist freevxfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.c" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist jffs2" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist jffs2" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.d" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist hfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist hfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.e" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist hfsplus" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist hfsplus" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.f" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist squashfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist squashfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.g" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist udf" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist udf" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
       <result>notselected</result>

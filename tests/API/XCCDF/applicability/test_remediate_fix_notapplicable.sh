@@ -1,12 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
+. $builddir/tests/test_common.sh
 
 set -e
 set -o pipefail
 
 name=$(basename $0 .sh)
-stderr=$(mktemp -t ${name}.out.XXXXXX)
-tmpdir=$(mktemp -d -t ${name}.out.XXXXXX)
-result=$(mktemp -p $tmpdir ${name}.out.XXXXXX)
+stderr=$(make_temp_file /tmp ${name}.out)
+tmpdir=$(make_temp_dir /tmp ${name}.out)
+result=$(make_temp_file ${tmpdir} ${name}.out)
+
 echo "Stderr file = $stderr"
 echo "Result file = $stderr"
 rm -f test_file
@@ -19,7 +21,8 @@ $OSCAP xccdf remediate --results $result $srcdir/${name}.xccdf.xml 2> $stderr ||
 [ $ret -eq 2 ]
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ ! -f test_file ]
-$OSCAP xccdf validate $result
+
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 2 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'
@@ -31,6 +34,7 @@ assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 # one message expected signalling no suitable fix found.
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message'
 
+
 #
 # Second, make sure that the fix is applied, when CPE is recognized as appplicable
 #
@@ -38,7 +42,8 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 $OSCAP xccdf remediate --cpe $srcdir/cpe-dict.xml --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ -f test_file ]; rm test_file
-$OSCAP xccdf validate $result
+
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 2 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'

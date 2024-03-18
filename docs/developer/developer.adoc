@@ -49,34 +49,34 @@ Build dependencies may vary depending on enabled features (by the `cmake` comman
 Some of the dependencies are optional, if they are not detected, openscap will be compiled
 without respective optional features.
 
-On RHEL 7 / Fedora 23 / CentOS 7, the command to install the build dependencies is:
+On RHEL 7 / CentOS 7, the command to install the build dependencies is:
 
 ----
 sudo yum install \
 cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
 pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig \
-bzip2-devel gcc-c++ libyaml-devel
+bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel
 ----
 
 On Fedora 24+, the command to install the build dependencies is:
 
 ----
-sudo yum install \
+sudo dnf install \
 cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
-pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel rpm-devel swig \
-bzip2-devel gcc-c++ libyaml-devel
+pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig \
+bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel
 ----
 
-On RHEL 8 / CentOS 8, the command to install the build dependencies is:
+On RHEL 8+ / CentOS 8+, the command to install the build dependencies is:
 
 ----
-sudo yum install \
+sudo dnf install \
 cmake dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
 pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python36-devel rpm-devel swig \
-bzip2-devel gcc-c++ libyaml-devel
+bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel
 ----
 
 On Ubuntu 16.04, Debian 8 or Debian 9, the command to install the build dependencies is:
@@ -85,8 +85,15 @@ On Ubuntu 16.04, Debian 8 or Debian 9, the command to install the build dependen
 sudo apt-get install -y cmake libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev \
 libgcrypt20-dev libselinux1-dev libxslt1-dev libgconf2-dev libacl1-dev libblkid-dev \
 libcap-dev libxml2-dev libldap2-dev libpcre3-dev python-dev swig libxml-parser-perl \
-libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++ libapt-pkg-dev libyaml-dev
+libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++ libyaml-dev \
+libxmlsec1-dev libxmlsec1-openssl
 ----
+
+Since version 1.3.9 OpenSCAP can use either PCRE or PCRE2 library to handle regular
+expressions. The default behaviour for 1.3.x line of versions is to try and link
+with PCRE. In order to switxh the build system to PCRE2 one must configure
+CMake with '-DWITH_PCRE2=True' parameter. Dependencies: Debian/Ubuntu — pcre2-dev,
+Fedora/RHEL — pcre2-devel.
 
 When you have all the build dependencies installed you can build the library.
 --
@@ -106,7 +113,7 @@ On Ubuntu 18.04 and potentially other distro, the python3 dist-packages path is 
 If the following command:
 
 ----
-$ python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
+$ python3 -c "import sysconfig; print(sysconfig.get_path('platlib'))"
 ----
 
 returns "/usr/local/lib/python3/dist-packages" instead of a path like
@@ -152,7 +159,7 @@ After building the library you might want to run library self-checks. To do
 that you need to have these additional packages installed:
 
 ----
-wget lua which procps-ng initscripts chkconfig sendmail bzip2 rpm-build
+wget lua which procps-ng initscripts chkconfig sendmail bzip2 rpm-build strace
 ----
 
 On Ubuntu 18.04, also install:
@@ -318,12 +325,12 @@ behaviour.
 * *OSCAP_FULL_VALIDATION=1* - validate all exported documents (slower)
 * *SEXP_VALIDATE_DISABLE=1* - do not validate SEXP expressions (faster)
 * *OSCAP_PCRE_EXEC_RECURSION_LIMIT* - override default recursion limit
-  for match in pcre_exec call in textfilecontent(54) probes.
+  for match in pcre_exec/pcre2_match calls in textfilecontent(54) probes.
 
 
 
 == Generating of code coverage
-Code coverage can be usefull during writing of test or performance profiling.
+Code coverage can be useful during writing of test or performance profiling.
 We could separate the process into five phases.
 
 1) *Get dependencies*
@@ -388,7 +395,7 @@ cd c:\devel
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 .\bootstrap-vcpkg.bat
-.\vcpkg install curl libxml2 libxslt bzip2 pcre pthreads
+.\vcpkg install curl libxml2 libxslt bzip2 pcre pthreads getopt-win32
 .\vcpkg integrate install
 ----
 
@@ -396,7 +403,7 @@ cd vcpkg
 
 ----
 cd c:\devel
-git clone -b master https://github.com/OpenSCAP/openscap.git
+git clone -b main https://github.com/OpenSCAP/openscap.git
 ----
 
 3) Generate Visual Studio Solution
@@ -436,10 +443,10 @@ mingw32-curl mingw32-pcre \
 mingw32-filesystem mingw32-bzip2
 -------------------------------------------------------------
 
-2) Checkout the master branch of the OpenSCAP repository
+2) Checkout the main branch of the OpenSCAP repository
 
 ----------------------------------------------------------------------
-$ git clone -b master https://github.com/openscap/openscap.git
+$ git clone -b main https://github.com/openscap/openscap.git
 $ cd openscap
 ----------------------------------------------------------------------
 

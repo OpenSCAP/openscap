@@ -45,20 +45,35 @@
 #define OVAL_SYSCHAR_IND_NS        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"
 #define OVAL_SYSCHAR_LIN_NS        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux"
 #define OVAL_SYSCHAR_WIN_NS        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows"
+#define OVAL_SYSCHAR_MAC_NS        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#macos"
 
 #define OVAL_DEFINITIONS_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 #define OVAL_DEFINITIONS_UNIX_NS   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
 #define OVAL_DEFINITIONS_IND_NS    BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
 #define OVAL_DEFINITIONS_LIN_NS    BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
 #define OVAL_DEFINITIONS_WIN_NS    BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+#define OVAL_DEFINITIONS_MAC_NS    BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#macos"
 
 #define OVAL_RESULTS_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-results-5"
 #define OVAL_VARIABLES_NAMESPACE   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-variables-5"
 #define OVAL_DIRECTIVES_NAMESPACE  BAD_CAST "http://oval.mitre.org/XMLSchema/oval-directives-5"
 
-#define OVAL_DEF_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd"
+#define OVAL_DEF_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-definitions-5#windows windows-definitions-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-definitions-5#macos macos-definitions-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd"
 
-#define OVAL_SYS_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 oval-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent independent-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix unix-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux linux-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd"
+#define OVAL_SYS_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 oval-system-characteristics-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent independent-system-characteristics-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix unix-system-characteristics-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux linux-system-characteristics-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows windows-system-characteristics-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#macos macos-system-characteristics-schema.xsd" \
+	" http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd"
 
 #define OVAL_RES_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-results-5 oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd"
 

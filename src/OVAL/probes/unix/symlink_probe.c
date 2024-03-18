@@ -58,6 +58,10 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 	if (pathname == NULL) {
 		return PROBE_EINVAL;
 	}
+	if (probe_path_is_blocked(pathname, ctx->blocked_paths)) {
+		free(pathname);
+		return 0;
+	}
 
 	if (lstat(pathname, &sb) == -1) {
 		if (errno == ENOENT) {

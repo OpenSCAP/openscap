@@ -82,7 +82,7 @@
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.1.1.a" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
       <ident system="http://cce.mitre.org">CCE-4187-1</ident>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo -e "\nblacklist usb_storage" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo -e "\ndenylist usb_storage" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.1.2.a" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
@@ -108,31 +108,31 @@
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.a" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist cramfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist cramfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.b" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist freevxfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist freevxfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.c" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist jffs2" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist jffs2" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.d" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist hfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist hfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.e" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist hfsplus" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist hfsplus" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.f" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist squashfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist squashfs" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.2.4.g" time="2012-07-17T15:50:44" weight="10.000000">
       <result>notselected</result>
-      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "blacklist udf" &gt;&gt; /etc/modprobe.d/blacklist.conf</fix>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" complexity="unknown" disruption="unknown">echo "denylist udf" &gt;&gt; /etc/modprobe.d/denylist.conf</fix>
     </rule-result>
     <rule-result idref="xccdf_cdf_rule_rule-2.2.3.1.a" time="2012-07-17T15:50:44" severity="medium" weight="10.000000">
       <result>notselected</result>

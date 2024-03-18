@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Test generating results and reports from SCE
 # Uses check which produce empty output to test

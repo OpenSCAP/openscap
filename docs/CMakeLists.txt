@@ -8,6 +8,12 @@ if(ENABLE_DOCS)
         set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
         set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
+        # configure for graphviz
+        set(DOXYGEN_DIAGRAM "NO")
+        if(DOXYGEN_DOT_FOUND)
+            set(DOXYGEN_DIAGRAM "YES")
+        endif()
+
         # request to configure the file
         configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
 

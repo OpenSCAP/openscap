@@ -52,6 +52,11 @@
 #include <bfind.h>
 #include <common/debug_priv.h>
 #include <netdb.h>
+
+#if defined(OS_FREEBSD)
+#include <arpa/inet.h>
+#endif
+
 #include "../SEAP/generic/rbt/rbt.h"
 #include "xinetd_probe.h"
 
@@ -517,7 +522,8 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 	{
 		/* fallback method - copy the contents into memory */
 
-		file->inmem = malloc(file->inlen);
+		file->inmem = malloc(file->inlen+1);
+		file->inmem[file->inlen] = '\0';
 
 		if (read (file->fd, file->inmem, file->inlen) != (ssize_t)file->inlen) {
 			/* Can't read the contents of the file */
@@ -561,7 +567,18 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 	}
 
 	xifile->depth = depth;
-	xiconf->cfile = realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
+	void *cfile = realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
+	if (cfile == NULL) {
+		dE("Failed re-allocate memory for cfile");
+		xiconf->count--;
+		if (xifile->cpath)
+			free(xifile->cpath);
+		if (xifile->inmem)
+			free(xifile->inmem);
+		free(xifile);
+		return (-1);
+	}
+	xiconf->cfile = cfile;
 	xiconf->cfile[xiconf->count - 1] = xifile;
 
 	dD("Added new file to the cfile queue: %s; fi=%zu", path, xiconf->count - 1);
@@ -729,6 +746,8 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 				switch (inctype) {
 				case XICONF_INCTYPE_FILE:
+					strncpy (pathbuf, inclarg, sizeof(pathbuf)-1);
+
 					dD("includefile: %s", pathbuf);
 
 					if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0) {
@@ -740,7 +759,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 				case XICONF_INCTYPE_DIR:
 				{
 					DIR           *dirfp;
-					struct dirent  dent, *dentp = NULL;
+					struct dirent *dent = NULL;
 
 					dD("includedir open: %s", inclarg);
 					dirfp = opendir (inclarg);
@@ -766,22 +785,22 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 					}
 
 					for (;;) {
-						if (readdir_r (dirfp, &dent, &dentp) != 0) {
-							dW("Can't read directory: %s; %d, %s.", inclarg, errno, strerror (errno));
+						errno = 0;
+						dent = readdir (dirfp);
+						if (dent == NULL) {
+							if (errno)
+								dW("Can't read directory: %s; %d, %s.", inclarg, errno, strerror (errno));
 							break;
 						}
 
-						if (dentp == NULL)
-							break;
-
-						if (fnmatch ("*~",  dent.d_name, FNM_PATHNAME) == 0 ||
-						    fnmatch ("*.*", dent.d_name, FNM_PATHNAME) == 0)
+						if (fnmatch ("*~",  dent->d_name, FNM_PATHNAME) == 0 ||
+						    fnmatch ("*.*", dent->d_name, FNM_PATHNAME) == 0)
 						{
-							dD("Skipping: %s", dent.d_name);
+							dD("Skipping: %s", dent->d_name);
 							continue;
 						}
 
-						strcpy(pathbuf + incllen, dent.d_name);
+						strcpy(pathbuf + incllen, dent->d_name);
 
 						if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0)
 							continue;
@@ -1143,8 +1162,14 @@ finish_section:
 			dD("adding new strans record to an exiting one: k=%s, cnt=%u+1",
 			   st_key, st->cnt);
 
-			st->srv = realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
-			st->srv[st->cnt - 1] = scur;
+			void *new_srv = realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
+			if (new_srv == NULL) {
+				dE("Failed to re-allocate memory for st->srv");
+				return (-1);
+			} else {
+				st->srv = new_srv;
+				st->srv[st->cnt - 1] = scur;
+			}
 		}
 
 		/*
@@ -1258,6 +1283,7 @@ int op_assign_bool(void *var, char *val)
 		*((bool *)(var)) = false;
 	} else {
 		char *endptr = NULL;
+		errno = 0;
 		*((bool *)(var)) = (bool) strtol (val, &endptr, 2);
 		if (errno == EINVAL || errno == ERANGE) {
 			return -1;
@@ -1362,7 +1388,12 @@ int op_assign_strl(void *var, char *val)
 			continue;
 		}
 		dD("Adding new member to string array: %s", tok);
-		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		void *new_string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		if (new_string_array == NULL) {
+			*aptr = string_array;
+			return -1;
+		}
+		string_array = new_string_array;
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
@@ -1393,7 +1424,12 @@ int op_insert_strl(void *var, char *val)
 			continue;
 		}
 		dD("Adding new member to string array: %s", tok);
-		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		void *new_string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		if (new_string_array == NULL) {
+			*aptr = string_array;
+			return -1;
+		}
+		string_array = new_string_array;
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
@@ -1425,6 +1461,8 @@ int op_remove_strl(void *var, char *val)
 	} else {
 		// Allocate the new string array
 		newstr_array = malloc(sizeof(char *) * (string_array_size + 1));
+		if (newstr_array == NULL)
+			return -1;
 	}
 
 	// Create an array of strings to be removed from the array
@@ -1439,9 +1477,19 @@ int op_remove_strl(void *var, char *val)
 			continue;
 		}
 		dD("Adding new member to string array: %s", tok);
-		valstr_array = realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
+		void *new_valstr_array = realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
+		if (new_valstr_array == NULL) {
+			free(newstr_array);
+			free(valstr_array);
+			return -2;
+		}
+		valstr_array = new_valstr_array;
 		valstr_array[valstr_array_size-1] = tok;
 		valstr_array[valstr_array_size] = NULL;
+	}
+	if (valstr_array == NULL) {
+		free(newstr_array);
+		return -2;
 	}
 
 	// Remove the insersection from the string array
@@ -1472,7 +1520,9 @@ int op_remove_strl(void *var, char *val)
 	newstr_array[newstr_array_size] = NULL;
 	free(string_array);
 	free(valstr_array);
-	newstr_array = realloc(newstr_array, sizeof(char*) * (newstr_array_size + 1));
+	void *new_newstr_array = realloc(newstr_array, sizeof(char *) * (newstr_array_size + 1));
+	if (new_newstr_array != NULL)
+		newstr_array = new_newstr_array;
 	*aptr = newstr_array;
 	return 0;
 }

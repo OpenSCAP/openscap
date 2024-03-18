@@ -97,6 +97,7 @@ struct xccdf_refine_value * xccdf_refine_value_clone(const struct xccdf_refine_v
 struct xccdf_refine_rule *xccdf_refine_rule_new(void)
 {
 	struct xccdf_refine_rule *foo = calloc(1, sizeof(struct xccdf_refine_rule));
+	foo->role = XCCDF_ROLE_FULL;
 	foo->remarks = oscap_list_new();
 	return foo;
 }
@@ -286,14 +287,15 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 			}
 		case XCCDFE_SET_VALUE:{
 				oscap_list_add(prof->sub.profile.setvalues, xccdf_setvalue_new_parse(reader));
+				xmlTextReaderRead(reader);
 				break;
 			}
 		default:
 			if (!xccdf_item_process_element(prof, reader))
 				dW("Encountered an unknown element '%s' while parsing XCCDF profile.",
 				   xmlTextReaderConstLocalName(reader));
+			xmlTextReaderRead(reader);
 		}
-		xmlTextReaderRead(reader);
 	}
 
 	return prof;
@@ -319,7 +321,8 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
         struct oscap_string_iterator *platforms = xccdf_profile_get_platforms(profile);
         while (oscap_string_iterator_has_more(platforms)) {
                 const char *platform = oscap_string_iterator_next(platforms);
-                xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "platform", BAD_CAST platform);
+                xmlNode *platform_node = xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "platform", NULL);
+                xmlNewProp(platform_node, BAD_CAST "idref", BAD_CAST platform);
         }   
         oscap_string_iterator_free(platforms);
 

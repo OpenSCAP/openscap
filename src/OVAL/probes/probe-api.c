@@ -138,6 +138,11 @@ SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val)
 {
 	SEXP_t *n_ref, *ns;
 
+	if (val == NULL)
+		ns = SEXP_string_new(name, strlen(name));
+	else
+		ns = SEXP_string_newf(":%s", name);
+
 	n_ref = SEXP_listref_first(item);
 
 	if (SEXP_listp(n_ref)) {
@@ -145,13 +150,7 @@ SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val)
 		 * There are already some attributes.
 		 * Just add the new to the list.
 		 */
-		if (val == NULL)
-			ns = SEXP_string_new(name, strlen(name));
-		else
-			ns = SEXP_string_newf(":%s", name);
-
 		SEXP_list_add(n_ref, ns);
-		SEXP_free(ns);
 
 		if (val != NULL)
 			SEXP_list_add(n_ref, val);
@@ -163,22 +162,20 @@ SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val)
 		 * S-exp and the attribute.
 		 */
 		SEXP_t *nl;
+		SEXP_t *x_ref;
 
-		if (val == NULL)
-			ns = SEXP_string_new(name, strlen(name));
-		else
-			ns = SEXP_string_newf(":%s", name);
+		x_ref = SEXP_list_nth(item, 1);
+		nl = SEXP_list_new(x_ref, ns, val, NULL);
+		SEXP_free(x_ref);
 
-		nl = SEXP_list_new(n_ref, ns, val, NULL);
-
-		SEXP_free(n_ref);
-		SEXP_free(ns);
-
-		n_ref = SEXP_list_replace(item, 1, nl);
+		x_ref = SEXP_list_replace(item, 1, nl);
+		SEXP_free(x_ref);
 		SEXP_free(nl);
 	}
 
 	SEXP_free(n_ref);
+
+	SEXP_free(ns);
 
 	return (val);
 }
@@ -874,7 +871,6 @@ oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj)
 	SEXP_t *items, *item;
 	int error_cnt = 0;
 	int exists_cnt = 0;
-	int does_not_exist_cnt = 0;
 	int not_collected_cnt = 0;
 
 	items = probe_cobj_get_items(cobj);
@@ -887,14 +883,13 @@ oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj)
 			++exists_cnt;
 			break;
 		case SYSCHAR_STATUS_DOES_NOT_EXIST:
-			++does_not_exist_cnt;
 			break;
 		case SYSCHAR_STATUS_NOT_COLLECTED:
 			++not_collected_cnt;
 			break;
 		default:
 			SEXP_free(item);
-			flag = SYSCHAR_STATUS_ERROR;
+			flag = SYSCHAR_FLAG_ERROR;
 			goto cleanup;
 		}
 	}
@@ -1799,4 +1794,20 @@ SEXP_t *probe_obj_getmask(SEXP_t *obj)
     SEXP_free(objents);
     return (mask);
 }
+
+bool probe_path_is_blocked(const char *path, struct oscap_list *blocked_paths)
+{
+	bool res = false;
+	struct oscap_iterator *it = oscap_iterator_new(blocked_paths);
+	while (oscap_iterator_has_more(it)) {
+		const char *item = oscap_iterator_next(it);
+		if (oscap_path_startswith(path, item)) {
+			res = true;
+			break;
+		}
+	}
+	oscap_iterator_free(it);
+	return res;
+}
+
 /// @}

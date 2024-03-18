@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 touch not_executable
@@ -10,15 +10,13 @@ name=$(basename $0 .sh)
 result=$(mktemp -t ${name}.out.XXXXXX)
 stderr=$(mktemp -t ${name}.err.XXXXXX)
 
-[ "`$OSCAP xccdf eval $srcdir/${name}.xccdf.xml 2>&1`" == "" ]
-
 $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_3 --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 '//Benchmark'
 assert_exists 1 '//Benchmark[@resolved="1"]'

@@ -845,7 +845,7 @@ cat <<EOF
       <node_name>`uname -n`</node_name>
       <os_name>`uname -s`</os_name>
       <os_release>`uname -r`</os_release>
-      <os_version>`uname -v`</os_version>
+      <os_version>`uname -v | sed 's/[ \t]*$//'`</os_version>
       <processor_type>`uname -m`</processor_type>
     </uname_state>
 
@@ -855,7 +855,7 @@ cat <<EOF
       <node_name>X`uname -n`</node_name>
       <os_name>X`uname -s`</os_name>
       <os_release>X`uname -r`</os_release>
-      <os_version>X`uname -v`</os_version>
+      <os_version>X`uname -v | sed 's/[ \t]*$//'`</os_version>
       <processor_type>X`uname -m`</processor_type>
     </uname_state>
 
@@ -865,7 +865,7 @@ cat <<EOF
       <node_name>X`uname -n`</node_name>
       <os_name>`uname -s`</os_name>
       <os_release>`uname -r`</os_release>
-      <os_version>`uname -v`</os_version>
+      <os_version>`uname -v | sed 's/[ \t]*$//'`</os_version>
       <processor_type>X`uname -m`</processor_type>
     </uname_state>
 

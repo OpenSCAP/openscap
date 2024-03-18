@@ -82,6 +82,14 @@ OSCAP_API struct xccdf_session *xccdf_session_new_from_source(struct oscap_sourc
 OSCAP_API void xccdf_session_free(struct xccdf_session *session);
 
 /**
+ * Reset xccdf_session results.
+ * This function resets XCCDF policies, session rules, skipped rules, OVAL system characteristics and OVAL results.
+ * @memberof xccdf_session
+ * @param session to reset results from.
+ */
+OSCAP_API void xccdf_session_result_reset(struct xccdf_session *session);
+
+/**
  * Retrieves the filename the session was created with
  * @memberof xccdf_session
  */
@@ -102,7 +110,24 @@ OSCAP_API bool xccdf_session_is_sds(const struct xccdf_session *session);
  * @param session XCCDF Session
  * @param rule If not NULL, session will use only this rule
  */
-OSCAP_API void xccdf_session_set_rule(struct xccdf_session *session, const char *rule);
+OSCAP_DEPRECATED(OSCAP_API void xccdf_session_set_rule(struct xccdf_session *session, const char *rule));
+
+/**
+ * Add specific rule for session - if at least one rule is added to the session,
+ * only the added rules will be evaluated
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param rule rule ID
+ */
+OSCAP_API void xccdf_session_add_rule(struct xccdf_session *session, const char *rule);
+
+/**
+ * Skip rule during evaluation of the session
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param rule rule ID
+ */
+OSCAP_API void xccdf_session_skip_rule(struct xccdf_session *session, const char *rule);
 
 /**
  * Set XSD validation level to one of three possibilities:
@@ -115,6 +140,22 @@ OSCAP_API void xccdf_session_set_rule(struct xccdf_session *session, const char 
  * @param full_validation True value indicates that every possible step will be validated by XSD.
  */
 OSCAP_API void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation);
+
+/**
+ * Set XML signature validation
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param validate False value indicates to skip any XML signature validation.
+ */
+OSCAP_API void xccdf_session_set_signature_validation(struct xccdf_session *session, bool validate);
+
+/**
+ * Set XML signature enforcement
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param enforce True value renders all unsigned XMLs invalid.
+ */
+OSCAP_API void xccdf_session_set_signature_enforcement(struct xccdf_session *session, bool enforce);
 
 /**
  * Set whether the thin results override is enabled.
@@ -216,7 +257,21 @@ OSCAP_API void xccdf_session_set_user_tailoring_cid(struct xccdf_session *sessio
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */
-OSCAP_API void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback);
+OSCAP_API OSCAP_DEPRECATED(void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback));
+
+/**
+ * Set properties of remote content.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param allowed Whether is download od remote resources allowed in this
+ * session (defaults to false)
+ * @param local_files Allows to use a locally downloaded copy of the remote
+ * resources. Contains a path to a directory where the files are stored
+ * (defaults to NULL).
+ * @param callback used to notify user about download proceeds. This might be
+ * safely set to NULL -- ignoring user notification.
+ */
+OSCAP_API void xccdf_session_configure_remote_resources(struct xccdf_session *session, bool allowed, const char *local_files, download_progress_calllback_t callback);
 
 /**
  * Disable or allow loading of depending content (OVAL, SCE, CPE)
@@ -528,6 +583,18 @@ OSCAP_API unsigned int xccdf_session_get_cpe_oval_agents_count(const struct xccd
 OSCAP_API bool xccdf_session_contains_fail_result(const struct xccdf_session *session);
 
 /**
+ * @struct xccdf_rule_result_iterator
+ */
+struct xccdf_rule_result_iterator;
+
+/**
+ * Get rule results.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ */
+OSCAP_API struct xccdf_rule_result_iterator *xccdf_session_get_rule_results(const struct xccdf_session *session);
+
+/**
  * Run XCCDF Remediation. It uses XCCDF Policy and XCCDF TestResult from the session
  * and modifies the TestResult. This also drops and recreate OVAL Agent Session, thus
  * users are advised to run @ref xccdf_session_export_oval first.
@@ -558,6 +625,32 @@ OSCAP_API int xccdf_session_build_policy_from_testresult(struct xccdf_session *s
  */
 OSCAP_API int xccdf_session_add_report_from_source(struct xccdf_session *session, struct oscap_source *report_source);
 
+/**
+ * Generate HTML guide form a loaded XCCDF session
+ * @param session XCCDF Session
+ * @param outfile path to the output file
+ * @returns zero on success
+ */
+OSCAP_API int xccdf_session_generate_guide(struct xccdf_session *session, const char *outfile);
+
+/**
+ * Export XCCDF results, ARF results and HTML report from the given XCCDF
+ * session based on values set in the XCCDF session. This is a destructive
+ * operation that modifies the oscap_source structures, specifically the XML
+ * trees. Callers must not perform any operation with the session after this
+ * call and they must free the session immediately.
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+OSCAP_API int xccdf_session_export_all(struct xccdf_session *session);
+
+/**
+ * Set reference filter to the XCCDF session. If this filter is set,
+ * the XCCDF session will evaluate only rules that conform to the filter.
+ * @param session XCCDF session
+ * @param reference_filter a string in a form "key:identifier"
+ */
+OSCAP_API void xccdf_session_set_reference_filter(struct xccdf_session *session, const char *reference_filter);
 /// @}
 /// @}
 #endif

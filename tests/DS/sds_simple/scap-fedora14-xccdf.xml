@@ -2160,7 +2160,7 @@ purposes.</xccdf:description>
                                     <xccdf:title>Disable Modprobe Loading of USB Storage Driver</xccdf:title>
                                     <xccdf:description>The USB device support module should not be loaded</xccdf:description>
                                     <xccdf:ident system="http://cce.mitre.org">CCE-4187-1</xccdf:ident>
-                                    <xccdf:fix>echo -e "\nblacklist usb_storage" &gt;&gt; /etc/modprobe.d/blacklist.conf</xccdf:fix>
+                                    <xccdf:fix>echo -e "\ndenylist usb_storage" &gt;&gt; /etc/modprobe.d/denylist.conf</xccdf:fix>
                                     <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                                         <xccdf:check-content-ref href="scap-fedora14-oval.xml" name="oval:org.open-scap.f14:def:20021"/>
                                     </xccdf:check>
@@ -2312,13 +2312,13 @@ purposes.</xccdf:description>
                         <xccdf:Group hidden="false" id="xccdf_cdf_group_group-2.2.2.4">
                             <xccdf:title xml:lang="en">Disable Mounting of Uncommon Filesystem Types</xccdf:title>
                             <xccdf:description xml:lang="en">
-            Specifying kernel module in /etc/modprobe.d/blacklist.conf will prevent
+            Specifying kernel module in /etc/modprobe.d/denylist.conf will prevent
             kernel module loading system from inserting the modele into the kernel. 
             This mechanism effectively prevents usage of these uncommon ﬁlesystems.</xccdf:description>
                             <xccdf:Rule id="xccdf_cdf_rule_rule-2.2.2.4.a" selected="false" weight="10.0">
                                 <xccdf:title>Disable Mounting of cramfs</xccdf:title>
                                 <xccdf:description>cramfs is uncommon ﬁlesystems</xccdf:description>
-                                <xccdf:fix>echo "blacklist cramfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</xccdf:fix>
+                                <xccdf:fix>echo "denylist cramfs" &gt;&gt; /etc/modprobe.d/denylist.conf</xccdf:fix>
                                 <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                                     <xccdf:check-content-ref href="scap-fedora14-oval.xml" name="oval:org.open-scap.f14:def:20027"/>
                                 </xccdf:check>
@@ -2326,7 +2326,7 @@ purposes.</xccdf:description>
                             <xccdf:Rule id="xccdf_cdf_rule_rule-2.2.2.4.b" selected="false" weight="10.0">
                                 <xccdf:title>Disable Mounting of freevxfs</xccdf:title>
                                 <xccdf:description>freevxfs is uncommon ﬁlesystems</xccdf:description>
-                                <xccdf:fix>echo "blacklist freevxfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</xccdf:fix>
+                                <xccdf:fix>echo "denylist freevxfs" &gt;&gt; /etc/modprobe.d/denylist.conf</xccdf:fix>
                                 <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                                     <xccdf:check-content-ref href="scap-fedora14-oval.xml" name="oval:org.open-scap.f14:def:20028"/>
                                 </xccdf:check>
@@ -2334,7 +2334,7 @@ purposes.</xccdf:description>
                             <xccdf:Rule id="xccdf_cdf_rule_rule-2.2.2.4.c" selected="false" weight="10.0">
                                 <xccdf:title>Disable Mounting of jffs2</xccdf:title>
                                 <xccdf:description>jffs2 is uncommon ﬁlesystems</xccdf:description>
-                                <xccdf:fix>echo "blacklist jffs2" &gt;&gt; /etc/modprobe.d/blacklist.conf</xccdf:fix>
+                                <xccdf:fix>echo "denylist jffs2" &gt;&gt; /etc/modprobe.d/denylist.conf</xccdf:fix>
                                 <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                                     <xccdf:check-content-ref href="scap-fedora14-oval.xml" name="oval:org.open-scap.f14:def:20029"/>
                                 </xccdf:check>
@@ -2342,7 +2342,7 @@ purposes.</xccdf:description>
                             <xccdf:Rule id="xccdf_cdf_rule_rule-2.2.2.4.d" selected="false" weight="10.0">
                                 <xccdf:title>Disable Mounting of hfs</xccdf:title>
                                 <xccdf:description>hfs is uncommon ﬁlesystems</xccdf:description>
-                                <xccdf:fix>echo "blacklist hfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</xccdf:fix>
+                                <xccdf:fix>echo "denylist hfs" &gt;&gt; /etc/modprobe.d/denylist.conf</xccdf:fix>
                                 <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                                     <xccdf:check-content-ref href="scap-fedora14-oval.xml" name="oval:org.open-scap.f14:def:20030"/>
                                 </xccdf:check>
@@ -2350,7 +2350,7 @@ purposes.</xccdf:description>
                             <xccdf:Rule id="xccdf_cdf_rule_rule-2.2.2.4.e" selected="false" weight="10.0">
                                 <xccdf:title>Disable Mounting of hfsplus</xccdf:title>
                                 <xccdf:description>hfsplus is uncommon ﬁlesystems</xccdf:description>
-                                <xccdf:fix>echo "blacklist hfsplus" &gt;&gt; /etc/modprobe.d/blacklist.conf</xccdf:fix>
+                                <xccdf:fix>echo "denylist hfsplus" &gt;&gt; /etc/modprobe.d/denylist.conf</xccdf:fix>
                                 <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                                     <xccdf:check-content-ref href="scap-fedora14-oval.xml" name="oval:org.open-scap.f14:def:20031"/>
                                 </xccdf:check>
@@ -2358,7 +2358,7 @@ purposes.</xccdf:description>
                             <xccdf:Rule id="xccdf_cdf_rule_rule-2.2.2.4.f" selected="false" weight="10.0">
                                 <xccdf:title>Disable Mounting of squashfs</xccdf:title>
                                 <xccdf:description>squashfs is uncommon ﬁlesystems</xccdf:description>
-                                <xccdf:fix>echo "blacklist squashfs" &gt;&gt; /etc/modprobe.d/blacklist.conf</xccdf:fix>
+                                <xccdf:fix>echo "denylist squashfs" &gt;&gt; /etc/modprobe.d/denylist.conf</xccdf:fix>
                                 <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                                     <xccdf:check-content-ref href="scap-fedora14-oval.xml" name="oval:org.open-scap.f14:def:20032"/>
                                 </xccdf:check>
@@ -2366,7 +2366,7 @@ purposes.</xccdf:description>
                             <xccdf:Rule id="xccdf_cdf_rule_rule-2.2.2.4.g" selected="false" weight="10.0">
                                 <xccdf:title>Disable Mounting of udf</xccdf:title>
                                 <xccdf:description>udf is uncommon ﬁlesystems</xccdf:description>
-                                <xccdf:fix>echo "blacklist udf" &gt;&gt; /etc/modprobe.d/blacklist.conf</xccdf:fix>
+                                <xccdf:fix>echo "denylist udf" &gt;&gt; /etc/modprobe.d/denylist.conf</xccdf:fix>
                                 <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                                     <xccdf:check-content-ref href="scap-fedora14-oval.xml" name="oval:org.open-scap.f14:def:20033"/>
                                 </xccdf:check>
@@ -11297,7 +11297,7 @@ purposes.</xccdf:description>
             workstation. If the MTA is running very old software or is configured poorly, it can be
             possible for attackers to take advantage of this feature, using your MTA to relay their
             spam from one remote site to another. This is undesirable for many reasons, not least
-            that your site will quickly be blacklisted as a spam source, leaving you unable to send
+            that your site will quickly be denylisted as a spam source, leaving you unable to send
             legitimate e-mail to your correspondents. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             The simplest solution described in this guide
@@ -13274,7 +13274,7 @@ purposes.</xccdf:description>
             };<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             zone "example.com " IN { <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-            type master; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            type primary; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             allow-transfer { key zone-transfer-key; }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             ... <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             }<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
@@ -13286,13 +13286,13 @@ purposes.</xccdf:description>
             secret "base64-key-string "; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-            server IP-OF-MASTER { <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            server IP-OF-PRIMARY { <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             keys { zone-transfer-key; }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             zone "example.com " IN { <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-            type slave;<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
-            masters { IP-OF-MASTER ; }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            type secondary;<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+            primaries { IP-OF-PRIMARY ; }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             ... <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             }; <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
             <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>

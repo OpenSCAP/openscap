@@ -50,9 +50,12 @@ struct ds_sds_session {
 	const char *target_dir;                 ///< Target directory for current split
 	const char *datastream_id;              ///< ID of selected datastream
 	const char *checklist_id;               ///< ID of selected checklist
+	const char *checklist_uri;              ///< URI of selected checklist
 	struct oscap_htable *component_sources;	///< oscap_source for parsed components
+	struct oscap_htable *component_uris;    ///< maps component refs to component URIs
 	bool fetch_remote_resources;            ///< Allows loading of external components;
 	download_progress_calllback_t progress;	///< Callback to report progress of download.
+	const char *local_files;            ///< Path to the directory where local copies of remote components are located
 };
 
 /**
@@ -72,6 +75,7 @@ struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *sourc
 	struct ds_sds_session *sds_session = (struct ds_sds_session *) calloc(1, sizeof(struct ds_sds_session));
 	sds_session->source = source;
 	sds_session->component_sources = oscap_htable_new();
+	sds_session->component_uris = oscap_htable_new();
 	sds_session->progress = download_progress_empty_calllback;
 	return sds_session;
 }
@@ -84,6 +88,7 @@ void ds_sds_session_free(struct ds_sds_session *sds_session)
 			oscap_acquire_cleanup_dir(&(sds_session->temp_dir));
 		}
 		oscap_htable_free(sds_session->component_sources, (oscap_destruct_func) oscap_source_free);
+		oscap_htable_free(sds_session->component_uris, (oscap_destruct_func) free);
 		free(sds_session);
 	}
 }
@@ -91,10 +96,13 @@ void ds_sds_session_free(struct ds_sds_session *sds_session)
 void ds_sds_session_reset(struct ds_sds_session *session)
 {
 	session->checklist_id = NULL;
+	session->checklist_uri = NULL;
 	session->datastream_id = NULL;
 	session->target_dir = NULL;
 	oscap_htable_free(session->component_sources, (oscap_destruct_func) oscap_source_free);
 	session->component_sources = oscap_htable_new();
+	oscap_htable_free(session->component_uris, (oscap_destruct_func) free);
+	session->component_uris = oscap_htable_new();
 }
 
 struct ds_sds_index *ds_sds_session_get_sds_idx(struct ds_sds_session *session)
@@ -163,9 +171,19 @@ const char *ds_sds_session_get_checklist_id(const struct ds_sds_session *session
 	return session->checklist_id;
 }
 
+const char *ds_sds_session_get_checklist_uri(const struct ds_sds_session *session)
+{
+	return session->checklist_uri;
+}
+
 struct oscap_htable *ds_sds_session_get_component_sources(struct ds_sds_session *session)
 {
 	return session->component_sources;
+}
+
+struct oscap_htable *ds_sds_session_get_component_uris(struct ds_sds_session *session)
+{
+	return session->component_uris;
 }
 
 const char *ds_sds_session_get_readable_origin(const struct ds_sds_session *session)
@@ -210,6 +228,7 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not extract %s with all dependencies from datastream.", session->checklist_id);
 		return NULL;
 	}
+	session->checklist_uri = oscap_htable_get(session->component_uris, session->checklist_id);
 	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, session->checklist_id);
 	if (xccdf == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to '%s' source.", session->checklist_id);
@@ -238,7 +257,7 @@ xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session)
 		char *error = session->datastream_id ?
 			oscap_sprintf("Could not find any datastream of id '%s'", session->datastream_id) :
 			oscap_sprintf("Could not find any datastream inside the file");
-		oscap_seterr(OSCAP_EFAMILY_XML, error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "%s", error);
 		free(error);
 	}
 	return datastream;
@@ -252,7 +271,7 @@ xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session)
 int ds_sds_session_register_component_source(struct ds_sds_session *session, const char *relative_filepath, struct oscap_source *component)
 {
 	if (!oscap_htable_add(session->component_sources, relative_filepath, component)) {
-		dW("File %s has already been registered in Source DataStream session: %s",
+		dI("File %s has already been registered in Source DataStream session: %s",
 			relative_filepath, oscap_source_readable_origin(session->source));
 		return -1;
 	}
@@ -319,10 +338,21 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 	return res;
 }
 
-void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback)
+void ds_sds_session_configure_remote_resources(struct ds_sds_session *session, bool allowed, const char *local_files, download_progress_calllback_t callback)
 {
 	session->fetch_remote_resources = allowed;
+	session->local_files = local_files;
 	session->progress = (callback != NULL) ? callback : download_progress_empty_calllback;
+}
+
+void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback)
+{
+	ds_sds_session_configure_remote_resources(session, allowed, NULL, callback);
+}
+
+const char *ds_sds_session_local_files(struct ds_sds_session *session)
+{
+	return session->local_files;
 }
 
 int ds_sds_session_dump_component_files(struct ds_sds_session *session)

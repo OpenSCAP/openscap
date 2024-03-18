@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -o pipefail
 
 . $builddir/tests/test_common.sh
@@ -14,7 +14,9 @@ function test_filecontent_non_utf {
     cp ${srcdir}/test_filecontent_non_utf.${FILE_SUFFIX} ${test_dir}/${FILE_SUFFIX}
 
     cp ${srcdir}/test_filecontent_non_utf.oval.xml ${test_dir}/oval.xml
-    sed -i "s:TEST_FILE:${test_dir}/${FILE_SUFFIX}:" ${test_dir}/oval.xml
+
+    xsed -i "s:TEST_FILE:${test_dir}/${FILE_SUFFIX}:" ${test_dir}/oval.xml
+
     $OSCAP oval eval --results $result ${test_dir}/oval.xml &> $output || exit_code=1
     if ! grep ${RESULT} $output; then
         echo "Failed to output \"${RESULT}\", something is wrong"

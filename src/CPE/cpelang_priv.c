@@ -313,7 +313,6 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 {
 
 	xmlChar *temp = NULL;
-	size_t elem_cnt = 0;
 	struct cpe_testexpr *ret = NULL;
 
 	__attribute__nonnull__(reader);
@@ -381,7 +380,6 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 			xmlTextReaderNextNode(reader);
 			continue;
 		}
-		elem_cnt++;
 
 		// We assume that the expression is a logical one (meaning that it
 		// can have subexpressions).
@@ -390,7 +388,6 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 		// .. and the next node is logical-test element, we need recursive call
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) &&
 		    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-			// ret->meta.expr[elem_cnt - 1] = *(cpe_testexpr_parse(reader));
 			oscap_list_add(ret->meta.expr, cpe_testexpr_parse(reader));
                         if (xmlTextReaderDepth(reader) < depth) {
                                 return ret;
@@ -420,7 +417,6 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 		}
 		xmlTextReaderNextNode(reader);
 	}
-	//ret->meta.expr[elem_cnt].oper = CPE_LANG_OPER_HALT;
 
 	return ret;
 }

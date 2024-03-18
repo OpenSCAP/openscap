@@ -19,8 +19,8 @@
 #cmakedefine HAVE_GCRYCTL_SET_ENFORCED_FIPS_FLAG
 #endif
 
-#cmakedefine NSS3_FOUND
-#if defined(NSS3_FOUND)
+#cmakedefine NSS_FOUND
+#if defined(NSS_FOUND)
 #define HAVE_NSS3
 #endif
 
@@ -28,6 +28,8 @@
 #define OSCAP_DEFAULT_XSLT_PATH "@OSCAP_DEFAULT_XSLT_PATH@"
 #define OSCAP_DEFAULT_CPE_PATH "@OSCAP_DEFAULT_CPE_PATH@"
 #define OSCAP_TEMP_DIR "@OSCAP_TEMP_DIR@"
+
+#cmakedefine HAVE_PCRE2
 
 #cmakedefine HAVE_ATOMIC_BUILTINS
 
@@ -44,6 +46,7 @@
 #cmakedefine HAVE_RPMVERCMP
 #cmakedefine RPM46_FOUND
 #cmakedefine RPM47_FOUND
+#cmakedefine RPM418_FOUND
 
 #cmakedefine BZIP2_FOUND
 
@@ -78,6 +81,7 @@
 #cmakedefine HAVE_UIO_H
 #cmakedefine HAVE_ATTR_XATTR_H
 #cmakedefine HAVE_SYS_XATTR_H
+#cmakedefine HAVE_SYS_EXTATTR_H
 
 #cmakedefine HAVE_STRSEP
 #cmakedefine HAVE_FLOCK
@@ -108,6 +112,7 @@
 #cmakedefine OPENSCAP_PROBE_LINUX_SELINUXSECURITYCONTEXT
 #cmakedefine OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY
 #cmakedefine OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY
+#cmakedefine OPENSCAP_PROBE_LINUX_FWUPDSECURITYATTR
 #cmakedefine OPENSCAP_PROBE_SOLARIS_ISAINFO
 #cmakedefine OPENSCAP_PROBE_UNIX_DNSCACHE
 #cmakedefine OPENSCAP_PROBE_UNIX_FILE
@@ -131,6 +136,9 @@
 #cmakedefine PREFERRED_PYTHON_PATH "@PREFERRED_PYTHON_PATH@"
 #cmakedefine PYTHON2_PATH "@PYTHON2_PATH@"
 #cmakedefine PYTHON3_PATH "@PYTHON3_PATH@"
+
+#cmakedefine OPENSCAP_ENABLE_SHA1
+#cmakedefine OPENSCAP_ENABLE_MD5
 
 #include "oscap_platforms.h"
 #include "compat.h"

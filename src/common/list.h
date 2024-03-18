@@ -62,6 +62,7 @@ struct oscap_list *oscap_list_new(void);
 void oscap_create_lists(struct oscap_list **first, ...);
 bool oscap_list_add(struct oscap_list *list, void *value);
 bool oscap_list_push(struct oscap_list *list, void *value);
+bool oscap_list_prepend(struct oscap_list *list, void *value);
 bool oscap_list_pop(struct oscap_list *list, oscap_destruct_func destructor);
 bool oscap_list_remove(struct oscap_list *list, void *value, oscap_cmp_func compare, oscap_destruct_func destructor);
 struct oscap_list *oscap_list_clone(const struct oscap_list * list, oscap_clone_func cloner);
@@ -218,6 +219,13 @@ bool oscap_htable_add(struct oscap_htable *htable, const char *key, void *item);
  * @return An item, NULL if item with specified key is not present in the hash table.
  */
 void *oscap_htable_get(struct oscap_htable *htable, const char *key);
+
+/**
+ * Get count of items in the hash table
+ * @param htable Hash table
+ * @return Count of items stored in the given hash table
+ */
+size_t oscap_htable_itemcount(struct oscap_htable *htable);
 
 void *oscap_htable_detach(struct oscap_htable *htable, const char *key);
 

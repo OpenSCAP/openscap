@@ -30,6 +30,11 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <errno.h>
+
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
 #include "_seap.h"
 #include "generic/common.h"
 #include "_sexp-types.h"
@@ -217,7 +222,7 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
                 return (-1);
         }
 
-        if (res != NULL)
+        if (res != NULL && res != cmd->args)
                 SEXP_free(res);
 
         SEAP_packet_free (packet);
@@ -521,6 +526,7 @@ int SEAP_replyerr (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, uint32_t e)
         _A(ctx != NULL);
         _A(rep_msg != NULL);
 
+        err.type = 0;
         err.code = e;
         err.id   = rep_msg->id;
         err.data = NULL; /* FIXME: Attach original message */

@@ -66,6 +66,25 @@ bool oscap_list_add(struct oscap_list * list, void *value)
 	return true;
 }
 
+bool oscap_list_prepend(struct oscap_list * list, void *value)
+{
+	__attribute__nonnull__(list);
+	if (value == NULL) return false;
+
+	struct oscap_list_item *item = malloc(sizeof(struct oscap_list_item));
+	item->next = NULL;
+	item->data = value;
+	++list->itemcount;
+
+	if (list->first == NULL) {
+		list->last = list->first = item;
+	} else {
+		item->next = list->first;
+		list->first = item;
+	}
+	return true;
+}
+
 bool oscap_list_push(struct oscap_list *list, void *value)
 {
 	return oscap_list_add(list,value);
@@ -494,6 +513,11 @@ void *oscap_htable_get(struct oscap_htable *htable, const char *key)
 	__attribute__nonnull__(htable);
 	struct oscap_htable_item *htitem = oscap_htable_lookup(htable, key);
 	return htitem ? htitem->value : NULL;
+}
+
+size_t oscap_htable_itemcount(struct oscap_htable *htable)
+{
+	return htable->itemcount;
 }
 
 void oscap_print_depth(int);

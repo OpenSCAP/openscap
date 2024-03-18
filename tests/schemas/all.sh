@@ -15,7 +15,14 @@ function test_no_external_imports {
     # multiline matching. Normally pcregrep could be used but since it's not
     # installed very often we use this hack instead. It assumes that xsd:import
     # declarations don't take more than 2 lines in total.
-    EXTERNAL_IMPORTS=$(grep -n -P "schemaLocation=\"http[s]?://[^\"]+\"" -C 1 -r "${srcdir}/../../schemas/" | grep -P "<[^:]+:import")
+    case $(uname) in
+	FreeBSD)
+		EXTERNAL_IMPORTS=$(grep -R -E 'schemaLocation=\"http*://' "${srcdir}/../../schemas/" -C 1 | grep -R -E '<xs.*:import') 
+		;;
+	*)
+		EXTERNAL_IMPORTS=$(grep -n -P "schemaLocation=\"http[s]?://[^\"]+\"" -C 1 -r "${srcdir}/../../schemas/" | grep -P "<[^:]+:import")
+		;;
+    esac
 
     if [ "$?x" != "1x" ]; then
         echo "XSD schemas using external xsd:import found!:"

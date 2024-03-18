@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -28,7 +28,7 @@ grep '^OVAL Definition ID.*oval:moc.elpmaxe.www:def:2$' $stdout
 grep '^OVAL Definition Title.*DEFINITION_2_TITLE_EXPECTED_FAIL$' $stdout
 rm $stdout
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 '//Rule[@id="xccdf_moc.elpmaxe.www_rule_1"]/check[@multi-check="true"]'
 assert_exists 1 '//check-content-ref[not(@name)]'

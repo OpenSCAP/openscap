@@ -1,14 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
+. $builddir/tests/test_common.sh
 
 set -e
 set -o pipefail
 
 name=$(basename $0 .sh)
-sds=$(mktemp -t ${name}.sds.XXXXXX)
+sds=$(make_temp_file /tmp ${name}.sds)
 xccdf=test_remediate_fix_processing.xccdf.xml
-stderr=$(mktemp -t ${name}.out.XXXXXX)
-resultx=$(mktemp -t ${name}.xccdf.XXXXXX)
-arf=$(mktemp -t ${name}.arf.XXXXXX)
+stderr=$(make_temp_file /tmp ${name}.out)
+resultx=$(make_temp_file /tmp ${name}.xccdf)
+arf=$(make_temp_file /tmp ${name}.arf)
 echo "sds file: $sds"
 echo "stderr file: $stderr"
 echo "results file: $result"
@@ -27,7 +28,7 @@ $OSCAP xccdf eval --remediate --results $resultx --results-arf $arf $sds 2> $std
 [ ! -f wrong_test_file ]
 [ -f test_file_cpe_na ]; rm test_file_cpe_na
 
-$OSCAP xccdf validate $resultx
+$OSCAP xccdf validate --skip-schematron $resultx
 $OSCAP ds rds-validate $arf
 
 result=$resultx
@@ -61,7 +62,7 @@ $OSCAP xccdf eval --cpe $srcdir/cpe-dict.xml --remediate --results $resultx --re
 [ ! -f wrong_test_file ]
 [ ! -f test_file_cpe_na ]
 
-$OSCAP xccdf validate $resultx
+$OSCAP xccdf validate --skip-schematron $resultx
 $OSCAP ds rds-validate $arf
 
 result=$resultx

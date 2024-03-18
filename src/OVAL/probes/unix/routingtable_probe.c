@@ -34,8 +34,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
-#ifdef OS_APPLE
+#if defined(OS_APPLE)
 #include <machine/endian.h>
+#elif defined(OS_FREEBSD)
+#include <sys/endian.h>
+#include <sys/socket.h>
 #else
 #include <endian.h>
 #endif
@@ -223,7 +226,7 @@ static int process_line_ip4(char *line, struct route_info *rt)
     RT_COND_ADD_FLAG(RTF_UP, "UP");
     RT_COND_ADD_FLAG(RTF_GATEWAY, "GATEWAY");
     RT_COND_ADD_FLAG(RTF_HOST, "HOST");
-#ifndef OS_APPLE
+#if !defined(OS_APPLE) && !defined(OS_FREEBSD)
     RT_COND_ADD_FLAG(RTF_REINSTATE, "REINSTATE");
 #endif
     RT_COND_ADD_FLAG(RTF_DYNAMIC, "DYNAMIC");
@@ -288,7 +291,7 @@ static int process_line_ip6(char *line, struct route_info *rt)
     RT_COND_ADD_FLAG(RTF_DYNAMIC, "DYNAMIC");
     RT_COND_ADD_FLAG(RTF_MODIFIED, "MODIFIED");
     RT_COND_ADD_FLAG(RTF_REJECT, "REJECT");
-#ifndef OS_APPLE
+#if !defined(OS_APPLE) && !defined(OS_FREEBSD)
     RT_COND_ADD_FLAG(RTF_REINSTATE, "REINSTATE");
     RT_COND_ADD_FLAG(RTF_ADDRCONF, "ADDRCONF");
     RT_COND_ADD_FLAG(RTF_CACHE, "CACHE");

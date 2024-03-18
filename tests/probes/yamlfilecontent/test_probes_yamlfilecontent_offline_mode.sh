@@ -15,14 +15,16 @@ function test_probes_yamlfilecontent_offline_mode {
 
     [ -f $RF ] && rm -f $RF
 
-    tmpdir=$(mktemp -t -d "test_offline_mode_yamlfilecontent.XXXXXX")
+    tmpdir=$(make_temp_dir /tmp "test_offline_mode_yamlfilecontent")
 
     # Setup chroot fs and host with test files in different states
     mkdir $tmpdir/tmp
     cp "${srcdir}/${YAML_FILE}" "${tmpdir}/tmp"
 
     cp "${srcdir}/${YAML_FILE}" /tmp
-    sed -i 's/name: instance/name: outstance/' "/tmp/${YAML_FILE}"
+
+    xsed -i 's/name: instance/name: outstance/' "/tmp/${YAML_FILE}"
+
     cp "${srcdir}/${YAML_FILE}" "/tmp/host-${YAML_FILE}"
 
     set_chroot_offline_test_mode "$tmpdir"

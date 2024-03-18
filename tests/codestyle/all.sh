@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Copyright 2014--2015 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
@@ -21,8 +21,9 @@ function test_illicit_function_use {
 		echo "xmlTextReaderReadString is not allowed within OpenSCAP project. Its implementation in libxml does not play well with xmlWalkerReader."
 		return 1;
 	fi
-	whitelisted=$(echo $codebase | sed 's/\S*\/source\/oscap_source.c / /g' -)
-	if grep xmlReadFile $whitelisted; then
+
+	codebase_without_xml_read_file=$(echo $codebase | xsed 's/\S*\/source\/oscap_source.c / /g' -)
+	if grep xmlReadFile $codebase_without_xml_read_file; then
 		echo "xmlReadFile is not allowed within OpenSCAP project. Please make a use of oscap_source facility."
 		return 1;
 	fi

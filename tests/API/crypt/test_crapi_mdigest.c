@@ -24,6 +24,8 @@
 #include <config.h>
 #endif
 
+#if (defined OPENSCAP_ENABLE_MD5 && defined OPENSCAP_ENABLE_SHA1)
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -127,3 +129,12 @@ int main (int argc, char *argv[])
         
         return (0);
 }
+
+#else
+
+int main (int argc, char *argv[])
+{
+        return 1;
+}
+
+#endif

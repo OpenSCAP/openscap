@@ -16,7 +16,7 @@
   <xs:import namespace="http://checklists.nist.gov/xccdf/1.2"
     schemaLocation="../../xccdf/1.2/xccdf_1.2.xsd"/>
   <xs:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5"
-    schemaLocation="../../oval/5.11.2/oval-definitions-schema.xsd"/>
+    schemaLocation="../../oval/5.11.3/oval-definitions-schema.xsd"/>
   <xs:import namespace="http://cpe.mitre.org/dictionary/2.0"
     schemaLocation="../../cpe/2.3/cpe-dictionary_2.3.xsd"/>
   <xs:import namespace="http://scap.nist.gov/schema/ocil/2.0"

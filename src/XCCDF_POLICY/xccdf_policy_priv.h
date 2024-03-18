@@ -59,8 +59,9 @@ struct xccdf_policy {
 	struct xccdf_policy_model   * model;    ///< XCCDF Policy model
 	struct xccdf_profile        * profile;  ///< Profile structure (from benchmark)
 	/** A list of all selects. Either from profile or later added through API. */
-	const char *rule;			///< Single-rule feature: if not NULL, only this one rule will be selected.
-	int rule_found;				///< Single-rule feature: flag for rule - if rule is found it is set to 1 otherwise 0.
+	struct oscap_htable *rules;
+	struct oscap_htable *rules_found;
+	struct oscap_htable *skip_rules;
 	struct oscap_list           * selects;
 	struct oscap_list           * values;   ///< Bound values of profile
 	struct oscap_list           * results;  ///< List of XCCDF results
@@ -71,6 +72,11 @@ struct xccdf_policy {
 	struct oscap_htable		*selected_final;
 	/* The hash-table contains the latest refine-rule for specified item-id. */
 	struct oscap_htable		*refine_rules_internal;
+	struct {
+		bool active;
+		char *href;
+		char *title;
+	} reference_filter;
 };
 
 
@@ -135,5 +141,6 @@ int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, voi
  */
 struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *policy);
 
+void xccdf_policy_set_reference_filter(struct xccdf_policy *policy, const char *reference_parameter);
 
 #endif

@@ -1,0 +1,27 @@
+# This Dockerfile should allow you to run the openscap test suite
+# inside a Fedora container and it can be also used to test a specific
+# pull request (PR).
+#
+# Example how to build it and run it:
+#     podman build -t oscap_test_suite -f Dockerfiles/test_suite
+#     podman run --cap-add=SYS_PTRACE -e PR=ID --name pr_test oscap_test_suite
+#
+# where ID in the $PR environment variable is the pull request (PR) ID,
+# if ID would not be set (-e option omitted) tests will be run from the
+# default branch (maint-1.3).
+#
+# Once tests are finished it is possible to enter the container:
+#     podman start pr_test
+#     podman exec -it pr_test bash
+# and when you are done with the container you can remove it:
+#     podman rm -f pr_test
+#
+FROM fedora
+
+RUN dnf install -y git-extras git cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace && dnf clean all
+
+RUN git clone --recurse-submodules https://github.com/OpenSCAP/openscap
+RUN echo -e "#!/bin/bash\n\ncd /openscap/build\nif [ -d /openscap/build/tests ]; then\n  sleep 1d\n  exit 0\nelse\n  [ -n \"\$PR\" ] && git pr \$PR\n  echo \"Testing branch: \$(git branch --show-current)\"\n  cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../ && make all\n  ctest --output-on-failure\nfi" >> /run.sh
+RUN chmod +x /run.sh
+
+CMD /bin/bash -c /run.sh; /bin/bash

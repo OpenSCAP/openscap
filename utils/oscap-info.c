@@ -62,9 +62,11 @@ struct oscap_module OSCAP_INFO_MODULE = {
 	.summary = "Print information about a SCAP file.",
     .usage = "some-file.xml",
 	.help = "Options:\n"
-		"   --fetch-remote-resources      - Download remote content referenced by DataStream.\n"
+		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
+		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --profile <id>                - Show info of the profile with the given ID.\n"
-		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n",
+		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n"
+		"   --references                  - Show references available in the input benchmark",
     .opt_parser = getopt_info,
     .func = app_info
 };
@@ -98,6 +100,9 @@ static inline void _print_xccdf_status(struct xccdf_status *status, const char *
 
 static void _remove_occurence_of_character_from_string(char *string, char c)
 {
+	if (string == NULL)
+		return;
+
 	char *reading_ptr = string, *writing_ptr = string;
 	while (*reading_ptr) {
 		*writing_ptr = *reading_ptr;
@@ -110,6 +115,9 @@ static void _remove_occurence_of_character_from_string(char *string, char c)
 
 static void _translate_character_in_string(char *string, char to_replace, char replace_with)
 {
+	if (string == NULL)
+		return;
+
 	char *string_iterator = string;
 	while (*string_iterator) {
 		if (*string_iterator == to_replace)
@@ -248,14 +256,33 @@ static inline void _print_xccdf_testresults(struct xccdf_benchmark *bench, const
 	xccdf_result_iterator_free(res_it);
 }
 
-static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
+static void _print_references(struct xccdf_benchmark *bench, const char *prefix)
+{
+	struct oscap_reference_iterator *it = xccdf_item_get_references((struct xccdf_item *)bench);
+	printf("%sReferences:\n", prefix);
+	if (!oscap_reference_iterator_has_more(it)) {
+		printf("%s\tNone\n", prefix);
+	}
+	while (oscap_reference_iterator_has_more(it)) {
+		struct oscap_reference *ref = oscap_reference_iterator_next(it);
+		const char *title = oscap_reference_get_title(ref);
+		const char *href = oscap_reference_get_href(ref);
+		printf("%s\t%s: %s\n", prefix, title, href);
+	}
+	oscap_reference_iterator_free(it);
+}
+
+static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const char *prefix, bool print_references)
 {
 	_print_xccdf_status(xccdf_benchmark_get_status_current(bench), prefix);
 	printf("%sResolved: %s\n", prefix, xccdf_benchmark_get_resolved(bench) ? "true" : "false");
 
 	struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
-	_print_xccdf_profiles(prof_it, prefix, print_one_profile);
+	_print_xccdf_profiles(prof_it, prefix, NULL);
 	xccdf_profile_iterator_free(prof_it);
+	if (print_references) {
+		_print_references(bench, prefix);
+	}
 
 	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 	_print_xccdf_referenced_files(policy_model, prefix);
@@ -301,7 +328,7 @@ static void _print_single_benchmark_one_profile(struct xccdf_benchmark *bench, c
 
 static void _print_single_benchmark_all(struct xccdf_benchmark *bench, const char *prefix)
 {
-	_print_xccdf_benchmark(bench, prefix, 0);
+	_print_xccdf_benchmark(bench, prefix, false);
 	// bench is freed as a side-effect of the function above
 }
 
@@ -455,7 +482,7 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 				ds_sds_session_free(session);
 				return OSCAP_ERROR;
 			}
-			_print_xccdf_benchmark(bench, prefix, 0);
+			_print_xccdf_benchmark(bench, prefix, action->references);
 			// bench is freed as a side-effect of the function above
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			_print_xccdf_tailoring(xccdf_source, prefix, 0);
@@ -531,7 +558,7 @@ static int app_info_sds(struct oscap_source *source, const struct oscap_action *
 		return OSCAP_ERROR;
 	}
 
-	ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	ds_sds_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 
 	/* get collection */
 	struct ds_sds_index *sds = ds_sds_session_get_sds_idx(session);
@@ -762,8 +789,10 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	/* Command-options */
 	const struct option long_options[] = {
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"local-files", required_argument, NULL, 'l'},
 		{"profile", required_argument, 0, 'p'},
 		{"profiles", no_argument, 0, 'n'},
+		{"references", no_argument, 0, 'r'},
 		// end
 		{0, 0, 0, 0}
 	};
@@ -778,6 +807,12 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 			case 'n':
 				action->show_profiles_only = 1;
 				action->provide_machine_readable_output = 1;
+				break;
+			case 'l':
+				action->local_files = optarg;
+				break;
+			case 'r':
+				action->references = 1;
 				break;
 			default: return oscap_module_usage(action->module, stderr, NULL);
 		}

@@ -64,24 +64,26 @@ int app_ds_rds_validate(const struct oscap_action *action);
 struct oscap_module OSCAP_DS_MODULE = {
 	.name = "ds",
 	.parent = &OSCAP_ROOT_MODULE,
-	.summary = "DataStream utilities",
+	.summary = "Data stream utilities",
 	.submodules = DS_SUBMODULES
 };
 
 static struct oscap_module DS_SDS_SPLIT_MODULE = {
 	.name = "sds-split",
 	.parent = &OSCAP_DS_MODULE,
-	.summary = "Split given SourceDataStream into separate files",
+	.summary = "Split given source data stream into separate files",
 	.usage = "[options] SDS TARGET_DIRECTORY",
 	.help =
 		"SDS - Source data stream that will be split into multiple files.\n"
 		"TARGET_DIRECTORY - Directory of the resulting files.\n"
 		"\n"
 		"Options:\n"
-		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
-		"   --xccdf-id <id>               - ID of XCCDF in the datastream that should be evaluated.\n"
+		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
+		"   --xccdf-id <id>               - ID of XCCDF in the data stream that should be evaluated.\n"
 		"   --skip-valid                  - Skips validating of given XCCDF.\n"
-		"   --fetch-remote-resources      - Download remote content referenced by DataStream.\n",
+		"   --skip-validation\n"
+		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
+		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_split
 };
@@ -89,10 +91,11 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
 static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.name = "sds-compose",
 	.parent = &OSCAP_DS_MODULE,
-	.summary = "Compose SourceDataStream from given XCCDF",
+	.summary = "Compose source data stream from given XCCDF",
 	.usage = "[options] xccdf-file.xml target_datastream.xml",
 	.help = "Options:\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n",
+		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --skip-validation\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_compose
 };
@@ -100,11 +103,12 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 static struct oscap_module DS_SDS_ADD_MODULE = {
 	.name = "sds-add",
 	.parent = &OSCAP_DS_MODULE,
-	.summary = "Add a component to the existing SourceDataStream",
+	.summary = "Add a component to the existing source data stream",
 	.usage = "[options] new-component.xml existing_datastream.xml",
 	.help =	"Options:\n"
-		"   --datastream-id <id>          - ID of the datastream in the collection for adding to.\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n",
+		"   --datastream-id <id>          - ID of the data stream in the collection for adding to.\n"
+		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --skip-validation\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_add
 };
@@ -112,7 +116,7 @@ static struct oscap_module DS_SDS_ADD_MODULE = {
 static struct oscap_module DS_SDS_VALIDATE_MODULE = {
 	.name = "sds-validate",
 	.parent = &OSCAP_DS_MODULE,
-	.summary = "Validate given SourceDataStream",
+	.summary = "Validate given source data stream",
 	.usage = "source_datastream.xml",
 	.help = NULL,
 	.opt_parser = getopt_ds,
@@ -122,11 +126,12 @@ static struct oscap_module DS_SDS_VALIDATE_MODULE = {
 static struct oscap_module DS_RDS_SPLIT_MODULE = {
 	.name = "rds-split",
 	.parent = &OSCAP_DS_MODULE,
-	.summary = "Splits a ResultDataStream. Creating source datastream (from report-request) and report in target directory.",
+	.summary = "Splits a result data stream. Creating source data stream (from report-request) and report in target directory.",
 	.usage = "[OPTIONS] rds.xml TARGET_DIRECTORY",
 	.help =	"Options:\n"
 		"   --report-id <id>              - ID of report inside ARF that should be split.\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n",
+		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --skip-validation\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_split
 };
@@ -134,10 +139,11 @@ static struct oscap_module DS_RDS_SPLIT_MODULE = {
 static struct oscap_module DS_RDS_CREATE_MODULE = {
 	.name = "rds-create",
 	.parent = &OSCAP_DS_MODULE,
-	.summary = "Create a ResultDataStream from given SourceDataStream, XCCDF results and one or more OVAL results",
+	.summary = "Create a result data stream from given source data stream, XCCDF results and one or more OVAL results",
 	.usage = "[options] sds.xml target-arf.xml results-xccdf.xml [results-oval1.xml [results-oval2.xml]]",
 	.help =	"Options:\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n",
+		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --skip-validation\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_create
 };
@@ -145,7 +151,7 @@ static struct oscap_module DS_RDS_CREATE_MODULE = {
 static struct oscap_module DS_RDS_VALIDATE_MODULE = {
 	.name = "rds-validate",
 	.parent = &OSCAP_DS_MODULE,
-	.summary = "Validate given ResultDataStream",
+	.summary = "Validate given result data stream",
 	.usage = "[options] result_datastream.xml",
 	.help = NULL,
 	.opt_parser = getopt_ds,
@@ -166,7 +172,8 @@ static struct oscap_module* DS_SUBMODULES[DS_SUBMODULES_NUM] = {
 enum ds_opt {
 	DS_OPT_DATASTREAM_ID = 1,
 	DS_OPT_XCCDF_ID,
-	DS_OPT_REPORT_ID
+	DS_OPT_REPORT_ID,
+	DS_OPT_LOCAL_FILES
 };
 
 bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
@@ -176,10 +183,12 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	const struct option long_options[] = {
 	// options
 		{"skip-valid",      no_argument, &action->validate, 0},
+		{"skip-validation",      no_argument, &action->validate, 0},
 		{"datastream-id",		required_argument, NULL, DS_OPT_DATASTREAM_ID},
 		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
 		{"report-id",		required_argument, NULL, DS_OPT_REPORT_ID},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"local-files", required_argument, NULL, DS_OPT_LOCAL_FILES},
 	// end
 		{0, 0, 0, 0}
 	};
@@ -191,6 +200,9 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		case DS_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
 		case DS_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
 		case DS_OPT_REPORT_ID:	action->f_report_id = optarg; break;
+		case DS_OPT_LOCAL_FILES:
+			action->local_files = optarg;
+			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -223,7 +235,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->file = argv[optind];
 		action->ds_action->target = argv[optind + 1];
 	}
-	else if( (action->module == &DS_SDS_VALIDATE_MODULE) ) {
+	else if (action->module == &DS_SDS_VALIDATE_MODULE) {
 		if(  argc != 4 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
@@ -240,7 +252,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->file = argv[optind];
 		action->ds_action->target = argv[optind + 1];
 	}
-	else if( (action->module == &DS_RDS_CREATE_MODULE) ) {
+	else if (action->module == &DS_RDS_CREATE_MODULE) {
 		if(argc - optind < 3 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
@@ -252,9 +264,9 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->oval_results = &argv[optind + 3];
 		action->ds_action->oval_result_count = argc - optind - 3;
 	}
-	else if( (action->module == &DS_RDS_VALIDATE_MODULE) ) {
+	else if (action->module == &DS_RDS_VALIDATE_MODULE) {
 		if(optind >= argc) {
-			oscap_module_usage(action->module, stderr, "Result DataStream file need to be specified!\n");
+			oscap_module_usage(action->module, stderr, "Result data stream file need to be specified!\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
@@ -294,7 +306,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 		goto cleanup;
 	}
 	if (ds_sds_index_select_checklist(ds_sds_session_get_sds_idx(session), &f_datastream_id, &f_component_id) != 0) {
-		fprintf(stdout, "Failed to locate a datastream with ID matching '%s' ID "
+		fprintf(stdout, "Failed to locate a data stream with ID matching '%s' ID "
 				"and checklist inside matching '%s' ID.\n",
 				action->f_datastream_id == NULL ? "<any>" : action->f_datastream_id,
 				action->f_xccdf_id == NULL ? "<any>" : action->f_xccdf_id);
@@ -302,7 +314,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	}
 	ds_sds_session_set_datastream_id(session, f_datastream_id);
 
-	ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	ds_sds_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 	ds_sds_session_set_target_dir(session, action->ds_action->target);
 	if (ds_sds_session_register_component_with_dependencies(session, "checklists", f_component_id, NULL) != 0) {
 		goto cleanup;
@@ -355,7 +367,11 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 
 	char* temp_cwd = strdup(action->ds_action->file);
 	char *temp_cwd_dirname = oscap_dirname(temp_cwd);
-	chdir(temp_cwd_dirname);
+	if (chdir(temp_cwd_dirname) < 0) {
+		free(temp_cwd_dirname);
+		free(temp_cwd);
+		goto cleanup;
+	}
 	free(temp_cwd_dirname);
 	free(temp_cwd);
 
@@ -365,8 +381,9 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	free(base_name);
 	free(source_xccdf);
 
-	chdir(previous_cwd);
-	free(previous_cwd);
+	if (chdir(previous_cwd) < 0) {
+		goto cleanup;
+	}
 
 	if (action->validate)
 	{
@@ -383,6 +400,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 cleanup:
 	oscap_print_error();
 
+	free(previous_cwd);
 	free(action->ds_action);
 	return ret;
 }
@@ -439,7 +457,7 @@ int app_ds_rds_split(const struct oscap_action *action) {
 			|| ds_rds_session_select_report(session, action->f_report_id) == NULL
 			|| ds_rds_session_select_report_request(session, NULL) == NULL
 			|| ds_rds_session_dump_component_files(session) != 0) {
-		fprintf(stdout, "Failed to split given result datastream '%s'.\n", action->ds_action->file);
+		fprintf(stdout, "Failed to split given result data stream '%s'.\n", action->ds_action->file);
 		goto cleanup;
 	}
 
@@ -504,7 +522,7 @@ int app_ds_rds_create(const struct oscap_action *action) {
 
 	if (ret != 0)
 	{
-		fprintf(stdout, "Failed to create result datastream in ARF.");
+		fprintf(stdout, "Failed to create result data stream in ARF.");
 		ret = OSCAP_ERROR;
 		goto cleanup;
 	}

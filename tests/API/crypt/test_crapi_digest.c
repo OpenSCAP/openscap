@@ -40,7 +40,11 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
 {
         const char ch[] = "0123456789abcdef";
         register size_t i;
-        
+
+        if (str == NULL) {
+                return -1;
+        }
+
         if (slen < (mlen * 2) + 1) {
                 errno = ENOBUFS;
                 return (-1);
@@ -58,88 +62,69 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
 
 int main (int argc, char *argv[])
 {
-        uint8_t md5_dst[16];
-        size_t  md5_dstlen = sizeof md5_dst;
-
-        uint8_t sha1_dst[20];
-        size_t  sha1_dstlen = sizeof sha1_dst;
-
-        uint8_t sha256_dst[32];
-        size_t  sha256_dstlen = sizeof sha256_dst;
-
-        char *orig_md5sum,  comp_md5sum[(sizeof md5_dst * 2) + 1];
-        char *orig_sha1sum, comp_sha1sum[(sizeof sha1_dst * 2) + 1];
-        char *orig_sha256sum, comp_sha256sum[(sizeof sha256_dst * 2) + 1];
-        char *filename;
-        int   fd;
-
-        if (argc != 5) {
-                fprintf (stderr, "Usage: %s <file> <md5sum> <sha1sum> <sha256sum>\n", argv[0]);
+	if (argc != 4) {
+		fprintf (stderr, "Usage: %s <file> <checksum> <algorithm>\n", argv[0]);
                 return (1);
         }
 
-        filename     = argv[1];
-        orig_md5sum  = argv[2];
-        orig_sha1sum = argv[3];
-        orig_sha256sum = argv[4];
+	char *filename = argv[1];
+	char *orig_sum = argv[2];
+	char *algorithm_str = argv[3];
 
-        if (crapi_init (NULL) != 0) {
-                fprintf (stderr, "crapi_init() != 0\n");
-                abort ();
-        }
-        
-        fd = open (filename, O_RDONLY);
-        
+	crapi_alg_t algorithm;
+	size_t dstlen = 0;
+
+	if (!strcmp(algorithm_str, "md5")) {
+#ifdef OPENSCAP_ENABLE_MD5
+		algorithm = CRAPI_DIGEST_MD5;
+		dstlen = 16;
+#else
+		return 1;
+#endif
+	} else if (!strcmp(algorithm_str, "sha1")) {
+#ifdef OPENSCAP_ENABLE_SHA1
+		algorithm = CRAPI_DIGEST_SHA1;
+		dstlen = 20;
+#else
+		return 1;
+#endif
+	} else if (!strcmp(algorithm_str, "sha256")) {
+		algorithm = CRAPI_DIGEST_SHA256;
+		dstlen = 32;
+	} else {
+		return 1;
+	}
+
+	int fd = open(filename, O_RDONLY);
+
         if (fd < 0) {
                 perror ("open");
                 return (2);
         }
 
-        if (crapi_digest_fd (fd, CRAPI_DIGEST_MD5, &md5_dst, &md5_dstlen) != 0) {
+        if (crapi_init (NULL) != 0) {
+                fprintf (stderr, "crapi_init() != 0\n");
+                abort ();
+        }
+
+	uint8_t *dst = malloc(dstlen);
+
+		size_t comp_sum_len = (dstlen * 2) + 1;
+		char *comp_sum = malloc(comp_sum_len);
+
+	if (crapi_digest_fd(fd, algorithm, dst, &dstlen) != 0) {
                 fprintf (stderr, "crapi_digest() != 0\n");
                 abort ();
         }
 
-        mem2hex (md5_dst, md5_dstlen, comp_md5sum, sizeof comp_md5sum);
+	mem2hex (dst, dstlen, comp_sum, comp_sum_len);
 
-        if (strcmp (orig_md5sum, comp_md5sum) != 0) {
-                fprintf (stderr, "crapi_digest::MD5(%s) != %s (== %s)\n", filename, orig_md5sum, comp_md5sum);
+	if (strcmp(orig_sum, comp_sum) != 0) {
+		fprintf (stderr, "crapi_digest::%s(%s) != %s (== %s)\n", algorithm_str, filename, orig_sum, comp_sum);
                 abort ();
         }
-
-        if (lseek (fd, 0, SEEK_SET) == (off_t)-1) {
-                perror ("lseek");
-                return (2);
-        }
-
-        if (crapi_digest_fd (fd, CRAPI_DIGEST_SHA1, &sha1_dst, &sha1_dstlen) != 0) {
-                fprintf (stderr, "crapi_digest() != 0\n");
-                abort ();
-        }
-
-        mem2hex (sha1_dst, sha1_dstlen, comp_sha1sum, sizeof comp_sha1sum);
-
-        if (strcmp (orig_sha1sum, comp_sha1sum) != 0) {
-                fprintf (stderr, "crapi_digest::SHA1(%s) != %s (== %s)\n", filename, orig_sha1sum, comp_sha1sum);
-                abort ();
-        }
-
-        if (lseek (fd, 0, SEEK_SET) == (off_t)-1) {
-                perror ("lseek");
-                return (2);
-        }
-
-        if (crapi_digest_fd (fd, CRAPI_DIGEST_SHA256, &sha256_dst, &sha256_dstlen) != 0) {
-                fprintf (stderr, "crapi_digest() != 0\n");
-                abort ();
-        }
-
-        mem2hex (sha256_dst, sha256_dstlen, comp_sha256sum, sizeof comp_sha256sum);
-
-        if (strcmp (orig_sha256sum, comp_sha256sum) != 0) {
-                fprintf (stderr, "crapi_digest::SHA256(%s) != %s (== %s)\n", filename, orig_sha256sum, comp_sha256sum);
-                abort ();
-        }
+	free(dst);
+	free(comp_sum);
 
         close (fd);
         

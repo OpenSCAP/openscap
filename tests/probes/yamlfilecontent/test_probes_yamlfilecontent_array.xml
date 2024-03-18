@@ -31,6 +31,17 @@
       </criteria>
     </definition>
 
+    <definition class="compliance" version="1" id="oval:0:def:3"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="get_2_dim_array" test_ref="oval:0:tst:4"/>
+        <criterion comment="get_2_dim_array_set" test_ref="oval:0:tst:5"/>
+      </criteria>
+    </definition>
+
   </definitions>
 
   <tests>
@@ -49,6 +60,16 @@
       <ind-def:object object_ref="oval:0:obj:3"/>
     </ind-def:yamlfilecontent_test>
 
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:4" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:4"/>
+      <ind-def:state state_ref="oval:0:ste:3"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:5" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:5"/>
+      <ind-def:state state_ref="oval:0:ste:3"/>
+    </ind-def:yamlfilecontent_test>
+
   </tests>
 
   <objects>
@@ -62,7 +83,7 @@
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:2">
       <ind-def:path>/tmp</ind-def:path>
       <ind-def:filename>openshift-logging.yaml</ind-def:filename>
-      <ind-def:yamlpath>.spec.outputs[0:2].name</ind-def:yamlpath>
+      <ind-def:yamlpath>.spec.outputs[:].name</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:3">
@@ -71,16 +92,38 @@
       <ind-def:yamlpath>.spec.outputs[0]</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:4">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>.arrs[:][:]</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:5">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>.arrs</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
   </objects>
 
   <states>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:1">
-      <ind-def:value_of datatype="string">secureforward-offcluster</ind-def:value_of>
+      <ind-def:value datatype="record">
+        <field name="#" datatype="string">secureforward-offcluster</field>
+      </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:2">
-      <ind-def:value_of datatype="string" var_ref="oval:0:var:2" var_check="at least one" />
+      <ind-def:value datatype="record">
+        <field name="#" datatype="string" var_ref="oval:0:var:2" var_check="at least one" entity_check="at least one"/>
+      </ind-def:value>
+    </ind-def:yamlfilecontent_state>
+
+    <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:3">
+      <ind-def:value datatype="record">
+        <field name="#" datatype="int" var_ref="oval:0:var:3" var_check="at least one" entity_check="at least one"/>
+      </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
   </states>
@@ -92,6 +135,12 @@
              NOTE: Wildly untested! -->
       <split delimiter="|">
         <literal_component>elasticsearch|elasticsearch-insecure</literal_component>
+      </split>
+    </local_variable>
+
+    <local_variable comment="variable with three values" datatype="int" version="1" id="oval:0:var:3">
+      <split delimiter="|">
+        <literal_component>1|2|3|4|5|6</literal_component>
       </split>
     </local_variable>
 

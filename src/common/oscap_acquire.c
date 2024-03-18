@@ -49,6 +49,7 @@
 #include "common/_error.h"
 #include "oscap_string.h"
 #include "oscap_helpers.h"
+#include "debug_priv.h"
 
 #ifndef OSCAP_TEMP_DIR
 #define OSCAP_TEMP_DIR "/tmp"
@@ -209,7 +210,7 @@ void oscap_acquire_cleanup_dir(char **dir_path)
 {
 	if (*dir_path != NULL)
 	{
-		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
+		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS);
 		free(*dir_path);
 		*dir_path = NULL;
 	}
@@ -288,6 +289,34 @@ oscap_acquire_url_to_filename(const char *url)
 	return filename;
 }
 
+static int _curl_trace(CURL *handle, curl_infotype type, char *data, size_t size, void *userp)
+{
+	const char *title;
+
+	switch (type) {
+	case CURLINFO_TEXT:
+		title = "== cURL info";
+		break;
+	case CURLINFO_HEADER_OUT:
+		title = "=> cURL header (out)";
+		break;
+	case CURLINFO_HEADER_IN:
+		title = "<= cURL header (in)";
+		break;
+	case CURLINFO_DATA_OUT:
+	case CURLINFO_SSL_DATA_OUT:
+	case CURLINFO_DATA_IN:
+	case CURLINFO_SSL_DATA_IN:
+	default:
+		return 0;
+		break;
+	}
+
+	dD("%s: %s", title, data);
+
+	return 0;
+}
+
 char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 {
 	CURL *curl;
@@ -297,21 +326,90 @@ char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 		return NULL;
 	}
 
-	struct oscap_buffer* buffer = oscap_buffer_new();
+	CURLcode res;
 
-	curl_easy_setopt(curl, CURLOPT_URL, url);
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_memory_callback);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
-	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
-
-	CURLcode res = curl_easy_perform(curl);
-	curl_easy_cleanup(curl);
-
+	/* CURLOPT_FAILONERROR - request failure on HTTP response >= 400 */
+	res = curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
 	if (res != 0) {
-		oscap_seterr(OSCAP_EFAMILY_NET, "Download failed: %s", curl_easy_strerror(res));
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_FAILONERROR: %s", curl_easy_strerror(res));
+		return NULL;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_URL, url);
+	if (res != 0) {
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_URL to '%s': %s", url, curl_easy_strerror(res));
+		return NULL;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_memory_callback);
+	if (res != 0) {
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_WRITEFUNCTION to write_to_memory_callback: %s", curl_easy_strerror(res));
+		return NULL;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "");
+	if (res != 0) {
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_ACCEPT_ENCODING to an empty string: %s", curl_easy_strerror(res));
+		return NULL;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_TRANSFER_ENCODING, true);
+	if (res != 0) {
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_TRANSFER_ENCODING to true: %s", curl_easy_strerror(res));
+		return NULL;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
+	if (res != 0) {
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_FOLLOWLOCATION to true: %s", curl_easy_strerror(res));
+		return NULL;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
+	if (res != 0) {
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_VERBOSE to true: %s", curl_easy_strerror(res));
+		return NULL;
+	}
+
+	res = curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, _curl_trace);
+	if (res != 0) {
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_DEBUGFUNCTION to _curl_trace: %s", curl_easy_strerror(res));
+		return NULL;
+	}
+
+	struct oscap_buffer *buffer = oscap_buffer_new();
+	res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
+	if (res != 0) {
+		curl_easy_cleanup(curl);
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_WRITEDATA as buffer: %s", curl_easy_strerror(res));
 		oscap_buffer_free(buffer);
 		return NULL;
 	}
+
+	res = curl_easy_perform(curl);
+
+	if (res != 0) {
+		if (res == CURLE_HTTP_RETURNED_ERROR) {
+			long http_code = 0;
+			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+			oscap_seterr(OSCAP_EFAMILY_NET, "Download failed: %s: %ld", curl_easy_strerror(res), http_code);
+		} else {
+			oscap_seterr(OSCAP_EFAMILY_NET, "Download failed: %s", curl_easy_strerror(res));
+		}
+		curl_easy_cleanup(curl);
+		oscap_buffer_free(buffer);
+		return NULL;
+	}
+
+	curl_easy_cleanup(curl);
 
 	*memory_size = oscap_buffer_get_length(buffer);
 	char* data = oscap_buffer_bequeath(buffer); // get data and free buffer struct

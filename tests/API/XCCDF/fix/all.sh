@@ -16,7 +16,7 @@ function test_generate_fix {
     # `tail -n +2` to skip the first line with progress reporting
     local GENERATED_FIX RELEVANT_FIX_CONTENTS
     GENERATED_FIX=$($OSCAP xccdf generate fix --result-id "$TESTRESULT_ID" "$INPUT")
-    RELEVANT_FIX_CONTENTS=$(grep -v -E "^([\t ]*|[\t ]*#.*)$" <<< "$GENERATED_FIX" | tail -n +2)
+    RELEVANT_FIX_CONTENTS=$(grep -v -E "^([\t ]*|[\t ]*#.*|\) #.*)$" <<< "$GENERATED_FIX" | tail -n +2)
     if [ "$?" != "0" ]; then
         return 1
     fi

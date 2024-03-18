@@ -1589,7 +1589,7 @@ OR 	|| 0   | 0+ | 1+ | 0+ | 0+ | 0+ || Error
       </xsd:enumeration>
       <xsd:enumeration value="ERROR">
         <xsd:annotation>
-          <xsd:documentation>An ERROR value indicates that an error occured
+          <xsd:documentation>An ERROR value indicates that an error occurred
                   while processing the check.</xsd:documentation>
           <xsd:documentation> Among other causes, this can indicate an
                   unexpected response. </xsd:documentation>

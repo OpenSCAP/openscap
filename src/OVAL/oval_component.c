@@ -55,8 +55,8 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/oscap_string.h"
+#include "common/oscap_pcre.h"
 #include "oval_glob_to_regex.h"
-#include <pcre.h>
 
 #if !defined(OVAL_PROBES_ENABLED)
 const char *oval_subtype_to_str(oval_subtype_t subtype);
@@ -1617,6 +1617,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 				texts[idx0] = oval_value_get_text(oval_value_iterator_next(comp_values));
 				not_finished = true;
 			} else {
+				oval_value_iterator_free(comp_values);
 				oval_collection_free_items(component_colls[idx0],
 							   (oscap_destruct_func) oval_value_free);
 				component_colls[idx0] = NULL;
@@ -1665,6 +1666,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 		free(counts);
 		free(texts);
 		free(values);
+	} else {
+		for (idx0 = 0; idx0 < len_subcomps; ++idx0)
+			oval_collection_free_items(component_colls[idx0], (oscap_destruct_func) oval_value_free);
 	}
 	free(component_colls);
 	oval_component_iterator_free(subcomps);
@@ -1977,12 +1981,16 @@ static long unsigned int _parse_fmt_sse(char *dt)
 static bool _match(const char *pattern, const char *string)
 {
 	bool match = false;
-	pcre *re;
-	const char *error;
+	oscap_pcre_t *re;
+	char *error;
 	int erroffset = -1, ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
-	re = pcre_compile(pattern, PCRE_UTF8, &error, &erroffset, NULL);
-	match = (pcre_exec(re, NULL, string, strlen(string), 0, 0, ovector, ovector_len) >= 0);
-	pcre_free(re);
+	re = oscap_pcre_compile(pattern, OSCAP_PCRE_OPTS_UTF8, &error, &erroffset);
+	if (re == NULL) {
+		oscap_pcre_err_free(error);
+		return false;
+	}
+	match = (oscap_pcre_exec(re, string, strlen(string), 0, 0, ovector, ovector_len) >= 0);
+	oscap_pcre_free(re);
 	return match;
 }
 
@@ -2205,13 +2213,14 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 	int rc;
 	char *pattern;
 	int erroffset = -1;
-	pcre *re = NULL;
-	const char *error;
+	oscap_pcre_t *re = NULL;
+	char *error;
 
 	pattern = oval_component_get_regex_pattern(component);
-	re = pcre_compile(pattern, PCRE_UTF8, &error, &erroffset, NULL);
+	re = oscap_pcre_compile(pattern, OSCAP_PCRE_OPTS_UTF8, &error, &erroffset);
 	if (re == NULL) {
-		dE("pcre_compile() failed: \"%s\".", error);
+		dE("oscap_pcre_compile() failed: \"%s\".", error);
+		oscap_pcre_err_free(error);
 		return SYSCHAR_FLAG_ERROR;
 	}
 
@@ -2230,9 +2239,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 			for (i = 0; i < ovector_len; ++i)
 				ovector[i] = -1;
 
-			rc = pcre_exec(re, NULL, text, strlen(text), 0, 0, ovector, ovector_len);
+			rc = oscap_pcre_exec(re, text, strlen(text), 0, 0, ovector, ovector_len);
 			if (rc < -1) {
-				dE("pcre_exec() failed: %d.", rc);
+				dE("oscap_pcre_exec() failed: %d.", rc);
 				flag = SYSCHAR_FLAG_ERROR;
 				break;
 			}
@@ -2260,7 +2269,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 		oval_collection_free_items(subcoll, (oscap_destruct_func) oval_value_free);
 	}
 	oval_component_iterator_free(subcomps);
-	pcre_free(re);
+	oscap_pcre_free(re);
 	return flag;
 }
 
@@ -2278,6 +2287,8 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(st
 	if (val_col_lst == NULL) {
 		struct oval_value *ov;
 		char sv[32];
+
+		memset(sv, 0, sizeof (sv));
 
 		if (datatype == OVAL_DATATYPE_INTEGER) {
 			snprintf(sv, sizeof (sv), "%ld", (long int) val);
@@ -2368,6 +2379,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 	}
 	oval_component_iterator_free(subcomps);
 
+	if (vcl_root == NULL) {
+		return SYSCHAR_FLAG_ERROR;
+	}
 	val_itr = (struct oval_value_iterator *) oval_collection_iterator(vcl_root->val_col);
 	while (oval_value_iterator_has_more(val_itr)) {
 		struct oval_value *ov;

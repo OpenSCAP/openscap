@@ -30,6 +30,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <limits.h>
 #include "oval_cmp_evr_string_impl.h"
 #include "oval_definitions.h"
 #include "oval_types.h"
@@ -37,7 +38,12 @@
 #include "common/_error.h"
 
 #ifdef HAVE_RPMVERCMP
+#ifdef RPM418_FOUND
+#include <rpm/rpmver.h>
+#include <rpm/rpmstring.h>
+#else
 #include <rpm/rpmlib.h>
+#endif
 #else
 #ifdef OS_WINDOWS
 #include <malloc.h>
@@ -57,6 +63,9 @@ static void parseEVR(char *evr, const char **ep, const char **vp, const char **r
 
 oval_result_t oval_evr_string_cmp(const char *state, const char *sys, oval_operation_t operation)
 {
+	if (state == NULL || sys == NULL) {
+		return OVAL_RESULT_ERROR;
+	}
 	int result = rpmevrcmp(sys, state);
 
 	if (operation == OVAL_OPERATION_EQUALS) {
@@ -82,8 +91,8 @@ static inline int rpmevrcmp(const char *a, const char *b)
 	/* This mimics rpmevrcmp which is not exported by rpmlib version 4.
 	 * Code inspired by rpm.labelCompare() from rpm4/python/header-py.c
 	 */
-	const char *a_epoch, *a_version, *a_release;
-	const char *b_epoch, *b_version, *b_release;
+	const char *a_epoch = NULL, *a_version = NULL, *a_release = NULL;
+	const char *b_epoch = NULL, *b_version = NULL, *b_release = NULL;
 	char *a_copy, *b_copy;
 	int result;
 
@@ -127,6 +136,9 @@ static void parseEVR(char *evr, const char **ep, const char **vp, const char **r
 	const char *version;			/* assume only version is present */
 	const char *release;
 	char *s, *se;
+
+	if (!evr)
+		return;
 
 	s = evr;
 	while (*s && risdigit(*s)) s++;		/* s points to epoch terminator */
@@ -281,6 +293,170 @@ static int rpmvercmp(const char *a, const char *b)
 }
 #endif
 
+/*
+ * based on code from dpkg: lib/dpkg/version.c
+ * Mino changes to use isdigit() and isalpha()
+ */
+/**
+ * Give a weight to the character to order in the version comparison.
+ *
+ * @param c An ASCII character.
+ */
+static int order(int c)
+{
+	if (isdigit(c))
+		return 0;
+	else if (isalpha(c))
+		return c;
+	else if (c == '~')
+		return -1;
+	else if (c)
+		return c + 256;
+	else
+		return 0;
+}
+
+/*
+ * based on code from dpkg: lib/dpkg/version.c
+ * Minor changes to use isdigit()
+ */
+static int verrevcmp(const char *a, const char *b)
+{
+	if (a == NULL)
+		a = "";
+	if (b == NULL)
+		b = "";
+
+	while (*a || *b) {
+		int first_diff = 0;
+
+		while ((*a && !isdigit(*a)) || (*b && !isdigit(*b))) {
+			int ac = order(*a);
+			int bc = order(*b);
+
+			if (ac != bc)
+				return ac - bc;
+
+			a++;
+			b++;
+		}
+		while (*a == '0')
+			a++;
+		while (*b == '0')
+			b++;
+		while (isdigit(*a) && isdigit(*b)) {
+			if (!first_diff)
+				first_diff = *a - *b;
+			a++;
+			b++;
+		}
+
+		if (isdigit(*a))
+			return 1;
+		if (isdigit(*b))
+			return -1;
+		if (first_diff)
+			return first_diff;
+	}
+
+	return 0;
+}
+
+/*
+ * Code copied from lib/dpkg/version.c
+ */
+/**
+ * Compares two Debian versions.
+ *
+ * This function follows the convention of the comparator functions used by
+ * qsort().
+ *
+ * @see deb-version(5)
+ *
+ * @param a The first version.
+ * @param b The second version.
+ *
+ * @retval 0 If a and b are equal.
+ * @retval <0 If a is smaller than b.
+ * @retval >0 If a is greater than b.
+ */
+static int dpkg_version_compare(struct dpkg_version *a, struct dpkg_version *b)
+{
+	int rc;
+
+	if (a->epoch > b->epoch)
+		return 1;
+	if (a->epoch < b->epoch)
+		return -1;
+
+	rc = verrevcmp(a->version, b->version);
+	if (rc)
+		return rc;
+
+	return verrevcmp(a->revision, b->revision);
+}
+
+oval_result_t oval_debian_evr_string_cmp(const char *state, const char *sys, oval_operation_t operation)
+{
+	struct dpkg_version a, b;
+	const char *a_epoch = NULL, *a_version = NULL, *a_release = NULL;
+	const char *b_epoch = NULL, *b_version = NULL, *b_release = NULL;
+	char *a_copy, *b_copy;
+	long aux;
+
+	a_copy = oscap_strdup(sys);
+	b_copy = oscap_strdup(state);
+	parseEVR(a_copy, &a_epoch, &a_version, &a_release);
+	parseEVR(b_copy, &b_epoch, &b_version, &b_release);
+
+	if (!a_epoch)
+		a_epoch = "0";
+	if (!b_epoch)
+		b_epoch = "0";
+
+	aux = strtol(a_epoch, NULL, 10);
+	if (aux < INT_MIN || aux > INT_MAX) {
+		free(a_copy);
+		free(b_copy);
+		return OVAL_RESULT_ERROR; // Outside int range
+	}
+	a.epoch = (int) aux;
+
+	aux = strtol(b_epoch, NULL, 10);
+	if (aux < INT_MIN || aux > INT_MAX) {
+		free(a_copy);
+		free(b_copy);
+		return OVAL_RESULT_ERROR; // Outside int range
+	}
+	b.epoch = (int) aux;
+
+	a.version = a_version;
+	a.revision = a_release;
+	b.version = b_version;
+	b.revision = b_release;
+	int result = dpkg_version_compare(&a, &b);
+
+	free(a_copy);
+	free(b_copy);
+	switch (operation) {
+	case OVAL_OPERATION_EQUALS:
+		return ((result == 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	case OVAL_OPERATION_NOT_EQUAL:
+		return ((result != 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	case OVAL_OPERATION_GREATER_THAN:
+		return ((result > 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	case OVAL_OPERATION_GREATER_THAN_OR_EQUAL:
+		return ((result >= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	case OVAL_OPERATION_LESS_THAN:
+		return ((result < 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
+		return ((result <= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	default:
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in dpkg version comparison: %d.", operation);
+	}
+
+	return OVAL_RESULT_ERROR;
+}
 
 oval_result_t oval_versiontype_cmp(const char *state, const char *syschar, oval_operation_t operation)
 {

@@ -112,6 +112,7 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	/* probe sysinfo */
 	ret = oval_probe_query_sysinfo(ag_sess->psess, &sysinfo);
 	if (ret != 0) {
+		free(ag_sess->filename);
 		oval_probe_session_destroy(ag_sess->psess);
 		oval_syschar_model_free(ag_sess->sys_model);
 		free(ag_sess);
@@ -254,6 +255,21 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	return 0;
 }
 
+void oval_agent_reset_syschar(oval_agent_session_t * ag_sess) {
+	oval_syschar_model_reset(ag_sess->sys_model);
+}
+
+void oval_agent_reset_results(oval_agent_session_t * ag_sess) {
+#if defined(OVAL_PROBES_ENABLED)
+	if (ag_sess != NULL) {
+		oval_results_model_free(ag_sess->res_model);
+		ag_sess->res_model = oval_results_model_new_with_probe_session(
+				ag_sess->def_model, ag_sess->sys_models, ag_sess->psess);
+		oval_probe_session_reinit(ag_sess->psess, ag_sess->sys_model);
+	}
+#endif
+}
+
 int oval_agent_abort_session(oval_agent_session_t *ag_sess)
 {
 	if (ag_sess == NULL) {
@@ -333,6 +349,7 @@ void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
 		oval_probe_session_destroy(ag_sess->psess);
 		oval_results_model_free(ag_sess->res_model);
 #endif
+		oval_syschar_model_free(ag_sess->sys_model);
 	        free(ag_sess->filename);
 		free(ag_sess);
 	}

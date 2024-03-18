@@ -42,6 +42,9 @@
 #if defined(OS_LINUX)
 # include <mntent.h>
 # include <unistd.h>
+# ifndef _PATH_MOUNTED
+#  define _PATH_MOUNTED MOUNTED
+# endif
 #elif defined(OS_SOLARIS)
 # include <sys/mnttab.h>
 # include <sys/mntent.h>
@@ -62,6 +65,7 @@
 #endif
 
 #include "fsdev.h"
+#include "common/util.h"
 
 /**
  * Compare two dev_t variables.
@@ -79,10 +83,6 @@ static int fsdev_cmp(const void *a, const void *b)
 #if defined(OS_LINUX)
 static int is_local_fs(struct mntent *ment)
 {
-// todo: would it be usefull to provide the choice during build-time?
-#if 1
-	char *s;
-
 	/*
 	 * When type of the filesystem is autofs, it means the mtab entry
 	 * describes the autofs configuration, which means ment->mnt_fsname
@@ -97,37 +97,52 @@ static int is_local_fs(struct mntent *ment)
 		return 0;
 	}
 
-	if (ment->mnt_fsname == NULL) {
-		return 0;
-	}
-
-	s = ment->mnt_fsname;
-	/* If the fsname begins with "//", it is probably CIFS. */
-	if (s[0] == '/' && s[1] == '/')
-		return 0;
-
-	/* If there's a ':' in the fsname and it occurs before any
-	 * '/', then this is probably NFS and the file system is
-	 * considered "remote".
+	/*
+	 * The following code is inspired by systemd, function fstype_is_network:
+	 * https://github.com/systemd/systemd/blob/21fd6bc263f49b57867d90d2e1f9f255e5509134/src/basic/mountpoint-util.c#L290
 	 */
-	s = strpbrk(s, "/:");
-	if (s && *s == ':')
-		return 0;
 
+	const char *fstype = ment->mnt_type;
+	if (oscap_str_startswith(fstype, "fuse.")) {
+		fstype += strlen("fuse.");
+	}
+	// OVAL's idea behind 'local' is to follow the 'df -l' behaviour
+	const char *pseudo_fs[] = {
+		"proc",
+		"sysfs",
+		NULL
+	};
+	const char *network_fs[] = {
+		"afs",
+		"auristorfs",
+		"ceph",
+		"cifs",
+		"smb3",
+		"smbfs",
+		"sshfs",
+		"ncpfs",
+		"ncp",
+		"nfs",
+		"nfs4",
+		"gfs",
+		"gfs2",
+		"glusterfs",
+		"gpfs",
+		"pvfs2", /* OrangeFS */
+		"ocfs2",
+		"lustre",
+		"davfs",
+		NULL
+	};
+	for (int i = 0; pseudo_fs[i]; i++) {
+		if (!strcmp(pseudo_fs[i], fstype))
+			return 0;
+	}
+	for (int i = 0; network_fs[i]; i++) {
+		if (!strcmp(network_fs[i], fstype))
+			return 0;
+	}
 	return 1;
-#else
-	struct stat st;
-
-	/* If the file system is not backed-up by a real file, it is
-	   considered remote. A notable exception is "tmpfs" to allow
-	   traversal of /tmp et al. */
-	if (strcmp(ment->mnt_fsname, "tmpfs") != 0
-	    && (stat(ment->mnt_fsname, &st) != 0
-		|| !(S_ISBLK(st.st_mode))))
-		return 0;
-	else
-		return 1;
-#endif
 }
 
 #elif defined(OS_AIX)
@@ -197,26 +212,45 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 			continue;
 		if (i >= lfs->cnt) {
 			lfs->cnt += DEVID_ARRAY_ADD;
-			lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+			void *new_ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+			if (new_ids == NULL) {
+				e = errno;
+				free(lfs->ids);
+				free(lfs);
+				endmntent(fp);
+				errno = e;
+				return (NULL);
+			}
+			lfs->ids = new_ids;
 		}
 		memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
 	}
 
 	endmntent(fp);
 
-	lfs->ids = realloc(lfs->ids, sizeof(dev_t) * i);
-	lfs->cnt = (lfs->ids == NULL ? 0 : i);
+	void *new_ids = realloc(lfs->ids, sizeof(dev_t) * i);
+	if (new_ids == NULL && i > 0) {
+		e = errno;
+		free(lfs->ids);
+		free(lfs);
+		errno = e;
+		return (NULL);
+	}
+	lfs->ids = new_ids;
+	lfs->cnt = i;
 
 	return (lfs);
 }
+
 #elif defined(OS_FREEBSD) || defined(OS_APPLE)
 static fsdev_t *__fsdev_init(fsdev_t *lfs)
 {
 	struct statfs *mntbuf = NULL;
 	struct stat st;
-	int i;
+	size_t i;
+	int e;
 
-	lfs->cnt = getmntinfo(&mntbuf, (fs == NULL ? MNT_LOCAL : 0) | MNT_NOWAIT);
+	lfs->cnt = getmntinfo(&mntbuf, MNT_NOWAIT);
 	lfs->ids = malloc(sizeof(dev_t) * lfs->cnt);
 
 	for (i = 0; i < lfs->cnt; ++i) {
@@ -227,7 +261,15 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	}
 
 	if (i != lfs->cnt) {
-		lfs->ids = realloc(lfs->ids, sizeof(dev_t) * i);
+		void *new_ids = realloc(lfs->ids, sizeof(dev_t) * i);
+		if (new_ids == NULL) {
+			e = errno;
+			free(lfs->ids);
+			free(lfs);
+			errno = e;
+			return (NULL);
+		}
+		lfs->ids = new_ids;
 		lfs->cnt = i;
 	}
 
@@ -260,7 +302,7 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	if (lfs->ids == NULL) {
 		e = errno;
 		free(lfs);
-                fclose(fp);
+		fclose(fp);
 		errno = e;
 		return (NULL);
 	}
@@ -274,7 +316,16 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 
 			if (i >= lfs->cnt) {
 				lfs->cnt += DEVID_ARRAY_ADD;
-				lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+				void *new_ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+				if (new_ids == NULL) {
+					e = errno;
+					free(lfs->ids);
+					free(lfs);
+					fclose(fp);
+					errno = e;
+					return (NULL);
+				}
+				lfs->ids = new_ids;
 			}
 
 			memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
@@ -283,8 +334,16 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 
 	fclose(fp);
 
-	lfs->ids = realloc(lfs->ids, sizeof(dev_t) * i);
-	lfs->cnt = (lfs->ids == NULL ? 0 : i);
+	void *new_ids = realloc(lfs->ids, sizeof(dev_t) * i);
+	if (new_ids == NULL) {
+		e = errno;
+		free(lfs->ids);
+		free(lfs);
+		errno = e;
+		return (NULL);
+	}
+	lfs->ids = new_ids;
+	lfs->cnt = i;
 
 	return (lfs);
 }
@@ -306,11 +365,6 @@ fsdev_t *fsdev_init()
                 qsort(lfs->ids, lfs->cnt, sizeof(dev_t), fsdev_cmp);
 
 	return (lfs);
-}
-
-static inline int isfschar(int c)
-{
-	return (isalpha(c) || isdigit(c) || c == '-' || c == '_');
 }
 
 void fsdev_free(fsdev_t * lfs)

@@ -17,17 +17,20 @@ PREFERRED_PYTHON=@PREFERRED_PYTHON_PATH@
 LC_ALL=C
 export LC_ALL
 
+MALLOC_CHECK_=3
+export MALLOC_CHECK_
+
 OSCAP_FULL_VALIDATION=1
 export OSCAP_FULL_VALIDATION
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    export OSCAP_EXEC="@CMAKE_BINARY_DIR@/utils/oscap"
+    export RUN_WRAPPER="@CMAKE_BINARY_DIR@/run"
     enable_valgrind="@ENABLE_VALGRIND@"
     if [ $enable_valgrind != "OFF" ] ; then
-        actualdir=@CMAKE_BINARY_DIR@
-        export actualdir
         [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="@CMAKE_SOURCE_DIR@/tests/valgrind_test.sh"
     else
-        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="bash @CMAKE_BINARY_DIR@/run @CMAKE_BINARY_DIR@/utils/oscap"
+        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="bash $RUN_WRAPPER $OSCAP_EXEC"
     fi
     [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE_EXEC="@CMAKE_BINARY_DIR@/utils/oscap-chrootable"
     [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE="bash @CMAKE_BINARY_DIR@/run $OSCAP_CHROOTABLE_EXEC"
@@ -121,6 +124,31 @@ function require {
     return 0
 }
 
+# Check if Python module is available. For example:
+# require_python_module 'dbusmock' || return 255
+function require_python_module {
+	eval "python3 -c \"import $1\" >/dev/null 2>&1"
+	if [ $? -gt 0 ]; then
+		echo -e "No '$1' Python module found!\n"
+		return 255 # Test is not applicable.
+	fi
+}
+
+# Check if D-Bus service is present. Arguments are:
+# Args:
+# $1: 'system' or 'session' keyword
+# $2: Bus name (e.g. 'org.domain.foo')
+# $3: Object (e.g. '/')
+# require_dbus 'system' 'org.freedesktop.fwupd' '/' || return 255
+function require_dbus {
+	require "gdbus" || return 255
+	eval "gdbus introspect --$1 -d $2 -o $3 >/dev/null 2>&1"
+	if [ $? -gt 0 ]; then
+		echo -e "No '$2' ($1) D-Bus bus found!\n"
+		return 255 # Test is not applicable.
+	fi
+}
+
 # Check if probe exists, use it as follows:
 # probecheck 'probe' || return 255
 function probecheck {
@@ -165,6 +193,14 @@ function package_version {
     if [ "${ver}" == "" ]; then
         return 255
     fi
+}
+
+function require_internet {
+    [ -s /etc/resolv.conf ] || return 255
+}
+
+function require_non_chroot {
+    awk 'BEGIN{exit_code=1} $2 == "/" {exit_code=0} END{exit exit_code}' /proc/mounts || return 255
 }
 
 function verify_results {
@@ -228,7 +264,7 @@ set_chroot_offline_test_mode() {
 		return
 	fi
 	if test -x "$OSCAP_CHROOTABLE_EXEC"; then
-		if ! getcap "$OSCAP_CHROOTABLE_EXEC" | grep -q 'cap_sys_chroot+ep'; then
+		if ! getcap "$OSCAP_CHROOTABLE_EXEC" | grep -q -P 'cap_sys_chroot[=+]+ep'; then
 			echo "Skipping test '${FUNCNAME[1]}' as '$OSCAP_CHROOTABLE_EXEC' doesn't have the chroot capability." >&2
 			return 255
 		fi
@@ -261,4 +297,93 @@ unset_chroot_offline_test_mode() {
 	set_offline_chroot_dir ""
 }
 
+# Wrapper functions to deal with differences across platforms
+make_temp_dir() {
+	PARENT_DIR=${1}
+	TEMP_NAME=${2}
+
+	[ -z "$PARENT_DIR" ] && PARENT_DIR=$(pwd)
+	[ -z "$TEMP_NAME" ] && TEMP_NAME="tmp"
+
+	TEMP_NAME="${TEMP_NAME}.XXXXXX"
+
+	case $(uname) in
+		FreeBSD)
+			mktemp -d ${PARENT_DIR}/${TEMP_NAME}
+			;;
+		*)
+			mktemp -d -p ${PARENT_DIR} -t ${TEMP_NAME}
+			;;
+	esac
+}
+
+make_temp_file() {
+	PARENT_DIR=${1}
+	TEMP_NAME=${2}
+
+	[ -z "$PARENT_DIR" ] && PARENT_DIR=$(pwd)
+	[ -z "$TEMP_NAME" ] && TEMP_NAME="tmp"
+
+	TEMP_NAME="${TEMP_NAME}.XXXXXX"
+
+	case $(uname) in
+		FreeBSD)
+			mktemp ${PARENT_DIR}/${TEMP_NAME}
+			;;
+		*)
+			mktemp -p ${PARENT_DIR} -t ${TEMP_NAME}
+			;;
+	esac
+}
+
+xsed() {
+	case $(uname) in
+		FreeBSD)
+			gsed "$@"
+			;;
+		*)
+			sed "$@"
+			;;
+	esac
+}
+
+# Args:
+# $1: The text string to print to stderr
+# $2: The return code (optional, default is 1)
+log_and_fail() {
+	printf '%s' "$1" >&2
+	return ${2:-1}
+}
+
+# Args: Same as with log_and_fail
+die() {
+	log_and_fail "$1" "$2"
+	exit $?
+}
+
+# See https://github.com/martinpitt/python-dbusmock
+# Args:
+# $1: The name of the mock template file without extension.
+init_dbus_mock() {
+	require_python_module "dbusmock" || return 255
+	require "gdbus" || return 255
+	printf "%s\n" "Initializing D-Bus mock from template: $1.py"
+	python3 -m dbusmock --template "${srcdir}/$1.py" &
+	# We have to replace system bus address because mock D-Bus
+	# endpoint is created inside the user session
+	export DBUS_SYSTEM_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS
+}
+
+# Args:
+# $1: The name of the mock service bus
+clean_dbus_mock() {
+	require "gdbus" || return 255
+	printf "%s\n" "Shutting down D-Bus mock: $1"
+	gdbus call --session -d "$1" -o / -m "$1.Exit" >/dev/null 2>&1 || true
+	export DBUS_SYSTEM_BUS_ADDRESS=
+}
+
 export -f assert_exists
+
+export OPENSCAP_ENABLE_MD5="@OPENSCAP_ENABLE_MD5@"
+export OPENSCAP_ENABLE_SHA1="@OPENSCAP_ENABLE_SHA1@"

@@ -72,7 +72,7 @@ function test_probe_xinetd_regression_stringlist {
 }
 
 function test_probe_xinetd_duplicates {
-    output=$(./test_probe_xinetd "${srcdir}/xinetd_H.conf" telnet tcp | grep 'xiconf_service_t(telnet)' | wc -l)
+    output=$(./test_probe_xinetd "${srcdir}/xinetd_H.conf" telnet tcp | grep 'xiconf_service_t(telnet)' | wc -l | xargs)
 
     if [ "$output" = "3" ]; then
 	return 0

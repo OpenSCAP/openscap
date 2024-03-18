@@ -91,10 +91,15 @@ oval_result_t probe_ent_cmp_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t o
 
 oval_result_t probe_ent_cmp_debian_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
-	//TODO: implement Debian's epoch-version-release comparing algorithm
-	// it is different algorithm than RPM algorithm
-	dW("Using RPM algorithm to compare epoch, version and release.");
-	return probe_ent_cmp_evr(val1, val2, op);
+	oval_result_t result = OVAL_RESULT_ERROR;
+	char *s1 = SEXP_string_cstr(val1);
+	char *s2 = SEXP_string_cstr(val2);
+
+	result = oval_debian_evr_string_cmp(s1, s2, op);
+
+	free(s1);
+	free(s2);
+	return result;
 }
 
 oval_result_t probe_ent_cmp_filesetrev(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)

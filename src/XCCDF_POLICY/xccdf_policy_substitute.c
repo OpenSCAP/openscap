@@ -216,7 +216,7 @@ char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy) {
 
 	char *resolved_text = NULL;
 	if (xml_iterate_dfs(text, &resolved_text, _xccdf_text_substitution_cb, &data) != 0) {
-		// Either warning or error occured. Since prototype of this function
+		// Either warning or error occurred. Since prototype of this function
 		// does not make possible warning notification -> We better scratch that.
 		free(resolved_text);
 		resolved_text = NULL;

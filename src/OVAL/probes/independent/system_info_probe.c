@@ -85,6 +85,13 @@
 #include "system_info_probe.h"
 #include "oscap_helpers.h"
 
+#define _REGEX_RES_VECSIZE     12
+#define MAX_BUFFER_SIZE        4096
+
+#if !defined(HOST_NAME_MAX)
+#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+#endif
+
 #if defined(OS_LINUX)
 #include <sys/socket.h>
 #include <ifaddrs.h>
@@ -94,16 +101,16 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
+#elif defined(OS_FREEBSD)
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#endif
 
-#include <pcre.h>
-#define _REGEX_RES_VECSIZE     3
-#define _REGEX_MENUENTRY       "(?<=menuentry ').*?(?=')"
-#define _REGEX_SAVED_ENTRY_NR  "(?<=saved_entry=)[0-9]+"
-#define _REGEX_SAVED_ENTRY     "(?<=saved_entry=).*"
-#define _REGEX_ARCH            "(?<=\\.)i386|i686|x86_64|ia64|alpha|amd64|arm|armeb|armel|hppa|m32r" \
-		               "|m68k|mips|mipsel|powerpc|ppc64|s390|s390x|sh3|sh3eb|sh4|sh4eb|sparc"
-#define MAX_BUFFER_SIZE        4096
-
+#if defined(OS_LINUX)
 static char *get_mac(const struct ifaddrs *ifa, int fd)
 {
        struct ifreq ifr;
@@ -185,9 +192,32 @@ static char *get_mac(const struct ifaddrs *ifa, int fd)
 	}
 	return mac_buf;
 }
+
+#elif defined(OS_FREEBSD)
+static char *get_mac(const struct ifaddrs *ifa, int fd)
+{
+	struct ifreq ifr;
+	unsigned char mac[6];
+	static char mac_buf[20];
+
+	memset(&ifr, 0, sizeof(struct ifreq));
+	strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
+	ifr.ifr_name[IFNAMSIZ-1] = 0;
+
+	if (ioctl(fd, SIOCGHWADDR, &ifr) >= 0) {
+		memcpy(mac, ifr.ifr_addr.sa_data, sizeof(mac));
+		snprintf(mac_buf, sizeof(mac_buf),
+				"%02X:%02X:%02X:%02X:%02X:%02X",
+				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	} else {
+		mac_buf[0] = 0;
+	}
+
+    return mac_buf;
+}
 #endif
 
-#if defined(OS_LINUX) || (defined(OS_SOLARIS))
+#if defined(OS_LINUX) || defined(OS_SOLARIS) || defined(OS_FREEBSD)
 static int get_ifs(SEXP_t *item)
 {
        struct ifaddrs *ifaddr, *ifa;
@@ -477,170 +507,93 @@ static ssize_t __sysinfo_saneval(const char *s)
 }
 
 #ifndef OS_WINDOWS
-static FILE *_fopen_with_prefix(const char *prefix, const char *path)
+static char *_get_os_release(const char *oscap_probe_root)
 {
-	FILE *fp;
-	if (prefix != NULL) {
-		char *path_with_prefix = oscap_sprintf("%s%s", prefix, path);
-		fp = fopen(path_with_prefix, "r");
-		free(path_with_prefix);
-	} else {
-		fp = fopen(path, "r");
-	}
-	return fp;
-}
-
-static char *_offline_get_menuentry(const char *oscap_probe_root, int entry_num)
-{
-	FILE *fp;
+	char os_release_data[MAX_BUFFER_SIZE+1];
 	char *ret = NULL;
-	char grubcfg[MAX_BUFFER_SIZE+1] = { '\0' };
-	int len;
 
-	fp = _fopen_with_prefix(oscap_probe_root, "/boot/grub2/grub.cfg");
-
+	FILE *fp = oscap_fopen_with_prefix(oscap_probe_root, "/etc/os-release");
 	if (fp == NULL)
 		goto fail;
 
-	int rc = PCRE_ERROR_NOMATCH;
-	int erroffset, ovec[_REGEX_RES_VECSIZE];
-	const char *error;
-	pcre *re;
-	re = pcre_compile(_REGEX_MENUENTRY, 0, &error, &erroffset, NULL);
-
-	if (re == NULL)
-		goto fail2;
-
-	while ((len = fread(grubcfg, 1, MAX_BUFFER_SIZE, fp)) > 0) {
-		if (ferror(fp)) {
-			pcre_free(re);
-			goto fail2;
-		}
-
-		memset(ovec, 0, sizeof(ovec));
-		do {
-			rc = pcre_exec(re, NULL, grubcfg, len, ovec[1], 0, ovec, _REGEX_RES_VECSIZE);
-			if (rc > 0)
-				entry_num--;
-		} while (rc > 0 && entry_num > 0);
-
-		if (entry_num == 0)
-			break;
-	}
-	pcre_free(re);
-
-	if (rc == PCRE_ERROR_NOMATCH)
-		goto fail2;
-
-	grubcfg[ovec[1]] = '\0';
-	ret = strdup(grubcfg + ovec[0]);
-fail2:
-	fclose(fp);
-fail:
-	return ret;
-}
-
-static const char * _offline_get_os_version(char *os)
-{
-	char *ptr;
-
-	if (os == NULL)
-		return NULL;
-
-	ptr = strchr(os, ' ');
-	if (ptr)
-		*ptr++ = '\0';
-
-	return ptr;
-}
-
-static char * _offline_get_arch(const char *os)
-{
-	int rc;
-	char *ptr = NULL;
-
-	if (os == NULL)
-		return NULL;
-
-	int erroffset, ovec[_REGEX_RES_VECSIZE] = { 0 };
-	const char *error;
-	pcre *re;
-
-	re = pcre_compile(_REGEX_ARCH, 0, &error, &erroffset, NULL);
-	if (re == NULL)
-		return NULL;
-
-	rc = pcre_exec(re, NULL, os, strlen(os), 0, 0, ovec, _REGEX_RES_VECSIZE);
-	if (rc == PCRE_ERROR_NOMATCH)
-		goto fail;
-
-	size_t len = ovec[1] - ovec[0];
-	ptr = malloc(sizeof(char) * len + 1);
-	if (ptr == NULL)
-		goto fail;
-	ptr = strncpy(ptr, os + ovec[0], len);
-	ptr[len] = '\0';
-fail:
-	pcre_free(re);
-	return ptr;
-}
-
-static char *_offline_get_os_name(const char *oscap_probe_root)
-{
-	FILE *fp;
-	int rc;
-	char saved_entry[MAX_BUFFER_SIZE+1];
-	char *ptr, *ret = NULL;
-
-	fp = _fopen_with_prefix(oscap_probe_root, "/boot/grub2/grubenv");
-
-	if (fp == NULL)
-		goto fail;
-
-	rc = fread(saved_entry, 1, MAX_BUFFER_SIZE, fp);
+	int rc = fread(os_release_data, 1, MAX_BUFFER_SIZE, fp);
 	if (ferror(fp))
 		goto finish;
-	saved_entry[rc] = '\0';
+	os_release_data[rc] = '\0';
+	ret = strdup(os_release_data);
 
-	size_t len;
-	int erroffset, ovec[_REGEX_RES_VECSIZE] = { 0 };
-	const char *error;
-	pcre *re;
-
-	re = pcre_compile(_REGEX_SAVED_ENTRY_NR, 0, &error, &erroffset, NULL);
-	if (re == NULL)
-		goto finish;
-
-	len = strlen(saved_entry);
-
-	rc = pcre_exec(re, NULL, saved_entry, len, 0, 0, ovec, _REGEX_RES_VECSIZE);
-	if (rc > 0) {
-		saved_entry[ovec[1]] = '\0';
-		ptr = saved_entry + ovec[0];
-		int nr = atoi(ptr);
-		ret = _offline_get_menuentry(oscap_probe_root, nr);
-		pcre_free(re);
-		goto finish;
-	}
-
-	re = pcre_compile(_REGEX_SAVED_ENTRY, 0, &error, &erroffset, NULL);
-	if (re == NULL)
-		goto finish;
-
-	rc = pcre_exec(re, NULL, saved_entry, len, 0, 0, ovec, _REGEX_RES_VECSIZE);
-	if (rc > 0) {
-		saved_entry[ovec[1]] = '\0';
-		ptr = saved_entry + ovec[0];
-		ret = strdup(ptr);
-		pcre_free(re);
-		goto finish;
-	}
 finish:
 	fclose(fp);
 fail:
 	return ret;
 }
 
+static char *_get_os_release_elem(char *os_release_data, const char *elem_name)
+{
+	if (os_release_data == NULL)
+		return NULL;
+
+	char *ret = NULL;
+	size_t len = strlen(os_release_data);
+
+	char elem_re[128] = {0};
+	snprintf(elem_re, sizeof(elem_re), "%s%s%s", "^", elem_name, "=[\"']?(.*?)[\"']?$");
+
+	char *error;
+	int erroffset, ovec[_REGEX_RES_VECSIZE] = {0};
+	oscap_pcre_t *re = oscap_pcre_compile(elem_re, OSCAP_PCRE_OPTS_MULTILINE, &error, &erroffset);
+	if (re == NULL) {
+		oscap_pcre_err_free(error);
+		goto finish;
+	}
+
+	char *ptr = NULL;
+	int rc = oscap_pcre_exec(re, os_release_data, len, 0, 0, ovec, _REGEX_RES_VECSIZE);
+	if (rc >= 0) {
+		/* ovec[0] and ovec[1] - are the start and the end of the whole pattern match (=".....")
+		 * ovec[2] and ovec[3] - are start and end char positions of the capture group (.*?) */
+		ptr = strndup(os_release_data+ovec[2], ovec[3]-ovec[2]);
+		ret = ptr;
+	}
+	oscap_pcre_free(re);
+
+finish:
+	return ret;
+}
+
+#if defined(OS_FREEBSD)
+static char *_offline_get_hname(const char *oscap_probe_root)
+{
+	FILE *fp;
+	size_t len;
+	char *strp;
+	char *entry;
+	char *hname;
+	char *ret = NULL;
+	char *line = NULL;
+	const char *sep = "\"";
+	const char *expected_entry = "hostname=";
+
+	fp = oscap_fopen_with_prefix(oscap_probe_root, "/etc/rc.conf");
+
+	if (!fp)
+		goto fail;
+
+	while (getline(&line, &len, fp) > 0) {
+		entry = strtok_r(line, sep, &strp);
+		if (strcmp(entry, expected_entry) == 0) {
+			hname = strtok_r(NULL, sep, &strp);
+			ret = strdup(hname);
+			break;
+		}
+	}
+
+	fclose(fp);
+fail:
+	return ret;
+}
+
+#else
 static char *_offline_get_hname(const char *oscap_probe_root)
 {
 	FILE *fp;
@@ -648,7 +601,7 @@ static char *_offline_get_hname(const char *oscap_probe_root)
 	char *ret = NULL;
 	int rc;
 
-	fp = _fopen_with_prefix(oscap_probe_root, "/etc/hostname");
+	fp = oscap_fopen_with_prefix(oscap_probe_root, "/etc/hostname");
 
 	if (fp == NULL)
 		goto fail;
@@ -666,7 +619,8 @@ finish:
 fail:
 	return ret;
 }
-#endif
+#endif /* ifdef OS_FREEBSD */
+#endif /* ifndef OS_WINDOWS */
 
 #ifdef OS_WINDOWS
 static char *get_windows_version()
@@ -732,9 +686,8 @@ int system_info_probe_offline_mode_supported()
 
 int system_info_probe_main(probe_ctx *ctx, void *arg)
 {
-	SEXP_t* item = NULL;
-	char* os_name, *architecture, *hname;
-	const char *os_version = NULL;
+	SEXP_t *item = NULL;
+	char *os_name, *architecture, *hname, *os_version = NULL;
 	const char unknown[] = "Unknown";
 	int ret = 0;
 	(void)arg;
@@ -751,36 +704,42 @@ int system_info_probe_main(probe_ctx *ctx, void *arg)
 	architecture = strdup(get_windows_architecture());
 	hname = oscap_windows_wstr_to_str(computer_name_wstr);
 #else
-	struct utsname sname;
+	const char *oscap_probe_root = "";
+	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
+		oscap_probe_root = getenv("OSCAP_PROBE_ROOT");
+	}
+	char *os_release_data = _get_os_release(oscap_probe_root);
+	os_name = _get_os_release_elem(os_release_data, "NAME");
+	os_version = _get_os_release_elem(os_release_data, "VERSION");
 	if (ctx->offline_mode == PROBE_OFFLINE_NONE) {
+		struct utsname sname;
 		if (uname(&sname) == 0) {
-			os_name = strdup(sname.sysname);
-			os_version = sname.version;
 			architecture = strdup(sname.machine);
 			hname = strdup(sname.nodename);
 		}
 	} else if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
-		const char *oscap_probe_root = getenv("OSCAP_PROBE_ROOT");
-		os_name = _offline_get_os_name(oscap_probe_root);
-		os_version = _offline_get_os_version(os_name);
-		architecture = _offline_get_arch(os_version);
 		hname = _offline_get_hname(oscap_probe_root);
 	}
+	free(os_release_data);
 #endif
 
 	/* All four elements are required */
 	if (!os_name)
 		os_name = strdup(unknown);
 
-	// os_version kept static as it shared memory with os_name if os_name exists
 	if (!os_version)
-		os_version = unknown;
+		os_version = strdup(unknown);
 
 	if (!architecture)
 		architecture = strdup(unknown);
 
-	if (!hname)
+	if (hname && *hname == '\0') {
+		free(hname);
+		hname = NULL;
+	}
+	if (!hname) {
 		hname = strdup(unknown);
+	}
 
 	if (__sysinfo_saneval(os_name) < 1 ||
 		__sysinfo_saneval(os_version) < 1 ||
@@ -798,10 +757,7 @@ int system_info_probe_main(probe_ctx *ctx, void *arg)
 	                         NULL);
 cleanup:
 	free(os_name);
-	// Free os_version only on Windows. On other platforms it shares same memory from os_name!
-#ifdef OS_WINDOWS
 	free(os_version);
-#endif
 	free(architecture);
 	free(hname);
 

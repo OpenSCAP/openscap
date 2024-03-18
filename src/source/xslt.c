@@ -29,6 +29,7 @@
 #include <libxslt/xsltutils.h>
 #include <libexslt/exslt.h>
 #include <string.h>
+
 #ifdef OS_WINDOWS
 #include <io.h>
 #else
@@ -82,30 +83,34 @@ static int xccdf_ns_xslt_workaround(xmlDocPtr doc, xmlNodePtr node)
 
 static inline int save_stylesheet_result_to_file(xmlDoc *resulting_doc, xsltStylesheet *stylesheet, const char *outfile)
 {
-	FILE *f = NULL;
-	if (outfile)
-		f = fopen(outfile, "w");
-	else
-		f = stdout;
-
-	if (f == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not open output file '%s'", outfile ? outfile : "stdout");
-		return -1;
+#ifdef OS_WINDOWS
+	int fd = _fileno(stdout);
+#else
+	int fd = STDOUT_FILENO;
+#endif
+	if (outfile) {
+		fd = oscap_open_writable(outfile);
 	}
+	if (fd == -1)
+		return -1;
 
-	int ret = xsltSaveResultToFile(f, resulting_doc, stylesheet);
+	int ret = xsltSaveResultToFd(fd, resulting_doc, stylesheet);
 	if (ret < 0) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save result document");
 	}
-	if (outfile && f)
-		fclose(f);
+#ifdef OS_WINDOWS
+	if (fd != _fileno(stdout))
+#else
+	if (fd != STDOUT_FILENO)
+#endif
+		close(fd);
 	return ret;
 }
 
 static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char *xsltfile, const char **params, const char *path_to_xslt, xsltStylesheet **stylesheet)
 {
 	xmlDoc *doc = oscap_source_get_xmlDoc(source);
-	if (doc == NULL || stylesheet == NULL) {
+	if (doc == NULL || stylesheet == NULL || xsltfile == NULL) {
 		return NULL;
 	}
 

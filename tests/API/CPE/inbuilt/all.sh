@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright 2013 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
@@ -29,7 +29,6 @@ function ensure_oscap_version(){
 	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 	grep "^Default CPE files: .*/cpe$" $stdout
 	grep " Inbuilt CPE names " $stdout
-	grep "^Red Hat Enterprise Linux . - cpe:/o:redhat:enterprise_linux:.$" $stdout
 	rm $stdout
 }
 

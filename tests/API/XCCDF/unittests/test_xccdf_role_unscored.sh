@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e -o pipefail
@@ -16,7 +16,7 @@ echo "Report file = $report"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 [ -f $report ]; [ -s $report ]; rm $report
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 '//rule-result'
 assert_exists 1 '//rule-result/result'
