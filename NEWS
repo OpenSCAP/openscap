@@ -1,3 +1,24 @@
+openscap-1.3.10                                                 18-03-2024
+- New features
+  - Dump all env. variables that affects the behaviour on INFO log level
+  - Support Blueprint services customization for masking
+  - Fix Blueprint template to be self-contained
+  - Add a refine-rule tailoring ability to autotailor
+  - Introduce JSON tailoring import option for autotailor
+  - Select rules based on reference
+  - Skip certain paths from scanning (controlled via env. variable)
+  - Introduce a limit of collected items (controlled via env. variable)
+- Maintenance, bug fix
+  - Fix partition probe for PCRE2
+  - Fix NSS crypto backend
+  - Wrap Bash snippets in a subshell when generating a fix script
+  - Improve references in HTML guides and reports
+  - Update html report with OVAL details
+  - Rewrite dpkginfo probe without using APT
+  - Fix incorrect openscap-cpe-oval result filename
+  - Implement xccdf_session_get_rule_results function in XCCDF session API
+  - Implement xccdf_session_result_reset function in XCCDF session API
+
 openscap-1.3.9                                                  06-09-2023
 - New features
   - OpenSCAP can now use PCRE2 library
