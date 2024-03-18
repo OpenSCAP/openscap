@@ -57,7 +57,7 @@ jobs:
       image: fedora:latest
     steps:
     - name: Install Deps
-      run: dnf install -y cmake git dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre2-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace python3-pytest
+      run: dnf install -y cmake git procps-ng dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre2-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace python3-pytest
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -80,7 +80,7 @@ jobs:
       image: fedora:latest
     steps:
     - name: Install Deps
-      run: dnf install -y cmake git dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel nss-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre2-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace python3-pytest
+      run: dnf install -y cmake git procps-ng dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel nss-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre2-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace python3-pytest
     - name: Checkout
       uses: actions/checkout@v3
       with:
