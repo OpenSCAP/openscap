@@ -5,7 +5,7 @@
 :sce_web:       https://www.open-scap.org/features/other-standards/sce/
 :openscap_web: https://open-scap.org/
 :oscap_git:     https://github.com/OpenSCAP/openscap
-:devel_manual:  https://github.com/OpenSCAP/openscap/blob/maint-1.3/docs/developer/developer.adoc
+:devel_manual:  https://github.com/OpenSCAP/openscap/blob/main/docs/developer/developer.adoc
 :ssg_git:       https://github.com/OpenSCAP/scap-security-guide
 :xmlsec:        https://www.aleksey.com/xmlsec/
 :xslt:          http://www.w3.org/TR/xslt
