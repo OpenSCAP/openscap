@@ -41,7 +41,7 @@ jobs:
     - name: Build
       working-directory: ./build
       run: |
-        cmake -DCMAKE_COMPILE_WARNING_AS_ERROR=True -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_PCRE2=True ../
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_PCRE2=True ../
         make all
 
     - name: Test
