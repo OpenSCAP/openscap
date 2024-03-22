@@ -8,7 +8,7 @@
 #
 # where ID in the $PR environment variable is the pull request (PR) ID,
 # if ID would not be set (-e option omitted) tests will be run from the
-# default branch (maint-1.3).
+# default branch (main).
 #
 # Once tests are finished it is possible to enter the container:
 #     podman start pr_test
