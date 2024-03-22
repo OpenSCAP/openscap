@@ -363,8 +363,10 @@ static inline void *oscap_aligned_malloc(size_t size, size_t alignment) {
 	return _aligned_malloc(size, alignment);
 #else
 	void *ptr = NULL;
-	posix_memalign(&ptr, alignment, size);
-	return ptr;
+	int ret = posix_memalign(&ptr, alignment, size);
+	if (ret == 0)
+		return ptr;
+	return NULL;
 #endif
 }
 

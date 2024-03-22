@@ -121,8 +121,9 @@ static int filehash_cb (const char *prefix, const char *p, const char *f, probe_
 	}
 
         if (fd < 0) {
-                strerror_r (errno, pbuf, PATH_MAX);
-                pbuf[PATH_MAX] = '\0';
+		#define __ERRBUF_SIZE 128
+		char errbuf[__ERRBUF_SIZE] = {0};
+		oscap_strerror_r(errno, errbuf, sizeof errbuf - 1);
 
 		itm = probe_item_create(OVAL_INDEPENDENT_FILE_HASH, NULL,
 				"filepath", OVAL_DATATYPE_STRING, include_filepath ? pbuf : NULL,
@@ -131,7 +132,7 @@ static int filehash_cb (const char *prefix, const char *p, const char *f, probe_
 				NULL
 				);
 		probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR,
-				"Can't open \"%s\": errno=%d, %s.", pbuf, errno, strerror (errno));
+				"Can't open \"%s\": %s (errno=%d).", pbuf, errbuf, errno);
 		probe_item_setstatus(itm, SYSCHAR_STATUS_ERROR);
 
        } else {
