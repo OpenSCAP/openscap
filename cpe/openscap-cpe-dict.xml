@@ -1,56 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <cpe-item name="cpe:/o:redhat:enterprise_linux:-">
-            <title xml:lang="en-us">Red Hat Enterprise Linux</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:redhat:enterprise_linux:5">
-            <title xml:lang="en-us">Red Hat Enterprise Linux 5</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:5</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:redhat:enterprise_linux:6">
-            <title xml:lang="en-us">Red Hat Enterprise Linux 6</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:6</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:redhat:enterprise_linux:7">
-            <title xml:lang="en-us">Red Hat Enterprise Linux 7</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:7</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:redhat:enterprise_linux:8">
-            <title xml:lang="en-us">Red Hat Enterprise Linux 8</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:8</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:centos:centos:5">
-            <title xml:lang="en-us">Community Enterprise Operating System 5</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1005</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:centos:centos:6">
-            <title xml:lang="en-us">Community Enterprise Operating System 6</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1006</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:centos:centos:7">
-            <title xml:lang="en-us">Community Enterprise Operating System 7</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1007</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:centos:centos:8">
-            <title xml:lang="en-us">Community Enterprise Operating System 8</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.centos:def:8</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:32">
-            <title xml:lang="en-us">Fedora 32</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:32</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:33">
-            <title xml:lang="en-us">Fedora 33</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:33</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:34">
-            <title xml:lang="en-us">Fedora 34</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:34</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:35">
-            <title xml:lang="en-us">Fedora 35</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:35</check>
+<cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <cpe-item name="cpe:/o:linux:linux_kernel:-">
+            <title xml:lang="en-us">Linux</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.linux:def:1</check>
       </cpe-item>
 </cpe-list>
