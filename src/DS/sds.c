@@ -791,7 +791,14 @@ static int ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, con
 	xpathCtx->node = catalog;
 
 	char *expression = oscap_sprintf("cat:uri[@uri = '%s']", uri);
+	if (expression == NULL)
+	{
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Error: Unable to create XPath expression.");
+		xmlXPathFreeContext(xpathCtx);
 
+		return -1;
+	}
+	
 	xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
 			BAD_CAST expression,
 			xpathCtx);
@@ -1012,6 +1019,13 @@ static int ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream
 	xpathCtx->node = datastream;
 
 	char *expression = oscap_sprintf("*/ds:component-ref[@xlink:href = '#%s' and @id = '%s']", filepath, cref_id);
+	if (expression == NULL)
+	{
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Error: Unable to create XPath expression.");
+		xmlXPathFreeContext(xpathCtx);
+
+		return -1;
+	}
 
 	xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
 			BAD_CAST expression,
