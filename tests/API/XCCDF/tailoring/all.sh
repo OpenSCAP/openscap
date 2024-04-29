@@ -98,6 +98,26 @@ function test_api_xccdf_tailoring_simple_include_in_arf {
     rm -f $result
 }
 
+function test_api_xccdf_tailoring_simple_include_in_arf_xlink_namespace {
+    # This test case is a regression test for RHEL-34104
+
+    local INPUT=$srcdir/$1
+    local TAILORING=$srcdir/$2
+
+    result=`mktemp`
+    stderr=`mktemp`
+    $OSCAP xccdf eval --tailoring-file $TAILORING --results-arf $result $INPUT 2>"$stderr"
+    if [ "$?" != "0" ]; then
+        return 1
+    fi
+
+    [ ! -s "$stderr" ]
+    assert_exists 1 '/arf:asset-report-collection/arf:report-requests/arf:report-request/arf:content/ds:data-stream-collection/ds:component/Tailoring'
+
+    rm -f "$result"
+    rm -f "$stderr"
+}
+
 function test_api_xccdf_tailoring_profile_include_in_arf {
     local INPUT=$srcdir/$1
     local TAILORING=$srcdir/$2
@@ -167,6 +187,7 @@ test_run "test_api_xccdf_tailoring_oscap_info_11" test_api_xccdf_tailoring_oscap
 test_run "test_api_xccdf_tailoring_oscap_info_12" test_api_xccdf_tailoring_oscap_info simple-tailoring.xml 1
 test_run "test_api_xccdf_tailoring_autonegotiation" test_api_xccdf_tailoring_autonegotiation simple-tailoring-autonegotiation.xml xccdf_org.open-scap_profile_default 1
 test_run "test_api_xccdf_tailoring_simple_include_in_arf" test_api_xccdf_tailoring_simple_include_in_arf simple-xccdf.xml simple-tailoring.xml
+test_run "test_api_xccdf_tailoring_simple_include_in_arf_xlink_namespace" test_api_xccdf_tailoring_simple_include_in_arf_xlink_namespace xlink-test-simple-ds.xml simple-tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_include_in_arf" test_api_xccdf_tailoring_profile_include_in_arf baseline.xccdf.xml baseline.tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_generate_fix" test_api_xccdf_tailoring_profile_generate_fix baseline.xccdf.xml baseline.tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_generate_guide" test_api_xccdf_tailoring_profile_generate_guide baseline.xccdf.xml baseline.tailoring.xml

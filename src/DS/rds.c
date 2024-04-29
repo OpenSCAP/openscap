@@ -757,12 +757,7 @@ static int _ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
 		free(tailoring_component_ref_id);
 		xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, sds_res_node, BAD_CAST xlink_ns_uri);
 		if (!xlink_ns) {
-			oscap_seterr(OSCAP_EFAMILY_XML,
-					"Unable to find namespace '%s' in the XML DOM tree. "
-					"This is most likely an internal error!.",
-					xlink_ns_uri);
-			free(tailoring_component_id);
-			return -1;
+			xlink_ns = xmlNewNs(tailoring_component_ref, BAD_CAST xlink_ns_uri, BAD_CAST "xlink");
 		}
 		char *tailoring_cref_href = oscap_sprintf("#%s", tailoring_component_id);
 		free(tailoring_component_id);
