@@ -360,7 +360,7 @@ option(ENABLE_MITRE "enables MITRE tests -- requires specific environment suppor
 
 # ---------- LANGUAGE BINDINGS
 cmake_dependent_option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" ON "PYTHONINTERP_FOUND;SWIG_FOUND;PYTHONLIBS_FOUND" OFF)
-cmake_dependent_option(ENABLE_PERL "if enabled, the perl swig bindings will be built" ON "PERLLIBS_FOUND;SWIG_FOUND" OFF)
+cmake_dependent_option(ENABLE_PERL "if enabled, the perl swig bindings will be built" ON "PERLLIBS_FOUND;SWIG_FOUND;NOT WIN32" OFF)
 
 # ---------- NO IDEA WHAT THIS IS FOR
 set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
