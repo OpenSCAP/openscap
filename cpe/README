@@ -1,14 +1,3 @@
 This folder contains the default CPE dictionary and its associated OVAL file.
 
-Synchronized with the official NIST NVD CPE Dictionary v2.3
-from https://nvd.nist.gov/products/cpe with the following exceptions,
-that are kept for backward-compatibility:
-
-cpe:/o:redhat:enterprise_linux:6          deprecated
-cpe:/o:redhat:enterprise_linux:7          no cover-all name for 7.x versions
-cpe:/o:redhat:enterprise_linux:8          no cover-all name for 8.x versions
-cpe:/o:centos:centos:7                    no cover-all name for 7.x versions
-cpe:/o:centos:centos:8                    no cover-all name for 8.x versions
-
-In the next API-breaking version the internal CPE dictionary will be removed
-completely.
+It has only one dummy entry and can be customized by a distribution packager.
