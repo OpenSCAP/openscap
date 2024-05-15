@@ -40,7 +40,6 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <limits.h>
-#include <cvss_score.h>
 #include <oscap_debug.h>
 #include "oscap_helpers.h"
 
@@ -68,7 +67,6 @@ static void oscap_action_release(struct oscap_action *action)
 {
 	assert(action != NULL);
 	free(action->f_ovals);
-	cvss_impact_free(action->cvss_impact);
     oscap_stringlist_free(action->rules);
     oscap_stringlist_free(action->skip_rules);
 }

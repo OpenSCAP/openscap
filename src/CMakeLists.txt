@@ -1,7 +1,6 @@
 add_subdirectory("common")
 add_subdirectory("CPE")
 add_subdirectory("CVE")
-add_subdirectory("CVSS")
 add_subdirectory("CVRF")
 add_subdirectory("DS")
 add_subdirectory("OVAL")
@@ -17,7 +16,6 @@ set(OBJECTS_TO_LINK_AGAINST
 	$<TARGET_OBJECTS:cpe_object>
 	$<TARGET_OBJECTS:cve_object>
 	$<TARGET_OBJECTS:cvrf_object>
-	$<TARGET_OBJECTS:cvss_object>
 	$<TARGET_OBJECTS:ds_object>
 	$<TARGET_OBJECTS:oscapsource_object>
 	$<TARGET_OBJECTS:oval_object>

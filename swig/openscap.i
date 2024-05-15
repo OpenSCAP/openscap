@@ -203,13 +203,6 @@
 %}
 %include "../../src/CVE/public/cve_nvd.h"
 
-
-%module openscap
-%{
- #include "../../src/CVSS/public/cvss_score.h"
-%}
-%include "../../src/CVSS/public/cvss_score.h"
-
 %module openscap
 %{
  #include "../../src/DS/public/ds_rds_session.h"
