@@ -13,15 +13,13 @@ function _oscap {
 
 	# commands for individual modules
     local -A cmds=()
-    cmds[oscap]="info oval xccdf ds cpe cvss cve"
+    cmds[oscap]="info oval xccdf ds cpe"
     cmds[oscap:oval]="collect eval analyse validate generate"
     cmds[oscap:oval:generate]="report"
-    cmds[oscap:cvss]="score describe"
     cmds[oscap:xccdf]="eval remediate resolve validate export-oval-variables generate"
     cmds[oscap:xccdf:generate]="report guide fix custom"
     cmds[oscap:ds]="sds-add sds-compose sds-split sds-validate rds-create rds-split rds-validate"
     cmds[oscap:cpe]="check match validate"
-    cmds[oscap:cve]="validate find"
 
     # command options
     local -A opts=()
@@ -46,8 +44,6 @@ function _oscap {
     opts[oscap:ds:sds-split]="--datastream-id --xccdf-id --skip-valid --skip-validation --fetch-remote-resources --local-files"
     opts[oscap:ds:rds-create]="--skip-valid --skip-validation"
     opts[oscap:ds:rds-split]="--report-id --skip-valid --skip-validation"
-    opts[oscap:cvss:score]=""
-    opts[oscap:cvss:describe]=""
     opts[oscap:info]="--fetch-remote-resources --local-files --profile --profiles"
 
     # local variables
@@ -75,13 +71,11 @@ function _oscap {
         local cmd=${modpath##*:}
 
 		case "$prev" in
-			--AV|--AC|--AU|--CI|--II|--AI|--EX|--RL|--RC|--CD|--TD|--CR|--IR|--AR)
-				COMPREPLY=( $(compgen -W "`$prog cvss $cmd -h | sed -r -n -e "s:^\s+$prev=\[(.+)\].+$:\1:gp" | tr '|' ' '`" -- ${cur}) ) ;;
 			--results|-o|--output|--template|--oval-template) _filedir 'xml.bz2|xml' ;;
             --report) _filedir 'html' ;;
 		esac
 
-	elif [ "x${cur:0:1}" == "x-" ] || [ "${modpath:0:11}" == 'oscap:cvss:' ]; then
+	elif [ "x${cur:0:1}" == "x-" ]; then
 		# an option
 		COMPREPLY=( $(compgen -W "${opts[$modpath]}" -- ${cur}) )
     elif [ "x${cmds[$modpath]}" != 'x' ]; then
@@ -91,7 +85,6 @@ function _oscap {
 		# a positional argument
 
 		case "$modpath" in
-			oscap:cvss:*) ;; # no positional args for cvss
 			*) _filedir 'xml.bz2|xml' ;;
 		esac
 
