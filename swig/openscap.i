@@ -196,13 +196,6 @@
 %include "../../src/CPE/public/cpe_dict.h"
 %include "../../src/CPE/public/cpe_lang.h"
 
-
-%module openscap
-%{
- #include "../../src/CVE/public/cve_nvd.h"
-%}
-%include "../../src/CVE/public/cve_nvd.h"
-
 %module openscap
 %{
  #include "../../src/DS/public/ds_rds_session.h"

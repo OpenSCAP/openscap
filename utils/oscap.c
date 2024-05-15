@@ -53,7 +53,6 @@ struct oscap_module* OSCAP_ROOT_SUBMODULES[] = {
     &OSCAP_OVAL_MODULE,
     &OSCAP_XCCDF_MODULE,
     &OSCAP_CPE_MODULE,
-    &OSCAP_CVE_MODULE,
     &OSCAP_VERSION_MODULE,
     &OSCAP_INFO_MODULE,
     NULL
@@ -122,7 +121,6 @@ static int print_versions(const struct oscap_action *action)
 	printf("XCCDF Version: %s\n", xccdf_benchmark_supported());
 	printf("OVAL Version: %s\n", oval_definition_model_supported());
 	printf("CPE Version: %s\n", cpe_dict_model_supported());
-	printf("CVE Version: %s\n", cve_model_supported());
 	printf("Asset Identification Version: %s\n", "1.1");
 	printf("Asset Reporting Format Version: %s\n", "1.1");
 	printf("\n");
