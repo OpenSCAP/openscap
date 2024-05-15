@@ -562,7 +562,6 @@ include_directories(
 	"src/common/public/"
 	"src/CPE/public/"
 	"src/CVE/public/"
-	"src/CVRF/public/"
 	"src/DS/public/"
 	"src/OVAL/public/"
 	"src/OVAL/probes/public/"

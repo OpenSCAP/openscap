@@ -1,7 +1,6 @@
 add_subdirectory("CPE")
 add_subdirectory("crypt")
 add_subdirectory("CVE")
-add_subdirectory("CVRF")
 add_subdirectory("OVAL")
 if (ENABLE_PROBES)
 	add_subdirectory("probes")

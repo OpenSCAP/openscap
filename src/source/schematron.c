@@ -675,8 +675,7 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 			scap_type == OSCAP_DOCUMENT_CPE_DICTIONARY ||
 			scap_type == OSCAP_DOCUMENT_CVE_FEED ||
 			scap_type == OSCAP_DOCUMENT_SCE_RESULT ||
-			scap_type == OSCAP_DOCUMENT_OCIL ||
-			scap_type == OSCAP_DOCUMENT_CVRF_FEED) {
+			scap_type == OSCAP_DOCUMENT_OCIL) {
 		fprintf(outfile_fd, "Skipped\n");
 		return 0;
 	}
