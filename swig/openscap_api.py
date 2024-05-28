@@ -1012,23 +1012,6 @@ class CPE_Class(OSCAP_Object):
         return "<Oscap Object of type 'CPE Class' at %s>" % (hex(id(self)),)
 
 # ------------------------------------------------------------------------------------------------------------
-# CVSS
-
-
-class CVSS_Class(OSCAP_Object):
-    """
-    CVSS Class
-    """
-
-    def __init__(self):
-        dict.__setattr__(self, "object", "cvss")
-        dict.__setattr__(self, "version", OSCAP.cvss_model_supported())
-        pass
-
-    def __repr__(self):
-        return "<Oscap Object of type 'CVSS Class' at %s>" % (hex(id(self)),)
-
-# ------------------------------------------------------------------------------------------------------------
 # SCE
 
 
@@ -1060,6 +1043,5 @@ xccdf = XCCDF_Class()
 oval = OVAL_Class()
 cve = CVE_Class()
 cpe = CPE_Class()
-cvss = CVSS_Class()
 sce = SCE_Class()
 common = OSCAP_Object("oscap")
