@@ -212,6 +212,7 @@ TARGET_RESULTS_ARF=""
 TARGET_REPORT=""
 TARGET_SYSCHAR=""
 OVAL_RESULTS=""
+STIG_RESULTS=""
 
 # We have to rewrite various paths to a remote temp dir
 for i in $(seq 0 `expr $# - 1`); do
@@ -221,6 +222,10 @@ for i in $(seq 0 `expr $# - 1`); do
     ("--tailoring-file")
         LOCAL_TAILORING_PATH=${oscap_args[j]}
         oscap_args[j]="$REMOTE_TEMP_DIR/tailoring.xml"
+      ;;
+    ("--stig-viewer")
+	STIG_RESULTS=${oscap_args[j]}
+	oscap_args[j]="$REMOTE_TEMP_DIR/stig_results.xml"
       ;;
     ("--local-files")
         LOCAL_LOCAL_FILES_PATH=${oscap_args[j]}
@@ -316,6 +321,9 @@ echo "oscap exit code: $OSCAP_EXIT_CODE"
 echo "Copying back requested files..."
 if [ "$TARGET_RESULTS" != "" ]; then
     scp_retreive_from_temp_dir results.xml "$TARGET_RESULTS" || die "Failed to copy the results file back to local machine!"
+fi
+if [ "$STIG_RESULTS" != "" ]; then
+    scp_retreive_from_temp_dir stig_results.xml "$STIG_RESULTS" || die "Failed to copy the STIG results file back to local machine!"
 fi
 if [ "$TARGET_RESULTS_ARF" != "" ]; then
     scp_retreive_from_temp_dir results-arf.xml "$TARGET_RESULTS_ARF" || die "Failed to copy the ARF file back to local machine!"
