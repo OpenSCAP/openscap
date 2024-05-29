@@ -199,7 +199,6 @@ int evaluate_suffix_match_result_with_custom_reports(int suffix_match_result, co
 int evaluate_suffix_match_result(int suffix_match_result, const char *profile_suffix, const char *source_file);
 
 extern struct oscap_module OSCAP_ROOT_MODULE;
-extern struct oscap_module OSCAP_DS_MODULE;
 extern struct oscap_module OSCAP_XCCDF_MODULE;
 extern struct oscap_module OSCAP_CVSS_MODULE;
 extern struct oscap_module OSCAP_OVAL_MODULE;

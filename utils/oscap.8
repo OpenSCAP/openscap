@@ -31,9 +31,6 @@ The eXtensible Configuration Checklist Description Format.
 \fBoval\fR
 Open Vulnerability and Assessment Language.
 .TP
-\fBds\fR
-SCAP Data Stream
-.TP
 \fBcpe\fR
 Common Platform Enumeration.
 .TP
@@ -641,73 +638,6 @@ AR:[ND|L|M|H]         E   Availability requirement: Not Defined, Low, Medium, Hi
 .RE
 .RE
 .PP
-
-.SH DS OPERATIONS
-.TP
-.B \fBsds-compose\fR [\fIoptions\fR] SOURCE_XCCDF TARGET_SDS
-.RS
-Creates an SCAP source data stream from the XCCDF file given in SOURCE_XCCDF and stores the result in TARGET_SDS. Dependencies like OVAL files are automatically detected and bundled in the created source data stream.
-.TP
-\fB\-\-skip-valid, \fB\-\-skip-validation
-Do not validate input/output files.
-.RE
-.TP
-.B \fBsds-add\fR [\fIoptions\fR] NEW_COMPONENT EXISTING_SDS
-.RS
-Adds given NEW_COMPONENT file to the existing source data stream (EXISTING_SDS). Component file might be OVAL, XCCDF or CPE Dictionary file. Dependencies like OVAL files are automatically detected and bundled in target source data stream.
-.TP
-\fB\-\-datastream-id DATASTREAM_ID\fR
-Uses a data stream with that particular ID from the given data stream collection. If not given the first data stream is used.
-.TP
-\fB\-\-skip-valid, \fB\-\-skip-validation
-Do not validate input/output files.
-.RE
-.TP
-.B \fBsds-split\fR [\fIoptions\fR] SOURCE_DS TARGET_DIR
-.RS
-Splits given source data stream into multiple files and stores all the files in TARGET_DIR.
-.TP
-\fB\-\-datastream-id DATASTREAM_ID\fR
-Uses a data stream with that particular ID from the given data stream collection. If not given the first data stream is used.
-.TP
-\fB\-\-xccdf-id XCCDF_ID\fR
-Takes component ref with given ID from checklists. This allows one to select a particular XCCDF component even in cases where there are multiple XCCDFs in a single data stream.
-.TP
-\fB\-\-skip-valid, \fB\-\-skip-validation
-Do not validate input/output files.
-.TP
-\fB\-\-fetch-remote-resources\fR
-Allow download of remote components referenced from data stream.
-.TP
-\fB\-\-local-files DIRECTORY\fR
-Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
-.RE
-.TP
-.B \fBsds-validate\fR SOURCE_DS
-.RS
-Validate given source data stream file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the source data stream is not valid.
-.RE
-.TP
-.B \fBrds-create\fR [\fIoptions\fR] SDS TARGET_ARF XCCDF_RESULTS [OVAL_RESULTS [OVAL_RESULTS ..]]
-.RS
-Takes given source data stream, XCCDF and OVAL results and creates a result data stream (in Asset Reporting Format) and saves it to file given in TARGET_ARF.
-.TP
-\fB\-\-skip-valid, \fB\-\-skip-validation
-Do not validate input/output files.
-.RE
-.TP
-.B \fBrds-split\fR [\fIoptions\fR] [--report-id REPORT_ID] RDS TARGET_DIR
-.RS
-Takes given result data stream (also called ARF = asset reporting format) and splits given report and its respective report-request to given target directory. If no report-id is given, we assume user wants the first applicable report in top-down order in the file.
-.TP
-\fB\-\-skip-valid, \fB\-\-skip-validation
-Do not validate input/output files.
-.RE
-.TP
-.B \fBrds-validate\fR SOURCE_RDS
-.RS
-Validate given result data stream file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the result data stream is not valid.
-.RE
 
 .SH CVE OPERATIONS
 .TP
