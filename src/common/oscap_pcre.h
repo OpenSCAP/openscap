@@ -91,12 +91,6 @@ void oscap_pcre_free(oscap_pcre_t *opcre);
 void oscap_pcre_set_match_limit_recursion(oscap_pcre_t *opcre, unsigned long limit);
 
 /**
- * Optimize the compiled regular expression object to increase matching speed.
- * @param opcre the oscap_pcre_t object
- */
-void oscap_pcre_optimize(oscap_pcre_t *opcre);
-
-/**
  * Match a regular expression and return substrings.
  * Caller is responsible for freeing the returned array.
  * @param str subject string
