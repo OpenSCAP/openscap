@@ -1,4 +1,3 @@
-# OpenSCAP
 
 [![Gating](https://github.com/OpenSCAP/openscap/actions/workflows/build.yml/badge.svg?branch=maint-1.3)](https://github.com/OpenSCAP/openscap/actions/workflows/build.yml)
 [![Join the chat at https://gitter.im/OpenSCAP/openscap](https://badges.gitter.im/OpenSCAP/openscap.svg)](https://gitter.im/OpenSCAP/openscap?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
