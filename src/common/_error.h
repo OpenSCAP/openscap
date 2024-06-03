@@ -35,7 +35,7 @@
 
 #define oscap_setxmlerr(error) __oscap_setxmlerr (__FILE__, __LINE__, __PRETTY_FUNCTION__, error)
 
-void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErrorPtr error);
+void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, const xmlError *error);
 
 struct oscap_err_t {
 	oscap_errfamily_t family;

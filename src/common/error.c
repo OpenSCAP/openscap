@@ -85,7 +85,7 @@ static inline void _push_err(struct oscap_err_t *err)
 	(void)err_queue_push(q, err);
 }
 
-void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErrorPtr error)
+void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, const xmlError *error)
 {
 
 	if (error == NULL)
