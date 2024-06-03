@@ -160,10 +160,6 @@ const char *oscap_document_type_to_string(oscap_document_type_t type)
 		return "CPE Language";
 	case OSCAP_DOCUMENT_ARF:
 		return "ARF Result Datastream";
-	case OSCAP_DOCUMENT_CVE_FEED:
-		return "CVE NVD Feed";
-	case OSCAP_DOCUMENT_CVRF_FEED:
-		return "CVRF Feed";
 	case OSCAP_DOCUMENT_OCIL:
 		return "OCIL Questionnaire";
 	default:

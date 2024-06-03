@@ -673,7 +673,6 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 	/* Skip document types that don't have a schematron available */
 	if (scap_type == OSCAP_DOCUMENT_CPE_LANGUAGE ||
 			scap_type == OSCAP_DOCUMENT_CPE_DICTIONARY ||
-			scap_type == OSCAP_DOCUMENT_CVE_FEED ||
 			scap_type == OSCAP_DOCUMENT_SCE_RESULT ||
 			scap_type == OSCAP_DOCUMENT_OCIL) {
 		fprintf(outfile_fd, "Skipped\n");
