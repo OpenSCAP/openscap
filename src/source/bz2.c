@@ -124,8 +124,8 @@ static void bz2_mem_free(struct bz2_mem *bzmem)
 
 static struct bz2_mem *bz2_mem_open(const char *buffer, size_t size)
 {
-	struct bz2_mem *b = calloc(sizeof(struct bz2_mem), 1);
-	b->stream = calloc(sizeof(bz_stream), 1);
+	struct bz2_mem *b = calloc(1, sizeof(struct bz2_mem));
+	b->stream = calloc(1, sizeof(bz_stream));
 	// next_in should point at the compressed data
 	b->stream->next_in = (char *) buffer;
 	// and avail_in should indicate how many bytes the library may read
