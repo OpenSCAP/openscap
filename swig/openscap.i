@@ -509,7 +509,6 @@ char * sub_callback_wrapper(xccdf_subst_type_t type, const char *id, void *arg)
 
 bool xccdf_policy_model_register_output_callback_py(struct xccdf_policy_model *model, PyObject *func, PyObject *usr) {
     struct internal_usr *new_usrdata;
-    PyEval_InitThreads();
     Py_INCREF(func);
     Py_INCREF(usr);
     new_usrdata = malloc(sizeof(struct internal_usr));
@@ -523,7 +522,6 @@ bool xccdf_policy_model_register_output_callback_py(struct xccdf_policy_model *m
 
 bool xccdf_policy_model_register_start_callback_py(struct xccdf_policy_model *model, PyObject *func, PyObject *usr) {
     struct internal_usr *new_usrdata;
-    PyEval_InitThreads();
     Py_INCREF(func);
     Py_INCREF(usr);
     new_usrdata = malloc(sizeof(struct internal_usr));
@@ -537,7 +535,6 @@ bool xccdf_policy_model_register_start_callback_py(struct xccdf_policy_model *mo
 
 int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyObject *usr) {
     struct internal_usr *new_usrdata;
-    PyEval_InitThreads();
     Py_INCREF(func);
     Py_INCREF(usr);
     new_usrdata = malloc(sizeof(struct internal_usr));
