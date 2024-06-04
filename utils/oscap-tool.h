@@ -41,13 +41,10 @@
 #if defined(OVAL_PROBES_ENABLED)
 # include <oval_probe.h>
 #endif
-#include <cvss_score.h>
 #include <xccdf_benchmark.h>
 #include <xccdf_session.h>
 #include <cpe_dict.h>
 #include <cpe_name.h>
-#include <cve_nvd.h>
-#include <cvrf.h>
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
 #define OSCAP_ERR_MSG "OpenSCAP Error:"
@@ -86,8 +83,6 @@ enum oscap_exitcode {
     OSCAP_EXITCODES_END_ = 120  // any code returned shall not be higher than this
 };
 
-struct cvss_impact;
-
 struct ds_action {
 	char* file;
 	char* target;
@@ -104,13 +99,6 @@ struct cpe_action {
 struct cve_action {
         char * file;
         char * cve;
-};
-
-struct cvrf_action {
-	int index;
-	char *f_cvrf;
-	char *f_results;
-	char *f_output;
 };
 
 struct oscap_action {
@@ -140,14 +128,12 @@ struct oscap_action {
         const char *tmpl;
         char *id;
         char *oval_template;
-        char *cvss_vector;
         int hide_profile_info;
         char *stylesheet;
 	char *tailoring_file;
 	char *tailoring_id;
 	char *cpe;
 
-        struct cvss_impact *cvss_impact;
 	struct ds_action* ds_action;
 	struct cpe_action * cpe_action;
 	struct cve_action * cve_action;
@@ -201,10 +187,8 @@ int evaluate_suffix_match_result(int suffix_match_result, const char *profile_su
 extern struct oscap_module OSCAP_ROOT_MODULE;
 extern struct oscap_module OSCAP_DS_MODULE;
 extern struct oscap_module OSCAP_XCCDF_MODULE;
-extern struct oscap_module OSCAP_CVSS_MODULE;
 extern struct oscap_module OSCAP_OVAL_MODULE;
 extern struct oscap_module OSCAP_CVE_MODULE;
-extern struct oscap_module OSCAP_CVRF_MODULE;
 extern struct oscap_module OSCAP_CPE_MODULE;
 extern struct oscap_module OSCAP_INFO_MODULE;
 

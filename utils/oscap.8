@@ -36,15 +36,6 @@ SCAP Data Stream
 .TP
 \fBcpe\fR
 Common Platform Enumeration.
-.TP
-\fBcvss\fR
-Common Vulnerability Scoring System
-.TP
-\fBcve\fR
-Common Vulnerabilities and Exposures
-.TP
-\fBcvrf\fR
-Common Vulnerability Reporting Framework
 
 .SH COMMON OPTIONS FOR ALL MODULES
 .RE
@@ -96,7 +87,7 @@ Show list of references available in each benchmark.
 .TP
 .B \fBeval\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
 .RS
-Perform evaluation of XCCDF document file given as INPUT_FILE. Print result of each rule to standard output, including rule title, rule id and security identifier(CVE, CCE). Optionally you can give an SCAP source data stream as the INPUT_FILE instead of an XCCDF file (see --datastream-id).
+Perform evaluation of XCCDF document file given as INPUT_FILE. Print result of each rule to standard output, including rule title, rule id and security identifier(CCE). Optionally you can give an SCAP source data stream as the INPUT_FILE instead of an XCCDF file (see --datastream-id).
 .PP
 oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one rule with either fail or unknown result, oscap finishes with return code 2.
 .PP
@@ -596,52 +587,6 @@ Find an exact match of CPE name in the dictionary.
 .RS
 Validate given CPE dictionary file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the XCCDF document is not valid.
 
-.SH CVSS OPERATIONS
-.TP
-.B \fBscore\fR \fIcvss_vector\fR
-.RS
-Calculate score from a CVSS vector. Prints base score for base CVSS vector, base and temporal score for temporal CVSS vector, base and temporal and environmental score for environmental CVSS vector.
-.RE
-.TP
-.B \fBdescribe\fR \fIcvss_vector\fR
-.RS
-Describe individual components of a CVSS vector in a human-readable format and print partial scores.
-.RE
-.TP
-.B \fICVSS vector\fR consists of several slash-separated components specified as key-value pairs. Each key can be specified at most once. Valid CVSS vector has to contain at least base CVSS metrics, i.e. AV, AC, AU, C, I, and A. Following table summarizes the components and possible values (second column is metric category: B for base, T for temporal, E for environmental):
-.RS
-.P
-AV:[L|A|N]            B   Access vector: Local, Adjacent network, Network
-.P
-AC:[H|M|L]            B   Access complexity: High, Medium, Low
-.P
-AU:[M|S|N]            B   Required authentication: Multiple instances, Single instance, None
-.P
-C:[N|P|C]             B   Confidentiality impact: None, Partial, Complete
-.P
-I:[N|P|C]             B   Integrity impact: None, Partial, Complete
-.P
-A:[N|P|C]             B   Availability impact: None, Partial, Complete
-.P
-E:[ND|U|POC|F|H]      T   Exploitability: Not Defined, Unproven, Proof of Concept, Functional, High
-.P
-RL:[ND|OF|TF|W|U]     T   Remediation Level: Not Defined, Official Fix, Temporary Fix, Workaround, Unavailable
-.P
-RC:[ND|UC|UR|C]       T   Report Confidence: Not Defined, Unconfirmed, Uncorroborated, Confirmed
-.P
-CDP:[ND|N|L|LM|MH|H]  E   Collateral Damage Potential: Not Defined, None, Low, Low-Medium, Medium-High, High
-.P
-TD:[ND|N|L|M|H]       E   Target Distribution: Not Defined, None, Low, Medium, High
-.P
-CR:[ND|L|M|H]         E   Confidentiality requirement: Not Defined, Low, Medium, High
-.P
-IR:[ND|L|M|H]         E   Integrity requirement: Not Defined, Low, Medium, High
-.P
-AR:[ND|L|M|H]         E   Availability requirement: Not Defined, Low, Medium, High
-.RE
-.RE
-.PP
-
 .SH DS OPERATIONS
 .TP
 .B \fBsds-compose\fR [\fIoptions\fR] SOURCE_XCCDF TARGET_SDS
@@ -708,46 +653,6 @@ Do not validate input/output files.
 .RS
 Validate given result data stream file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the result data stream is not valid.
 .RE
-
-.SH CVE OPERATIONS
-.TP
-.B validate\fR cve-nvd-feed.xml
-.RS
-Validate given CVE data feed.
-.RE
-.TP
-.B find\fR CVE cve-nvd-feed.xml
-.RS
-Find given CVE in data feed and report base score, vector string and vulnerable software list.
-.RE
-
-.SH EXIT STATUS
-.TP
-Normally, the exit status is 0 when operation finished successfully and 1 otherwise. In cases when oscap performs evaluation of the system it may return 2 indicating success of the operation but incompliance of the assessed system.
-.RE
-
-.SH EXAMPLES
-Evaluate XCCDF content using CPE dictionary and produce HTML report. In this case we use United States Government Configuration Baseline (USGCB) for Red Hat Enterprise Linux 5 Desktop.
-.PP
-.nf
-.RS
-\& oscap xccdf eval \-\-fetch-remote-resources \-\-oval-results \e
-\&         \-\-profile united_states_government_configuration_baseline \e
-\&         \-\-report usgcb-rhel5desktop.report.html \e
-\&         \-\-results usgcb-rhel5desktop-xccdf.xml.result.xml \e
-\&         \-\-cpe usgcb-rhel5desktop-cpe-dictionary.xml \e
-\&         usgcb-rhel5desktop-xccdf.xml
-.RE
-.fi
-.PP
-
-.SH CONTENT
-\fB SCAP Security Guide\fR - \fIhttps://github.com/OpenSCAP/scap-security-guide/\fR
-.TP
-\fB National Vulnerability Database\fR - \fIhttp://web.nvd.nist.gov/view/ncp/repository\fR
-.TP
-\fB Red Hat CVE content repository\fR - \fIhttps://www.redhat.com/security/data/metrics/ds/v2/\fR
-
 
 .SH REPORTING BUGS
 .nf
