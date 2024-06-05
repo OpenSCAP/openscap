@@ -721,7 +721,6 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 	ofts->ofts_path_op = path_op;
 	if (regex != NULL) {
 		ofts->ofts_path_regex = regex;
-		oscap_pcre_optimize(regex);
 	}
 
 	if (filesystem == OVAL_RECURSE_FS_LOCAL) {

@@ -49,23 +49,13 @@ Build dependencies may vary depending on enabled features (by the `cmake` comman
 Some of the dependencies are optional, if they are not detected, openscap will be compiled
 without respective optional features.
 
-On RHEL 7 / CentOS 7, the command to install the build dependencies is:
-
-----
-sudo yum install \
-cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
-libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
-pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig \
-bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel
-----
-
 On Fedora 24+, the command to install the build dependencies is:
 
 ----
 sudo dnf install \
 cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
-pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig \
+pcre2-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig \
 bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel
 ----
 
@@ -75,7 +65,7 @@ On RHEL 8+ / CentOS 8+, the command to install the build dependencies is:
 sudo dnf install \
 cmake dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
-pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python36-devel rpm-devel swig \
+pcre2-devel perl-XML-Parser perl-XML-XPath perl-devel python36-devel rpm-devel swig \
 bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel
 ----
 
@@ -89,10 +79,8 @@ libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++ libyaml-dev \
 libxmlsec1-dev libxmlsec1-openssl
 ----
 
-Since version 1.3.9 OpenSCAP can use either PCRE or PCRE2 library to handle regular
-expressions. The default behaviour for 1.3.x line of versions is to try and link
-with PCRE. In order to switxh the build system to PCRE2 one must configure
-CMake with '-DWITH_PCRE2=True' parameter. Dependencies: Debian/Ubuntu — pcre2-dev,
+Since version 1.4.0 OpenSCAP uses PCRE2 library to handle regular
+expressions. Dependencies: Debian/Ubuntu — pcre2-dev,
 Fedora/RHEL — pcre2-devel.
 
 When you have all the build dependencies installed you can build the library.

@@ -41,7 +41,7 @@ jobs:
     - name: Build
       working-directory: ./build
       run: |
-        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_PCRE2=True ../
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
         make all
 
     - name: Test
@@ -65,7 +65,7 @@ jobs:
     - name: Build
       working-directory: ./build
       run: |
-        cmake -DCMAKE_COMPILE_WARNING_AS_ERROR=True -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_PCRE2=True ../
+        cmake -DCMAKE_COMPILE_WARNING_AS_ERROR=True -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
         make all
     - name: Test
       working-directory: ./build
@@ -88,7 +88,7 @@ jobs:
     - name: Build
       working-directory: ./build
       run: |
-        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_PCRE2=True -DWITH_CRYPTO=nss ../
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_CRYPTO=nss ../
         make all
     - name: Test
       working-directory: ./build
@@ -126,7 +126,7 @@ jobs:
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE/build
-        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DWITH_PCRE2=True -DENABLE_PROBES=False ../
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DENABLE_PROBES=False ../
         make all
 
     - name: Test
@@ -161,7 +161,7 @@ jobs:
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: Install Deps
-      run: "${{ github.workspace }}\\vcpkg\\vcpkg.exe install curl libxml2 libxslt bzip2 pcre pthreads zlib getopt-win32 xmlsec --triplet x64-windows"
+      run: "${{ github.workspace }}\\vcpkg\\vcpkg.exe install curl libxml2 libxslt bzip2 pcre2 pthreads zlib getopt-win32 xmlsec --triplet x64-windows"
 
     - name: Configure
       working-directory: ./build
