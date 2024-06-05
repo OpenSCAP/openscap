@@ -274,7 +274,7 @@ static inline void ipv6addr_mask(struct in6_addr *addr, int prefix_len)
 	uint8_t mask = (~0u) << (8u - (prefix_len % 8));
 
 	/* First n (prefix_len/8 - 1) bytes are left untouched. */
-	for (int i = prefix_len/8; i < 128/8; i++)
+	for (unsigned int i = prefix_len/8; i < 128/8; i++)
 	{
 		/* The (n+1) byte is masked according to the prefix_len */
 		addr->s6_addr[i] &= mask;
