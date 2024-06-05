@@ -263,8 +263,8 @@ if (WIN32)
 endif()
 cmake_dependent_option(ENABLE_PROBES_WINDOWS "build OVAL probes for the Windows OVAL tests" ${IS_WIN32} "ENABLE_PROBES" OFF)
 
-option(OPENSCAP_ENABLE_SHA1 "Enable using the SHA-1 algorithm" ON)
-option(OPENSCAP_ENABLE_MD5 "Enable using the MD5 algorithm" ON)
+option(OPENSCAP_ENABLE_SHA1 "Enable using the SHA-1 algorithm" OFF)
+option(OPENSCAP_ENABLE_MD5 "Enable using the MD5 algorithm" OFF)
 
 # INDEPENDENT PROBES
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE "Independent environmentvariable probe" ON "ENABLE_PROBES_INDEPENDENT" OFF)
