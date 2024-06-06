@@ -1364,7 +1364,7 @@ int app_xccdf_validate(const struct oscap_action *action) {
 		result = OSCAP_FAIL;
 	} else {
 		if (action->schematron) {
-			ret = oscap_source_validate_schematron(source, NULL);
+			ret = oscap_source_validate_schematron(source);
 			if (ret < 0) {
 				result = OSCAP_ERROR;
 			} else if (ret > 0) {

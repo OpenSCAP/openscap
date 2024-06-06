@@ -366,25 +366,14 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
 	return ret;
 }
 
-int oscap_source_validate_schematron(struct oscap_source *source, const char *outfile)
+int oscap_source_validate_schematron(struct oscap_source *source)
 {
-	FILE *outfile_fd = stdout;
-	if (outfile != NULL) {
-		outfile_fd = fopen(outfile, "w");
-		if (outfile_fd == NULL) {
-			dE("Can't open %s: %s", outfile, strerror(errno));
-			return -1;
-		}
-	}
 	oscap_document_type_t scap_type = oscap_source_get_scap_type(source);
 	const char *schema_version = oscap_source_get_schema_version(source);
 	if (!schema_version) {
 		schema_version = "unknown schema version";
 	}
-	int ret = oscap_source_validate_schematron_priv(source, scap_type,
-		schema_version, outfile_fd);
-	if (outfile != NULL)
-		fclose(outfile_fd);
+	int ret = oscap_source_validate_schematron_priv(source, scap_type, schema_version);
 	if (ret != 0) {
 		const char *type_name = oscap_document_type_to_string(scap_type);
 		const char *origin = oscap_source_readable_origin(source);

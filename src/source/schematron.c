@@ -110,7 +110,7 @@ struct oscap_schema_table_entry OSCAP_SCHEMATRON_TABLE[] = {
 	{OSCAP_DOCUMENT_SDS,                    "1.3",          "sds/1.3/source-data-stream-1.3.xsl"}
 };
 
-static int _validate_sds_components(struct oscap_source *source, FILE *outfile_fd)
+static int _validate_sds_components(struct oscap_source *source)
 {
 	int ret = 0;
 	struct ds_sds_session *session = ds_sds_session_new_from_source(source);
@@ -126,12 +126,11 @@ static int _validate_sds_components(struct oscap_source *source, FILE *outfile_f
 		struct oscap_source *cs = oscap_htable_iterator_next_value(it);
 		const char *type = oscap_document_type_to_string(oscap_source_get_scap_type(cs));
 		const char *origin = oscap_source_readable_origin(cs);
-		fprintf(outfile_fd, "Starting schematron validation of %s component '%s':\n", type, origin);
+		printf("Starting schematron validation of %s component '%s':\n", type, origin);
 		int component_result = oscap_source_validate_schematron_priv(cs,
 			oscap_source_get_scap_type(cs),
-			oscap_source_get_schema_version(cs),
-			outfile_fd);
-		fprintf(outfile_fd, "Schematron validation of %s component '%s': %s\n\n", type, origin, component_result == 0 ? "PASS" : "FAIL");
+			oscap_source_get_schema_version(cs));
+		printf("Schematron validation of %s component '%s': %s\n\n", type, origin, component_result == 0 ? "PASS" : "FAIL");
 		if (component_result != 0) {
 			ret = component_result;
 		}
@@ -408,7 +407,7 @@ static bool _req_src_236_2_sub1(xmlNodePtr data_stream_node, xmlXPathContextPtr 
 	return res;
 }
 
-static bool _req_src_236_2(xmlXPathContextPtr context, FILE *outfile_fd)
+static bool _req_src_236_2(xmlXPathContextPtr context)
 {
 	/*
 	 * This function implements the check for SCAPVAL requirement SRC-236-2
@@ -432,7 +431,7 @@ static bool _req_src_236_2(xmlXPathContextPtr context, FILE *outfile_fd)
 		free(use_case);
 		if (!_req_src_236_2_sub1(data_stream_node, context)) {
 			char *data_stream_id = (char *) xmlGetProp(data_stream_node, BAD_CAST "id");
-			fprintf(outfile_fd, "Error: SRC-236-2|scap:data-stream %s\n", data_stream_id);
+			printf("Error: SRC-236-2|scap:data-stream %s\n", data_stream_id);
 			free(data_stream_id);
 			res = false;
 			break;
@@ -574,7 +573,7 @@ static bool _req_src_346_1_sub1(xmlNodePtr data_stream_node, xmlXPathContextPtr 
 	return res;
 }
 
-static bool _req_src_346_1(xmlXPathContextPtr context, FILE *outfile_fd)
+static bool _req_src_346_1(xmlXPathContextPtr context)
 {
 	/*
 	 * This function implements the check for SCAPVAL requirement SRC-346-1
@@ -591,7 +590,7 @@ static bool _req_src_346_1(xmlXPathContextPtr context, FILE *outfile_fd)
 		xmlNodePtr data_stream_node = data_streams->nodesetval->nodeTab[i];
 		if (!_req_src_346_1_sub1(data_stream_node, context)) {
 			char *data_stream_id = (char *) xmlGetProp(data_stream_node, BAD_CAST "id");
-			fprintf(outfile_fd, "Error: SRC-346-1|scap:data-stream %s\n", data_stream_id);
+			printf("Error: SRC-346-1|scap:data-stream %s\n", data_stream_id);
 			free(data_stream_id);
 			res = false;
 			break;
@@ -601,7 +600,7 @@ static bool _req_src_346_1(xmlXPathContextPtr context, FILE *outfile_fd)
 	return res;
 }
 
-static int _additional_schematron_checks(struct oscap_source *source, FILE *outfile_fd)
+static int _additional_schematron_checks(struct oscap_source *source)
 {
 	xmlDocPtr doc = oscap_source_get_xmlDoc(source);
 	xmlXPathContextPtr context = xmlXPathNewContext(doc);
@@ -618,17 +617,17 @@ static int _additional_schematron_checks(struct oscap_source *source, FILE *outf
 
 	int res = 0;
 	/* Assert ID: scap-use-case-conf-verification-benchmark-one-rule-ref-oval-ocil */
-	if (!_req_src_236_2(context, outfile_fd))
+	if (!_req_src_236_2(context))
 		res = 1;
 	/* Assert ID: scap-general-scap-content-xccdf-check-content-ref-name-not-req */
-	if (!_req_src_346_1(context, outfile_fd))
+	if (!_req_src_346_1(context))
 		res = 1;
 
 	xmlXPathFreeContext(context);
 	return res;
 }
 
-static int _run_schematron_with_warnings_and_errors(struct oscap_source *source, const char *schema_path, FILE *outfile_fd)
+static int _run_schematron_with_warnings_and_errors(struct oscap_source *source, const char *schema_path)
 {
 	int validity = 0;
 	const char *params[] = { NULL };
@@ -641,27 +640,27 @@ static int _run_schematron_with_warnings_and_errors(struct oscap_source *source,
 		/* "Error:" found in schematron output */
 		validity = 1;
 	}
-	fputs(xslt_output, outfile_fd);
+	puts(xslt_output);
 	free(xslt_output);
 	return validity;
 }
 
-static int _sds_schematron_validation(struct oscap_source *source, const char *schema_path, FILE *outfile_fd)
+static int _sds_schematron_validation(struct oscap_source *source, const char *schema_path)
 {
 	int validity = 0;
-	fprintf(outfile_fd, "Starting global schematron validation using the source data stream schematron\n");
+	printf("Starting global schematron validation using the source data stream schematron\n");
 
-	if (_additional_schematron_checks(source, outfile_fd) != 0) {
+	if (_additional_schematron_checks(source) != 0) {
 		validity = 1;
 	}
-	if (_run_schematron_with_warnings_and_errors(source, schema_path, outfile_fd) != 0) {
+	if (_run_schematron_with_warnings_and_errors(source, schema_path) != 0) {
 		validity = 1;
 	}
-	fprintf(outfile_fd, "Global schematron validation using the source data stream schematron: %s\n\n", validity == 0 ? "PASS" : "FAIL");
+	printf("Global schematron validation using the source data stream schematron: %s\n\n", validity == 0 ? "PASS" : "FAIL");
 	return validity;
 }
 
-int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_document_type_t scap_type, const char *version, FILE *outfile_fd)
+int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_document_type_t scap_type, const char *version)
 {
 	const char *origin = oscap_source_readable_origin(source);
 	if (version == NULL) {
@@ -675,11 +674,11 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 			scap_type == OSCAP_DOCUMENT_CPE_DICTIONARY ||
 			scap_type == OSCAP_DOCUMENT_SCE_RESULT ||
 			scap_type == OSCAP_DOCUMENT_OCIL) {
-		fprintf(outfile_fd, "Skipped\n");
+		printf("Skipped\n");
 		return 0;
 	}
 	if (scap_type == OSCAP_DOCUMENT_XCCDF && !strcmp(version, "1.1")) {
-		fprintf(outfile_fd, "Skipped\n");
+		printf("Skipped\n");
 		return 0;
 	}
 
@@ -699,20 +698,20 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 	/* validate */
 	int ret = 0;
 	if (scap_type == OSCAP_DOCUMENT_SDS) {
-		int component_validity = _validate_sds_components(source, outfile_fd);
-		int global_validity = _sds_schematron_validation(source, schematron_path, outfile_fd);
+		int component_validity = _validate_sds_components(source);
+		int global_validity = _sds_schematron_validation(source, schematron_path);
 		if (component_validity != 0 || global_validity != 0) {
 			ret = 1;
 		}
-		fprintf(outfile_fd, "Complete result of schematron validation of '%s': %s\n", origin, ret == 0 ? "PASS" : "FAIL");
+		printf("Complete result of schematron validation of '%s': %s\n", origin, ret == 0 ? "PASS" : "FAIL");
 	} else if (scap_type == OSCAP_DOCUMENT_XCCDF) {
-		ret = _run_schematron_with_warnings_and_errors(source, schematron_path, outfile_fd);
+		ret = _run_schematron_with_warnings_and_errors(source, schematron_path);
 	} else {
 		const char *params[] = { NULL };
 		char *xslt_output = oscap_source_apply_xslt_path_mem(source, schematron_path, params, oscap_path_to_schemas());
 		if (xslt_output != NULL) {
 			ret = 1;
-			fputs(xslt_output, outfile_fd);
+			puts(xslt_output);
 		}
 		free(xslt_output);
 	}
