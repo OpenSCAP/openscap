@@ -126,8 +126,7 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
     .func = app_xccdf_export_oval_variables,
 	.help =	"Options:\n"
 		"   --profile <name>              - The name of Profile to be evaluated.\n"
-		"   --skip-valid                  - Skip validation.\n"
-		"   --skip-validation\n"
+		"   --skip-validation             - Skip validation.\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
 		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
@@ -168,8 +167,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"                                   The option --without-syschar is automatically enabled when you use Thin Results.\n"
 		"   --without-syschar             - Don't provide system characteristic in OVAL/ARF result files.\n"
 		"   --report <file>               - Write HTML report into file.\n"
-		"   --skip-valid                  - Skip validation.\n"
-		"   --skip-validation\n"
+		"   --skip-validation             - Skip validation.\n"
 		"   --skip-signature-validation   - Skip data stream signature validation.\n"
 		"                                   (only applicable for source data streams)\n"
 		"   --enforce-signature           - Process only signed data streams.\n"
@@ -200,8 +198,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 	.help =		"INPUT_FILE - XCCDF TestResult file or ARF\n\n"
 		"Options:\n"
 		"   --result-id                   - TestResult ID to be processed. Default is the most recent one.\n"
-		"   --skip-valid                  - Skip validation.\n"
-		"   --skip-validation\n"
+		"   --skip-validation             - Skip validation.\n"
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
 		"                                   for applicability checks.\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
@@ -1248,7 +1245,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
 		{"check-engine-results", no_argument, &action->check_engine_results, 1},
-		{"skip-valid",		no_argument, &action->validate, 0},
 		{"skip-validation",		no_argument, &action->validate, 0},
 		{"skip-signature-validation", no_argument, &action->validate_signature, 0},
 		{"enforce-signature", no_argument, &action->enforce_signature, 1},
