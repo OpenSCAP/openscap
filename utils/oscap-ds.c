@@ -80,8 +80,7 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
 		"Options:\n"
 		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
 		"   --xccdf-id <id>               - ID of XCCDF in the data stream that should be evaluated.\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n"
-		"   --skip-validation\n"
+		"   --skip-validation             - Skips validating of given XCCDF.\n"
 		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
 		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n",
 	.opt_parser = getopt_ds,
@@ -94,8 +93,7 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.summary = "Compose source data stream from given XCCDF",
 	.usage = "[options] xccdf-file.xml target_datastream.xml",
 	.help = "Options:\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n"
-		"   --skip-validation\n",
+		"   --skip-validation             - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_compose
 };
@@ -107,8 +105,7 @@ static struct oscap_module DS_SDS_ADD_MODULE = {
 	.usage = "[options] new-component.xml existing_datastream.xml",
 	.help =	"Options:\n"
 		"   --datastream-id <id>          - ID of the data stream in the collection for adding to.\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n"
-		"   --skip-validation\n",
+		"   --skip-validation             - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_add
 };
@@ -130,8 +127,7 @@ static struct oscap_module DS_RDS_SPLIT_MODULE = {
 	.usage = "[OPTIONS] rds.xml TARGET_DIRECTORY",
 	.help =	"Options:\n"
 		"   --report-id <id>              - ID of report inside ARF that should be split.\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n"
-		"   --skip-validation\n",
+		"   --skip-validation             - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_split
 };
@@ -142,8 +138,7 @@ static struct oscap_module DS_RDS_CREATE_MODULE = {
 	.summary = "Create a result data stream from given source data stream, XCCDF results and one or more OVAL results",
 	.usage = "[options] sds.xml target-arf.xml results-xccdf.xml [results-oval1.xml [results-oval2.xml]]",
 	.help =	"Options:\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n"
-		"   --skip-validation\n",
+		"   --skip-validation              - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_create
 };
@@ -182,7 +177,6 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	/* Command-options */
 	const struct option long_options[] = {
 	// options
-		{"skip-valid",      no_argument, &action->validate, 0},
 		{"skip-validation",      no_argument, &action->validate, 0},
 		{"datastream-id",		required_argument, NULL, DS_OPT_DATASTREAM_ID},
 		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
