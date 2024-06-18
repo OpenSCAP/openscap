@@ -27,10 +27,8 @@
 #include "public/scap_ds.h"
 #include "common/list.h"
 #include "common/_error.h"
-#include "common/elements.h"
 #include "rds_index_priv.h"
-#include "source/oscap_source_priv.h"
-#include "source/public/oscap_source.h"
+
 
 #include <libxml/xmlreader.h>
 #include <string.h>

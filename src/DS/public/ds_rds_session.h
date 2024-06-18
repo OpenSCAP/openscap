@@ -120,6 +120,5 @@ OSCAP_API int ds_rds_session_replace_report_with_source(struct ds_rds_session *s
  * @param rds_session The ds_rds_session to build HTML from
  * @returns a buffer of HTML content that should be freed by the caller
  */
-OSCAP_API char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session);
 
 #endif

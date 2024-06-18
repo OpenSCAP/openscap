@@ -24,13 +24,11 @@
 #include <config.h>
 #endif
 
-#include "public/oscap.h"
 #include "public/scap_ds.h"
 #include "public/oscap_text.h"
 
 #include "common/list.h"
 #include "common/_error.h"
-#include "common/elements.h"
 #include "rds_index_priv.h"
 
 #include <libxml/xmlreader.h>

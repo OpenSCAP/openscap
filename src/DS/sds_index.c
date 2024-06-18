@@ -29,8 +29,7 @@
 #include "common/_error.h"
 #include "common/elements.h"
 #include "sds_index_priv.h"
-#include "source/oscap_source_priv.h"
-#include "source/public/oscap_source.h"
+
 
 #include <libxml/xmlreader.h>
 #include <string.h>
@@ -111,11 +110,6 @@ struct oscap_string_iterator* ds_stream_index_get_checklists(struct ds_stream_in
 struct oscap_string_iterator* ds_stream_index_get_dictionaries(struct ds_stream_index* s)
 {
 	return oscap_iterator_new((struct oscap_list*)s->dictionary_components);
-}
-
-struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_stream_index* s)
-{
-	return oscap_iterator_new((struct oscap_list*)s->extended_components);
 }
 
 static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)

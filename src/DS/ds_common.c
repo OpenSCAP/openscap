@@ -28,7 +28,6 @@
 #include "common/_error.h"
 #include "common/list.h"
 #include "common/oscap_acquire.h"
-#include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 #include "oscap_helpers.h"
 

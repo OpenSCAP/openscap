@@ -26,7 +26,6 @@
 
 #include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
-#include "common/elements.h"
 #include "common/_error.h"
 #include "common/list.h"
 #include "common/oscapxml.h"
@@ -345,11 +344,6 @@ void ds_sds_session_configure_remote_resources(struct ds_sds_session *session, b
 	session->progress = (callback != NULL) ? callback : download_progress_empty_calllback;
 }
 
-void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback)
-{
-	ds_sds_session_configure_remote_resources(session, allowed, NULL, callback);
-}
-
 const char *ds_sds_session_local_files(struct ds_sds_session *session)
 {
 	return session->local_files;
@@ -370,21 +364,3 @@ download_progress_calllback_t ds_sds_session_remote_resources_progress(struct ds
 	return session->progress;
 }
 
-char *ds_sds_session_get_html_guide(struct ds_sds_session *session, const char *profile_id)
-{
-	const char *params[] = {
-		"show", "",
-		"verbosity", "",
-		"hide-profile-info", NULL,
-		"oscap-version", oscap_get_version(),
-		"pwd", NULL,
-		"profile_id", profile_id,
-		NULL
-	};
-	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, session->checklist_id);
-	if (xccdf == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to '%s' source.", session->checklist_id);
-		return NULL;
-	}
-	return oscap_source_apply_xslt_path_mem(xccdf, "xccdf-guide.xsl", params, oscap_path_to_xslt());
-}

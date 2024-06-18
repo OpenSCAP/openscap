@@ -24,10 +24,8 @@
 #include <config.h>
 #endif
 
-#include "public/ds_sds_session.h"
 #include "public/scap_ds.h"
-#include "public/xccdf_benchmark.h"
-#include "public/oval_definitions.h"
+
 #include "public/oscap.h"
 #include "public/oscap_text.h"
 
