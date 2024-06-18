@@ -766,7 +766,7 @@ static int app_oval_validate(const struct oscap_action *action) {
 	} else {
 		// We can only do schematron validation if the file isn't a source datastream
 		if (action->schematron && oscap_source_get_scap_type(source) != OSCAP_DOCUMENT_SDS) {
-			ret = oscap_source_validate_schematron(source, NULL);
+			ret = oscap_source_validate_schematron(source);
 			if (ret < 0) {
 				result = OSCAP_ERROR;
 			} else if (ret > 0) {

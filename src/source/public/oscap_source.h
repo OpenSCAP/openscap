@@ -142,11 +142,10 @@ OSCAP_API int oscap_source_validate(struct oscap_source *source, xml_reporter re
  * Validate the SCAP document against schematron assertions
  * @memberof oscap_source
  * @param source The oscap_source to validate
- * @param outfile path to out file containing errors, NULL for stdout
  * @note The held resource has to be XML for this function to work.
  * @returns 0 on pass; 1 on fail, and -1 on internal error
  */
-OSCAP_API int oscap_source_validate_schematron(struct oscap_source *source, const char *outfile);
+OSCAP_API int oscap_source_validate_schematron(struct oscap_source *source);
 
 /**
  * Returns human readable description of oscap_source origin
