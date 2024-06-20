@@ -9,7 +9,9 @@ xccdf=${name}.xccdf.xml
 sds=$(make_temp_file /tmp ${name}.sds)
 stderr=$(make_temp_file /tmp ${name}_ds.err)
 result=$(make_temp_file /tmp ${name}_ds.out)
+cp $srcdir/test_report_anaconda_fixes.sds.xml $sds
 
+echo "name: $name"
 echo "sds file: $sds"
 echo "Stderr file = $stderr"
 echo "Results file = $result"
@@ -18,8 +20,6 @@ line1='^\W*part /tmp$'
 line2='^\W*part /tmp --mountoptions=nodev$'
 line3='^\W*passwd --minlen=14$'
 
-$OSCAP ds sds-compose $srcdir/$xccdf $sds 2>&1 > $stderr
-[ -f $stderr ]; [ ! -s $stderr ]
 $OSCAP ds sds-validate $sds
 
 datastream_id=scap_org.open-scap_datastream_from_xccdf_test_report_anaconda_fixes.xccdf.xml
