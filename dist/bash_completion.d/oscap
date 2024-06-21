@@ -18,7 +18,7 @@ function _oscap {
     cmds[oscap:oval:generate]="report"
     cmds[oscap:xccdf]="eval remediate resolve validate export-oval-variables generate"
     cmds[oscap:xccdf:generate]="report guide fix custom"
-    cmds[oscap:ds]="sds-add sds-compose sds-split sds-validate rds-create rds-split rds-validate"
+    cmds[oscap:ds]="sds-validate rds-validate"
     cmds[oscap:cpe]="check match validate"
 
     # command options
@@ -39,11 +39,6 @@ function _oscap {
     opts[oscap:xccdf:generate:guide]="-o --output --hide-profile-info --profile --benchmark-id --xccdf-id --tailoring-file --tailoring-id --skip-signature-validation --enforce-signature"
     opts[oscap:xccdf:generate:fix]="-o --output --template --profile --result-id --profile --fix-type --xccdf-id --benchmark-id --tailoring-file --tailoring-id --skip-signature-validation --enforce-signature"
     opts[oscap:xccdf:generate:custom]="-o --output --stylesheet"
-    opts[oscap:ds:sds-add]="--datastream-id --skip-validation"
-    opts[oscap:ds:sds-compose]="--skip-validation"
-    opts[oscap:ds:sds-split]="--datastream-id --xccdf-id --skip-validation --fetch-remote-resources --local-files"
-    opts[oscap:ds:rds-create]="--skip-validation"
-    opts[oscap:ds:rds-split]="--report-id --skip-validation"
     opts[oscap:info]="--fetch-remote-resources --local-files --profile --profiles"
 
     # local variables
