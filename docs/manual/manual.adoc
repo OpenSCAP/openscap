@@ -516,24 +516,6 @@ can open it in a text editor.
 
 You can use `oscap info` with source data stream files as well. Source
 data stream will often reference OVAL files that are bundled in it.
-It is also possible to extract OVAL files from source data stream using
-`oscap ds sds-split`.
-
-----
-$ oscap ds sds-split ssg-rhel7-ds.xml extracted/
-$ ls -1 extracted/
-scap_org.open-scap_cref_output--ssg-rhel7-cpe-dictionary.xml
-scap_org.open-scap_cref_ssg-rhel7-xccdf-1.2.xml
-ssg-rhel7-cpe-oval.xml
-ssg-rhel7-ocil.xml
-ssg-rhel7-oval.xml
-----
-
-After splitting the source data stream you can inspect OVAL and XCCDF files
-individually using a text editor. Keep in mind that this is only an example and
-file names depend on contents of the source data stream you are splitting and
-that you can also inspect XCCDF and OVAL content directly in a source data
-stream or a result data stream.
 
 
 === Evaluating XCCDF
@@ -1522,61 +1504,6 @@ multiset evaluation.
 </tests>
 ----
 
-
-=== Evaluating XCCDF rules with multiple checks
-
-Normally, each XCCDF rule references to a single check with a specified name.
-However, if `@name` attribute of `xccdf:check-content-ref` of a given rule is omitted,
-multiple checks can be executed to evaluate the rule.
-This is common for `security_patches_up_to_date` check.
-By default, only a single result is produced for an XCCDF rule in such case, and the
-result is computed from all results of checks in the referenced location.
-In case user wants to see separate results for each check (one `xccdf:check-result` element
-in results document for each check evaluated), then `multi-check` attribute
-of `xccdf:check` element must be set to *true*.
-
-----
-<Rule
-  id="xccdf_org.nist-testsuite.content_rule_security_patches_up_to_date"
-  selected="false" weight="10.0">
-  <title xml:lang="en-US">Security Patches Up-To-Date</title>
-  <description xml:lang="en-US">All known security patches have been installed.</description>
-  <requires idref="xccdf_org.nist-testsuite.content_group_CM-6"/>
-  <requires idref="xccdf_org.nist-testsuite.content_group_SI-2"/>
-  <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" multi-check="true">
-    <check-content-ref href="r1100-scap11-win_rhel-patches.xml"/>
-  </check>
-</Rule>
-----
-
-In XCCDF specification older than 1.2, the `multi-check` element is not defined,
-which means that only a single result is always produced.
-To produce separate results for each check from the content older than XCCDF version 1.2,
-you need to convert it first into XCCDF 1.2 using the following command:
-
-----
-$ xsltproc --stringparam reverse_DNS com.example.www /usr/share/openscap/xsl/xccdf_1.1_to_1.2.xsl xccdf.xml > xccdf-1.2.xml
-----
-
-And then patch the content using a text editor, adding `multi-check` as
-shown in the example Rule snippet above.
-
-To create a source data stream from the patched content, the following command can be used:
-
-----
-$ oscap ds sds-compose xccdf-1.2.xml source_ds.xml
-----
-
-If the original XCCDF file referenced a custom CPE dictionary, you also have to inject
-the CPE dictionary into the source data stream in order to create a valid source data stream.
-To add a CPE dictionary component into your data stream in place, use this command:
-
-----
-$ oscap ds sds-add cpe_dictionary.xml source_ds.xml
-----
-
-Now the `source_ds.xml` data stream can be evaluated as usual.
-
 === Identifying SWID tags
 
 OpenSCAP identifies SWID tags using OVAL inventory class definitions that are
@@ -1654,7 +1581,7 @@ If OpenSCAP is executed with verbosity level INFO or DEVEL their runtime values 
 * `OSCAP_PCRE_EXEC_RECURSION_LIMIT` - Set recursion limit of regular expression matching using `pcre_exec`/`pcre2_match` functions.
 * `OSCAP_PROBE_ROOT` - Path to a directory which contains mounted filesystem to be evaluated. Used for offline scanning.
 * `SEXP_VALIDATE_DISABLE` - If set, `oscap` will not validate SEXP expressions during its execution.
-* `SOURCE_DATE_EPOCH` - Timestamp in seconds since epoch. This timestamp will be used instead of the current time to populate `timestamp` attributes in SCAP source data streams created by `oscap ds sds-compose` sub-module. This is used for reproducible builds of data streams.
+* `SOURCE_DATE_EPOCH` - Timestamp in seconds since epoch. This timestamp will be used instead of the current time to populate `timestamp` attributes in SCAP source data streams. This is used for reproducible builds of data streams.
 * `OSCAP_PROBE_MEMORY_USAGE_RATIO` - maximum memory usage ratio (used/total) for OpenSCAP probes, default: 0.1
 * `OSCAP_PROBE_MAX_COLLECTED_ITEMS` - maximal count of collected items by OpenSCAP probe for a single OVAL object evaluation
 * `OSCAP_PROBE_IGNORE_PATHS` - Skip given paths during evaluation. If multiple paths should be skipped they need to be separated by a colon. The paths should be absolute canonical paths.
