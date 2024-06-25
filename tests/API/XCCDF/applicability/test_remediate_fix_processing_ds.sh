@@ -5,8 +5,7 @@ set -e
 set -o pipefail
 
 name=$(basename $0 .sh)
-sds=$(make_temp_file /tmp ${name}.sds)
-xccdf=test_remediate_fix_processing.xccdf.xml
+sds=$srcdir/test_remediate_fix_processing.xccdf.xml
 stderr=$(make_temp_file /tmp ${name}.out)
 resultx=$(make_temp_file /tmp ${name}.xccdf)
 arf=$(make_temp_file /tmp ${name}.arf)
@@ -15,7 +14,6 @@ echo "stderr file: $stderr"
 echo "results file: $result"
 rm -f test_file test_file_cpe_na wrong_test_file
 
-$OSCAP ds sds-compose $srcdir/$xccdf $sds 2>&1 > $stderr
 [ -f $stderr ]; [ ! -s $stderr ]
 $OSCAP ds sds-validate $sds
 

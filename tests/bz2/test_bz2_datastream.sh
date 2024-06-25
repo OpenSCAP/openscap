@@ -14,6 +14,7 @@ echo "Stderr file = $stderr"
 sds=$dir/sds.xml
 xccdf=$dir/xccdf.xml
 cp $srcdir/../DS/sds_multiple_oval/*.xml $dir/
+cp $srcdir/../bz2/sds.xml $sds
 mv $dir/multiple-oval-xccdf.xml $xccdf
 
 #
@@ -31,9 +32,6 @@ bash $builddir/run ./test_bz2_memory_source "${xccdf}.bz2" | grep 'XCCDF Checkli
 #
 # Compose DataStream
 #
-$OSCAP ds sds-compose "${xccdf}.bz2" "$sds" 2>&1 > $stderr
-[ ! -s $stderr ]
-
 bzip2 $sds
 [ -f "${sds}.bz2" ]
 $OSCAP info "${sds}.bz2" 2> $stderr

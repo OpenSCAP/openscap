@@ -174,15 +174,3 @@ int ds_rds_session_replace_report_with_source(struct ds_rds_session *session, st
 	return ds_rds_create_report(doc, reports_node, oscap_source_get_xmlDoc(source), session->report_id) == NULL;
 }
 
-char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session)
-{
-	const char *params[] = {
-		"show",              "",
-		"verbosity",         "",
-		"hide-profile-info", NULL,
-		"oscap-version",     oscap_get_version(),
-		"pwd",               NULL,
-		NULL
-        };
-	return oscap_source_apply_xslt_path_mem(rds_session->source, "xccdf-report.xsl", params, oscap_path_to_xslt());
-}

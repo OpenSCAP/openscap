@@ -165,7 +165,6 @@ OSCAP_API struct oscap_string_iterator* ds_stream_index_get_dictionaries(struct 
  *
  * @memberof ds_stream_index
  */
-OSCAP_API struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_stream_index* s);
 
 /**
  * @struct ds_sds_index

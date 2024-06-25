@@ -26,7 +26,6 @@
 
 #include "public/scap_ds.h"
 #include "public/oscap_text.h"
-#include "public/oscap.h"
 
 #include "common/_error.h"
 #include "common/util.h"

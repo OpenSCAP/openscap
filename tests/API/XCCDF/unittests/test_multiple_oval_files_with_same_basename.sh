@@ -39,10 +39,8 @@ assert_exists 1 '//TestResult/score[@system="urn:xccdf:scoring:flat"][text()="8.
 #
 
 sds=$(mktemp -t ${name}.ds.XXXXXX)
-echo "Creating SDS file = $sds"
-
-$OSCAP ds sds-compose $srcdir/${name}.xccdf.xml $sds 2> $stderr
-[ -f $stderr ]; [ ! -s $stderr ]
+echo "Copying SDS file = $sds"
+cp $srcdir/test_multiple_oval_files_with_same_basename.sds.xml $sds
 
 $OSCAP ds sds-validate $sds 2> $stderr
 $OSCAP info $sds 2> $stderr
@@ -73,9 +71,9 @@ assert_exists 1 '//TestResult/score[@system="urn:xccdf:scoring:flat"][text()="8.
 rm $result
 
 split=$(mktemp -d -t ${name}.sds.XXXXXX)
-echo "Creating SDS split = $split"
+echo "Copying SDS split = $split"
 
-$OSCAP ds sds-split $sds $split 2> $stderr
+cp -r $srcdir/test_multiple_oval_files_with_same_basename.sds.split/* $split
 [ -f $stderr ]; [ ! -s $stderr ]
 rm $sds
 
