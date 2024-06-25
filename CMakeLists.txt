@@ -88,8 +88,6 @@ if(ACL_FOUND)
 	check_include_file(sys/acl.h HAVE_SYS_ACL_H)
 endif()
 
-find_package(AptPkg)
-
 find_package(Blkid)
 if(BLKID_FOUND)
 	check_library_exists("${BLKID_LIBRARY}" blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
@@ -277,7 +275,7 @@ cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT "Independent y
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_DNSCACHE "Unix dnscache probe" ON "ENABLE_PROBES_UNIX" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_FILE "Unix file probe" ON "ENABLE_PROBES_UNIX" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_FILEEXTENDEDATTRIBUTE "Unix fileextendedattribute probe" ON "ENABLE_PROBES_UNIX; HAVE_SYS_XATTR_H OR HAVE_ATTR_XATTR_H OR HAVE_SYS_EXTATTR_H" OFF)
-cmake_dependent_option(OPENSCAP_PROBE_UNIX_GCONF "Unix gconf probe" ON "ENABLE_PROBES_UNIX; GCONF_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_GCONF "Unix gconf probe" OFF "ENABLE_PROBES_UNIX; GCONF_FOUND" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_INTERFACE "Unix interface probe" ON "ENABLE_PROBES_UNIX" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_PASSWORD "Unix password probe" ON "ENABLE_PROBES_UNIX" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_PROCESS "Unix process probe" ON "ENABLE_PROBES_UNIX" OFF)

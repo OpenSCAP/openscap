@@ -30,7 +30,7 @@ function oval-schema-fail {
 }
 
 function oval-schematron-fail {
-	$OSCAP oval validate --schematron ${srcdir}/oval-schematron-fail.xml
+	$OSCAP oval validate ${srcdir}/oval-schematron-fail.xml
 	ret=$?
 	if [ $ret -eq 2 ]; then
 		return 0

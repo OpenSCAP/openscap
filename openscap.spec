@@ -134,12 +134,8 @@ Tool for scanning Atomic containers.
 # gconf is a legacy system not used any more, and it blocks testing of oscap-anaconda-addon
 # as gconf is no longer part of the installation medium
 %cmake \
-%if 0%{?fedora}
-    -DWITH_PCRE2=ON \
-%endif
     -DENABLE_PERL=OFF \
     -DENABLE_DOCS=ON \
-    -DOPENSCAP_PROBE_UNIX_GCONF=OFF \
     -DGCONF_LIBRARY=
 %cmake_build
 make docs

@@ -670,8 +670,6 @@ bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 		{ "syschar",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_SYSCHAR     },
 		{ "results",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_RESULTS     },
 		{ "directives",		no_argument, &action->doctype, OSCAP_DOCUMENT_OVAL_DIRECTIVES  },
-		//TODO: force schematron validation (no-op, deprecate and remove)
-		{ "schematron",		no_argument, &action->schematron, 1 },
 		{ "skip-schematron",no_argument, &action->schematron, 0 },
         // end
 		{ 0, 0, 0, 0 }
