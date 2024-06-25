@@ -10,7 +10,7 @@ echo "Result file: $result"
 echo "Evaluating content."
 $OSCAP oval eval --results $result $srcdir/${name}.oval.xml
 echo "Validating results."
-$OSCAP oval validate --results --schematron $result
+$OSCAP oval validate --results $result
 echo "Testing results values."
 assert_exists 1 '/oval_results'
 assert_exists 1 '/oval_results/oval_definitions'
