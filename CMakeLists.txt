@@ -88,8 +88,6 @@ if(ACL_FOUND)
 	check_include_file(sys/acl.h HAVE_SYS_ACL_H)
 endif()
 
-find_package(AptPkg)
-
 find_package(Blkid)
 if(BLKID_FOUND)
 	check_library_exists("${BLKID_LIBRARY}" blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
