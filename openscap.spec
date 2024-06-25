@@ -139,7 +139,6 @@ Tool for scanning Atomic containers.
 %endif
     -DENABLE_PERL=OFF \
     -DENABLE_DOCS=ON \
-    -DOPENSCAP_PROBE_UNIX_GCONF=OFF \
     -DGCONF_LIBRARY=
 %cmake_build
 make docs
