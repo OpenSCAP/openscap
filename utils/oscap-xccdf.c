@@ -1254,8 +1254,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"remediate", no_argument, &action->remediate, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
-		//TODO: deprecate and remove
-		{"schematron",          no_argument, &action->schematron, 1},
 		{"skip-schematron",     no_argument, &action->schematron, 0},
 		{"without-syschar",    no_argument, &action->without_sys_chars, 1},
 		{"thin-results",        no_argument, &action->thin_results, 1},

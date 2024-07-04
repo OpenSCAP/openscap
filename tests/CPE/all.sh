@@ -8,7 +8,7 @@ set -e -o pipefail
 . $builddir/tests/test_common.sh
 
 function test_cpe() {
-    $OSCAP oval validate --schematron ${top_srcdir}/cpe/openscap-cpe-oval.xml
+    $OSCAP oval validate ${top_srcdir}/cpe/openscap-cpe-oval.xml
     $OSCAP cpe validate ${top_srcdir}/cpe/openscap-cpe-dict.xml
 }
 
