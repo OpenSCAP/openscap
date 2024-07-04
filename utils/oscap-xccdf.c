@@ -242,8 +242,7 @@ static struct oscap_module XCCDF_GEN_REPORT = {
     .help = GEN_OPTS
 		"\nReport Options:\n"
 		"   --result-id <id>              - TestResult ID to be processed. Default is the most recent one.\n"
-		"   --output <file>               - Write the document into file.\n"
-		"   --oval-template <template-string> - Template which will be used to obtain OVAL result files.\n",
+		"   --output <file>               - Write the document into file.\n",
     .opt_parser = getopt_xccdf,
     .user = "xccdf-report.xsl",
     .func = app_xccdf_xslt
@@ -285,7 +284,6 @@ static struct oscap_module XCCDF_GEN_FIX = {
 		"                                   blueprint (default: bash).\n"
 		"   --output <file>               - Write the script into file.\n"
 		"   --result-id <id>              - Fixes will be generated for failed rule-results of the specified TestResult.\n"
-		"   --template <id|filename>      - Fix template. (default: bash)\n"
 		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be used.\n"
 		"                                   (only applicable for source data streams)\n"
 		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
@@ -943,43 +941,32 @@ int app_generate_fix(const struct oscap_action *action)
 {
 	struct xccdf_session *session = NULL;
 	struct ds_rds_session *arf_session = NULL;
-	const char *template = NULL;
+	const char *remediation_system = NULL;
 
-	if (action->fix_type != NULL && action->tmpl != NULL) {
-		/* Avoid undefined situations, eg.:
-		 * oscap xccdf generate fix --fix-type ansible --template urn:xccdf:fix:scipt:sh
-		 */
-		fprintf(stderr,
-				"Option '--fix-type' is mutually exclusive with '--template'.\n"
-				"Please provide only one of them.\n");
-		return OSCAP_ERROR;
-	} else if (action->fix_type != NULL) {
+	if (action->fix_type != NULL) {
 		if (strcmp(action->fix_type, "bash") == 0) {
-			template = "urn:xccdf:fix:script:sh";
+			remediation_system = "urn:xccdf:fix:script:sh";
 		} else if (strcmp(action->fix_type, "ansible") == 0) {
-			template = "urn:xccdf:fix:script:ansible";
+			remediation_system = "urn:xccdf:fix:script:ansible";
 		} else if (strcmp(action->fix_type, "puppet") == 0) {
-			template = "urn:xccdf:fix:script:puppet";
+			remediation_system = "urn:xccdf:fix:script:puppet";
 		} else if (strcmp(action->fix_type, "anaconda") == 0) {
-			template = "urn:redhat:anaconda:pre";
+			remediation_system = "urn:redhat:anaconda:pre";
 		} else if (strcmp(action->fix_type, "ignition") == 0) {
-			template = "urn:xccdf:fix:script:ignition";
+			remediation_system = "urn:xccdf:fix:script:ignition";
 		} else if (strcmp(action->fix_type, "kubernetes") == 0) {
-			template = "urn:xccdf:fix:script:kubernetes";
+			remediation_system = "urn:xccdf:fix:script:kubernetes";
 		} else if (strcmp(action->fix_type, "blueprint") == 0) {
-			template = "urn:redhat:osbuild:blueprint";
+			remediation_system = "urn:redhat:osbuild:blueprint";
 		} else {
 			fprintf(stderr,
 					"Unknown fix type '%s'.\n"
-					"Please provide one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint.\n"
-					"Or provide a custom template using '--template' instead.\n",
+					"Please provide one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint.\n",
 					action->fix_type);
 			return OSCAP_ERROR;
 		}
-	} else if (action->tmpl != NULL) {
-		template = action->tmpl;
 	} else {
-		template = "urn:xccdf:fix:script:sh";
+		remediation_system = "urn:xccdf:fix:script:sh";
 	}
 
 	int ret = OSCAP_ERROR;
@@ -1046,7 +1033,7 @@ int app_generate_fix(const struct oscap_action *action)
 
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
 		struct xccdf_result *result = xccdf_policy_get_result_by_id(policy, xccdf_session_get_result_id(session));
-		if (xccdf_policy_generate_fix(policy, result, template, output_fd) == 0)
+		if (xccdf_policy_generate_fix(policy, result, remediation_system, output_fd) == 0)
 			ret = OSCAP_OK;
 	} else { // Fallback to profile if result id is missing
 		/* Profile-oriented fixes */
@@ -1060,7 +1047,7 @@ int app_generate_fix(const struct oscap_action *action)
 			}
 		}
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
-		if (xccdf_policy_generate_fix(policy, NULL, template, output_fd) == 0)
+		if (xccdf_policy_generate_fix(policy, NULL, remediation_system, output_fd) == 0)
 			ret = OSCAP_OK;
 	}
 cleanup2:
@@ -1125,20 +1112,20 @@ cleanup:
 
 int app_xccdf_xslt(const struct oscap_action *action)
 {
-	const char *oval_template = action->oval_template;
-	const char *sce_template = action->sce_template;
+	const char *oval_template = NULL;
+	const char *sce_template = NULL;
 
-	if (action->module == &XCCDF_GEN_REPORT && (oval_template == NULL || sce_template == NULL)) {
+	if (action->module == &XCCDF_GEN_REPORT) {
 		/* If generating the report and the option is missing -> use defaults */
 		struct oscap_source *xccdf_source = oscap_source_new_from_file(action->f_xccdf);
 		/* We want to define default template because we strive to serve user the
 		 * best. However, we must not offer a template, if there is a risk it might
 		 * be incorrect. Otherwise, libxml2 will throw a lot of misleading messages
 		 * to stderr. */
-		if (oval_template == NULL && _some_result_exists(xccdf_source, "http://oval.mitre.org/XMLSchema/oval-definitions-5")) {
+		if (_some_result_exists(xccdf_source, "http://oval.mitre.org/XMLSchema/oval-definitions-5")) {
 			oval_template = "%.result.xml";
 		}
-		if (sce_template == NULL && _some_result_exists(xccdf_source, "http://open-scap.org/page/SCE")) {
+		if (_some_result_exists(xccdf_source, "http://open-scap.org/page/SCE")) {
 			sce_template = "%.result.xml";
 		}
 		oscap_source_free(xccdf_source);
@@ -1152,7 +1139,6 @@ int app_xccdf_xslt(const struct oscap_action *action)
 		"result-id",         action->id,
 		"benchmark_id",      action->f_benchmark_id,
 		"profile_id",        action->profile,
-		"template",          action->tmpl,
 		"oval-template",     oval_template,
 		"sce-template",      sce_template,
 		"verbosity",         "",
@@ -1192,11 +1178,8 @@ enum oval_opt {
     XCCDF_OPT_RULE,
     XCCDF_OPT_SKIP_RULE,
     XCCDF_OPT_REPORT_FILE,
-    XCCDF_OPT_TEMPLATE,
     XCCDF_OPT_FORMAT,
-    XCCDF_OPT_OVAL_TEMPLATE,
     XCCDF_OPT_STYLESHEET_FILE,
-    XCCDF_OPT_SCE_TEMPLATE,
     XCCDF_OPT_FILE_VERSION,
 	XCCDF_OPT_TAILORING_FILE,
 	XCCDF_OPT_TAILORING_ID,
@@ -1230,14 +1213,11 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"skip-rule", 		required_argument, NULL, XCCDF_OPT_SKIP_RULE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
-		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
-		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
 		{"stylesheet",	required_argument, NULL, XCCDF_OPT_STYLESHEET_FILE},
 		{"tailoring-file", required_argument, NULL, XCCDF_OPT_TAILORING_FILE},
 		{"tailoring-id", required_argument, NULL, XCCDF_OPT_TAILORING_ID},
 		{"cpe",	required_argument, NULL, XCCDF_OPT_CPE},
 		{"cpe-dict",	required_argument, NULL, XCCDF_OPT_CPE_DICT}, // DEPRECATED!
-		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
 		{"fix-type", required_argument, NULL, XCCDF_OPT_FIX_TYPE},
 		{"local-files", required_argument, NULL, XCCDF_OPT_LOCAL_FILES},
 		{"reference", required_argument, NULL, XCCDF_OPT_REFERENCE},
@@ -1281,8 +1261,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 			break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
-		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;
-		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
 		/* we use realpath to get an absolute path to given XSLT to prevent openscap from looking
 		   into /usr/share/openscap/xsl instead of CWD */
 		case XCCDF_OPT_STYLESHEET_FILE: oscap_realpath(optarg, custom_stylesheet_path); action->stylesheet = custom_stylesheet_path; break;
@@ -1294,7 +1272,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 				fprintf(stdout, "Warning: --cpe-dict is a deprecated option. Please use --cpe instead!\n\n");
 				action->cpe = optarg; break;
 			}
-		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
 		case XCCDF_OPT_FIX_TYPE:
 			action->fix_type = optarg;
 			break;

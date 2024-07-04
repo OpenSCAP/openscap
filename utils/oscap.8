@@ -408,12 +408,6 @@ Write the report to this file instead of standard output.
 .TP
 \fB\-\-result-id ID\fR
 ID of the XCCDF TestResult from which the report will be generated.
-.TP
-\fB\-\-oval-template \fItemplate-string\fR
-To use the ability to include additional information from OVAL in xccdf result file, a template which will be used to obtain OVAL result file names has to be specified. The template can be either a filename or a string containing wildcard character (percent sign '%'). Wildcard will be replaced by the original OVAL definition file name as referenced from the XCCDF file. This way it is possible to obtain OVAL information even from XCCDF documents referencing several OVAL files. To use this option with results from an XCCDF evaluation, specify \fI%.result.xml\fR as a OVAL file name template.
-.TP
-\fB\-\-sce-template \fItemplate-string\fR
-To use the ability to include additional information from SCE in XCCDF result file, a template which will be used to obtain SCE result file names has to be specified. The template can be either a filename or a string containing wildcard character (percent sign '%'). Wildcard will be replaced by the original SCE script file name as referenced from the XCCDF file. This way it is possible to obtain SCE information even from XCCDF documents referencing several SCE files. To use this option with results from an XCCDF evaluation, specify \fI%.result.xml\fR as a SCE file name template.
 .RE
 .TP
 .B \fBfix\fR  [\fIoptions\fR] xccdf-file
@@ -425,16 +419,13 @@ Result-oriented fixes are generated using result-id provided to select only the 
 Profile-oriented fixes are generated using all rules within the provided profile. If no result-id/profile are provided, (default) profile will be used to generate fixes.
 .TP
 \fB\-\-fix-type TYPE\fR
-Specify fix type. There are multiple programming languages in which the fix script can be generated. TYPE should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint. Default is bash. This option is mutually exclusive with --template, because fix type already determines the template URN.
+Specify fix type. There are multiple programming languages in which the fix script can be generated. TYPE should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint. Default is bash.
 .TP
 \fB\-\-output FILE\fR
 Write the report to this file instead of standard output.
 .TP
 \fB\-\-result-id \fIID\fR\fR
 Fixes will be generated for failed rule-results of the specified TestResult.
-.TP
-\fB\-\-template \fIID|FILE\fR\fR
-Template to be used to generate the script. If it contains a dot '.' it is interpreted as a location of a file with the template definition. Otherwise it identifies a template from standard set which currently includes: \fIbash\fR (default if no --template switch present). Brief explanation of the process of writing your own templates is in the XSL file \fIxsl/legacy-fix.xsl\fR in the openscap data directory. You can also take a look at the default template \fIxsl/legacy-fixtpl-bash.xml\fR.
 .TP
 \fB\-\-xccdf-id ID\fR
 Takes component ref with given ID from checklists. This allows one to select a particular XCCDF component even in cases where there are multiple XCCDFs in a single data stream. If none is given, the first component from the checklists element is used.
