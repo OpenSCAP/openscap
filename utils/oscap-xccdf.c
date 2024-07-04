@@ -281,7 +281,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .help = GEN_OPTS
         "\nFix Options:\n"
 		"   --fix-type <type>             - Fix type. Should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes,\n"
-		"                                   blueprint (default: bash).\n"
+		"                                   blueprint, kickstart (default: bash).\n"
 		"   --output <file>               - Write the script into file.\n"
 		"   --result-id <id>              - Fixes will be generated for failed rule-results of the specified TestResult.\n"
 		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be used.\n"
@@ -948,6 +948,8 @@ int app_generate_fix(const struct oscap_action *action)
 			remediation_system = "urn:xccdf:fix:script:sh";
 		} else if (strcmp(action->fix_type, "ansible") == 0) {
 			remediation_system = "urn:xccdf:fix:script:ansible";
+		} else if (strcmp(action->fix_type, "kickstart") == 0) {
+			remediation_system = "urn:xccdf:fix:script:kickstart";
 		} else if (strcmp(action->fix_type, "puppet") == 0) {
 			remediation_system = "urn:xccdf:fix:script:puppet";
 		} else if (strcmp(action->fix_type, "anaconda") == 0) {
@@ -961,7 +963,7 @@ int app_generate_fix(const struct oscap_action *action)
 		} else {
 			fprintf(stderr,
 					"Unknown fix type '%s'.\n"
-					"Please provide one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint.\n",
+					"Please provide one of: bash, ansible, kickstart, puppet, anaconda, ignition, kubernetes, blueprint.\n",
 					action->fix_type);
 			return OSCAP_ERROR;
 		}
