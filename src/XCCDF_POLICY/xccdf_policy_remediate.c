@@ -1306,6 +1306,17 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	}
 	oscap_iterator_free(rules_to_fix_it);
 
+	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
+	const char *ds_path = "/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml";
+	char *oscap_command = oscap_sprintf(
+		"oscap xccdf eval --remediate --profile '%s' %s\n",
+		profile_id, ds_path);
+	_write_text_to_fd(output_fd, "\n");
+	_write_text_to_fd(output_fd, "%post\n");
+	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening\n");
+	_write_text_to_fd_and_free(output_fd, oscap_command);
+	_write_text_to_fd(output_fd, "%end\n");
+
 	return ret;
 }
 
