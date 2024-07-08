@@ -1014,7 +1014,7 @@ static char *_comment_multiline_text(char *text)
 static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
 	if (!(oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands") ||
-		  oscap_streq(sys, "urn:xccdf:fix:script:ansible") || oscap_streq(sys, "urn:redhat:osbuild:blueprint")))
+		  oscap_streq(sys, "urn:xccdf:fix:script:ansible") || oscap_streq(sys, "urn:redhat:osbuild:blueprint") || oscap_streq(sys, "urn:xccdf:fix:script:kickstart") ))
 		return 0; // no header required
 
 	const char *oscap_version = oscap_get_version();
@@ -1042,6 +1042,12 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		format = "bash";
 		remediation_type = "Bash Remediation Script";
 		shebang_with_newline = "#!/usr/bin/env bash\n";
+	}
+
+	if (oscap_streq(sys, "urn:xccdf:fix:script:kickstart")) {
+		how_to_apply = "# Customize the kickstart for your deployment, then perform operating system installation using this kickstart.";
+		format = "kickstart";
+		remediation_type = "Kickstart";
 	}
 
 	char *fix_header;
