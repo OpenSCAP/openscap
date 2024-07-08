@@ -675,6 +675,10 @@ struct blueprint_customizations {
 	struct oscap_list *kernel_append;
 };
 
+struct kickstart_fixes {
+	struct oscap_list *others;
+};
+
 static inline int _parse_blueprint_fix(const char *fix_text, struct blueprint_customizations *customizations)
 {
 	char *err;
@@ -890,6 +894,17 @@ static int _xccdf_policy_rule_generate_blueprint_fix(struct xccdf_policy *policy
 	}
 	ret = _parse_blueprint_fix(fix_text, customizations);
 	free(fix_text);
+	return ret;
+}
+
+static int _xccdf_policy_rule_generate_kickstart_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct kickstart_fixes *fixes)
+{
+	char *fix_text = NULL;
+	int ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
+	if (fix_text == NULL) {
+		return ret;
+	}
+	oscap_list_add(fixes->others, fix_text);
 	return ret;
 }
 
@@ -1295,16 +1310,24 @@ static int _xccdf_policy_generate_fix_other(struct oscap_list *rules_to_fix, str
 static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
 {
 	int ret = 0;
-	const unsigned int total = oscap_list_get_itemcount(rules_to_fix);
-	unsigned int current = 1;
+	struct kickstart_fixes fixes = {
+		.others = oscap_list_new(),
+	};
 	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
 	while (oscap_iterator_has_more(rules_to_fix_it)) {
 		struct xccdf_rule *rule = (struct xccdf_rule *) oscap_iterator_next(rules_to_fix_it);
-		ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total);
+		ret = _xccdf_policy_rule_generate_kickstart_fix(policy, rule, sys, &fixes);
 		if (ret != 0)
 			break;
 	}
 	oscap_iterator_free(rules_to_fix_it);
+
+	struct oscap_iterator *others_it = oscap_iterator_new(fixes.others);
+	while(oscap_iterator_has_more(others_it)) {
+		char *command = (char *) oscap_iterator_next(others_it);
+		_write_text_to_fd(output_fd, command);
+	}
+	_write_text_to_fd(output_fd, "\n");
 
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
 	const char *ds_path = "/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml";
@@ -1317,6 +1340,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	_write_text_to_fd_and_free(output_fd, oscap_command);
 	_write_text_to_fd(output_fd, "%end\n");
 
+	oscap_list_free(fixes.others, free);
 	return ret;
 }
 
