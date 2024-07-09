@@ -6,7 +6,6 @@ set -o pipefail
 
 profile="xccdf_com.example.www_profile_test_ansible_vars"
 profile_tailored="xccdf_com.example.www_profile_test_ansible_vars_tailored"
-ansible_template="urn:xccdf:fix:script:ansible"
 ds="test_generate_fix_ansible_vars_ds.xml"
 tailoring_file="test_generate_fix_ansible_vars_ds-tailoring.xml"
 golden="test_generate_fix_ansible_vars_golden.yml"
@@ -18,7 +17,7 @@ name=$(basename $0 .sh)
 playbook=$(make_temp_file /tmp ${name}.yml)
 out=$(make_temp_file /tmp ${name}.out)
 
-$OSCAP xccdf generate fix --profile $profile --template $ansible_template \
+$OSCAP xccdf generate fix --profile $profile --fix-type ansible \
 	$srcdir/$ds >$playbook 2>$out
 [ -f $out ]; [ ! -s $out ]; :> $out
 [ -f $playbook ]; [ -s $playbook ]
@@ -40,7 +39,7 @@ golden_altered_var=$(grep "$var:" $srcdir/$golden_altered | xsed "s|.*$var:[^0-9
 [ "$generated_var" != "$golden_altered_var" ]
 
 # Generates Ansible playbook using tailoring file.
-$OSCAP xccdf generate fix --template $ansible_template \
+$OSCAP xccdf generate fix --fix-type ansible \
 	--profile $profile_tailored --tailoring-file $srcdir/$tailoring_file \
 	$srcdir/$ds >$playbook 2>$out
 [ -f $out ]; [ ! -s $out ]; :> $out

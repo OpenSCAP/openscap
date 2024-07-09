@@ -10,7 +10,6 @@ profile="xccdf_moc.elpmaxe.www_profile_standard"
 result_id="xccdf_org.open-scap_testresult_xccdf_moc.elpmaxe.www_profile_standard"
 bash_line1="echo this_is_ok"
 bash_line2="echo fix_me_please"
-ansible_template="urn:xccdf:fix:script:ansible"
 ansible_task1a="\- name: ensure everything passes"
 ansible_task1b="shell: /bin/true"
 ansible_task2a="\- name: correct the failing case"
@@ -40,7 +39,7 @@ grep -q "$bash_line1" $script
 grep -q "$bash_line2" $script
 
 # Generate an Ansible playbook from a profile in ARF file
-$OSCAP xccdf generate fix --profile $profile --template $ansible_template $results_arf | grep -Ev $regex >$playbook 2>$stderr
+$OSCAP xccdf generate fix --profile $profile --fix-type ansible $results_arf | grep -Ev $regex >$playbook 2>$stderr
 diff -B $playbook $srcdir/$name.playbook1.yml
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep -q "$ansible_task1a" $playbook
@@ -56,7 +55,7 @@ grep -q -v "$bash_line1" $script
 grep -q "$bash_line2" $script
 
 # Generate  an Ansible playbook based on scan results stored in ARF file
-$OSCAP xccdf generate fix --result-id $result_id --template $ansible_template $results_arf | grep -Ev $regex >$playbook 2>$stderr
+$OSCAP xccdf generate fix --result-id $result_id --fix-type ansible $results_arf | grep -Ev $regex >$playbook 2>$stderr
 diff -B $playbook $srcdir/$name.playbook2.yml
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep -q -v "$ansible_task1a" $playbook

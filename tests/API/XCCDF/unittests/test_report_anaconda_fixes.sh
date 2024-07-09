@@ -15,7 +15,7 @@ line1='^\W*part /tmp$'
 line2='^\W*part /tmp --mountoptions=nodev$'
 line3='^\W*passwd --minlen=14$'
 
-$OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
+$OSCAP xccdf generate fix --fix-type anaconda \
 	--output $result $srcdir/${name}.xccdf.xml 2>&1 > $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 grep "$line1" $result
@@ -38,7 +38,7 @@ grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3"
 
 :> $result
 
-$OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
+$OSCAP xccdf generate fix --fix-type anaconda \
 	--profile xccdf_moc.elpmaxe.www_profile_1 \
 	--output $result $srcdir/${name}.xccdf.xml 2>&1 > $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
@@ -53,7 +53,7 @@ rm $result
 
 
 # And Now For Something Completely Different -- Tailoring:
-$OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
+$OSCAP xccdf generate fix --fix-type anaconda \
 	--tailoring-file $srcdir/${name}.tailoring.xml \
 	--profile xccdf_org.open-scap_profile_unselecting \
 	--output $result \
@@ -65,7 +65,7 @@ $OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
 rm $result
 
 line4='^\W*passwd --minlen=8$'
-$OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
+$OSCAP xccdf generate fix --fix-type anaconda \
 	--tailoring-file $srcdir/${name}.tailoring.xml \
 	--profile xccdf_org.open-scap_profile_override \
 	--output $result \

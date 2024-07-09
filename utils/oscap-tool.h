@@ -125,9 +125,7 @@ struct oscap_action {
 	struct oscap_stringlist *rules;
 	struct oscap_stringlist *skip_rules;
         char *format;
-        const char *tmpl;
         char *id;
-        char *oval_template;
         int hide_profile_info;
         char *stylesheet;
 	char *tailoring_file;
@@ -155,7 +153,6 @@ struct oscap_action {
 	int without_sys_chars;
 	int thin_results;
 	int remediate;
-	char *sce_template;
 	int check_engine_results;
 	int export_variables;
         int list_dynamic;

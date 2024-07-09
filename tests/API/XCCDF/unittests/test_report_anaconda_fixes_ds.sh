@@ -28,7 +28,7 @@ component_id=scap_org.open-scap_cref_test_report_anaconda_fixes.xccdf.xml
 $OSCAP info $sds | grep $datastream_id
 $OSCAP info $sds | grep $component_id
 
-$OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
+$OSCAP xccdf generate fix --fix-type anaconda \
 	--datastream-id $datastream_id --xccdf-id $component_id \
 	--output $result $sds 2>&1 > $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
@@ -40,7 +40,7 @@ grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3"
 
 :> $result
 
-$OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
+$OSCAP xccdf generate fix --fix-type anaconda \
 	--profile xccdf_moc.elpmaxe.www_profile_1 \
 	--output $result $sds 2>&1 > $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
