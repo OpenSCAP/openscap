@@ -54,15 +54,48 @@
         <title>Common hardening profile</title>
         <description>This is a very cool profile</description>
         <select idref="xccdf_org.openscap.www_rule_1" selected="true"/>
+        <select idref="xccdf_org.openscap.www_rule_2" selected="true"/>
+        <select idref="xccdf_org.openscap.www_rule_3" selected="true"/>
+        <select idref="xccdf_org.openscap.www_rule_4" selected="true"/>
+        <select idref="xccdf_org.openscap.www_rule_5" selected="true"/>
       </Profile>
       <Rule selected="true" id="xccdf_org.openscap.www_rule_1">
-        <title>Ensure that file exists and it is not executable</title>
+        <title>Rule 1: Enable Audit Service</title>
         <fix system="urn:xccdf:fix:script:kickstart">
-            services --enable auditd
+            service enable auditd
         </fix>
-        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref href="test_single_rule.oval.xml" name="oval:org.openscap.www:def:1"/>
-        </check>
+      </Rule>
+      <Rule selected="true" id="xccdf_org.openscap.www_rule_2">
+        <title>Rule 2: Install rsyslog package</title>
+        <fix system="urn:xccdf:fix:script:kickstart">
+          package install rsyslog
+        </fix>
+      </Rule>
+      <Rule selected="true" id="xccdf_org.openscap.www_rule_3">
+        <title>Rule 3: Enable Rsyslog Service</title>
+        <fix system="urn:xccdf:fix:script:kickstart">
+            # this command should end up in the command section
+            service enable rsyslog
+        </fix>
+      </Rule>
+      <Rule selected="true" id="xccdf_org.openscap.www_rule_4">
+        <title>Rule 4: Remove USBGuard</title>
+        <fix system="urn:xccdf:fix:script:kickstart">
+          package remove usbguard
+        </fix>
+      </Rule>
+      <Rule selected="true" id="xccdf_org.openscap.www_rule_5">
+        <title>Rule 4: Install and enable SSHD</title>
+        <fix system="urn:xccdf:fix:script:kickstart">
+          # openssh-server will go to %packages section
+          package install openssh-server
+
+          # the service commands will end up in the command section
+          service enable sshd
+          service disable telnet
+
+          post mkdir /etc/scap
+        </fix>
       </Rule>
     </Benchmark>
   </ds:component>
