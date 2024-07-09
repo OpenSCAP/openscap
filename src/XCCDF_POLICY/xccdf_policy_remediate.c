@@ -1394,6 +1394,78 @@ static int _xccdf_policy_generate_fix_other(struct oscap_list *rules_to_fix, str
 	return ret;
 }
 
+const char *common_kickstart_header = (
+"# Specify installation method to use for installation\n"
+"# To use a different one comment out the 'url' one below, update\n"
+"# the selected choice with proper options & un-comment it\n"
+"#\n"
+"# Install from an installation tree on a remote server via FTP or HTTP:\n"
+"# --url		the URL to install from\n"
+"#\n"
+"# Example:\n"
+"#\n"
+"# url --url=http://192.168.122.1/image\n"
+"#\n"
+"# Modify concrete URL in the above example appropriately to reflect the actual\n"
+"# environment machine is to be installed in\n"
+"#\n"
+"# Other possible / supported installation methods:\n"
+"# * install from the first CD-ROM/DVD drive on the system:\n"
+"#\n"
+"# cdrom\n"
+"#\n"
+"# * install from a directory of ISO images on a local drive:\n"
+"#\n"
+"# harddrive --partition=hdb2 --dir=/tmp/install-tree\n"
+"#\n"
+"# * install from provided NFS server:\n"
+"#\n"
+"# nfs --server=<hostname> --dir=<directory> [--opts=<nfs options>]\n"
+"#\n"
+"\n"
+"# Set language to use during installation and the default language to use on the installed system (required)\n"
+"lang en_US.UTF-8\n"
+"\n"
+"# Set system keyboard type / layout (required)\n"
+"keyboard --vckeymap us\n"
+"\n"
+"# Configure network information for target system and activate network devices in the installer environment (optional)\n"
+"# --onboot	enable device at a boot time\n"
+"# --device	device to be activated and / or configured with the network command\n"
+"# --bootproto	method to obtain networking configuration for device (default dhcp)\n"
+"# --noipv6	disable IPv6 on this device\n"
+"network --onboot yes --device eth0 --bootproto dhcp --noipv6\n"
+"\n"
+"# Set the system's root password (required)\n"
+"# Plaintext password is: server\n"
+"# Refer to e.g. https://pykickstart.readthedocs.io/en/latest/commands.html#rootpw to see how to create\n"
+"# encrypted password form for different plaintext password\n"
+"rootpw --iscrypted $6$/0RYeeRdK70ynvYz$jH2ZN/80HM6DjndHMxfUF9KIibwipitvizzXDH1zW.fTjyD3RD3tkNdNUaND18B/XqfAUW3vy1uebkBybCuIm0\n"
+"\n"
+"# The selected profile will restrict root login\n"
+"# Add a user that can login and escalate privileges\n"
+"# Plaintext password is: admin123\n"
+"user --name=admin --groups=wheel --password=$6$Ga6ZnIlytrWpuCzO$q0LqT1USHpahzUafQM9jyHCY9BiE5/ahXLNWUMiVQnFGblu0WWGZ1e6icTaCGO4GNgZNtspp1Let/qpM7FMVB0 --iscrypted\n"
+"\n"
+"# Configure firewall settings for the system (optional)\n"
+"# --enabled	reject incoming connections that are not in response to outbound requests\n"
+"# --ssh		allow sshd service through the firewall\n"
+"firewall --enabled --ssh\n"
+"\n"
+"# State of SELinux on the installed system (optional)\n"
+"# Defaults to enforcing\n"
+"selinux --enforcing\n"
+"\n"
+"# Set the system time zone (required)\n"
+"timezone --utc America/New_York\n"
+"\n"
+"# Specify how the bootloader should be installed (required)\n"
+"# Plaintext password is: password\n"
+"# Refer to e.g. grub2-mkpasswd-pbkdf2 to see how to create\n"
+"# encrypted password form for different plaintext password\n"
+"bootloader --password=grub.pbkdf2.sha512.10000.45912D32B964BA58B91EAF9847F3CCE6F4C962638922543AFFAEE4D29951757F4336C181E6FC9030E07B7D9874DAD696A1B18978D995B1D7F27AF9C38159FDF3.99F65F3896012A0A3D571A99D6E6C695F3C51BE5343A01C1B6907E1C3E1373CB7F250C2BC66C44BB876961E9071F40205006A05189E51C2C14770C70C723F3FD --iscrypted\n"
+);
+
 static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
 {
 	int ret = 0;
@@ -1413,6 +1485,9 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 			break;
 	}
 	oscap_iterator_free(rules_to_fix_it);
+
+	_write_text_to_fd(output_fd, common_kickstart_header);
+	_write_text_to_fd(output_fd, "\n");
 
 	struct oscap_iterator *service_disable_it = oscap_iterator_new(cmds.service_disable);
 	struct oscap_iterator *service_enable_it = oscap_iterator_new(cmds.service_enable);
