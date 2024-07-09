@@ -971,6 +971,11 @@ int app_generate_fix(const struct oscap_action *action)
 		remediation_system = "urn:xccdf:fix:script:sh";
 	}
 
+	if (action->id != NULL && action->fix_type != NULL && !strcmp(action->fix_type, "kickstart")) {
+		fprintf(stderr, "It isn't possible to generate results-oriented Kickstarts.\n");
+		return OSCAP_ERROR;
+	}
+
 	int ret = OSCAP_ERROR;
 	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
 	oscap_document_type_t document_type = oscap_source_get_scap_type(source);
