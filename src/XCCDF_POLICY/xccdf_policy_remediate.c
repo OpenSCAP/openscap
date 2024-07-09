@@ -1519,6 +1519,9 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 
 	_write_text_to_fd(output_fd, "# Packages selection (%packages section is required)\n");
 	_write_text_to_fd(output_fd, "%packages\n");
+	/* openscap-scanner and scap-security-guide needs to be installed because we will run oscap in the %post section */
+	_write_text_to_fd(output_fd, "openscap-scanner\n");
+	_write_text_to_fd(output_fd, "scap-security-guide\n");
 	struct oscap_iterator *package_install_it = oscap_iterator_new(cmds.package_install);
 	while (oscap_iterator_has_more(package_install_it)) {
 		char *package = (char *) oscap_iterator_next(package_install_it);
