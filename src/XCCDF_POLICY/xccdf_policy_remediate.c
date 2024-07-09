@@ -49,6 +49,14 @@
 #include "public/xccdf_policy.h"
 #include "oscap_helpers.h"
 
+struct kickstart_commands {
+	struct oscap_list *package_install;
+	struct oscap_list *package_remove;
+	struct oscap_list *service_enable;
+	struct oscap_list *service_disable;
+	struct oscap_list *post;
+};
+
 static int _rule_add_info_message(struct xccdf_rule_result *rr, ...)
 {
 	va_list ap;
@@ -675,10 +683,6 @@ struct blueprint_customizations {
 	struct oscap_list *kernel_append;
 };
 
-struct kickstart_fixes {
-	struct oscap_list *others;
-};
-
 static inline int _parse_blueprint_fix(const char *fix_text, struct blueprint_customizations *customizations)
 {
 	char *err;
@@ -897,14 +901,97 @@ static int _xccdf_policy_rule_generate_blueprint_fix(struct xccdf_policy *policy
 	return ret;
 }
 
-static int _xccdf_policy_rule_generate_kickstart_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct kickstart_fixes *fixes)
+static int _parse_line(const char *line, struct kickstart_commands *cmds)
+{
+	int ret = 0;
+	char *dup = strdup(line);
+	char **words = oscap_split(dup, " ");
+	enum states {KS_START, KS_PACKAGE, KS_PACKAGE_INSTALL, KS_PACKAGE_REMOVE, KS_SERVICE, KS_SERVICE_ENABLE, KS_SERVICE_DISABLE, KS_POST};
+	int state = KS_START;
+	for (unsigned int i = 0; words[i] != NULL; i++) {
+		char *word = words[i];
+		switch (state) {
+		case KS_START:
+			if (!strcmp(word, "package")) {
+				state = KS_PACKAGE;
+			} else if (!strcmp(word, "service")) {
+				state = KS_SERVICE;
+			} else if (!strcmp(word, "post")) {
+				state = KS_POST;
+			} else {
+				ret = 1;
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported command keyword '%s' in command:'%s'", word, line);
+				goto cleanup;
+			}
+			break;
+		case KS_PACKAGE:
+			if (!strcmp(word, "install")) {
+				state = KS_PACKAGE_INSTALL;
+			} else if (!strcmp(word, "remove")) {
+				state = KS_PACKAGE_REMOVE;
+			} else {
+				ret = 1;
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'package' command keyword '%s' in command:'%s'", word, line);
+				goto cleanup;
+			}
+			break;
+		case KS_PACKAGE_INSTALL:
+			oscap_list_add(cmds->package_install, strdup(word));
+			break;
+		case KS_PACKAGE_REMOVE:
+			oscap_list_add(cmds->package_remove, strdup(word));
+			break;
+		case KS_SERVICE:
+			if (!strcmp(word, "enable")) {
+				state = KS_SERVICE_ENABLE;
+			} else if (!strcmp(word, "disable")) {
+				state = KS_SERVICE_DISABLE;
+			} else {
+				ret = 1;
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'service' command keyword '%s' in command:'%s'", word, line);
+				goto cleanup;
+			}
+			break;
+		case KS_SERVICE_ENABLE:
+			oscap_list_add(cmds->service_enable, strdup(word));
+			break;
+		case KS_SERVICE_DISABLE:
+			oscap_list_add(cmds->service_disable, strdup(word));
+			break;
+		case KS_POST:
+			oscap_list_add(cmds->post, strdup(line + strlen("post ")));
+			goto cleanup;
+			break;
+		default:
+			break;
+		}
+	}
+
+cleanup:
+	free(words);
+	free(dup);
+	return ret;
+}
+
+static int _xccdf_policy_rule_generate_kickstart_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct kickstart_commands *cmds)
 {
 	char *fix_text = NULL;
 	int ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
 	if (fix_text == NULL) {
 		return ret;
 	}
-	oscap_list_add(fixes->others, fix_text);
+	char *dup = strdup(fix_text);
+	char **lines = oscap_split(dup, "\n");
+	for (unsigned int i = 0; lines[i] != NULL; i++) {
+		char *line = lines[i];
+		oscap_trim(line);
+		if (*line == '#' || *line == '\0')
+			continue;
+		_parse_line(line, cmds);
+	}
+	free(lines);
+	free(dup);
+	free(fix_text);
 	return ret;
 }
 
@@ -1310,37 +1397,99 @@ static int _xccdf_policy_generate_fix_other(struct oscap_list *rules_to_fix, str
 static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
 {
 	int ret = 0;
-	struct kickstart_fixes fixes = {
-		.others = oscap_list_new(),
+	struct kickstart_commands cmds = {
+		.package_install = oscap_list_new(),
+		.package_remove = oscap_list_new(),
+		.service_enable = oscap_list_new(),
+		.service_disable = oscap_list_new(),
+		.post = oscap_list_new(),
 	};
+
 	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
 	while (oscap_iterator_has_more(rules_to_fix_it)) {
 		struct xccdf_rule *rule = (struct xccdf_rule *) oscap_iterator_next(rules_to_fix_it);
-		ret = _xccdf_policy_rule_generate_kickstart_fix(policy, rule, sys, &fixes);
+		ret = _xccdf_policy_rule_generate_kickstart_fix(policy, rule, sys, &cmds);
 		if (ret != 0)
 			break;
 	}
 	oscap_iterator_free(rules_to_fix_it);
 
-	struct oscap_iterator *others_it = oscap_iterator_new(fixes.others);
-	while(oscap_iterator_has_more(others_it)) {
-		char *command = (char *) oscap_iterator_next(others_it);
-		_write_text_to_fd(output_fd, command);
+	struct oscap_iterator *service_disable_it = oscap_iterator_new(cmds.service_disable);
+	struct oscap_iterator *service_enable_it = oscap_iterator_new(cmds.service_enable);
+	if (oscap_iterator_has_more(service_disable_it) || oscap_iterator_has_more(service_enable_it)) {
+		_write_text_to_fd(output_fd, "# Disable and enable systemd services based on the SCAP profile\n");
+		_write_text_to_fd(output_fd, "services");
+		if (oscap_iterator_has_more(service_disable_it)) {
+			_write_text_to_fd(output_fd, " --disabled=");
+			while (oscap_iterator_has_more(service_disable_it)) {
+				char *command = (char *) oscap_iterator_next(service_disable_it);
+				_write_text_to_fd(output_fd, command);
+				if (oscap_iterator_has_more(service_disable_it))
+					_write_text_to_fd(output_fd, ",");
+			}
+		}
+		if (oscap_iterator_has_more(service_enable_it)) {
+			_write_text_to_fd(output_fd, " --enabled=");
+			while (oscap_iterator_has_more(service_enable_it)) {
+				char *command = (char *) oscap_iterator_next(service_enable_it);
+				_write_text_to_fd(output_fd, command);
+				if (oscap_iterator_has_more(service_enable_it))
+					_write_text_to_fd(output_fd, ",");
+			}
+		}
+		_write_text_to_fd(output_fd, "\n\n");
 	}
+	oscap_iterator_free(service_disable_it);
+	oscap_iterator_free(service_enable_it);
+
+	_write_text_to_fd(output_fd, "# Packages selection (%packages section is required)\n");
+	_write_text_to_fd(output_fd, "%packages\n");
+	struct oscap_iterator *package_install_it = oscap_iterator_new(cmds.package_install);
+	while (oscap_iterator_has_more(package_install_it)) {
+		char *package = (char *) oscap_iterator_next(package_install_it);
+		_write_text_to_fd(output_fd, package);
+		_write_text_to_fd(output_fd, "\n");
+	}
+	oscap_iterator_free(package_install_it);
+	struct oscap_iterator *package_remove_it = oscap_iterator_new(cmds.package_remove);
+	while (oscap_iterator_has_more(package_remove_it)) {
+		char *package = (char *) oscap_iterator_next(package_remove_it);
+		_write_text_to_fd(output_fd, "-");
+		_write_text_to_fd(output_fd, package);
+		_write_text_to_fd(output_fd, "\n");
+	}
+	oscap_iterator_free(package_remove_it);
+	_write_text_to_fd(output_fd, "%end\n");
 	_write_text_to_fd(output_fd, "\n");
 
+
+	_write_text_to_fd(output_fd, "%post\n");
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
 	const char *ds_path = "/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml";
 	char *oscap_command = oscap_sprintf(
 		"oscap xccdf eval --remediate --profile '%s' %s\n",
 		profile_id, ds_path);
-	_write_text_to_fd(output_fd, "\n");
-	_write_text_to_fd(output_fd, "%post\n");
 	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening\n");
 	_write_text_to_fd_and_free(output_fd, oscap_command);
+	struct oscap_iterator *post_it = oscap_iterator_new(cmds.post);
+	while (oscap_iterator_has_more(post_it)) {
+		char *command = (char *) oscap_iterator_next(post_it);
+		_write_text_to_fd(output_fd, command);
+		_write_text_to_fd(output_fd, "\n");
+	}
+	oscap_iterator_free(post_it);
 	_write_text_to_fd(output_fd, "%end\n");
+	_write_text_to_fd(output_fd, "\n");
 
-	oscap_list_free(fixes.others, free);
+	_write_text_to_fd(output_fd, "# Reboot after the installation is complete (optional)\n");
+	_write_text_to_fd(output_fd, "# --eject - attempt to eject CD or DVD media before rebooting\n");
+	_write_text_to_fd(output_fd, "reboot --eject\n");
+
+	oscap_list_free(cmds.package_install, free);
+	oscap_list_free(cmds.package_remove, free);
+	oscap_list_free(cmds.service_enable, free);
+	oscap_list_free(cmds.service_disable, free);
+	oscap_list_free(cmds.post, free);
 	return ret;
 }
 
