@@ -1454,6 +1454,26 @@ static int _generate_kickstart_packages(struct kickstart_commands *cmds, int out
 	return 0;
 }
 
+static int _generate_kickstart_post(struct kickstart_commands *cmds, const char *profile_id, const char *input_path, int output_fd)
+{
+	_write_text_to_fd(output_fd, "%post\n");
+	char *oscap_command = oscap_sprintf(
+		"oscap xccdf eval --remediate --profile '%s' %s\n",
+		profile_id, input_path);
+	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening\n");
+	_write_text_to_fd_and_free(output_fd, oscap_command);
+	struct oscap_iterator *post_it = oscap_iterator_new(cmds->post);
+	while (oscap_iterator_has_more(post_it)) {
+		char *command = (char *) oscap_iterator_next(post_it);
+		_write_text_to_fd(output_fd, command);
+		_write_text_to_fd(output_fd, "\n");
+	}
+	oscap_iterator_free(post_it);
+	_write_text_to_fd(output_fd, "%end\n");
+	_write_text_to_fd(output_fd, "\n");
+	return 0;
+}
+
 const char *common_kickstart_header = (
 "# Specify installation method to use for installation\n"
 "# To use a different one comment out the 'url' one below, update\n"
@@ -1553,23 +1573,9 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 
 	_generate_kickstart_packages(&cmds, output_fd);
 
-	_write_text_to_fd(output_fd, "%post\n");
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
 	const char *ds_path = "/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml";
-	char *oscap_command = oscap_sprintf(
-		"oscap xccdf eval --remediate --profile '%s' %s\n",
-		profile_id, ds_path);
-	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening\n");
-	_write_text_to_fd_and_free(output_fd, oscap_command);
-	struct oscap_iterator *post_it = oscap_iterator_new(cmds.post);
-	while (oscap_iterator_has_more(post_it)) {
-		char *command = (char *) oscap_iterator_next(post_it);
-		_write_text_to_fd(output_fd, command);
-		_write_text_to_fd(output_fd, "\n");
-	}
-	oscap_iterator_free(post_it);
-	_write_text_to_fd(output_fd, "%end\n");
-	_write_text_to_fd(output_fd, "\n");
+	_generate_kickstart_post(&cmds, profile_id, ds_path, output_fd);
 
 	_write_text_to_fd(output_fd, "# Reboot after the installation is complete (optional)\n");
 	_write_text_to_fd(output_fd, "# --eject - attempt to eject CD or DVD media before rebooting\n");
