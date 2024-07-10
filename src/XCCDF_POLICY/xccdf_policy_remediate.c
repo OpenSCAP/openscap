@@ -1457,9 +1457,13 @@ static int _generate_kickstart_packages(struct kickstart_commands *cmds, int out
 static int _generate_kickstart_post(struct kickstart_commands *cmds, const char *profile_id, const char *input_path, int output_fd)
 {
 	_write_text_to_fd(output_fd, "%post\n");
+	char *dup = strdup(input_path);
+	char *basename = oscap_basename(dup);
+	free(dup);
 	char *oscap_command = oscap_sprintf(
-		"oscap xccdf eval --remediate --profile '%s' %s\n",
-		profile_id, input_path);
+		"oscap xccdf eval --remediate --profile '%s' /usr/share/xml/scap/ssg/content/%s\n",
+		profile_id, basename);
+	free(basename);
 	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening\n");
 	_write_text_to_fd_and_free(output_fd, oscap_command);
 	struct oscap_iterator *post_it = oscap_iterator_new(cmds->post);
@@ -1546,7 +1550,7 @@ const char *common_kickstart_header = (
 "bootloader --password=grub.pbkdf2.sha512.10000.45912D32B964BA58B91EAF9847F3CCE6F4C962638922543AFFAEE4D29951757F4336C181E6FC9030E07B7D9874DAD696A1B18978D995B1D7F27AF9C38159FDF3.99F65F3896012A0A3D571A99D6E6C695F3C51BE5343A01C1B6907E1C3E1373CB7F250C2BC66C44BB876961E9071F40205006A05189E51C2C14770C70C723F3FD --iscrypted\n"
 );
 
-static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
+static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, const char *input_file_name, int output_fd)
 {
 	int ret = 0;
 	struct kickstart_commands cmds = {
@@ -1574,8 +1578,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	_generate_kickstart_packages(&cmds, output_fd);
 
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
-	const char *ds_path = "/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml";
-	_generate_kickstart_post(&cmds, profile_id, ds_path, output_fd);
+	_generate_kickstart_post(&cmds, profile_id, input_file_name, output_fd);
 
 	_write_text_to_fd(output_fd, "# Reboot after the installation is complete (optional)\n");
 	_write_text_to_fd(output_fd, "# --eject - attempt to eject CD or DVD media before rebooting\n");
@@ -1646,7 +1649,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	} else if (strcmp(sys, "urn:redhat:osbuild:blueprint") == 0) {
 		ret = _xccdf_policy_generate_fix_blueprint(rules_to_fix, policy, sys, output_fd);
 	} else if (strcmp(sys, "urn:xccdf:fix:script:kickstart") == 0) {
-		ret = _xccdf_policy_generate_fix_kickstart(rules_to_fix, policy, sys, output_fd);
+		ret = _xccdf_policy_generate_fix_kickstart(rules_to_fix, policy, sys, input_file_name, output_fd);
 	} else {
 		ret =  _xccdf_policy_generate_fix_other(rules_to_fix, policy, sys, output_fd);
 	}
