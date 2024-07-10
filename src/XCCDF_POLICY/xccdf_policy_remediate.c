@@ -960,6 +960,7 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 			break;
 		case KS_POST:
 			oscap_list_add(cmds->post, strdup(line + strlen("post ")));
+			/* we need to jump off because we have eaten the whole line */
 			goto cleanup;
 			break;
 		default:
