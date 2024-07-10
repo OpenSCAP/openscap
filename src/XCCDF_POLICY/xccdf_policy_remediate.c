@@ -1395,6 +1395,38 @@ static int _xccdf_policy_generate_fix_other(struct oscap_list *rules_to_fix, str
 	return ret;
 }
 
+static int _generate_kickstart_services(struct kickstart_commands *cmds, int output_fd)
+{
+	struct oscap_iterator *service_disable_it = oscap_iterator_new(cmds->service_disable);
+	struct oscap_iterator *service_enable_it = oscap_iterator_new(cmds->service_enable);
+	if (oscap_iterator_has_more(service_disable_it) || oscap_iterator_has_more(service_enable_it)) {
+		_write_text_to_fd(output_fd, "# Disable and enable systemd services based on the SCAP profile\n");
+		_write_text_to_fd(output_fd, "services");
+		if (oscap_iterator_has_more(service_disable_it)) {
+			_write_text_to_fd(output_fd, " --disabled=");
+			while (oscap_iterator_has_more(service_disable_it)) {
+				char *command = (char *) oscap_iterator_next(service_disable_it);
+				_write_text_to_fd(output_fd, command);
+				if (oscap_iterator_has_more(service_disable_it))
+					_write_text_to_fd(output_fd, ",");
+			}
+		}
+		if (oscap_iterator_has_more(service_enable_it)) {
+			_write_text_to_fd(output_fd, " --enabled=");
+			while (oscap_iterator_has_more(service_enable_it)) {
+				char *command = (char *) oscap_iterator_next(service_enable_it);
+				_write_text_to_fd(output_fd, command);
+				if (oscap_iterator_has_more(service_enable_it))
+					_write_text_to_fd(output_fd, ",");
+			}
+		}
+		_write_text_to_fd(output_fd, "\n\n");
+	}
+	oscap_iterator_free(service_disable_it);
+	oscap_iterator_free(service_enable_it);
+	return 0;
+}
+
 const char *common_kickstart_header = (
 "# Specify installation method to use for installation\n"
 "# To use a different one comment out the 'url' one below, update\n"
@@ -1490,33 +1522,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	_write_text_to_fd(output_fd, common_kickstart_header);
 	_write_text_to_fd(output_fd, "\n");
 
-	struct oscap_iterator *service_disable_it = oscap_iterator_new(cmds.service_disable);
-	struct oscap_iterator *service_enable_it = oscap_iterator_new(cmds.service_enable);
-	if (oscap_iterator_has_more(service_disable_it) || oscap_iterator_has_more(service_enable_it)) {
-		_write_text_to_fd(output_fd, "# Disable and enable systemd services based on the SCAP profile\n");
-		_write_text_to_fd(output_fd, "services");
-		if (oscap_iterator_has_more(service_disable_it)) {
-			_write_text_to_fd(output_fd, " --disabled=");
-			while (oscap_iterator_has_more(service_disable_it)) {
-				char *command = (char *) oscap_iterator_next(service_disable_it);
-				_write_text_to_fd(output_fd, command);
-				if (oscap_iterator_has_more(service_disable_it))
-					_write_text_to_fd(output_fd, ",");
-			}
-		}
-		if (oscap_iterator_has_more(service_enable_it)) {
-			_write_text_to_fd(output_fd, " --enabled=");
-			while (oscap_iterator_has_more(service_enable_it)) {
-				char *command = (char *) oscap_iterator_next(service_enable_it);
-				_write_text_to_fd(output_fd, command);
-				if (oscap_iterator_has_more(service_enable_it))
-					_write_text_to_fd(output_fd, ",");
-			}
-		}
-		_write_text_to_fd(output_fd, "\n\n");
-	}
-	oscap_iterator_free(service_disable_it);
-	oscap_iterator_free(service_enable_it);
+	_generate_kickstart_services(&cmds, output_fd);
 
 	_write_text_to_fd(output_fd, "# Packages selection (%packages section is required)\n");
 	_write_text_to_fd(output_fd, "%packages\n");
