@@ -10,7 +10,7 @@
 # Benchmark Version:  1.0
 # XCCDF Version:  1.2
 #
-# $ oscap xccdf generate fix --profile xccdf_moc.elpmaxe.www_profile_common --fix-type blueprint xccdf-file.xml
+# $ oscap xccdf generate fix --profile xccdf_moc.elpmaxe.www_profile_common --fix-type blueprint TEST_XCCDF_FILE_NAME
 #
 # It attempts to fix every selected rule, even if the system is already compliant.
 #

@@ -515,10 +515,11 @@ OSCAP_API bool xccdf_policy_resolve(struct xccdf_policy * policy);
  * @param result XCCDF TestResult. This may be omitted to generate the prescription
  * based solely on the XCCDF Policy (xccdf:Profile).
  * @param sys Consider only those fixes that have @system attribute equal to sys
+ * @param input_file_name file name of the input SCAP file
  * @param output_fd write prescription to this file descriptor
  * @returns zero on success, non-zero indicate partial (incomplete) output.
  */
-OSCAP_API int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd);
+OSCAP_API int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, int output_fd);
 
 /**
  * xccdf_policy_model_get_files and xccdf_item_get_files each return oscap_file_entries instead of raw strings
