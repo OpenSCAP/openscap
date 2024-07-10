@@ -1427,6 +1427,33 @@ static int _generate_kickstart_services(struct kickstart_commands *cmds, int out
 	return 0;
 }
 
+static int _generate_kickstart_packages(struct kickstart_commands *cmds, int output_fd)
+{
+	_write_text_to_fd(output_fd, "# Packages selection (%packages section is required)\n");
+	_write_text_to_fd(output_fd, "%packages\n");
+	/* openscap-scanner and scap-security-guide needs to be installed because we will run oscap in the %post section */
+	_write_text_to_fd(output_fd, "openscap-scanner\n");
+	_write_text_to_fd(output_fd, "scap-security-guide\n");
+	struct oscap_iterator *package_install_it = oscap_iterator_new(cmds->package_install);
+	while (oscap_iterator_has_more(package_install_it)) {
+		char *package = (char *) oscap_iterator_next(package_install_it);
+		_write_text_to_fd(output_fd, package);
+		_write_text_to_fd(output_fd, "\n");
+	}
+	oscap_iterator_free(package_install_it);
+	struct oscap_iterator *package_remove_it = oscap_iterator_new(cmds->package_remove);
+	while (oscap_iterator_has_more(package_remove_it)) {
+		char *package = (char *) oscap_iterator_next(package_remove_it);
+		_write_text_to_fd(output_fd, "-");
+		_write_text_to_fd(output_fd, package);
+		_write_text_to_fd(output_fd, "\n");
+	}
+	oscap_iterator_free(package_remove_it);
+	_write_text_to_fd(output_fd, "%end\n");
+	_write_text_to_fd(output_fd, "\n");
+	return 0;
+}
+
 const char *common_kickstart_header = (
 "# Specify installation method to use for installation\n"
 "# To use a different one comment out the 'url' one below, update\n"
@@ -1524,29 +1551,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 
 	_generate_kickstart_services(&cmds, output_fd);
 
-	_write_text_to_fd(output_fd, "# Packages selection (%packages section is required)\n");
-	_write_text_to_fd(output_fd, "%packages\n");
-	/* openscap-scanner and scap-security-guide needs to be installed because we will run oscap in the %post section */
-	_write_text_to_fd(output_fd, "openscap-scanner\n");
-	_write_text_to_fd(output_fd, "scap-security-guide\n");
-	struct oscap_iterator *package_install_it = oscap_iterator_new(cmds.package_install);
-	while (oscap_iterator_has_more(package_install_it)) {
-		char *package = (char *) oscap_iterator_next(package_install_it);
-		_write_text_to_fd(output_fd, package);
-		_write_text_to_fd(output_fd, "\n");
-	}
-	oscap_iterator_free(package_install_it);
-	struct oscap_iterator *package_remove_it = oscap_iterator_new(cmds.package_remove);
-	while (oscap_iterator_has_more(package_remove_it)) {
-		char *package = (char *) oscap_iterator_next(package_remove_it);
-		_write_text_to_fd(output_fd, "-");
-		_write_text_to_fd(output_fd, package);
-		_write_text_to_fd(output_fd, "\n");
-	}
-	oscap_iterator_free(package_remove_it);
-	_write_text_to_fd(output_fd, "%end\n");
-	_write_text_to_fd(output_fd, "\n");
-
+	_generate_kickstart_packages(&cmds, output_fd);
 
 	_write_text_to_fd(output_fd, "%post\n");
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
