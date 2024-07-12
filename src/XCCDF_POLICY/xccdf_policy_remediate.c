@@ -55,6 +55,7 @@ struct kickstart_commands {
 	struct oscap_list *service_enable;
 	struct oscap_list *service_disable;
 	struct oscap_list *post;
+	struct oscap_list *logvol;
 };
 
 static int _rule_add_info_message(struct xccdf_rule_result *rr, ...)
@@ -906,7 +907,7 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 	int ret = 0;
 	char *dup = strdup(line);
 	char **words = oscap_split(dup, " ");
-	enum states {KS_START, KS_PACKAGE, KS_PACKAGE_INSTALL, KS_PACKAGE_REMOVE, KS_SERVICE, KS_SERVICE_ENABLE, KS_SERVICE_DISABLE, KS_POST};
+	enum states {KS_START, KS_PACKAGE, KS_PACKAGE_INSTALL, KS_PACKAGE_REMOVE, KS_SERVICE, KS_SERVICE_ENABLE, KS_SERVICE_DISABLE, KS_LOGVOL, KS_POST};
 	int state = KS_START;
 	for (unsigned int i = 0; words[i] != NULL; i++) {
 		char *word = words[i];
@@ -918,6 +919,8 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 				state = KS_SERVICE;
 			} else if (!strcmp(word, "post")) {
 				state = KS_POST;
+			} else if (!strcmp(word, "logvol")) {
+				state = KS_LOGVOL;
 			} else {
 				ret = 1;
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported command keyword '%s' in command:'%s'", word, line);
@@ -960,6 +963,11 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 			break;
 		case KS_POST:
 			oscap_list_add(cmds->post, strdup(line + strlen("post ")));
+			/* we need to jump off because we have eaten the whole line */
+			goto cleanup;
+			break;
+		case KS_LOGVOL:
+			oscap_list_add(cmds->logvol, strdup(line));
 			/* we need to jump off because we have eaten the whole line */
 			goto cleanup;
 			break;
@@ -1478,6 +1486,44 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 	return 0;
 }
 
+
+const char *common_partition = (
+"# Initialize (format) all disks (optional)\n"
+"zerombr\n"
+"\n"
+"# The following partition layout scheme assumes disk of size 20GB or larger\n"
+"# Modify size of partitions appropriately to reflect actual machine's hardware\n"
+"#\n"
+"# Remove Linux partitions from the system prior to creating new ones (optional)\n"
+"# --linux	erase all Linux partitions\n"
+"# --initlabel	initialize the disk label to the default based on the underlying architecture\n"
+"clearpart --linux --initlabel\n"
+"\n"
+"# Create primary system partitions (required for installs)\n"
+"part /boot --fstype=xfs --size=512 --fsoptions=\"nodev,nosuid,noexec\"\n"
+"part pv.01 --grow --size=1\n"
+"\n"
+"# Create a Logical Volume Management (LVM) group (optional)\n"
+"volgroup VolGroup pv.01\n"
+"\n"
+"# Create particular logical volumes (optional)\n"
+"\nlogvol / --fstype=xfs --name=root --vgname=VolGroup --size=10240 --grow\n"
+);
+
+static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int output_fd)
+{
+	_write_text_to_fd(output_fd, common_partition);
+	struct oscap_iterator *logvol_it = oscap_iterator_new(cmds->logvol);
+	while (oscap_iterator_has_more(logvol_it)) {
+		char *command = (char *) oscap_iterator_next(logvol_it);
+		_write_text_to_fd(output_fd, command);
+		_write_text_to_fd(output_fd, "\n");
+	}
+	oscap_iterator_free(logvol_it);
+	_write_text_to_fd(output_fd, "logvol swap --name=swap --vgname=VolGroup --size=2016\n");
+	return 0;
+}
+
 const char *common_kickstart_header = (
 "# Specify installation method to use for installation\n"
 "# To use a different one comment out the 'url' one below, update\n"
@@ -1559,6 +1605,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 		.service_enable = oscap_list_new(),
 		.service_disable = oscap_list_new(),
 		.post = oscap_list_new(),
+		.logvol = oscap_list_new(),
 	};
 
 	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
@@ -1572,6 +1619,8 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 
 	_write_text_to_fd(output_fd, common_kickstart_header);
 	_write_text_to_fd(output_fd, "\n");
+
+	_generate_kickstart_logvol(&cmds, output_fd);
 
 	_generate_kickstart_services(&cmds, output_fd);
 
@@ -1589,6 +1638,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	oscap_list_free(cmds.service_enable, free);
 	oscap_list_free(cmds.service_disable, free);
 	oscap_list_free(cmds.post, free);
+	oscap_list_free(cmds.logvol, free);
 	return ret;
 }
 

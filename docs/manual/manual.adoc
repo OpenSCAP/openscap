@@ -1144,7 +1144,8 @@ Supported commands:
 * `package remove package_name` - adds `-package_name` to `%packages` section in the kickstart
 * `service enable service_name` - adds `service_name` to list in the `--enabled=` option in the `services` command in commands section in the kickstart
 * `service disable service_name` - adds `service_name` to list in the `--disabled=` option in the `services` command in commands section in the kickstart
-* `post command` - adds `command` to the `%post`` section the kickstart
+* `post command` - adds `command` to the `%post` section the kickstart
+* `logvol command` - adds `logvol command` to the commands section the kickstart
 
 For example, to generate a kickstart for RHEL 9 STIG profile, run:
 
