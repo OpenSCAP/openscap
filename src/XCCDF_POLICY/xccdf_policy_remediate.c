@@ -1156,7 +1156,9 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 	}
 
 	if (oscap_streq(sys, "urn:xccdf:fix:script:kickstart")) {
-		how_to_apply = "# Customize the kickstart for your deployment, then perform operating system installation using this kickstart.";
+		how_to_apply = "# Review the kickstart and customize the kickstart for your deployment.\n"
+			"# Pay attention to items marked as \"required for security compliance\".\n"
+			"# Install the operating system using this kickstart.";
 		format = "kickstart";
 		remediation_type = "Kickstart";
 	}
@@ -1408,7 +1410,7 @@ static int _generate_kickstart_services(struct kickstart_commands *cmds, int out
 	struct oscap_iterator *service_disable_it = oscap_iterator_new(cmds->service_disable);
 	struct oscap_iterator *service_enable_it = oscap_iterator_new(cmds->service_enable);
 	if (oscap_iterator_has_more(service_disable_it) || oscap_iterator_has_more(service_enable_it)) {
-		_write_text_to_fd(output_fd, "# Disable and enable systemd services based on the SCAP profile\n");
+		_write_text_to_fd(output_fd, "# Disable and enable systemd services (required for security compliance)\n");
 		_write_text_to_fd(output_fd, "services");
 		if (oscap_iterator_has_more(service_disable_it)) {
 			_write_text_to_fd(output_fd, " --disabled=");
@@ -1437,7 +1439,7 @@ static int _generate_kickstart_services(struct kickstart_commands *cmds, int out
 
 static int _generate_kickstart_packages(struct kickstart_commands *cmds, int output_fd)
 {
-	_write_text_to_fd(output_fd, "# Packages selection (%packages section is required)\n");
+	_write_text_to_fd(output_fd, "# Packages selection (required for security compliance)\n");
 	_write_text_to_fd(output_fd, "%packages\n");
 	/* openscap-scanner and scap-security-guide needs to be installed because we will run oscap in the %post section */
 	_write_text_to_fd(output_fd, "openscap-scanner\n");
@@ -1472,7 +1474,7 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 		"oscap xccdf eval --remediate --profile '%s' /usr/share/xml/scap/ssg/content/%s\n",
 		profile_id, basename);
 	free(basename);
-	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening\n");
+	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening (required for security compliance)\n");
 	_write_text_to_fd_and_free(output_fd, oscap_command);
 	struct oscap_iterator *post_it = oscap_iterator_new(cmds->post);
 	while (oscap_iterator_has_more(post_it)) {
@@ -1488,107 +1490,32 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 
 
 const char *common_partition = (
-"# Initialize (format) all disks (optional)\n"
+"# Create partition layout scheme (required for security compliance)\n"
 "zerombr\n"
-"\n"
-"# The following partition layout scheme assumes disk of size 20GB or larger\n"
-"# Modify size of partitions appropriately to reflect actual machine's hardware\n"
-"#\n"
-"# Remove Linux partitions from the system prior to creating new ones (optional)\n"
-"# --all	erase all partitions\n"
-"# --initlabel	initialize the disk label to the default based on the underlying architecture\n"
 "clearpart --all --initlabel\n"
 "reqpart\n"
-"\n"
-"# Create primary system partitions (required for installs)\n"
 "part /boot --fstype=xfs --size=512 --fsoptions=\"nodev,nosuid,noexec\"\n"
 "part pv.01 --grow --size=1\n"
-"\n"
-"# Create a Logical Volume Management (LVM) group (optional)\n"
 "volgroup VolGroup pv.01\n"
-"\n"
-"# Create particular logical volumes (optional)\n"
-"\nlogvol / --fstype=xfs --name=root --vgname=VolGroup --size=10240 --grow\n"
+"logvol / --fstype=xfs --name=root --vgname=VolGroup --size=10240 --grow\n"
+"logvol swap --name=swap --vgname=VolGroup --size=2016\n"
 );
 
 static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int output_fd)
 {
-	_write_text_to_fd(output_fd, common_partition);
 	struct oscap_iterator *logvol_it = oscap_iterator_new(cmds->logvol);
+	if (oscap_iterator_has_more(logvol_it)) {
+		_write_text_to_fd(output_fd, common_partition);
+	}
 	while (oscap_iterator_has_more(logvol_it)) {
 		char *command = (char *) oscap_iterator_next(logvol_it);
 		_write_text_to_fd(output_fd, command);
 		_write_text_to_fd(output_fd, "\n");
 	}
+	_write_text_to_fd(output_fd, "\n");
 	oscap_iterator_free(logvol_it);
-	_write_text_to_fd(output_fd, "logvol swap --name=swap --vgname=VolGroup --size=2016\n");
 	return 0;
 }
-
-const char *common_kickstart_header = (
-"# Specify installation method to use for installation\n"
-"# To use a different one comment out the 'url' one below, update\n"
-"# the selected choice with proper options & un-comment it\n"
-"#\n"
-"# Install from an installation tree on a remote server via FTP or HTTP:\n"
-"# --url		the URL to install from\n"
-"#\n"
-"# Example:\n"
-"#\n"
-"# url --url=http://192.168.122.1/image\n"
-"#\n"
-"# Modify concrete URL in the above example appropriately to reflect the actual\n"
-"# environment machine is to be installed in\n"
-"#\n"
-"# Other possible / supported installation methods:\n"
-"# * install from the first CD-ROM/DVD drive on the system:\n"
-"#\n"
-"# cdrom\n"
-"#\n"
-"# * install from a directory of ISO images on a local drive:\n"
-"#\n"
-"# harddrive --partition=hdb2 --dir=/tmp/install-tree\n"
-"#\n"
-"# * install from provided NFS server:\n"
-"#\n"
-"# nfs --server=<hostname> --dir=<directory> [--opts=<nfs options>]\n"
-"#\n"
-"\n"
-"# Set language to use during installation and the default language to use on the installed system (required)\n"
-"lang en_US.UTF-8\n"
-"\n"
-"# Set system keyboard type / layout (required)\n"
-"keyboard --vckeymap us\n"
-"\n"
-"# Configure network information for target system and activate network devices in the installer environment (optional)\n"
-"# --onboot	enable device at a boot time\n"
-"# --bootproto	method to obtain networking configuration for device (default dhcp)\n"
-"network --onboot yes --bootproto dhcp\n"
-"\n"
-"# Set the system's root password (required)\n"
-"# Plaintext password is: server\n"
-"# Refer to e.g. https://pykickstart.readthedocs.io/en/latest/commands.html#rootpw to see how to create\n"
-"# encrypted password form for different plaintext password\n"
-"rootpw --iscrypted $6$/0RYeeRdK70ynvYz$jH2ZN/80HM6DjndHMxfUF9KIibwipitvizzXDH1zW.fTjyD3RD3tkNdNUaND18B/XqfAUW3vy1uebkBybCuIm0\n"
-"\n"
-"# The selected profile will restrict root login\n"
-"# Add a user that can login and escalate privileges\n"
-"# Plaintext password is: admin123\n"
-"user --name=admin --groups=wheel --password=$6$Ga6ZnIlytrWpuCzO$q0LqT1USHpahzUafQM9jyHCY9BiE5/ahXLNWUMiVQnFGblu0WWGZ1e6icTaCGO4GNgZNtspp1Let/qpM7FMVB0 --iscrypted\n"
-"\n"
-"# State of SELinux on the installed system (optional)\n"
-"# Defaults to enforcing\n"
-"selinux --enforcing\n"
-"\n"
-"# Set the system time zone (required)\n"
-"timezone --utc America/New_York\n"
-"\n"
-"# Specify how the bootloader should be installed (required)\n"
-"# Plaintext password is: password\n"
-"# Refer to e.g. grub2-mkpasswd-pbkdf2 to see how to create\n"
-"# encrypted password form for different plaintext password\n"
-"bootloader --password=grub.pbkdf2.sha512.10000.45912D32B964BA58B91EAF9847F3CCE6F4C962638922543AFFAEE4D29951757F4336C181E6FC9030E07B7D9874DAD696A1B18978D995B1D7F27AF9C38159FDF3.99F65F3896012A0A3D571A99D6E6C695F3C51BE5343A01C1B6907E1C3E1373CB7F250C2BC66C44BB876961E9071F40205006A05189E51C2C14770C70C723F3FD --iscrypted\n"
-);
 
 static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, const char *input_file_name, int output_fd)
 {
@@ -1611,7 +1538,6 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	}
 	oscap_iterator_free(rules_to_fix_it);
 
-	_write_text_to_fd(output_fd, common_kickstart_header);
 	_write_text_to_fd(output_fd, "\n");
 
 	_generate_kickstart_logvol(&cmds, output_fd);
@@ -1622,10 +1548,6 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
 	_generate_kickstart_post(&cmds, profile_id, input_file_name, output_fd);
-
-	_write_text_to_fd(output_fd, "# Reboot after the installation is complete (optional)\n");
-	_write_text_to_fd(output_fd, "# --eject - attempt to eject CD or DVD media before rebooting\n");
-	_write_text_to_fd(output_fd, "reboot --eject\n");
 
 	oscap_list_free(cmds.package_install, free);
 	oscap_list_free(cmds.package_remove, free);
