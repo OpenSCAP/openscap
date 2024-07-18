@@ -58,6 +58,11 @@ struct kickstart_commands {
 	struct oscap_list *logvol;
 };
 
+struct logvol_cmd {
+	char *path;
+	char *size;
+};
+
 static int _rule_add_info_message(struct xccdf_rule_result *rr, ...)
 {
 	va_list ap;
@@ -907,8 +912,20 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 	int ret = 0;
 	char *dup = strdup(line);
 	char **words = oscap_split(dup, " ");
-	enum states {KS_START, KS_PACKAGE, KS_PACKAGE_INSTALL, KS_PACKAGE_REMOVE, KS_SERVICE, KS_SERVICE_ENABLE, KS_SERVICE_DISABLE, KS_LOGVOL, KS_POST};
+	enum states {
+		KS_START,
+		KS_PACKAGE,
+		KS_PACKAGE_INSTALL,
+		KS_PACKAGE_REMOVE,
+		KS_SERVICE,
+		KS_SERVICE_ENABLE,
+		KS_SERVICE_DISABLE,
+		KS_LOGVOL,
+		KS_LOGVOL_SIZE,
+		KS_POST
+	};
 	int state = KS_START;
+	struct logvol_cmd *current_logvol_cmd = NULL;
 	for (unsigned int i = 0; words[i] != NULL; i++) {
 		char *word = words[i];
 		switch (state) {
@@ -967,9 +984,14 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 			goto cleanup;
 			break;
 		case KS_LOGVOL:
-			oscap_list_add(cmds->logvol, strdup(line));
-			/* we need to jump off because we have eaten the whole line */
-			goto cleanup;
+			current_logvol_cmd = malloc(sizeof(struct logvol_cmd));
+			current_logvol_cmd->path = strdup(word);
+			state = KS_LOGVOL_SIZE;
+			break;
+		case KS_LOGVOL_SIZE:
+			current_logvol_cmd->size = strdup(word);
+			oscap_list_add(cmds->logvol, current_logvol_cmd);
+			current_logvol_cmd = NULL;
 			break;
 		default:
 			break;
@@ -1488,17 +1510,34 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 	return 0;
 }
 
+static char *_remove_slash(const char *in)
+{
+	if (in == NULL)
+		return NULL;
+	char *out = malloc(strlen(in));
+	char *p = (char *) in;
+	char *q = out;
+	while (*p != '\0') {
+		if (*p != '/') {
+			*q = *p;
+			q++;
+		}
+		p++;
+	}
+	*q = '\0';
+	return out;
+}
 
 const char *common_partition = (
-"# Create partition layout scheme (required for security compliance)\n"
-"zerombr\n"
-"clearpart --all --initlabel\n"
-"reqpart\n"
-"part /boot --fstype=xfs --size=512 --fsoptions=\"nodev,nosuid,noexec\"\n"
-"part pv.01 --grow --size=1\n"
-"volgroup VolGroup pv.01\n"
-"logvol / --fstype=xfs --name=root --vgname=VolGroup --size=10240 --grow\n"
-"logvol swap --name=swap --vgname=VolGroup --size=2016\n"
+	"# Create partition layout scheme (required for security compliance)\n"
+	"zerombr\n"
+	"clearpart --all --initlabel\n"
+	"reqpart\n"
+	"part /boot --fstype=xfs --size=512 --fsoptions=\"nodev,nosuid,noexec\"\n"
+	"part pv.01 --grow --size=1\n"
+	"volgroup VolGroup pv.01\n"
+	"logvol / --fstype=xfs --name=root --vgname=VolGroup --size=10240 --grow\n"
+	"logvol swap --name=swap --vgname=VolGroup --size=2016\n"
 );
 
 static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int output_fd)
@@ -1508,13 +1547,24 @@ static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int outpu
 		_write_text_to_fd(output_fd, common_partition);
 	}
 	while (oscap_iterator_has_more(logvol_it)) {
-		char *command = (char *) oscap_iterator_next(logvol_it);
-		_write_text_to_fd(output_fd, command);
-		_write_text_to_fd(output_fd, "\n");
+		struct logvol_cmd *command = (struct logvol_cmd *) oscap_iterator_next(logvol_it);
+		char *name = _remove_slash(command->path);
+		char *fmt = oscap_sprintf("logvol %s --fstype=xfs --name=%s --vgname=VolGroup --size=%s\n", command->path, name, command->size);
+		_write_text_to_fd(output_fd, fmt);
+		free(name);
+		free(fmt);
 	}
 	_write_text_to_fd(output_fd, "\n");
 	oscap_iterator_free(logvol_it);
 	return 0;
+}
+
+static void logvol_cmd_free(void *ptr)
+{
+	struct logvol_cmd *cmd = (struct logvol_cmd *) ptr;
+	free(cmd->path);
+	free(cmd->size);
+	free(cmd);
 }
 
 static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, const char *input_file_name, int output_fd)
@@ -1554,7 +1604,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	oscap_list_free(cmds.service_enable, free);
 	oscap_list_free(cmds.service_disable, free);
 	oscap_list_free(cmds.post, free);
-	oscap_list_free(cmds.logvol, free);
+	oscap_list_free(cmds.logvol, logvol_cmd_free);
 	return ret;
 }
 
