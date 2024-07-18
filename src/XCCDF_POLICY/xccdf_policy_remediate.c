@@ -56,6 +56,7 @@ struct kickstart_commands {
 	struct oscap_list *service_disable;
 	struct oscap_list *post;
 	struct oscap_list *logvol;
+	struct oscap_list *bootloader;
 };
 
 struct logvol_cmd {
@@ -922,7 +923,8 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 		KS_SERVICE_DISABLE,
 		KS_LOGVOL,
 		KS_LOGVOL_SIZE,
-		KS_POST
+		KS_POST,
+		KS_BOOTLOADER,
 	};
 	int state = KS_START;
 	struct logvol_cmd *current_logvol_cmd = NULL;
@@ -938,6 +940,8 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 				state = KS_POST;
 			} else if (!strcmp(word, "logvol")) {
 				state = KS_LOGVOL;
+			} else if (!strcmp(word, "bootloader")) {
+				state = KS_BOOTLOADER;
 			} else {
 				ret = 1;
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported command keyword '%s' in command:'%s'", word, line);
@@ -992,6 +996,9 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 			current_logvol_cmd->size = strdup(word);
 			oscap_list_add(cmds->logvol, current_logvol_cmd);
 			current_logvol_cmd = NULL;
+			break;
+		case KS_BOOTLOADER:
+			oscap_list_add(cmds->bootloader, strdup(word));
 			break;
 		default:
 			break;
@@ -1559,6 +1566,27 @@ static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int outpu
 	return 0;
 }
 
+static int _generate_kickstart_bootloader(struct kickstart_commands *cmds, int output_fd)
+{
+	struct oscap_iterator *bl_it = oscap_iterator_new(cmds->bootloader);
+	if (!oscap_iterator_has_more(bl_it)) {
+		oscap_iterator_free(bl_it);
+		return 0;
+	}
+	_write_text_to_fd(output_fd, "# Configure boot loader options (required for security compliance)\n");
+	_write_text_to_fd(output_fd, "bootloader --append=\"");
+	while (oscap_iterator_has_more(bl_it)) {
+		char *optval = (char *) oscap_iterator_next(bl_it);
+		_write_text_to_fd(output_fd, optval);
+		if (oscap_iterator_has_more(bl_it))
+			_write_text_to_fd(output_fd, " ");
+	}
+	_write_text_to_fd(output_fd, "\"\n");
+	_write_text_to_fd(output_fd, "\n");
+	oscap_iterator_free(bl_it);
+	return 0;
+}
+
 static void logvol_cmd_free(void *ptr)
 {
 	struct logvol_cmd *cmd = (struct logvol_cmd *) ptr;
@@ -1577,6 +1605,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 		.service_disable = oscap_list_new(),
 		.post = oscap_list_new(),
 		.logvol = oscap_list_new(),
+		.bootloader = oscap_list_new(),
 	};
 
 	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
@@ -1592,6 +1621,8 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 
 	_generate_kickstart_logvol(&cmds, output_fd);
 
+	_generate_kickstart_bootloader(&cmds, output_fd);
+
 	_generate_kickstart_services(&cmds, output_fd);
 
 	_generate_kickstart_packages(&cmds, output_fd);
@@ -1605,6 +1636,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	oscap_list_free(cmds.service_disable, free);
 	oscap_list_free(cmds.post, free);
 	oscap_list_free(cmds.logvol, logvol_cmd_free);
+	oscap_list_free(cmds.bootloader, free);
 	return ret;
 }
 
