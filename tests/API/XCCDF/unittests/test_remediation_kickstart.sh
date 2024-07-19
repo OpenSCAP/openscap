@@ -23,7 +23,7 @@ $OSCAP xccdf generate fix --fix-type kickstart --output "$kickstart" --profile c
 
 grep -q '# Kickstart for Common hardening profile' "$kickstart"
 grep -q 'services --disabled=telnet --enabled=auditd,rsyslog,sshd' "$kickstart"
-grep -q 'logvol /var/tmp --fstype=xfs --name=vartmp --vgname=VolGroup --size=1024' "$kickstart"
+grep -q 'logvol /var/tmp --name=vartmp --vgname=system --size=1024' "$kickstart"
 grep -q 'mkdir /etc/scap' "$kickstart"
 grep -q '\-usbguard' "$kickstart"
 
