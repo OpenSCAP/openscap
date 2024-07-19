@@ -925,11 +925,14 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 		KS_LOGVOL_SIZE,
 		KS_POST,
 		KS_BOOTLOADER,
+		KS_ERROR
 	};
 	int state = KS_START;
 	struct logvol_cmd *current_logvol_cmd = NULL;
 	for (unsigned int i = 0; words[i] != NULL; i++) {
-		char *word = words[i];
+		char *word = oscap_trim(words[i]);
+		if (*word == '\0')
+			continue;
 		switch (state) {
 		case KS_START:
 			if (!strcmp(word, "package")) {
@@ -972,7 +975,7 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 				state = KS_SERVICE_DISABLE;
 			} else {
 				ret = 1;
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'service' command keyword '%s' in command:'%s'", word, line);
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'service' command keyword '%s' in command: '%s'", word, line);
 				goto cleanup;
 			}
 			break;
@@ -996,10 +999,15 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 			current_logvol_cmd->size = strdup(word);
 			oscap_list_add(cmds->logvol, current_logvol_cmd);
 			current_logvol_cmd = NULL;
+			state = KS_ERROR;
 			break;
 		case KS_BOOTLOADER:
 			oscap_list_add(cmds->bootloader, strdup(word));
 			break;
+		case KS_ERROR:
+			ret = 1;
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected string '%s' in command: '%s'", word, line);
+			goto cleanup;
 		default:
 			break;
 		}
