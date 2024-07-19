@@ -1539,12 +1539,11 @@ const char *common_partition = (
 	"# Create partition layout scheme (required for security compliance)\n"
 	"zerombr\n"
 	"clearpart --all --initlabel\n"
-	"reqpart\n"
-	"part /boot --fstype=xfs --size=512 --fsoptions=\"nodev,nosuid,noexec\"\n"
+	"reqpart --add-boot\n"
 	"part pv.01 --grow --size=1\n"
-	"volgroup VolGroup pv.01\n"
-	"logvol / --fstype=xfs --name=root --vgname=VolGroup --size=10240 --grow\n"
-	"logvol swap --name=swap --vgname=VolGroup --size=2016\n"
+	"volgroup system pv.01\n"
+	"logvol / --name=root --vgname=system --size=2000 --grow\n"
+	"logvol swap --name=swap --vgname=system --size=1000\n"
 );
 
 static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int output_fd)
@@ -1556,7 +1555,7 @@ static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int outpu
 	while (oscap_iterator_has_more(logvol_it)) {
 		struct logvol_cmd *command = (struct logvol_cmd *) oscap_iterator_next(logvol_it);
 		char *name = _remove_slash(command->path);
-		char *fmt = oscap_sprintf("logvol %s --fstype=xfs --name=%s --vgname=VolGroup --size=%s\n", command->path, name, command->size);
+		char *fmt = oscap_sprintf("logvol %s --name=%s --vgname=system --size=%s\n", command->path, name, command->size);
 		_write_text_to_fd(output_fd, fmt);
 		free(name);
 		free(fmt);
