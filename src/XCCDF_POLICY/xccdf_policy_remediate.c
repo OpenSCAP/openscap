@@ -947,7 +947,7 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 				state = KS_BOOTLOADER;
 			} else {
 				ret = 1;
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported command keyword '%s' in command:'%s'", word, line);
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported command keyword '%s' in command: '%s'", word, line);
 				goto cleanup;
 			}
 			break;
