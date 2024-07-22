@@ -1508,10 +1508,11 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 	char *basename = oscap_basename(dup);
 	free(dup);
 	char *oscap_command = oscap_sprintf(
-		"oscap xccdf eval --remediate --profile '%s' /usr/share/xml/scap/ssg/content/%s\n",
+		"oscap xccdf eval --remediate --results-arf /root/openscap_data/arf.xml --report /root/openscap_data/report.html --profile '%s' /usr/share/xml/scap/ssg/content/%s\n",
 		profile_id, basename);
 	free(basename);
 	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening (required for security compliance)\n");
+	_write_text_to_fd(output_fd, "mkdir -p /root/openscap_data\n");
 	_write_text_to_fd_and_free(output_fd, oscap_command);
 	struct oscap_iterator *post_it = oscap_iterator_new(cmds->post);
 	while (oscap_iterator_has_more(post_it)) {
