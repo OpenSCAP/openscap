@@ -1525,24 +1525,6 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 	return 0;
 }
 
-static char *_remove_slash(const char *in)
-{
-	if (in == NULL)
-		return NULL;
-	char *out = malloc(strlen(in));
-	char *p = (char *) in;
-	char *q = out;
-	while (*p != '\0') {
-		if (*p != '/') {
-			*q = *p;
-			q++;
-		}
-		p++;
-	}
-	*q = '\0';
-	return out;
-}
-
 const char *common_partition = (
 	"# Create partition layout scheme (required for security compliance)\n"
 	"zerombr\n"
@@ -1562,7 +1544,8 @@ static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int outpu
 	}
 	while (oscap_iterator_has_more(logvol_it)) {
 		struct logvol_cmd *command = (struct logvol_cmd *) oscap_iterator_next(logvol_it);
-		char *name = _remove_slash(command->path);
+		char *name = strdup(command->path);
+		oscap_strrm(name, "/");
 		char *fmt = oscap_sprintf("logvol %s --name=%s --vgname=system --size=%s\n", command->path, name, command->size);
 		_write_text_to_fd(output_fd, fmt);
 		free(name);
