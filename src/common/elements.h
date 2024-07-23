@@ -64,9 +64,18 @@ xmlNode *oscap_xmlstr_to_dom(xmlNode *parent, const char *elname, const char *co
  * Save XML Document to the file of the given filename.
  * @param filename path to the file
  * @param doc the XML document content
- * @return 1 on success, -1 on failure (oscap_seterr is set appropriatly).
+ * @return 1 on success, -1 on failure (oscap_seterr is set appropriately).
  */
 int oscap_xml_save_filename(const char *filename, xmlDocPtr doc);
+
+/**
+ * Save XML Document to the given file descriptor.
+ * The file descriptor isn't closed by this function.
+ * @param fd file descriptor
+ * @param doc the XML document content
+ * @return 1 on success, -1 on failure (oscap_seterr is set appropriately).
+ */
+int oscap_xml_save_fd(int fd, xmlDocPtr doc);
 
 /**
  * Save XML Document to the file of the given filename and dispose the document afterwards.
