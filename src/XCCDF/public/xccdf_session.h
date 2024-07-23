@@ -240,6 +240,8 @@ OSCAP_API void xccdf_session_set_user_cpe(struct xccdf_session *session, const c
  */
 OSCAP_API void xccdf_session_set_user_tailoring_file(struct xccdf_session *session, const char *user_tailoring_file);
 
+OSCAP_API struct oscap_source *xccdf_session_get_user_tailoring_file(struct xccdf_session *session);
+
 /**
  * Set ID of Tailoring component for the session. This function is applicable
  * only before session loads. It has no effect if run afterwards.

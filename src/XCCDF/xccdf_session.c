@@ -502,6 +502,11 @@ void xccdf_session_set_user_tailoring_file(struct xccdf_session *session, const 
 		oscap_source_new_from_file(user_tailoring_file) : NULL;
 }
 
+struct oscap_source *xccdf_session_get_user_tailoring_file(struct xccdf_session *session)
+{
+	return session->tailoring.user_file;
+}
+
 void xccdf_session_set_user_tailoring_cid(struct xccdf_session *session, const char *user_tailoring_cid)
 {
 	free(session->tailoring.user_component_id);
