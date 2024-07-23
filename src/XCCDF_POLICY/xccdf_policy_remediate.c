@@ -1637,6 +1637,8 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
 	_generate_kickstart_post(&cmds, profile_id, input_file_name, tailoring, output_fd);
 
+	_write_text_to_fd(output_fd, "# Reboot after the installation is complete\nreboot\n");
+
 	oscap_list_free(cmds.package_install, free);
 	oscap_list_free(cmds.package_remove, free);
 	oscap_list_free(cmds.service_enable, free);
