@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<ns0:Tailoring xmlns:ns0="http://checklists.nist.gov/xccdf/1.2" id="xccdf_auto_tailoring_default">
+	<ns0:benchmark href="tests/API/XCCDF/unittests/test_remediation_kickstart.ds.xml"/>
+	<ns0:version time="2024-07-23T17:02:55.239590">1</ns0:version>
+	<ns0:Profile id="xccdf_org.openscap.www_profile_custom" extends="xccdf_org.openscap.www_profile_common">
+		<ns0:title override="false"/>
+		<ns0:select idref="xccdf_org.openscap.www_rule_2" selected="false"/>
+		<ns0:select idref="xccdf_org.openscap.www_rule_4" selected="false"/>
+		<ns0:select idref="xccdf_org.openscap.www_rule_5" selected="false"/>
+		<ns0:select idref="xccdf_org.openscap.www_rule_6" selected="false"/>
+	</ns0:Profile>
+</ns0:Tailoring>

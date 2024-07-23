@@ -19,6 +19,23 @@ function test_normal {
     rm -rf "$stderr"
 }
 
+function test_tailoring {
+    kickstart=$(mktemp)
+    stderr=$(mktemp)
+
+    $OSCAP xccdf generate fix --tailoring-file "$srcdir/test_remediation_kickstart.tailoring.xml" --fix-type kickstart --output "$kickstart" --profile custom "$srcdir/test_remediation_kickstart.ds.xml"
+
+    grep -q 'services --enabled=auditd,rsyslog' "$kickstart"
+    ! grep -q 'openssh-server' "$kickstart"
+    grep -q 'cat >/root/openscap_data/tailoring.xml <<END_OF_TAILORING' "$kickstart"
+    grep -q 'ns0:Tailoring' "$kickstart"
+    grep -q 'oscap xccdf eval --remediate --tailoring-file /root/openscap_data/tailoring.xml' "$kickstart"
+
+    rm -rf "$kickstart"
+    rm -rf "$stderr"
+}
+
+
 function test_results_oriented {
     kickstart=$(mktemp)
     stderr=$(mktemp)
@@ -81,6 +98,7 @@ function test_error_unknown {
 }
 
 test_normal
+test_tailoring
 test_results_oriented
 test_error_service
 test_error_package
