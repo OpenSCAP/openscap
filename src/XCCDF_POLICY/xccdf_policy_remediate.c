@@ -1507,7 +1507,7 @@ static void _write_tailoring_to_fd(struct oscap_source *tailoring, int output_fd
 {
 	if (tailoring == NULL)
 		return;
-	_write_text_to_fd(output_fd, "cat >/root/openscap_data/tailoring.xml <<END_OF_TAILORING\n");
+	_write_text_to_fd(output_fd, "cat >/root/oscap_tailoring.xml <<END_OF_TAILORING\n");
 	oscap_source_to_fd(tailoring, output_fd);
 	_write_text_to_fd(output_fd, "END_OF_TAILORING\n");
 }
@@ -1517,9 +1517,9 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 	_write_text_to_fd(output_fd, "%post\n");
 	const char *fmt;
 	if (tailoring != NULL) {
-		fmt = "oscap xccdf eval --remediate --tailoring-file /root/openscap_data/tailoring.xml --results-arf /root/openscap_data/arf.xml --report /root/openscap_data/report.html --profile '%s' /usr/share/xml/scap/ssg/content/%s\n";
+		fmt = "oscap xccdf eval --remediate --tailoring-file /root/oscap_tailoring.xml --results-arf /root/oscap_arf.xml --report /root/oscap_report.html --profile '%s' /usr/share/xml/scap/ssg/content/%s\n";
 	} else {
-		fmt = "oscap xccdf eval --remediate --results-arf /root/openscap_data/arf.xml --report /root/openscap_data/report.html --profile '%s' /usr/share/xml/scap/ssg/content/%s\n";
+		fmt = "oscap xccdf eval --remediate --results-arf /root/oscap_arf.xml --report /root/oscap_report.html --profile '%s' /usr/share/xml/scap/ssg/content/%s\n";
 	}
 	char *dup = strdup(input_path);
 	char *basename = oscap_basename(dup);
@@ -1527,7 +1527,6 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 	char *oscap_command = oscap_sprintf(fmt, profile_id, basename);
 	free(basename);
 	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening (required for security compliance)\n");
-	_write_text_to_fd(output_fd, "mkdir -p /root/openscap_data\n");
 	_write_tailoring_to_fd(tailoring, output_fd);
 	_write_text_to_fd_and_free(output_fd, oscap_command);
 	struct oscap_iterator *post_it = oscap_iterator_new(cmds->post);

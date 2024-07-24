@@ -27,9 +27,9 @@ function test_tailoring {
 
     grep -q 'services --enabled=auditd,rsyslog' "$kickstart"
     ! grep -q 'openssh-server' "$kickstart"
-    grep -q 'cat >/root/openscap_data/tailoring.xml <<END_OF_TAILORING' "$kickstart"
+    grep -q 'cat >/root/oscap_tailoring.xml <<END_OF_TAILORING' "$kickstart"
     grep -q 'ns0:Tailoring' "$kickstart"
-    grep -q 'oscap xccdf eval --remediate --tailoring-file /root/openscap_data/tailoring.xml' "$kickstart"
+    grep -q 'oscap xccdf eval --remediate --tailoring-file /root/oscap_tailoring.xml' "$kickstart"
 
     rm -rf "$kickstart"
     rm -rf "$stderr"
