@@ -1514,7 +1514,8 @@ static void _write_tailoring_to_fd(struct oscap_source *tailoring, int output_fd
 
 static int _generate_kickstart_post(struct kickstart_commands *cmds, const char *profile_id, const char *input_path, struct oscap_source *tailoring, int output_fd)
 {
-	_write_text_to_fd(output_fd, "%post\n");
+	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening (required for security compliance)\n");
+	_write_text_to_fd(output_fd, "%post --erroronfail\n");
 	const char *fmt;
 	if (tailoring != NULL) {
 		fmt = "oscap xccdf eval --remediate --tailoring-file /root/oscap_tailoring.xml --results-arf /root/oscap_arf.xml --report /root/oscap_report.html --profile '%s' /usr/share/xml/scap/ssg/content/%s\n";
@@ -1526,9 +1527,9 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 	free(dup);
 	char *oscap_command = oscap_sprintf(fmt, profile_id, basename);
 	free(basename);
-	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening (required for security compliance)\n");
 	_write_tailoring_to_fd(tailoring, output_fd);
 	_write_text_to_fd_and_free(output_fd, oscap_command);
+	_write_text_to_fd(output_fd, "[ $? -eq 0 -o $? -eq 2 ]\n");
 	struct oscap_iterator *post_it = oscap_iterator_new(cmds->post);
 	while (oscap_iterator_has_more(post_it)) {
 		char *command = (char *) oscap_iterator_next(post_it);
