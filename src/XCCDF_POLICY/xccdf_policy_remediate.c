@@ -1625,6 +1625,17 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	oscap_iterator_free(rules_to_fix_it);
 
 	_write_text_to_fd(output_fd, "\n");
+	const char *common = (
+		"# Default values for automated installation\n"
+		"lang en_US.UTF-8\n"
+		"keyboard --vckeymap us\n"
+		"timezone --utc America/New_York\n"
+		"\n"
+		"# Root password is required for system rescue tasks\n"
+		"rootpw changeme\n"
+		"\n"
+	);
+	_write_text_to_fd(output_fd, common);
 
 	_generate_kickstart_logvol(&cmds, output_fd);
 
