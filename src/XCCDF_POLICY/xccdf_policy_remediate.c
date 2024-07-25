@@ -1553,11 +1553,26 @@ const char *common_partition = (
 	"logvol swap --name=swap --vgname=system --size=1000\n"
 );
 
+/* Fallback partition layout for profiles that don't specify partitioning layout */
+/* We need to specify at least some layout in the kickstart to make the installation fully automated. */
+const char *fallback_partition = (
+	"# Create partition layout scheme (optional)\n"
+	"zerombr\n"
+	"clearpart --all --initlabel\n"
+	"reqpart --add-boot\n"
+	"part pv.01 --grow --size=1\n"
+	"volgroup system pv.01\n"
+	"logvol / --name=root --vgname=system --size=10000 --grow\n"
+	"logvol swap --name=swap --vgname=system --size=1000\n"
+);
+
 static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int output_fd)
 {
 	struct oscap_iterator *logvol_it = oscap_iterator_new(cmds->logvol);
 	if (oscap_iterator_has_more(logvol_it)) {
 		_write_text_to_fd(output_fd, common_partition);
+	} else {
+		_write_text_to_fd(output_fd, fallback_partition);
 	}
 	while (oscap_iterator_has_more(logvol_it)) {
 		struct logvol_cmd *command = (struct logvol_cmd *) oscap_iterator_next(logvol_it);
