@@ -1559,11 +1559,7 @@ const char *fallback_partition = (
 	"# Create partition layout scheme (optional)\n"
 	"zerombr\n"
 	"clearpart --all --initlabel\n"
-	"reqpart --add-boot\n"
-	"part pv.01 --grow --size=1\n"
-	"volgroup system pv.01\n"
-	"logvol / --name=root --vgname=system --size=10000 --grow\n"
-	"logvol swap --name=swap --vgname=system --size=1000\n"
+	"autopart --type=lvm\n"
 );
 
 static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int output_fd)
