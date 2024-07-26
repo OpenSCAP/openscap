@@ -550,4 +550,13 @@ int oscap_open_writable(const char *filename);
  */
 bool oscap_path_startswith(const char *path, const char *prefix);
 
+/**
+ * Concatenate 2 strings
+ * Convenience wrapper over strncat.
+ * @param str1 string 1
+ * @param str2 string 2
+ * @return string 1 with string 2 appended inside
+ */
+char *oscap_concat(char *str1, char *str2);
+
 #endif              /* OSCAP_UTIL_H_ */
