@@ -14,6 +14,7 @@ function test_normal {
     grep -q 'logvol /var/tmp --name=vartmp --vgname=system --size=1024' "$kickstart"
     grep -q 'mkdir /etc/scap' "$kickstart"
     grep -q '\-usbguard' "$kickstart"
+    grep -q 'bootloader --append="quick audit=1"' "$kickstart"
 
     rm -rf "$kickstart"
     rm -rf "$stderr"

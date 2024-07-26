@@ -59,6 +59,7 @@
         <select idref="xccdf_org.openscap.www_rule_4" selected="true"/>
         <select idref="xccdf_org.openscap.www_rule_5" selected="true"/>
         <select idref="xccdf_org.openscap.www_rule_6" selected="true"/>
+        <select idref="xccdf_org.openscap.www_rule_7" selected="true"/>
       </Profile>
       <Rule selected="false" id="xccdf_org.openscap.www_rule_1">
         <title>Rule 1: Enable Audit Service</title>
@@ -102,6 +103,13 @@
         <title>Rule 6: Configure all partitions</title>
         <fix system="urn:xccdf:fix:script:kickstart">
           logvol /var/tmp 1024
+        </fix>
+      </Rule>
+      <Rule selected="false" id="xccdf_org.openscap.www_rule_7">
+        <title>Rule 6: Bootloader</title>
+        <fix system="urn:xccdf:fix:script:kickstart">
+          bootloader quick
+          bootloader audit=1
         </fix>
       </Rule>
     </Benchmark>
