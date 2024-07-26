@@ -60,6 +60,8 @@
         <select idref="xccdf_org.openscap.www_rule_5" selected="true"/>
         <select idref="xccdf_org.openscap.www_rule_6" selected="true"/>
         <select idref="xccdf_org.openscap.www_rule_7" selected="true"/>
+        <select idref="xccdf_org.openscap.www_rule_8" selected="true"/>
+        <select idref="xccdf_org.openscap.www_rule_9" selected="true"/>
       </Profile>
       <Rule selected="false" id="xccdf_org.openscap.www_rule_1">
         <title>Rule 1: Enable Audit Service</title>
@@ -95,8 +97,6 @@
           # the service commands will end up in the command section
           service enable sshd
           service disable telnet
-
-          post mkdir /etc/scap
         </fix>
       </Rule>
       <Rule selected="false" id="xccdf_org.openscap.www_rule_6">
@@ -110,6 +110,30 @@
         <fix system="urn:xccdf:fix:script:kickstart">
           bootloader quick
           bootloader audit=1
+        </fix>
+      </Rule>
+      <Rule selected="false" id="xccdf_org.openscap.www_rule_8">
+        <title>Rule 8: Extra nochroot %post section</title>
+        <fix system="urn:xccdf:fix:script:kickstart">
+          %post --nochroot
+          mkdir -p /etc/ddfds
+          %end
+        </fix>
+      </Rule>
+      <Rule selected="false" id="xccdf_org.openscap.www_rule_9">
+        <title>Rule 9: Crazy remediation</title>
+        <fix system="urn:xccdf:fix:script:kickstart">
+          %post --nochroot
+          mkdir -p /etc/abcd
+          %end
+          service disable httpd
+          # other post section
+          %post
+          rm -rf /etc/xyz
+          # create a new path
+          feel /etc/xyz
+          %end
+          package install podman
         </fix>
       </Rule>
     </Benchmark>

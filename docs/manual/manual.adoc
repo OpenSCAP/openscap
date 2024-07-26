@@ -1130,14 +1130,19 @@ To generate a kickstart, use `oscap xccdf generate fix` command with the `--fix-
 The kickstart will be generated from kickstart snippets in XCCDF rules in the input SCAP content.
 The kickstart snippets need to be stored in `<fix>` elements with `system` attribute set to `urn:xccdf:fix:script:kickstart`.
 
-When processing the kickstart snippets comming from the XCCDF Rules, each line is processed separately.
+When processing the kickstart snippets from the XCCDF Rules, each line is processed separately.
 The following rules are applied on each line:
 
-* lines starting with `#` are ignored
-* empty lines are ignored
-* lines starting with a supported command are processed
-* lines starting with something else than a supported command are dropped
-* excess whitespace are trimmed
+* Lines starting with `#` are ignored.
+* Empty lines are ignored.
+* If a line starts with a supported block keyword, that line and all following lines until a line starting with `%end` are considered a block. Blocks are propagated to the output without any processing.
+* Lines starting with a supported command are processed.
+* Lines starting with something else than a supported command are dropped and error is produced.
+* Excess whitespace are trimmed.
+
+Supported block keywords:
+
+* `%post` - represents a start of a `%post` kickstart section, all lines until corresponding '%end' are overthrown
 
 Supported commands:
 
@@ -1145,7 +1150,6 @@ Supported commands:
 * `package remove package_name` - adds `-package_name` to `%packages` section in the kickstart
 * `service enable service_name` - adds `service_name` to list in the `--enabled=` option in the `services` command in commands section in the kickstart
 * `service disable service_name` - adds `service_name` to list in the `--disabled=` option in the `services` command in commands section in the kickstart
-* `post command` - adds `command` to the `%post` section the kickstart
 * `logvol path size` - adds `logvol` entry to the commands section of the kickstart that will mount a partition of the given `size` in MB to the given `path` as a mount point
 * `bootloader option` or `bootloader option=value` - adds `option` or `option=value` to the list in the `--append=` option in the `bootloader` command in commands section in the kickstart
 

@@ -8,5 +8,8 @@
 		<ns0:select idref="xccdf_org.openscap.www_rule_4" selected="false"/>
 		<ns0:select idref="xccdf_org.openscap.www_rule_5" selected="false"/>
 		<ns0:select idref="xccdf_org.openscap.www_rule_6" selected="false"/>
+		<ns0:select idref="xccdf_org.openscap.www_rule_7" selected="false"/>
+		<ns0:select idref="xccdf_org.openscap.www_rule_8" selected="false"/>
+		<ns0:select idref="xccdf_org.openscap.www_rule_9" selected="false"/>
 	</ns0:Profile>
 </ns0:Tailoring>

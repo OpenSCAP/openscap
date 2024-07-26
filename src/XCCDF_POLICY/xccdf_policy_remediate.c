@@ -923,7 +923,6 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 		KS_SERVICE_DISABLE,
 		KS_LOGVOL,
 		KS_LOGVOL_SIZE,
-		KS_POST,
 		KS_BOOTLOADER,
 		KS_ERROR
 	};
@@ -939,8 +938,6 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 				state = KS_PACKAGE;
 			} else if (!strcmp(word, "service")) {
 				state = KS_SERVICE;
-			} else if (!strcmp(word, "post")) {
-				state = KS_POST;
 			} else if (!strcmp(word, "logvol")) {
 				state = KS_LOGVOL;
 			} else if (!strcmp(word, "bootloader")) {
@@ -985,11 +982,6 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 		case KS_SERVICE_DISABLE:
 			oscap_list_add(cmds->service_disable, strdup(word));
 			break;
-		case KS_POST:
-			oscap_list_add(cmds->post, strdup(line + strlen("post ")));
-			/* we need to jump off because we have eaten the whole line */
-			goto cleanup;
-			break;
 		case KS_LOGVOL:
 			current_logvol_cmd = malloc(sizeof(struct logvol_cmd));
 			current_logvol_cmd->path = strdup(word);
@@ -1028,12 +1020,40 @@ static int _xccdf_policy_rule_generate_kickstart_fix(struct xccdf_policy *policy
 	}
 	char *dup = strdup(fix_text);
 	char **lines = oscap_split(dup, "\n");
+	enum states {
+		KS_R_P_NORMAL,
+		KS_R_P_POST_BLOCK
+	};
+	int state = KS_R_P_NORMAL;
+	char *block = NULL;
 	for (unsigned int i = 0; lines[i] != NULL; i++) {
 		char *line = lines[i];
-		oscap_trim(line);
-		if (*line == '#' || *line == '\0')
-			continue;
-		_parse_line(line, cmds);
+		char *trim_line = oscap_trim(strdup(line));
+		switch (state) {
+		case KS_R_P_NORMAL:
+			if (oscap_str_startswith(trim_line, "%post")) {
+				state = KS_R_P_POST_BLOCK;
+				block = strdup(trim_line);
+				block = oscap_concat(block, "\n");
+			} else if (*trim_line != '#' && *trim_line != '\0') {
+				_parse_line(trim_line, cmds);
+			}
+			break;
+		case KS_R_P_POST_BLOCK:
+			if (oscap_str_startswith(trim_line, "%end")) {
+				state = KS_R_P_NORMAL;
+				block = oscap_concat(block, trim_line);
+				block = oscap_concat(block, "\n");
+				oscap_list_add(cmds->post, block);
+				block = NULL;
+			} else {
+				block = oscap_concat(block, line);
+				block = oscap_concat(block, "\n");
+			}
+		default:
+			break;
+		}
+		free(trim_line);
 	}
 	free(lines);
 	free(dup);
@@ -1512,7 +1532,7 @@ static void _write_tailoring_to_fd(struct oscap_source *tailoring, int output_fd
 	_write_text_to_fd(output_fd, "END_OF_TAILORING\n");
 }
 
-static int _generate_kickstart_post(struct kickstart_commands *cmds, const char *profile_id, const char *input_path, struct oscap_source *tailoring, int output_fd)
+static int _generate_kickstart_oscap_post(struct kickstart_commands *cmds, const char *profile_id, const char *input_path, struct oscap_source *tailoring, int output_fd)
 {
 	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening (required for security compliance)\n");
 	_write_text_to_fd(output_fd, "%post --erroronfail\n");
@@ -1530,15 +1550,21 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, const char 
 	_write_tailoring_to_fd(tailoring, output_fd);
 	_write_text_to_fd_and_free(output_fd, oscap_command);
 	_write_text_to_fd(output_fd, "[ $? -eq 0 -o $? -eq 2 ] || exit 1\n");
+	_write_text_to_fd(output_fd, "%end\n");
+	_write_text_to_fd(output_fd, "\n");
+	return 0;
+}
+
+static int _generate_kickstart_post(struct kickstart_commands *cmds, int output_fd)
+{
 	struct oscap_iterator *post_it = oscap_iterator_new(cmds->post);
 	while (oscap_iterator_has_more(post_it)) {
-		char *command = (char *) oscap_iterator_next(post_it);
-		_write_text_to_fd(output_fd, command);
+		_write_text_to_fd(output_fd, "# Additional %post section (required for security compliance)\n");
+		char *post_content = (char *) oscap_iterator_next(post_it);
+		_write_text_to_fd(output_fd, post_content);
 		_write_text_to_fd(output_fd, "\n");
 	}
 	oscap_iterator_free(post_it);
-	_write_text_to_fd(output_fd, "%end\n");
-	_write_text_to_fd(output_fd, "\n");
 	return 0;
 }
 
@@ -1657,7 +1683,9 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	_generate_kickstart_packages(&cmds, output_fd);
 
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
-	_generate_kickstart_post(&cmds, profile_id, input_file_name, tailoring, output_fd);
+	_generate_kickstart_oscap_post(&cmds, profile_id, input_file_name, tailoring, output_fd);
+
+	_generate_kickstart_post(&cmds, output_fd);
 
 	_write_text_to_fd(output_fd, "# Reboot after the installation is complete\nreboot\n");
 
