@@ -54,6 +54,7 @@ struct kickstart_commands {
 	struct oscap_list *package_remove;
 	struct oscap_list *service_enable;
 	struct oscap_list *service_disable;
+	struct oscap_list *pre;
 	struct oscap_list *post;
 	struct oscap_list *logvol;
 	struct oscap_list *bootloader;
@@ -1022,6 +1023,7 @@ static int _xccdf_policy_rule_generate_kickstart_fix(struct xccdf_policy *policy
 	char **lines = oscap_split(dup, "\n");
 	enum states {
 		KS_R_P_NORMAL,
+		KS_R_P_PRE_BLOCK,
 		KS_R_P_POST_BLOCK
 	};
 	int state = KS_R_P_NORMAL;
@@ -1031,12 +1033,28 @@ static int _xccdf_policy_rule_generate_kickstart_fix(struct xccdf_policy *policy
 		char *trim_line = oscap_trim(strdup(line));
 		switch (state) {
 		case KS_R_P_NORMAL:
-			if (oscap_str_startswith(trim_line, "%post")) {
+			if (oscap_str_startswith(trim_line, "%pre")) {
+				state = KS_R_P_PRE_BLOCK;
+				block = strdup(trim_line);
+				block = oscap_concat(block, "\n");
+			} else if (oscap_str_startswith(trim_line, "%post")) {
 				state = KS_R_P_POST_BLOCK;
 				block = strdup(trim_line);
 				block = oscap_concat(block, "\n");
 			} else if (*trim_line != '#' && *trim_line != '\0') {
 				_parse_line(trim_line, cmds);
+			}
+			break;
+		case KS_R_P_PRE_BLOCK:
+			if (oscap_str_startswith(trim_line, "%end")) {
+				state = KS_R_P_NORMAL;
+				block = oscap_concat(block, trim_line);
+				block = oscap_concat(block, "\n");
+				oscap_list_add(cmds->pre, block);
+				block = NULL;
+			} else {
+				block = oscap_concat(block, line);
+				block = oscap_concat(block, "\n");
 			}
 			break;
 		case KS_R_P_POST_BLOCK:
@@ -1555,6 +1573,19 @@ static int _generate_kickstart_oscap_post(struct kickstart_commands *cmds, const
 	return 0;
 }
 
+static int _generate_kickstart_pre(struct kickstart_commands *cmds, int output_fd)
+{
+	struct oscap_iterator *pre_it = oscap_iterator_new(cmds->pre);
+	while (oscap_iterator_has_more(pre_it)) {
+		_write_text_to_fd(output_fd, "# Additional %pre section (required for security compliance)\n");
+		char *pre_content = (char *) oscap_iterator_next(pre_it);
+		_write_text_to_fd(output_fd, pre_content);
+		_write_text_to_fd(output_fd, "\n");
+	}
+	oscap_iterator_free(pre_it);
+	return 0;
+}
+
 static int _generate_kickstart_post(struct kickstart_commands *cmds, int output_fd)
 {
 	struct oscap_iterator *post_it = oscap_iterator_new(cmds->post);
@@ -1647,6 +1678,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 		.package_remove = oscap_list_new(),
 		.service_enable = oscap_list_new(),
 		.service_disable = oscap_list_new(),
+		.pre = oscap_list_new(),
 		.post = oscap_list_new(),
 		.logvol = oscap_list_new(),
 		.bootloader = oscap_list_new(),
@@ -1674,6 +1706,8 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	);
 	_write_text_to_fd(output_fd, common);
 
+	_generate_kickstart_pre(&cmds, output_fd);
+
 	_generate_kickstart_logvol(&cmds, output_fd);
 
 	_generate_kickstart_bootloader(&cmds, output_fd);
@@ -1693,6 +1727,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	oscap_list_free(cmds.package_remove, free);
 	oscap_list_free(cmds.service_enable, free);
 	oscap_list_free(cmds.service_disable, free);
+	oscap_list_free(cmds.pre, free);
 	oscap_list_free(cmds.post, free);
 	oscap_list_free(cmds.logvol, logvol_cmd_free);
 	oscap_list_free(cmds.bootloader, free);

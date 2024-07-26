@@ -1142,6 +1142,7 @@ The following rules are applied on each line:
 
 Supported block keywords:
 
+* `%pre` - represents a start of a `%pre` kickstart section, all lines until corresponding '%end' are overthrown
 * `%post` - represents a start of a `%post` kickstart section, all lines until corresponding '%end' are overthrown
 
 Supported commands:
