@@ -1123,19 +1123,20 @@ $ oscap xccdf generate fix --profile ospp --fix-type blueprint /usr/share/xml/sc
 === Generating RHEL Kickstarts
 
 OpenSCAP can generate RHEL kickstarts which can be used for unattended installation of RHEL, Fedora and similar systems.
-Information about RHEL kickstarts and their syntax can be found at https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/performing_an_advanced_rhel_9_installation/kickstart_references[Kickstart references].
+Information about RHEL kickstarts and their syntax can be found at https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/performing_an_advanced_rhel_9_installation/kickstart_references[Kickstart references] and https://pykickstart.readthedocs.io/en/latest/kickstart-docs.html[Kickstart Documentation].
 
 To generate a kickstart, use `oscap xccdf generate fix` command with the `--fix-type kickstart` option.
 
 The kickstart will be generated from kickstart snippets in XCCDF rules in the input SCAP content.
-The kickstart snippets need to be stored in `<fix>` elements with `system` attribute set to `urn:xccdf:fix:script:kickstart`.
+The kickstart snippets need to be present in `<fix>` elements with `system` attribute set to `urn:xccdf:fix:script:kickstart`.
 
 When processing the kickstart snippets from the XCCDF Rules, each line is processed separately.
-The following rules are applied on each line:
+If a line starts with a supported block keyword, that line and all following lines until a line starting with `%end` are considered a block.
+Blocks are propagated to the output without any processing.
+If a line isn't part of a block, the following rules are applied:
 
 * Lines starting with `#` are ignored.
 * Empty lines are ignored.
-* If a line starts with a supported block keyword, that line and all following lines until a line starting with `%end` are considered a block. Blocks are propagated to the output without any processing.
 * Lines starting with a supported command are processed.
 * Lines starting with something else than a supported command are dropped and error is produced.
 * Excess whitespace are trimmed.
@@ -1161,6 +1162,9 @@ $ oscap xccdf generate fix --profile stig --fix-type kickstart /usr/share/xml/sc
 ----
 
 The generated kickstart file needs to be reviewed and customized for the intended deployment.
+The kickstart sets some default values to makte automated installation possible.
+These default values are usually good enough but sometimes need to be changed manually.
+Pay special attention to the items marked as `required for security compliance`.
 
 NOTE: The `kickstart` fix type shouldn't be confused with `anaconda` fix type.
 The `anaconda` fix type is used by the OSCAP Anaconda Addon and shouldn't be used directly by users.
