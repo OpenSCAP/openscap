@@ -106,7 +106,7 @@
         </fix>
       </Rule>
       <Rule selected="false" id="xccdf_org.openscap.www_rule_7">
-        <title>Rule 6: Bootloader</title>
+        <title>Rule 7: Bootloader</title>
         <fix system="urn:xccdf:fix:script:kickstart">
           bootloader quick
           bootloader audit=1
