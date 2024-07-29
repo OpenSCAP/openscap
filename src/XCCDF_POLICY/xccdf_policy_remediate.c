@@ -58,6 +58,7 @@ struct kickstart_commands {
 	struct oscap_list *post;
 	struct oscap_list *logvol;
 	struct oscap_list *bootloader;
+	bool enable_kdump;
 };
 
 struct logvol_cmd {
@@ -925,6 +926,7 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 		KS_LOGVOL,
 		KS_LOGVOL_SIZE,
 		KS_BOOTLOADER,
+		KS_KDUMP,
 		KS_ERROR
 	};
 	int state = KS_START;
@@ -943,6 +945,8 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 				state = KS_LOGVOL;
 			} else if (!strcmp(word, "bootloader")) {
 				state = KS_BOOTLOADER;
+			} else if (!strcmp(word, "kdump")) {
+				state = KS_KDUMP;
 			} else {
 				ret = 1;
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported command keyword '%s' in command: '%s'", word, line);
@@ -996,6 +1000,15 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 			break;
 		case KS_BOOTLOADER:
 			oscap_list_add(cmds->bootloader, strdup(word));
+			break;
+		case KS_KDUMP:
+			if (!strcmp(word, "disable")) {
+				cmds->enable_kdump = false;
+			} else {
+				ret = 1;
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'kdump' command keyword '%s' in command: '%s'", word, line);
+				goto cleanup;
+			}
 			break;
 		case KS_ERROR:
 			ret = 1;
@@ -1656,6 +1669,19 @@ static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int outpu
 	return 0;
 }
 
+static int _generate_kickstart_kdump(struct kickstart_commands *cmds, int output_fd)
+{
+	if (!cmds->enable_kdump) {
+		_write_text_to_fd(output_fd,
+			"# Disable the kdump kernel crash dumping mechanism (required for security compliance)\n"
+			"%addon com_redhat_kdump --disable\n"
+			"%end\n"
+			"\n"
+		);
+	}
+	return 0;
+}
+
 static int _generate_kickstart_bootloader(struct kickstart_commands *cmds, int output_fd)
 {
 	struct oscap_iterator *bl_it = oscap_iterator_new(cmds->bootloader);
@@ -1697,6 +1723,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 		.post = oscap_list_new(),
 		.logvol = oscap_list_new(),
 		.bootloader = oscap_list_new(),
+		.enable_kdump = true,
 	};
 
 	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
@@ -1726,6 +1753,8 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	_generate_kickstart_logvol(&cmds, output_fd);
 
 	_generate_kickstart_bootloader(&cmds, output_fd);
+
+	_generate_kickstart_kdump(&cmds, output_fd);
 
 	_generate_kickstart_services(&cmds, output_fd);
 

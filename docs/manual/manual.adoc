@@ -1154,6 +1154,7 @@ Supported commands:
 * `service disable service_name` - adds `service_name` to list in the `--disabled=` option in the `services` command in commands section in the kickstart
 * `logvol path size` - adds `logvol` entry to the commands section of the kickstart that will mount a partition of the given `size` in MB to the given `path` as a mount point
 * `bootloader option` or `bootloader option=value` - adds `option` or `option=value` to the list in the `--append=` option in the `bootloader` command in commands section in the kickstart
+* `kdump disable` - this will disable K-Dump by adding the `com_redhat_kdump` Addon section to the kickstart with a `--disable` option
 
 For example, to generate a kickstart for RHEL 9 STIG profile, run:
 

@@ -134,6 +134,7 @@
           feel /etc/xyz
           %end
           package install podman
+          kdump disable
         </fix>
       </Rule>
     </Benchmark>
