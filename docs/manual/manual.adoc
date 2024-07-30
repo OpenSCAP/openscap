@@ -6,7 +6,7 @@
 :openscap_web: https://open-scap.org/
 :oscap_git:     https://github.com/OpenSCAP/openscap
 :devel_manual:  https://github.com/OpenSCAP/openscap/blob/main/docs/developer/developer.adoc
-:ssg_git:       https://github.com/OpenSCAP/scap-security-guide
+:ssg_git:       https://github.com/ComplianceAsCode/content
 :xmlsec:        https://www.aleksey.com/xmlsec/
 :xslt:          http://www.w3.org/TR/xslt
 :xsl:           http://www.w3.org/Style/XSL/
@@ -19,13 +19,13 @@
 :cce:   https://cce.mitre.org/
 :oval:  https://oval.mitre.org/
 :pci_dss: https://www.pcisecuritystandards.org/security_standards/
-:usgcb: http://usgcb.nist.gov/
 :stig:    http://iase.disa.mil/stigs/Pages/index.aspx
 :scap_1-3: https://csrc.nist.gov/Projects/Security-Content-Automation-Protocol/SCAP-Releases/scap-1-3
 :scap_1-2: https://csrc.nist.gov/Projects/Security-Content-Automation-Protocol/SCAP-Releases/SCAP-1-2
 :scap_1-1: https://csrc.nist.gov/Projects/Security-Content-Automation-Protocol/SCAP-Releases/SCAP-1-1
 :scap_1-0: https://csrc.nist.gov/Projects/Security-Content-Automation-Protocol/SCAP-Releases/SCAP-1-0
 :nvd:       https://web.nvd.nist.gov/view/ncp/repository
+:cis: https://www.cisecurity.org/cis-benchmarks
 :toc:
 :toclevels: 4
 :toc-placement: preamble
@@ -69,11 +69,11 @@ The `oscap` tool is a part of the {openscap_web}[OpenSCAP] project. If you're
 interested in a graphical alternative to this tool please visit
 {workbench_url}[SCAP Workbench] page.
 
-We will use the {ssg}[SCAP Security Guide] project to provide us the SCAP
+We will use the {ssg_git}[ComplianceAsCode] (scap-security-guide) project to provide us the SCAP
 content. It provides security policies written in a form of SCAP documents
 covering many areas of security compliance, and it implements security guidances
 recommended by respected authorities, namely {pci_dss}[PCI DSS], {stig}[STIG],
-and {usgcb}[USGCB].
+and {cis}[CIS].
 
 You can also generate your own SCAP content if you have an understanding of at
 least XCCDF or OVAL. XCCDF content is also frequently published online under
@@ -95,14 +95,13 @@ newer or on Fedora use the following command:
 # dnf install openscap-scanner
 ----
 
-To install OpenSCAP on Red Hat Enterprise Linux 7 or CentOS 7 or older use the
-following command:
+To install OpenSCAP on Debian 12 or Ubuntu 24.04 or newer use the following command:
 
 ----
-# yum install openscap-scanner
+# apt install openscap-scanner
 ----
 
-To install OpenSCAP on Debian or Ubuntu use the following command:
+To install OpenSCAP on older versions of Debian or Ubuntu use the following command:
 
 ----
 # apt install libopenscap8
@@ -111,8 +110,7 @@ To install OpenSCAP on Debian or Ubuntu use the following command:
 After the installation is completed you can start using the `oscap` command line
 tool.
 
-To display the version of OpenSCAP, supported specifications, built-in CPE
-names, and supported OVAL objects, type the following command:
+To display the version of OpenSCAP, supported specifications, and supported OVAL objects, type the following command:
 
 ----
 $ oscap --version
@@ -131,14 +129,7 @@ To install `scap-security-guide` on Red Hat Enterprise Linux 8 and newer, on
 CentOS 8 and newer or on Fedora use the following command:
 
 ----
-# yum install scap-security-guide
-----
-
-To install `scap-security-guide`  on Red Hat Enterprise Linux 7 or CentOS 7 or
-older use the following command:
-
-----
-# yum install scap-security-guide
+# dnf install scap-security-guide
 ----
 
 The SCAP content will be installed in the `/usr/share/xml/scap/ssg/content/`
@@ -409,21 +400,21 @@ scenario:
 ----
 $ oscap xccdf export-oval-variables \
 --profile united_states_government_configuration_baseline \
-usgcb-rhel5desktop-xccdf.xml
+xccdf.xml
 ----
 
 ----
 $ oscap oval eval \
---variables usgcb-rhel5desktop-oval.xml-0.variables-0.xml \
---results usgcb-results-oval.xml
-usgcb-rhel5desktop-oval.xml
+--variables oval_variables.xml \
+--results oval_results.xml
+oval.xml
 ----
 Where *united_states_government_configuration_baseline* represents a
-profile in the XCCDF document, *usgcb-rhel5desktop-xccdf.xml* is a file
-specifying the XCCDF document, *usgcb-rhel5desktop-oval.xml* is the OVAL
-Definition file, *usgcb-rhel5desktop-oval.xml-0.variables-0.xml* is the
+profile in the XCCDF document, *xccdf.xml* is a file
+specifying the XCCDF document, *oval.xml* is the OVAL
+Definition file, *oval_variables.xml* is the
 file containing exported variables from the XCCDF file, and
-*usgcb-results-oval.xml* is the the OVAL Result file.
+*oval_results.xml* is the the OVAL Result file.
 
 An OVAL directives file can be used to control whether results should be "thin" or "full".
 This file can be loaded by OpenSCAP using *--directives <file>* option.
@@ -648,14 +639,14 @@ For example:
 ----
 
 In the following example, we use the
-`/usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml` file provided by the
+`/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml` file provided by the
 `scap-security-guide` RPM package. This data stream file meets both
 prerequisites for rules.
 
 1) Scan your system using the `oscap` command with the `--stig-viewer` option.
 
 ----
-$ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig --stig-viewer results-stig.xml /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+$ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig --stig-viewer results-stig.xml /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
 ----
 
 2) Download a STIG file of your choice, for example, from the
@@ -1328,21 +1319,6 @@ deem it applicable
 .  If not found or not applicable, look into external CPE dictionaries
 (order of registration)
 
-==== Built-in CPE Naming Dictionary
-
-Apart from the external CPE Dictionaries, `oscap` comes with an inbuilt
-CPE Dictionary. The built-in CPE Dictionary contains only a few products
-(sub-set of http://nvd.nist.gov/cpe.cfm[Official CPE Dictionary]) and it
-is used as a fall-back option when there is no other CPE source found.
-
-The list of inbuilt CPE names can be found in the output of
-
-----
-$ oscap --version
-----
-
-The built-in CPE dictionary will be deprecated in OpenSCAP 1.4.0.
-
 === Notes on the Concept of Multiple OVAL Values
 
 This section describes advanced concepts of OVAL Variables and their
@@ -1389,9 +1365,9 @@ file.xml`. The OVAL Variables file can be passed to the evaluation by
  
 ----
 $ oscap oval eval \
---variables usgcb-rhel5desktop-oval.xml-0.variables-0.xml \
---results usgcb-results-oval.xml \
-usgcb-rhel5desktop-oval.xml
+--variables oval_variables.xml \
+--results oval_results.xml \
+oval.xml
 ----
 
 2)  XCCDF Bindings -- The values of external variables can be given from
@@ -1402,7 +1378,7 @@ following command allows users to export variable bindings from XCCDF to
 an OVAL Variables file:
 
 ----
-$ oscap xccdf export-oval-variables --profile united_states_government_configuration_baseline usgcb-rhel5desktop-xccdf.xml
+$ oscap xccdf export-oval-variables --profile united_states_government_configuration_baseline xccdf.xml
 ----
 
 3)  Values within an OVAL Definition File -- Variables' values defined
@@ -1590,10 +1566,9 @@ Also, OpenSCAP uses `libcurl` library which also can be configured using environ
 
 == Using external or remote resources
 
-Some SCAP content references external resources. For example SCAP Security Guide
-uses external OVAL file to check that the system is up to date and has no known
-security vulnerabilities. However, other content can use external resources for
-other purposes.
+Some SCAP content references external resources. For example, some content
+can use external OVAL file to check that the system is up to date and has no known
+security vulnerabilities.
 
 When you are evaluating SCAP content with external resources the `oscap` tool
 will warn you:
@@ -1601,7 +1576,7 @@ will warn you:
 ----
 $ oscap xccdf eval \
 --profile xccdf_org.ssgproject.content_profile_common \
-/usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+ds.xml
 
 WARNING: This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.
 WARNING: Skipping https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2 file which is referenced from XCCDF content
@@ -1616,7 +1591,7 @@ the `--fetch-remote-resources` option to automatically download it using the
 $ oscap xccdf eval \
 --fetch-remote-resources \
 --profile xccdf_org.ssgproject.content_profile_common \
-/usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+ds.xml
 Downloading: https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2 ... ok
 Title   Ensure /var/log Located On Separate Partition
 Rule    xccdf_org.ssgproject.content_rule_partition_for_var_log
@@ -1651,18 +1626,18 @@ These practical examples show usage of industry standard checklists that
 were validated by NIST.
 
 === Auditing System Settings with SCAP Security Guide
-The SSG project contains guidance for settings of Red Hat Enterprise Linux 7.
+The SSG project contains guidance for settings of Red Hat Enterprise Linux 9.
 
 1) Install the SSG
 
 ----
-$ sudo yum install -y scap-security-guide
+# sudo dnf install -y scap-security-guide
 ----
 
 2) To inspect the security content use the `oscap info` module:
 
 ----
-$ oscap info /usr/share/xml/scap/ssg/rhel7/ssg-rhel7-ds.xml
+$ oscap info /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
 ----
 
 The output of this command contains available configuration profiles. To audit
@@ -1673,11 +1648,11 @@ the given system against a draft SCAP profile for Red Hat Certified Cloud
 Providers:
 
 ----
-$ oscap xccdf eval \
+# oscap xccdf eval \
 --profile xccdf_org.ssgproject.content_profile_rht-ccp \
 --results ssg-rhel7-xccdf-result.xml \
 --report ssg-rhel7-report.html \
-/usr/share/xml/scap/ssg/rhel7/ssg-rhel7-ds.xml
+/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
 ----
 
 
@@ -1798,35 +1773,35 @@ To find out more information about this project, see
 https://www.redhat.com/security/data/metrics/.
 
 
-=== How to Evaluate PCI-DSS on RHEL7
+=== How to Evaluate PCI-DSS on RHEL9
 This section describes how to evaluate the Payment Card Industry Data Security
-Standard (PCI-DSS) on Red Hat Enterprise Linux 7.
+Standard (PCI-DSS) on Red Hat Enterprise Linux 9.
 
 1) Install SSG which provides the PCI-DSS SCAP content
 
 ----
-$ sudo yum install -y scap-security-guide
+# dnf install -y scap-security-guide
 ----
 
 2) Verify that the PCI-DSS profile is present
 
 ----
-$ oscap info /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+# oscap info /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
 ----
 
-3) Evaluate the PCI-DSS content
+3) Evaluate the PCI-DSS profile
 
 ----
-$ oscap xccdf eval \
---results results.xml \
+# oscap xccdf eval \
+--results-arf results-arf.xml \
 --profile xccdf_org.ssgproject.content_profile_pci-dss \
-/usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+/usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
 ----
 
 4) Generate report readable in a web browser.
 
 ----
-$ oscap xccdf generate report --output report.html results.xml
+$ oscap xccdf generate report --output report.html results-arf.xml
 ----
 
 === How to Evaluate DISA STIG
@@ -1866,42 +1841,6 @@ U_RHEL_7_V3R2_STIG_SCAP_1-2_Benchmark.xml
 
 If you are interested in DISA STIG content for other systems please refer to
 https://public.cyber.mil/stigs/downloads/[DoD Cyber Exchange].
-
-=== How to check that patches are up-to-date on Red Hat Enterprise Linux 6 or 7
-This section describes how to check that software patches are up-to-date using
-external OVAL content.
-
-1) Install the SSG
-
-----
-$ sudo yum install -y scap-security-guide
-----
-
-2a) Evaluate common profile for RHEL 6
-
-----
-$ oscap xccdf eval \
---profile xccdf_org.ssgproject.content_profile_common \
---fetch-remote-resources \
---results-arf results.xml \
-/usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
-----
-
-2b) Evaluate common profile for RHEL 7
-
-----
-$ oscap xccdf eval \
---profile xccdf_org.ssgproject.content_profile_common \
---fetch-remote-resources \
---results-arf results.xml \
-/usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
-----
-
-This command evaluates common profile for Red Hat Enterprise Linux 6 or 7. Part of
-the profile is a rule to check that patches are up-to-date. To evaluate the rule
-correctly, oscap tool needs to download an up-to-date OVAL file from Red Hat servers. This can be
-allowed using `--fetch-remote-resources` option. Result of this scan will be saved
-in `results.xml` using ARF format.
 
 
 == Scanning remote and virtual machines or containers
