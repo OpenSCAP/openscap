@@ -325,7 +325,7 @@ char *oscap_strerror_r(int errnum, char *buf, size_t buflen)
 #ifdef OS_WINDOWS
 	strerror_s(buf, buflen, errnum);
 	return buf;
-#elif defined(OS_FREEBSD)
+#elif defined(OS_APPLE) || defined(OS_FREEBSD)
 	strerror_r(errnum, buf, buflen);
 	return buf;
 #else
