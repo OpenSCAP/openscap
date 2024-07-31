@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_xccdf.xml.xml" schematron-version="1.3">
+  <ds:data-stream id="scap_org.open-scap_datastream_from_xccdf_xccdf.xml.xml" scap-version="1.3" use-case="OTHER">
+    <ds:checklists>
+      <ds:component-ref id="scap_org.open-scap_cref_xccdf.xml.xml" xlink:href="#scap_org.open-scap_comp_xccdf.xml.xml">
+        <cat:catalog>
+          <cat:uri name="oval.xml" uri="#scap_org.open-scap_cref_oval.xml"/>
+          <cat:uri name="cpe-oval.xml" uri="#scap_org.open-scap_cref_cpe-oval.xml"/>
+        </cat:catalog>
+      </ds:component-ref>
+    </ds:checklists>
+    <ds:checks>
+      <ds:component-ref id="scap_org.open-scap_cref_oval.xml" xlink:href="#scap_org.open-scap_comp_oval.xml"/>
+      <ds:component-ref id="scap_org.open-scap_cref_cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_cpe-oval.xml"/>
+    </ds:checks>
+  </ds:data-stream>
+  <ds:component id="scap_org.open-scap_comp_oval.xml" timestamp="2023-03-22T10:30:34">
+    <oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+      <generator>
+        <oval:schema_version>5.11.1</oval:schema_version>
+        <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition class="compliance" version="1" id="oval:x:def:1">
+          <metadata>
+            <title>x</title>
+            <description>x</description>
+            <affected family="unix">
+              <platform>x</platform>
+            </affected>
+          </metadata>
+          <criteria comment="x" operator="OR">
+            <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:tst:1" check="all" comment="always pass" version="1">
+          <object object_ref="oval:x:obj:1"/>
+        </variable_test>
+      </tests>
+      <objects>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:obj:1" version="1" comment="x">
+          <var_ref>oval:x:var:1</var_ref>
+        </variable_object>
+      </objects>
+      <variables>
+        <constant_variable id="oval:x:var:1" version="1" comment="x" datatype="string">
+          <value>x</value>
+        </constant_variable>
+      </variables>
+    </oval_definitions>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_cpe-oval.xml" timestamp="2023-03-22T10:30:34">
+    <oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+      <generator>
+        <oval:schema_version>5.11.1</oval:schema_version>
+        <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition class="compliance" version="1" id="oval:my_custom_platform:def:2">
+          <metadata>
+            <title>x</title>
+            <description>x</description>
+            <affected family="unix">
+              <platform>x</platform>
+            </affected>
+          </metadata>
+          <criteria comment="x" operator="AND">
+            <criterion test_ref="oval:x:tst:2" comment="always pass"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:tst:2" check="all" check_existence="any_exist" comment="always pass" version="1">
+          <object object_ref="oval:x:obj:1"/>
+        </variable_test>
+      </tests>
+      <objects>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:obj:1" version="1" comment="x">
+          <var_ref>oval:x:var:1</var_ref>
+        </variable_object>
+      </objects>
+      <variables>
+        <constant_variable id="oval:x:var:1" version="1" comment="x" datatype="string">
+          <value>x</value>
+        </constant_variable>
+      </variables>
+    </oval_definitions>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_xccdf.xml.xml" timestamp="2023-03-22T10:30:43">
+    <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:cpe2="http://cpe.mitre.org/language/2.0" id="xccdf_moc.elpmaxe.www_benchmark_test">
+      <status>incomplete</status>
+      <cpe2:platform-specification>
+        <cpe2:platform id="platform1">
+          <cpe2:title xml:lang="en-US">Test Platform 1</cpe2:title>
+          <cpe2:logical-test operator="OR" negate="false">
+            <cpe2:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="cpe-oval.xml" id-ref="oval:my_custom_platform:def:2"/>
+          </cpe2:logical-test>
+        </cpe2:platform>
+      </cpe2:platform-specification>
+      <version>1.0</version>
+      <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
+        <title>Test Rule</title>
+        <platform idref="#platform1"/>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <check-content-ref href="oval.xml" name="oval:x:def:1"/>
+        </check>
+      </Rule>
+    </Benchmark>
+  </ds:component>
+</ds:data-stream-collection>

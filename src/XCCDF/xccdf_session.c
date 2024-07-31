@@ -950,6 +950,7 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 	}
 
 	if (xccdf_session_is_sds(session)) {
+		_connect_cpe_session_with_sds(session);
 		struct ds_sds_index *sds_idx = xccdf_session_get_sds_idx(session);
 		if (sds_idx == NULL) {
 			return -1;
@@ -968,7 +969,6 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 				oscap_string_iterator_free(cpe_it);
 				return 1;
 			}
-			_connect_cpe_session_with_sds(session);
 			while (oscap_string_iterator_has_more(cpe_it)) {
 				const char* cpe_filename = oscap_string_iterator_next(cpe_it);
 
