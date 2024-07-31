@@ -1526,6 +1526,20 @@ static int _xccdf_policy_generate_fix_other(struct oscap_list *rules_to_fix, str
 	return ret;
 }
 
+static void _write_it_comma_list(struct oscap_iterator *it, const char *option, int output_fd)
+{
+	if (!oscap_iterator_has_more(it))
+		return;
+	_write_text_to_fd(output_fd, " ");
+	_write_text_to_fd(output_fd, option);
+	while (oscap_iterator_has_more(it)) {
+		char *item = (char *) oscap_iterator_next(it);
+		_write_text_to_fd(output_fd, item);
+		if (oscap_iterator_has_more(it))
+			_write_text_to_fd(output_fd, ",");
+	}
+}
+
 static int _generate_kickstart_services(struct kickstart_commands *cmds, int output_fd)
 {
 	struct oscap_iterator *service_disable_it = oscap_iterator_new(cmds->service_disable);
@@ -1533,24 +1547,8 @@ static int _generate_kickstart_services(struct kickstart_commands *cmds, int out
 	if (oscap_iterator_has_more(service_disable_it) || oscap_iterator_has_more(service_enable_it)) {
 		_write_text_to_fd(output_fd, "# Disable and enable systemd services (required for security compliance)\n");
 		_write_text_to_fd(output_fd, "services");
-		if (oscap_iterator_has_more(service_disable_it)) {
-			_write_text_to_fd(output_fd, " --disabled=");
-			while (oscap_iterator_has_more(service_disable_it)) {
-				char *command = (char *) oscap_iterator_next(service_disable_it);
-				_write_text_to_fd(output_fd, command);
-				if (oscap_iterator_has_more(service_disable_it))
-					_write_text_to_fd(output_fd, ",");
-			}
-		}
-		if (oscap_iterator_has_more(service_enable_it)) {
-			_write_text_to_fd(output_fd, " --enabled=");
-			while (oscap_iterator_has_more(service_enable_it)) {
-				char *command = (char *) oscap_iterator_next(service_enable_it);
-				_write_text_to_fd(output_fd, command);
-				if (oscap_iterator_has_more(service_enable_it))
-					_write_text_to_fd(output_fd, ",");
-			}
-		}
+		_write_it_comma_list(service_disable_it, "--disabled=", output_fd);
+		_write_it_comma_list(service_enable_it, "--enabled=", output_fd);
 		_write_text_to_fd(output_fd, "\n\n");
 	}
 	oscap_iterator_free(service_disable_it);
@@ -1565,24 +1563,8 @@ static int _generate_kickstart_firewall(struct kickstart_commands *cmds, int out
 	if (oscap_iterator_has_more(disable_it) || oscap_iterator_has_more(enable_it)) {
 		_write_text_to_fd(output_fd, "# Disable and enable services in firewall (required for security compliance)\n");
 		_write_text_to_fd(output_fd, "firewall");
-		if (oscap_iterator_has_more(disable_it)) {
-			_write_text_to_fd(output_fd, " --remove-service=");
-			while (oscap_iterator_has_more(disable_it)) {
-				char *name = (char *) oscap_iterator_next(disable_it);
-				_write_text_to_fd(output_fd, name);
-				if (oscap_iterator_has_more(disable_it))
-					_write_text_to_fd(output_fd, ",");
-			}
-		}
-		if (oscap_iterator_has_more(enable_it)) {
-			_write_text_to_fd(output_fd, " --service=");
-			while (oscap_iterator_has_more(enable_it)) {
-				char *name = (char *) oscap_iterator_next(enable_it);
-				_write_text_to_fd(output_fd, name);
-				if (oscap_iterator_has_more(enable_it))
-					_write_text_to_fd(output_fd, ",");
-			}
-		}
+		_write_it_comma_list(disable_it, "--remove-service=", output_fd);
+		_write_it_comma_list(enable_it, "--service=", output_fd);
 		_write_text_to_fd(output_fd, "\n\n");
 	}
 	oscap_iterator_free(disable_it);
