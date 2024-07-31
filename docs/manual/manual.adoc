@@ -1640,18 +1640,15 @@ The SSG project contains guidance for settings of Red Hat Enterprise Linux 9.
 $ oscap info /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
 ----
 
-The output of this command contains available configuration profiles. To audit
-your system settings choose the
- `xccdf_org.ssgproject.content_profile_rht-ccp` profile and run the
-evaluation command . For example, the The following command is used to assess
-the given system against a draft SCAP profile for Red Hat Certified Cloud
-Providers:
+The output of this command contains available configuration profiles.
+To audit your system settings choose one of the profiles and run the evaluation command.
+For example, the following command is used to assess the given system using the "CIS Red Hat Enterprise Linux 9 Benchmark for Level 2 - Server" profile.
 
 ----
 # oscap xccdf eval \
---profile xccdf_org.ssgproject.content_profile_rht-ccp \
---results ssg-rhel7-xccdf-result.xml \
---report ssg-rhel7-report.html \
+--profile xccdf_org.ssgproject.content_profile_cis \
+--results-arf results.xml \
+--report report.html \
 /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
 ----
 
