@@ -250,6 +250,28 @@ int oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 	return (xmlCode >= 1) ? 1 : -1;
 }
 
+int oscap_xml_save_fd(int fd, xmlDocPtr doc)
+{
+	xmlOutputBufferPtr buff;
+	int xmlCode;
+
+	buff = xmlOutputBufferCreateFd(fd, NULL);
+	if (buff == NULL) {
+		close(fd);
+		oscap_setxmlerr(xmlGetLastError());
+		dW("xmlOutputBufferCreateFile() failed.");
+		return -1;
+	}
+
+	xmlCode = xmlSaveFormatFileTo(buff, doc, "UTF-8", 1);
+	if (xmlCode <= 0) {
+		oscap_setxmlerr(xmlGetLastError());
+		dW("No bytes exported: xmlCode: %d.", xmlCode);
+	}
+
+	return (xmlCode >= 1) ? 1 : -1;
+}
+
 int oscap_xml_save_filename_free(const char *filename, xmlDocPtr doc)
 {
 	int ret = oscap_xml_save_filename(filename, doc);

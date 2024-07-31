@@ -415,11 +415,12 @@ ID of the XCCDF TestResult from which the report will be generated.
 Generate a script that shall bring the system to a state of compliance with given XCCDF Benchmark. There are 2 possibilities when generating fixes: Result-oriented fixes (--result-id) or Profile-oriented fixes (--profile). Result-oriented takes precedences over Profile-oriented, if result-id is given, oscap will ignore any profile provided.
 .TP
 Result-oriented fixes are generated using result-id provided to select only the failing rules from results in xccdf-file, it skips all other rules.
+It isn't possible to generate result-oriented fixes for the kickstart fix type.
 .TP
 Profile-oriented fixes are generated using all rules within the provided profile. If no result-id/profile are provided, (default) profile will be used to generate fixes.
 .TP
 \fB\-\-fix-type TYPE\fR
-Specify fix type. There are multiple programming languages in which the fix script can be generated. TYPE should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint. Default is bash.
+Specify fix type. There are multiple programming languages in which the fix script can be generated. TYPE should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint, kickstart. Default is bash.
 .TP
 \fB\-\-output FILE\fR
 Write the report to this file instead of standard output.

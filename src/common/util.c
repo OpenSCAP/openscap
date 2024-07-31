@@ -474,3 +474,14 @@ bool oscap_path_startswith(const char *path, const char *prefix)
 	free(prefix_split);
 	return res;
 }
+
+char *oscap_concat(char *str1, char *str2)
+{
+	if (str1 == NULL || str2 == NULL)
+		return str1;
+	size_t str1_len = strlen(str1);
+	size_t str2_len = strlen(str2);
+	str1 = realloc(str1, str1_len + str2_len + 1);
+	strncat(str1, str2, str2_len);
+	return str1;
+}

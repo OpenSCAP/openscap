@@ -1120,6 +1120,57 @@ For example, to generate a blueprint remediation for RHEL 8 OSPP profile, run:
 $ oscap xccdf generate fix --profile ospp --fix-type blueprint /usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml > blueprint.toml
 ----
 
+=== Generating RHEL Kickstarts
+
+OpenSCAP can generate RHEL kickstarts which can be used for unattended installation of RHEL, Fedora and similar systems.
+Information about RHEL kickstarts and their syntax can be found at https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/performing_an_advanced_rhel_9_installation/kickstart_references[Kickstart references] and https://pykickstart.readthedocs.io/en/latest/kickstart-docs.html[Kickstart Documentation].
+
+To generate a kickstart, use `oscap xccdf generate fix` command with the `--fix-type kickstart` option.
+
+The kickstart will be generated from kickstart snippets in XCCDF rules in the input SCAP content.
+The kickstart snippets need to be present in `<fix>` elements with `system` attribute set to `urn:xccdf:fix:script:kickstart`.
+
+When processing the kickstart snippets from the XCCDF Rules, each line is processed separately.
+If a line starts with a supported block keyword, that line and all following lines until a line starting with `%end` are considered a block.
+Blocks are propagated to the output without any processing.
+If a line isn't part of a block, the following rules are applied:
+
+* Lines starting with `#` are ignored.
+* Empty lines are ignored.
+* Lines starting with a supported command are processed.
+* Lines starting with something else than a supported command are dropped and error is produced.
+* Excess whitespace are trimmed.
+
+Supported block keywords:
+
+* `%pre` - represents a start of a `%pre` kickstart section, all lines until corresponding '%end' are overthrown
+* `%post` - represents a start of a `%post` kickstart section, all lines until corresponding '%end' are overthrown
+
+Supported commands:
+
+* `package install package_name` - adds `package_name` to `%packages` section in the kickstart
+* `package remove package_name` - adds `-package_name` to `%packages` section in the kickstart
+* `service enable service_name` - adds `service_name` to list in the `--enabled=` option in the `services` command in commands section in the kickstart
+* `service disable service_name` - adds `service_name` to list in the `--disabled=` option in the `services` command in commands section in the kickstart
+* `logvol path size` - adds `logvol` entry to the commands section of the kickstart that will mount a partition of the given `size` in MB to the given `path` as a mount point
+* `bootloader option` or `bootloader option=value` - adds `option` or `option=value` to the list in the `--append=` option in the `bootloader` command in commands section in the kickstart
+* `kdump disable` - this will disable K-Dump by adding the `com_redhat_kdump` Addon section to the kickstart with a `--disable` option
+
+For example, to generate a kickstart for RHEL 9 STIG profile, run:
+
+----
+$ oscap xccdf generate fix --profile stig --fix-type kickstart /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml > rhel9-kickstart-stig.cfg
+----
+
+The generated kickstart file needs to be reviewed and customized for the intended deployment.
+The kickstart sets some default values to makte automated installation possible.
+These default values are usually good enough but sometimes need to be changed manually.
+Pay special attention to the items marked as `required for security compliance`.
+
+NOTE: The `kickstart` fix type shouldn't be confused with `anaconda` fix type.
+The `anaconda` fix type is used by the OSCAP Anaconda Addon and shouldn't be used directly by users.
+Users should use the `kickstart` fix type.
+
 == Details on SCAP conformance
 
 === Check Engines
@@ -2095,3 +2146,10 @@ You can find the ID of the customized profile with `oscap info <your_tailoring_f
 Yes, it's possible, you can download the file on other computer that is connected to the internet and then copy the file to the system where you run `oscap`.
 Instead of the `--fetch-remote-resources` option you will use the `--local-files` option.
 For more information, please refer to section <<_using_external_or_remote_resources,Using external or remote resources>>.
+
+*I have generated a kickstart but the generated file isn't a valid kickstart.*
+
+You are using a wrong `--fix-type` option.
+To generate a kickstart, use the `--fix-type kickstart` option.
+Do not use `--fix-type anaconda`.
+For more information, please refer to section <<_generating_rhel_kickstarts,Generating RHEL Kickstarts>>.

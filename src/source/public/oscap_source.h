@@ -166,6 +166,15 @@ OSCAP_API const char *oscap_source_readable_origin(const struct oscap_source *so
 OSCAP_API int oscap_source_save_as(struct oscap_source *source, const char *filename);
 
 /**
+ * Store the resource represented by oscap_source to the file descriptor.
+ * @memberof oscap_source
+ * @param source The oscap_source to save
+ * @param fd file descriptor
+ * @returns 0 on success, 1 or -1 to indicate error
+ */
+OSCAP_API int oscap_source_to_fd(struct oscap_source *source, int fd);
+
+/**
  * Retrieve contents refered to by oscap_source as raw memory.
  * The memory is always copied. If the origin of oscap_source is raw memory,
  * this function will simply duplicate it and the operation is relatively cheap.

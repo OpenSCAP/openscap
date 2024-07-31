@@ -443,6 +443,17 @@ int oscap_source_save_as(struct oscap_source *source, const char *filename)
 	return oscap_xml_save_filename(target, doc) == 1 ? 0 : -1;
 }
 
+int oscap_source_to_fd(struct oscap_source *source, int fd)
+{
+	xmlDoc *doc = oscap_source_get_xmlDoc(source);
+	if (doc == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save document: DOM representation not available.");
+		return -1;
+	}
+	return oscap_xml_save_fd(fd, doc) == 1 ? 0 : -1;
+
+}
+
 int oscap_source_get_raw_memory(struct oscap_source *source, char **buffer, size_t *size)
 {
 	if (source->origin.memory != NULL) {
