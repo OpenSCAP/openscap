@@ -62,6 +62,7 @@
         <select idref="xccdf_org.openscap.www_rule_7" selected="true"/>
         <select idref="xccdf_org.openscap.www_rule_8" selected="true"/>
         <select idref="xccdf_org.openscap.www_rule_9" selected="true"/>
+        <select idref="xccdf_org.openscap.www_rule_10" selected="true"/>
       </Profile>
       <Rule selected="false" id="xccdf_org.openscap.www_rule_1">
         <title>Rule 1: Enable Audit Service</title>
@@ -135,6 +136,13 @@
           %end
           package install podman
           kdump disable
+        </fix>
+      </Rule>
+      <Rule selected="false" id="xccdf_org.openscap.www_rule_10">
+        <title>Rule 10: Firewall</title>
+        <fix system="urn:xccdf:fix:script:kickstart">
+          firewall enable sshd
+          firewall disable httpd
         </fix>
       </Rule>
     </Benchmark>

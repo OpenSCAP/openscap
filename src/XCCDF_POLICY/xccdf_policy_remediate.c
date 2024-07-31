@@ -58,6 +58,8 @@ struct kickstart_commands {
 	struct oscap_list *post;
 	struct oscap_list *logvol;
 	struct oscap_list *bootloader;
+	struct oscap_list *firewall_enable;
+	struct oscap_list *firewall_disable;
 	bool enable_kdump;
 };
 
@@ -927,6 +929,9 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 		KS_LOGVOL_SIZE,
 		KS_BOOTLOADER,
 		KS_KDUMP,
+		KS_FIREWALL,
+		KS_FIREWALL_ENABLE,
+		KS_FIREWALL_DISABLE,
 		KS_ERROR
 	};
 	int state = KS_START;
@@ -947,6 +952,8 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 				state = KS_BOOTLOADER;
 			} else if (!strcmp(word, "kdump")) {
 				state = KS_KDUMP;
+			}  else if (!strcmp(word, "firewall")) {
+				state = KS_FIREWALL;
 			} else {
 				ret = 1;
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported command keyword '%s' in command: '%s'", word, line);
@@ -1009,6 +1016,23 @@ static int _parse_line(const char *line, struct kickstart_commands *cmds)
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'kdump' command keyword '%s' in command: '%s'", word, line);
 				goto cleanup;
 			}
+			break;
+		case KS_FIREWALL:
+			if (!strcmp(word, "enable")) {
+				state = KS_FIREWALL_ENABLE;
+			} else if (!strcmp(word, "disable")) {
+				state = KS_FIREWALL_DISABLE;
+			} else {
+				ret = 1;
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'firewall' command keyword '%s' in command: '%s'", word, line);
+				goto cleanup;
+			}
+			break;
+		case KS_FIREWALL_ENABLE:
+			oscap_list_add(cmds->firewall_enable, strdup(word));
+			break;
+		case KS_FIREWALL_DISABLE:
+			oscap_list_add(cmds->firewall_disable, strdup(word));
 			break;
 		case KS_ERROR:
 			ret = 1;
@@ -1534,6 +1558,38 @@ static int _generate_kickstart_services(struct kickstart_commands *cmds, int out
 	return 0;
 }
 
+static int _generate_kickstart_firewall(struct kickstart_commands *cmds, int output_fd)
+{
+	struct oscap_iterator *disable_it = oscap_iterator_new(cmds->firewall_disable);
+	struct oscap_iterator *enable_it = oscap_iterator_new(cmds->firewall_enable);
+	if (oscap_iterator_has_more(disable_it) || oscap_iterator_has_more(enable_it)) {
+		_write_text_to_fd(output_fd, "# Disable and enable services in firewall (required for security compliance)\n");
+		_write_text_to_fd(output_fd, "firewall");
+		if (oscap_iterator_has_more(disable_it)) {
+			_write_text_to_fd(output_fd, " --remove-service=");
+			while (oscap_iterator_has_more(disable_it)) {
+				char *name = (char *) oscap_iterator_next(disable_it);
+				_write_text_to_fd(output_fd, name);
+				if (oscap_iterator_has_more(disable_it))
+					_write_text_to_fd(output_fd, ",");
+			}
+		}
+		if (oscap_iterator_has_more(enable_it)) {
+			_write_text_to_fd(output_fd, " --service=");
+			while (oscap_iterator_has_more(enable_it)) {
+				char *name = (char *) oscap_iterator_next(enable_it);
+				_write_text_to_fd(output_fd, name);
+				if (oscap_iterator_has_more(enable_it))
+					_write_text_to_fd(output_fd, ",");
+			}
+		}
+		_write_text_to_fd(output_fd, "\n\n");
+	}
+	oscap_iterator_free(disable_it);
+	oscap_iterator_free(enable_it);
+	return 0;
+}
+
 static int _generate_kickstart_packages(struct kickstart_commands *cmds, int output_fd)
 {
 	_write_text_to_fd(output_fd, "# Packages selection (required for security compliance)\n");
@@ -1723,6 +1779,8 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 		.post = oscap_list_new(),
 		.logvol = oscap_list_new(),
 		.bootloader = oscap_list_new(),
+		.firewall_enable = oscap_list_new(),
+		.firewall_disable = oscap_list_new(),
 		.enable_kdump = true,
 	};
 
@@ -1756,6 +1814,8 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 
 	_generate_kickstart_kdump(&cmds, output_fd);
 
+	_generate_kickstart_firewall(&cmds, output_fd);
+
 	_generate_kickstart_services(&cmds, output_fd);
 
 	_generate_kickstart_packages(&cmds, output_fd);
@@ -1775,6 +1835,8 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	oscap_list_free(cmds.post, free);
 	oscap_list_free(cmds.logvol, logvol_cmd_free);
 	oscap_list_free(cmds.bootloader, free);
+	oscap_list_free(cmds.firewall_enable, free);
+	oscap_list_free(cmds.firewall_disable, free);
 	return ret;
 }
 
