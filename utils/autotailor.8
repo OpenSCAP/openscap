@@ -57,16 +57,22 @@ Specify the rule to select. The rule ID can be either full, or just the suffix, 
 Specify the rule to unselect. The argument works the same way as the --select argument.
 .RE
 .TP
-\fB-p NEW_PROFILE_ID, --new-profile-id NEW_PROFILE_ID\fR
+\fB-p TAILORED_PROFILE_ID, --tailored-profile-id TAILORED_PROFILE_ID\fR
 .RS
 Specify the ID of the tailored profile. The ID of the new profile can be either its full ID, or the suffix, in which case the 'xccdf_<id-namespace>_profile_' prefix will be prepended internally.
 If left out, the new ID will be obtained by appending '_customized' to the tailored profile ID.
+.RE
+.TP
+\fB--new-profile-id NEW_PROFILE_ID\fR
+.RS
+Synonym of --tailored-profile-id.
 .RE
 .TP
 \fB--json-tailoring JSON_TAILORING_FILE\fR
 .RS
 Import tailoring from a JSON file (https://github.com/ComplianceAsCode/schemas/tree/main/tailoring). This option makes BASE_PROFILE_ID positional argument optional.
 However, data passed in the command line options takes precedence over JSON contents, including the BASE_PROFILE_ID argument.
+JSON tailoring can be accompanied with additional command-line options to either override contents of an existing profile (along with --tailored-profile-id identifier) or to create an extra profile (BASE_PROFILE_ID is a mandatory argument in this case and --tailored-profile-id is optional) in the resulting XCCDF tailoring file.
 .RE
 
 .SH USAGE

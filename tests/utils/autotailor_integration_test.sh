@@ -70,7 +70,6 @@ assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4"]/result[text()="notselected"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4" and @severity="high"]'
 
-
 # select additional rule R4 and change its role to "unchecked"
 python3 $autotailor --id-namespace "com.example.www" --select R4 --rule-role R4=unchecked $ds $original_profile > $tailoring
 $OSCAP xccdf eval --profile P1_customized --progress --tailoring-file $tailoring --results $result $ds
@@ -82,7 +81,6 @@ assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3" and @role="full"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4"]/result[text()="notchecked"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4" and @role="unchecked"]'
-
 
 # select additional rule R3; the customized profile will have a special profile ID
 customized_profile="xccdf_com.pink.elephant_profile_pineapple"
@@ -113,7 +111,7 @@ assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="notselected"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4"]/result[text()="notselected"]'
 
-# use JSON tailoring
+# use JSON tailoring (P1)
 python3 $autotailor $ds --id-namespace "com.example.www" --json-tailoring $json_tailoring > $tailoring
 $OSCAP xccdf eval --profile JSON_P1 --progress --tailoring-file $tailoring --results $result $ds
 assert_exists 1 '/Benchmark/TestResult/set-value[@idref="xccdf_com.example.www_value_V1" and text()="New Value"]'
@@ -124,3 +122,18 @@ assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3" and @severity="unknown"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4"]/result[text()="notselected"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4" and @role="unchecked"]'
+
+# use JSON tailoring (P11)
+python3 $autotailor --id-namespace "com.example.www" --json-tailoring $json_tailoring $ds > $tailoring
+$OSCAP xccdf eval --profile JSON_P11 --progress --tailoring-file $tailoring --results $result $ds
+assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="pass"]'
+
+# use JSON tailoring (P11) with command-line override
+python3 $autotailor --id-namespace "com.example.www" --json-tailoring $json_tailoring --tailored-profile-id=JSON_P11 --unselect R3 $ds > $tailoring
+$OSCAP xccdf eval --profile JSON_P11 --progress --tailoring-file $tailoring --results $result $ds
+assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="notselected"]'
+
+# use JSON tailoring (P11) with a new profile from the command line
+python3 $autotailor --id-namespace "com.example.www" --json-tailoring $json_tailoring --tailored-profile-id=CMDL_P --select R3 $ds $original_profile > $tailoring
+$OSCAP xccdf eval --profile CMDL_P --progress --tailoring-file $tailoring --results $result $ds
+assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="pass"]'
