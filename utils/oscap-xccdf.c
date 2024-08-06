@@ -283,6 +283,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
 		"   --fix-type <type>             - Fix type. Should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes,\n"
 		"                                   blueprint, kickstart (default: bash).\n"
 		"   --output <file>               - Write the script into file.\n"
+		"   --raw                         - Don't write extra headers or boilerplate instructions, only compose the content snippets.\n"
 		"   --result-id <id>              - Fixes will be generated for failed rule-results of the specified TestResult.\n"
 		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be used.\n"
 		"                                   (only applicable for source data streams)\n"
@@ -1041,7 +1042,7 @@ int app_generate_fix(const struct oscap_action *action)
 
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
 		struct xccdf_result *result = xccdf_policy_get_result_by_id(policy, xccdf_session_get_result_id(session));
-		if (xccdf_policy_generate_fix(policy, result, remediation_system, action->f_xccdf, tailoring, output_fd) == 0)
+		if (xccdf_policy_generate_fix(policy, result, remediation_system, action->f_xccdf, tailoring, output_fd, action->raw) == 0)
 			ret = OSCAP_OK;
 	} else { // Fallback to profile if result id is missing
 		/* Profile-oriented fixes */
@@ -1055,7 +1056,7 @@ int app_generate_fix(const struct oscap_action *action)
 			}
 		}
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
-		if (xccdf_policy_generate_fix(policy, NULL, remediation_system, action->f_xccdf, tailoring, output_fd) == 0)
+		if (xccdf_policy_generate_fix(policy, NULL, remediation_system, action->f_xccdf, tailoring, output_fd, action->raw) == 0)
 			ret = OSCAP_OK;
 	}
 cleanup2:
@@ -1243,8 +1244,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
 		{"skip-schematron",     no_argument, &action->schematron, 0},
-		{"without-syschar",    no_argument, &action->without_sys_chars, 1},
+		{"without-syschar",     no_argument, &action->without_sys_chars, 1},
 		{"thin-results",        no_argument, &action->thin_results, 1},
+		{"raw",                 no_argument, &action->raw, 1},
 	// end
 		{0, 0, 0, 0}
 	};

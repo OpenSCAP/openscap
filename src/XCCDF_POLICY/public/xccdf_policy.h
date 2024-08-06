@@ -518,9 +518,10 @@ OSCAP_API bool xccdf_policy_resolve(struct xccdf_policy * policy);
  * @param input_file_name file name of the input SCAP file
  * @param tailoring input tailoring file (parsed as oscap source)
  * @param output_fd write prescription to this file descriptor
+ * @param raw controls verbosiness of generated remediation files (if greater than zero, the function won't add commentaries and optional boilerplate instructions)
  * @returns zero on success, non-zero indicate partial (incomplete) output.
  */
-OSCAP_API int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int output_fd);
+OSCAP_API int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int output_fd, int raw);
 
 /**
  * xccdf_policy_model_get_files and xccdf_item_get_files each return oscap_file_entries instead of raw strings

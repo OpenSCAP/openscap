@@ -1237,7 +1237,7 @@ static char *_comment_multiline_text(char *text)
 	return buffer;
 }
 
-static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, const char *tailoring_file_name, int output_fd)
+static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, const char *tailoring_file_name, int output_fd, int raw)
 {
 	if (!(oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands") ||
 		  oscap_streq(sys, "urn:xccdf:fix:script:ansible") || oscap_streq(sys, "urn:redhat:osbuild:blueprint") || oscap_streq(sys, "urn:xccdf:fix:script:kickstart") ))
@@ -1294,7 +1294,9 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 	char *profile_title = _comment_multiline_text(raw_profile_title);
 	free(raw_profile_title);
 
-	if (result == NULL) {
+	if (raw > 0) {
+		fix_header = strdup("");
+	} else if (result == NULL) {
 		// Profile-based remediation fix
 		// Description
 		struct oscap_text_iterator *description_iterator = xccdf_profile_get_description(profile);
@@ -1345,7 +1347,6 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		free(tailoring_option);
 		free(commented_profile_description);
 		free(profile_option);
-
 	} else {
 		// Results-based remediation fix
 		const char *start_time = xccdf_result_get_start_time(result);
@@ -1390,6 +1391,9 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		free(profile_title);
 		return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
 	} else if (oscap_streq(sys, "urn:redhat:osbuild:blueprint")) {
+		char *customization_instructions = "# If your hardening data stream is not part of the 'scap-security-guide' package\n"
+			"# provide the absolute path to it (from the root of the image filesystem).\n"
+			"# datastream = \"/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml\"\n";
 		char *blueprint_fix_header = oscap_sprintf(
 			"%s"
 			"name = \"hardened_%s\"\n"
@@ -1397,10 +1401,8 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"version = \"%s\"\n\n"
 			"[customizations.openscap]\n"
 			"profile_id = \"%s\"\n"
-			"# If your hardening data stream is not part of the 'scap-security-guide' package\n"
-			"# provide the absolute path to it (from the root of the image filesystem).\n"
-			"# datastream = \"/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml\"\n\n",
-			fix_header, profile_id, profile_title, benchmark_version_info, profile_id);
+			"%s\n",
+			fix_header, profile_id, profile_title, benchmark_version_info, profile_id, raw == 0 ? customization_instructions : "");
 		free(fix_header);
 		free(profile_title);
 		return _write_text_to_fd_and_free(output_fd, blueprint_fix_header);
@@ -1540,12 +1542,13 @@ static void _write_it_comma_list(struct oscap_iterator *it, const char *option, 
 	}
 }
 
-static int _generate_kickstart_services(struct kickstart_commands *cmds, int output_fd)
+static int _generate_kickstart_services(struct kickstart_commands *cmds, int output_fd, int raw)
 {
 	struct oscap_iterator *service_disable_it = oscap_iterator_new(cmds->service_disable);
 	struct oscap_iterator *service_enable_it = oscap_iterator_new(cmds->service_enable);
 	if (oscap_iterator_has_more(service_disable_it) || oscap_iterator_has_more(service_enable_it)) {
-		_write_text_to_fd(output_fd, "# Disable and enable systemd services (required for security compliance)\n");
+		if (raw == 0)
+			_write_text_to_fd(output_fd, "# Disable and enable systemd services (required for security compliance)\n");
 		_write_text_to_fd(output_fd, "services");
 		_write_it_comma_list(service_disable_it, "--disabled=", output_fd);
 		_write_it_comma_list(service_enable_it, "--enabled=", output_fd);
@@ -1556,12 +1559,13 @@ static int _generate_kickstart_services(struct kickstart_commands *cmds, int out
 	return 0;
 }
 
-static int _generate_kickstart_firewall(struct kickstart_commands *cmds, int output_fd)
+static int _generate_kickstart_firewall(struct kickstart_commands *cmds, int output_fd, int raw)
 {
 	struct oscap_iterator *disable_it = oscap_iterator_new(cmds->firewall_disable);
 	struct oscap_iterator *enable_it = oscap_iterator_new(cmds->firewall_enable);
 	if (oscap_iterator_has_more(disable_it) || oscap_iterator_has_more(enable_it)) {
-		_write_text_to_fd(output_fd, "# Disable and enable services in firewall (required for security compliance)\n");
+		if (raw == 0)
+			_write_text_to_fd(output_fd, "# Disable and enable services in firewall (required for security compliance)\n");
 		_write_text_to_fd(output_fd, "firewall");
 		_write_it_comma_list(disable_it, "--remove-service=", output_fd);
 		_write_it_comma_list(enable_it, "--service=", output_fd);
@@ -1572,9 +1576,10 @@ static int _generate_kickstart_firewall(struct kickstart_commands *cmds, int out
 	return 0;
 }
 
-static int _generate_kickstart_packages(struct kickstart_commands *cmds, int output_fd)
+static int _generate_kickstart_packages(struct kickstart_commands *cmds, int output_fd, int raw)
 {
-	_write_text_to_fd(output_fd, "# Packages selection (required for security compliance)\n");
+	if (raw == 0)
+		_write_text_to_fd(output_fd, "# Packages selection (required for security compliance)\n");
 	_write_text_to_fd(output_fd, "%packages\n");
 	/* openscap-scanner and scap-security-guide needs to be installed because we will run oscap in the %post section */
 	_write_text_to_fd(output_fd, "openscap-scanner\n");
@@ -1610,7 +1615,6 @@ static void _write_tailoring_to_fd(struct oscap_source *tailoring, int output_fd
 
 static int _generate_kickstart_oscap_post(struct kickstart_commands *cmds, const char *profile_id, const char *input_path, struct oscap_source *tailoring, int output_fd)
 {
-	_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening (required for security compliance)\n");
 	_write_text_to_fd(output_fd, "%post --erroronfail\n");
 	const char *fmt = "oscap xccdf eval --remediate%s--results-arf /root/oscap_arf.xml --report /root/oscap_report.html%s/usr/share/xml/scap/ssg/content/%s\n";
 	const char *tailoring_part;
@@ -1639,11 +1643,12 @@ static int _generate_kickstart_oscap_post(struct kickstart_commands *cmds, const
 	return 0;
 }
 
-static int _generate_kickstart_pre(struct kickstart_commands *cmds, int output_fd)
+static int _generate_kickstart_pre(struct kickstart_commands *cmds, int output_fd, int raw)
 {
 	struct oscap_iterator *pre_it = oscap_iterator_new(cmds->pre);
 	while (oscap_iterator_has_more(pre_it)) {
-		_write_text_to_fd(output_fd, "# Additional %pre section (required for security compliance)\n");
+		if (raw == 0)
+			_write_text_to_fd(output_fd, "# Additional %pre section (required for security compliance)\n");
 		char *pre_content = (char *) oscap_iterator_next(pre_it);
 		_write_text_to_fd(output_fd, pre_content);
 		_write_text_to_fd(output_fd, "\n");
@@ -1652,11 +1657,12 @@ static int _generate_kickstart_pre(struct kickstart_commands *cmds, int output_f
 	return 0;
 }
 
-static int _generate_kickstart_post(struct kickstart_commands *cmds, int output_fd)
+static int _generate_kickstart_post(struct kickstart_commands *cmds, int output_fd, int raw)
 {
 	struct oscap_iterator *post_it = oscap_iterator_new(cmds->post);
 	while (oscap_iterator_has_more(post_it)) {
-		_write_text_to_fd(output_fd, "# Additional %post section (required for security compliance)\n");
+		if (raw == 0)
+			_write_text_to_fd(output_fd, "# Additional %post section (required for security compliance)\n");
 		char *post_content = (char *) oscap_iterator_next(post_it);
 		_write_text_to_fd(output_fd, post_content);
 		_write_text_to_fd(output_fd, "\n");
@@ -1666,7 +1672,6 @@ static int _generate_kickstart_post(struct kickstart_commands *cmds, int output_
 }
 
 const char *common_partition = (
-	"# Create partition layout scheme (required for security compliance)\n"
 	"zerombr\n"
 	"clearpart --all --initlabel\n"
 	"reqpart --add-boot\n"
@@ -1679,19 +1684,28 @@ const char *common_partition = (
 /* Fallback partition layout for profiles that don't specify partitioning layout */
 /* We need to specify at least some layout in the kickstart to make the installation fully automated. */
 const char *fallback_partition = (
-	"# Create partition layout scheme (optional)\n"
 	"zerombr\n"
 	"clearpart --all --initlabel\n"
 	"autopart --type=lvm\n"
 );
 
-static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int output_fd)
+static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int output_fd, int raw)
 {
 	struct oscap_iterator *logvol_it = oscap_iterator_new(cmds->logvol);
 	if (oscap_iterator_has_more(logvol_it)) {
-		_write_text_to_fd(output_fd, common_partition);
+		if (raw == 0) {
+			_write_text_to_fd(output_fd, "# Create partition layout scheme (required for security compliance)\n");
+			_write_text_to_fd(output_fd, common_partition);
+		} else {
+			_write_text_to_fd(output_fd, "# %partitions\n");
+			_write_text_to_fd(output_fd, common_partition);
+			_write_text_to_fd(output_fd, "# %logvols\n");
+		}
 	} else {
-		_write_text_to_fd(output_fd, fallback_partition);
+		if (raw == 0) {
+			_write_text_to_fd(output_fd, "# Default partition layout scheme (optional)\n");
+			_write_text_to_fd(output_fd, fallback_partition);
+		}
 	}
 	while (oscap_iterator_has_more(logvol_it)) {
 		struct logvol_cmd *command = (struct logvol_cmd *) oscap_iterator_next(logvol_it);
@@ -1701,17 +1715,22 @@ static int _generate_kickstart_logvol(struct kickstart_commands *cmds, int outpu
 		_write_text_to_fd(output_fd, fmt);
 		free(name);
 		free(fmt);
+		if (!oscap_iterator_has_more(logvol_it)) {
+			if (raw > 0)
+				_write_text_to_fd(output_fd, "# %end\n");
+			_write_text_to_fd(output_fd, "\n");
+		}
 	}
-	_write_text_to_fd(output_fd, "\n");
 	oscap_iterator_free(logvol_it);
 	return 0;
 }
 
-static int _generate_kickstart_kdump(struct kickstart_commands *cmds, int output_fd)
+static int _generate_kickstart_kdump(struct kickstart_commands *cmds, int output_fd, int raw)
 {
 	if (!cmds->enable_kdump) {
+		if (raw == 0)
+			_write_text_to_fd(output_fd, "# Disable the kdump kernel crash dumping mechanism (required for security compliance)\n");
 		_write_text_to_fd(output_fd,
-			"# Disable the kdump kernel crash dumping mechanism (required for security compliance)\n"
 			"%addon com_redhat_kdump --disable\n"
 			"%end\n"
 			"\n"
@@ -1720,23 +1739,26 @@ static int _generate_kickstart_kdump(struct kickstart_commands *cmds, int output
 	return 0;
 }
 
-static int _generate_kickstart_bootloader(struct kickstart_commands *cmds, int output_fd)
+static int _generate_kickstart_bootloader(struct kickstart_commands *cmds, int output_fd, int raw)
 {
 	struct oscap_iterator *bl_it = oscap_iterator_new(cmds->bootloader);
 	if (!oscap_iterator_has_more(bl_it)) {
 		oscap_iterator_free(bl_it);
 		return 0;
 	}
-	_write_text_to_fd(output_fd, "# Configure boot loader options (required for security compliance)\n");
+	if (raw == 0)
+		_write_text_to_fd(output_fd, "# Configure boot loader options (required for security compliance)\n");
 	_write_text_to_fd(output_fd, "bootloader --append=\"");
 	while (oscap_iterator_has_more(bl_it)) {
 		char *optval = (char *) oscap_iterator_next(bl_it);
 		_write_text_to_fd(output_fd, optval);
-		if (oscap_iterator_has_more(bl_it))
+		if (oscap_iterator_has_more(bl_it)) {
 			_write_text_to_fd(output_fd, " ");
+		} else {
+			_write_text_to_fd(output_fd, "\"\n");
+			_write_text_to_fd(output_fd, "\n");
+		}
 	}
-	_write_text_to_fd(output_fd, "\"\n");
-	_write_text_to_fd(output_fd, "\n");
 	oscap_iterator_free(bl_it);
 	return 0;
 }
@@ -1749,7 +1771,7 @@ static void logvol_cmd_free(void *ptr)
 	free(cmd);
 }
 
-static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int output_fd)
+static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int raw, int output_fd)
 {
 	int ret = 0;
 	struct kickstart_commands cmds = {
@@ -1775,43 +1797,47 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	}
 	oscap_iterator_free(rules_to_fix_it);
 
-	_write_text_to_fd(output_fd, "\n");
 	const char *common_template = (
-		"# Default values for automated installation\n"
+		"\n# Default values for automated installation (optional)\n"
 		"lang en_US.UTF-8\n"
 		"keyboard --vckeymap us\n"
 		"timezone --utc America/New_York\n"
 		"\n"
-		"# Root password is required for system rescue tasks\n"
+		"# Root password is required for system rescue tasks (optional)\n"
 		"rootpw %s\n"
 		"\n"
 	);
-	char *password = oscap_generate_random_string(24, NULL);
-	char *common = oscap_sprintf(common_template, password);
-	_write_text_to_fd(output_fd, common);
-	free(password);
-	free(common);
+	if (raw == 0) {
+		char *password = oscap_generate_random_string(24, NULL);
+		char *common = oscap_sprintf(common_template, password);
+		_write_text_to_fd(output_fd, common);
+		free(password);
+		free(common);
+	}
 
-	_generate_kickstart_pre(&cmds, output_fd);
+	_generate_kickstart_pre(&cmds, output_fd, raw);
 
-	_generate_kickstart_logvol(&cmds, output_fd);
+	_generate_kickstart_logvol(&cmds, output_fd, raw);
 
-	_generate_kickstart_bootloader(&cmds, output_fd);
+	_generate_kickstart_bootloader(&cmds, output_fd, raw);
 
-	_generate_kickstart_kdump(&cmds, output_fd);
+	_generate_kickstart_kdump(&cmds, output_fd, raw);
 
-	_generate_kickstart_firewall(&cmds, output_fd);
+	_generate_kickstart_firewall(&cmds, output_fd, raw);
 
-	_generate_kickstart_services(&cmds, output_fd);
+	_generate_kickstart_services(&cmds, output_fd, raw);
 
-	_generate_kickstart_packages(&cmds, output_fd);
+	_generate_kickstart_packages(&cmds, output_fd, raw);
 
+	if (raw == 0)
+		_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening (required for security compliance)\n");
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
 	_generate_kickstart_oscap_post(&cmds, profile_id, input_file_name, tailoring, output_fd);
 
-	_generate_kickstart_post(&cmds, output_fd);
+	_generate_kickstart_post(&cmds, output_fd, raw);
 
-	_write_text_to_fd(output_fd, "# Reboot after the installation is complete\nreboot\n");
+	if (raw == 0)
+		_write_text_to_fd(output_fd, "# Reboot after the installation is complete\nreboot\n");
 
 	oscap_list_free(cmds.package_install, free);
 	oscap_list_free(cmds.package_remove, free);
@@ -1826,7 +1852,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	return ret;
 }
 
-int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int output_fd)
+int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int output_fd, int raw)
 {
 	__attribute__nonnull__(policy);
 	int ret = 0;
@@ -1844,7 +1870,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 			return 1;
 		}
 
-		if (_write_script_header_to_fd(policy, result, sys, input_file_name, tailoring_file_name, output_fd) != 0) {
+		if (_write_script_header_to_fd(policy, result, sys, input_file_name, tailoring_file_name, output_fd, raw) != 0) {
 			oscap_list_free(rules_to_fix, NULL);
 			return 1;
 		}
@@ -1861,7 +1887,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	else {
 		dI("Generating result-oriented fixes for policy(result/@id=%s)", xccdf_result_get_id(result));
 
-		if (_write_script_header_to_fd(policy, result, sys, input_file_name, tailoring_file_name, output_fd) != 0) {
+		if (_write_script_header_to_fd(policy, result, sys, input_file_name, tailoring_file_name, output_fd, raw) != 0) {
 			oscap_list_free(rules_to_fix, NULL);
 			return 1;
 		}
@@ -1884,7 +1910,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	} else if (strcmp(sys, "urn:redhat:osbuild:blueprint") == 0) {
 		ret = _xccdf_policy_generate_fix_blueprint(rules_to_fix, policy, sys, output_fd);
 	} else if (strcmp(sys, "urn:xccdf:fix:script:kickstart") == 0) {
-		ret = _xccdf_policy_generate_fix_kickstart(rules_to_fix, policy, sys, input_file_name, tailoring, output_fd);
+		ret = _xccdf_policy_generate_fix_kickstart(rules_to_fix, policy, sys, input_file_name, tailoring, raw, output_fd);
 	} else {
 		ret =  _xccdf_policy_generate_fix_other(rules_to_fix, policy, sys, output_fd);
 	}
@@ -1893,3 +1919,4 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 
 	return ret;
 }
+
