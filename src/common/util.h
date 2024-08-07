@@ -385,6 +385,18 @@ char *oscap_trim(char *str);
 char *oscap_vsprintf(const char *fmt, va_list ap);
 
 /**
+ * Generates a pseudorandom string of a given length.
+ * If charset string is not NULL and its length is greater than 0,
+ * it will be used as a dictionary, otherwise a default alphanumeric set
+ * will be the base for the generated string.
+ * Caller is responsible for freeing the returned string.
+ * @param len desired string length (must be greater than 0)
+ * @param charset a dictionary string, could be NULL
+ * @return A random string of desired length.
+ */
+char *oscap_generate_random_string(size_t len, char *charset);
+
+/**
  * Join 2 paths in an intelligent way.
  * Both paths are allowed to be NULL.
  * Caller is responsible for freeing the returned pointer.

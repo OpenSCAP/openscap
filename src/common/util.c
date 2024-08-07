@@ -25,6 +25,7 @@
 #include <config.h>
 #endif
 
+#include <time.h>
 #include <fcntl.h>
 #include <string.h>
 #include <ctype.h>
@@ -49,6 +50,24 @@
 #endif
 
 #define PATH_SEPARATOR '/'
+
+char *oscap_generate_random_string(size_t len, char *charset)
+{
+	char default_charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	char *res = NULL;
+	charset = (charset != NULL && strlen(charset) > 0) ? charset : default_charset;
+	size_t charset_len = strlen(charset);
+	if (len > 0) {
+		srand(time(NULL));
+		res = malloc(len+1);
+		res[len] = 0;
+		while (len-- > 0) {
+			size_t index = (double) rand() / RAND_MAX * (charset_len-1);
+			res[len] = charset[index];
+		}
+	}
+	return res;
+}
 
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str)
 {

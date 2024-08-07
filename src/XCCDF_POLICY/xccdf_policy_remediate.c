@@ -1776,17 +1776,21 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	oscap_iterator_free(rules_to_fix_it);
 
 	_write_text_to_fd(output_fd, "\n");
-	const char *common = (
+	const char *common_template = (
 		"# Default values for automated installation\n"
 		"lang en_US.UTF-8\n"
 		"keyboard --vckeymap us\n"
 		"timezone --utc America/New_York\n"
 		"\n"
 		"# Root password is required for system rescue tasks\n"
-		"rootpw changeme\n"
+		"rootpw %s\n"
 		"\n"
 	);
+	char *password = oscap_generate_random_string(24, NULL);
+	char *common = oscap_sprintf(common_template, password);
 	_write_text_to_fd(output_fd, common);
+	free(password);
+	free(common);
 
 	_generate_kickstart_pre(&cmds, output_fd);
 
