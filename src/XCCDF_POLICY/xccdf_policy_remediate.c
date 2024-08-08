@@ -1749,7 +1749,7 @@ static void logvol_cmd_free(void *ptr)
 	free(cmd);
 }
 
-static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int output_fd)
+static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int raw, int output_fd)
 {
 	int ret = 0;
 	struct kickstart_commands cmds = {
@@ -1786,7 +1786,9 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 		"rootpw changeme\n"
 		"\n"
 	);
-	_write_text_to_fd(output_fd, common);
+	if (raw == 0) {
+		_write_text_to_fd(output_fd, common);
+	}
 
 	_generate_kickstart_pre(&cmds, output_fd);
 
@@ -1807,7 +1809,8 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 
 	_generate_kickstart_post(&cmds, output_fd);
 
-	_write_text_to_fd(output_fd, "# Reboot after the installation is complete\nreboot\n");
+	if (raw == 0)
+		_write_text_to_fd(output_fd, "# Reboot after the installation is complete\nreboot\n");
 
 	oscap_list_free(cmds.package_install, free);
 	oscap_list_free(cmds.package_remove, free);
@@ -1822,7 +1825,7 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	return ret;
 }
 
-int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int output_fd)
+int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int output_fd, int raw)
 {
 	__attribute__nonnull__(policy);
 	int ret = 0;
@@ -1840,10 +1843,11 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 			return 1;
 		}
 
-		if (_write_script_header_to_fd(policy, result, sys, input_file_name, tailoring_file_name, output_fd) != 0) {
-			oscap_list_free(rules_to_fix, NULL);
-			return 1;
-		}
+		if (raw == 0)
+			if (_write_script_header_to_fd(policy, result, sys, input_file_name, tailoring_file_name, output_fd) != 0) {
+				oscap_list_free(rules_to_fix, NULL);
+				return 1;
+			}
 
 		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
 		while (xccdf_item_iterator_has_more(item_it)) {
@@ -1857,10 +1861,11 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	else {
 		dI("Generating result-oriented fixes for policy(result/@id=%s)", xccdf_result_get_id(result));
 
-		if (_write_script_header_to_fd(policy, result, sys, input_file_name, tailoring_file_name, output_fd) != 0) {
-			oscap_list_free(rules_to_fix, NULL);
-			return 1;
-		}
+		if (raw == 0)
+			if (_write_script_header_to_fd(policy, result, sys, input_file_name, tailoring_file_name, output_fd) != 0) {
+				oscap_list_free(rules_to_fix, NULL);
+				return 1;
+			}
 
 		struct xccdf_rule_result_iterator *rr_it = xccdf_result_get_rule_results(result);
 		while (xccdf_rule_result_iterator_has_more(rr_it)) {
@@ -1880,7 +1885,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	} else if (strcmp(sys, "urn:redhat:osbuild:blueprint") == 0) {
 		ret = _xccdf_policy_generate_fix_blueprint(rules_to_fix, policy, sys, output_fd);
 	} else if (strcmp(sys, "urn:xccdf:fix:script:kickstart") == 0) {
-		ret = _xccdf_policy_generate_fix_kickstart(rules_to_fix, policy, sys, input_file_name, tailoring, output_fd);
+		ret = _xccdf_policy_generate_fix_kickstart(rules_to_fix, policy, sys, input_file_name, tailoring, raw, output_fd);
 	} else {
 		ret =  _xccdf_policy_generate_fix_other(rules_to_fix, policy, sys, output_fd);
 	}
@@ -1889,3 +1894,4 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 
 	return ret;
 }
+
