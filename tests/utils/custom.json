@@ -30,6 +30,16 @@
           "option_id": "some"
         }
       }
+    },
+    {
+      "id": "JSON_P11",
+      "title": "JSON Tailored Profile P11",
+      "base_profile_id": "P1",
+      "rules": {
+        "R3": {
+          "evaluate": true
+        }
+      }
     }
   ]
 }

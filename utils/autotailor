@@ -52,21 +52,18 @@ def is_valid_xccdf_id(string):
         string) is not None
 
 
-class Tailoring:
+class Profile:
     def __init__(self):
-        self.id = "xccdf_auto_tailoring_default"
         self.reverse_dns = DEFAULT_REVERSE_DNS
-        self.version = 1
         self._profile_id = None
         self.extends = ""
-        self.original_ds_filename = ""
         self.profile_title = ""
 
-        self.value_changes = []
-        self.rules_to_select = []
-        self.rules_to_unselect = []
-        self.groups_to_select = []
-        self.groups_to_unselect = []
+        self.value_changes = set()
+        self.rules_to_select = set()
+        self.rules_to_unselect = set()
+        self.groups_to_select = set()
+        self.groups_to_unselect = set()
         self._rule_refinements = collections.defaultdict(dict)
         self._value_refinements = collections.defaultdict(dict)
 
@@ -75,7 +72,7 @@ class Tailoring:
         if self._profile_id is not None:
             return self._profile_id
         else:
-            return self.extends + "_customized"
+            return self.extends + DEFAULT_PROFILE_SUFFIX
 
     @profile_id.setter
     def profile_id(self, new_profile_id):
@@ -100,7 +97,7 @@ class Tailoring:
         if not is_valid_xccdf_id(rule_id):
             msg = f"Rule id '{rule_id}' is invalid!"
             raise ValueError(msg)
-        enumeration = Tailoring._find_rule_enumeration(attribute)
+        enumeration = Profile._find_rule_enumeration(attribute)
         if value in enumeration:
             return
         allowed = ", ".join(map(quote, enumeration))
@@ -138,14 +135,17 @@ class Tailoring:
         raise ValueError(msg)
 
     def refine_rule(self, rule_id, attribute, value):
-        Tailoring._validate_rule_refinement_params(rule_id, attribute, value)
+        Profile._validate_rule_refinement_params(rule_id, attribute, value)
         self._prevent_duplicate_rule_refinement(attribute, rule_id, value)
         self._rule_refinements[rule_id][attribute] = value
 
     def refine_value(self, value_id, attribute, value):
-        Tailoring._validate_value_refinement_params(value_id, attribute, value)
+        Profile._validate_value_refinement_params(value_id, attribute, value)
         self._prevent_duplicate_value_refinement(attribute, value_id, value)
         self._value_refinements[value_id][attribute] = value
+
+    def add_value_change(self, varname, value):
+        self.value_changes.add((varname, value))
 
     def change_rule_attribute(self, rule_id, attribute, value):
         full_rule_id = self._full_rule_id(rule_id)
@@ -193,33 +193,30 @@ class Tailoring:
     def _full_group_id(self, string):
         return self._full_id(string, "group")
 
-    def add_value_change(self, varname, value):
-        self.value_changes.append((varname, value))
-
-    def _add_group_select_operations(self, container_element):
-        for group_id in self.groups_to_select:
+    def _add_group_select_operations_to_xml(self, container_element):
+        for group_id in sorted(self.groups_to_select):
             change = ET.SubElement(container_element, "{%s}select" % NS)
             change.set("idref", self._full_group_id(group_id))
             change.set("selected", "true")
 
-        for group_id in self.groups_to_unselect:
+        for group_id in sorted(self.groups_to_unselect):
             change = ET.SubElement(container_element, "{%s}select" % NS)
             change.set("idref", self._full_group_id(group_id))
             change.set("selected", "false")
 
-    def _add_rule_select_operations(self, container_element):
-        for rule_id in self.rules_to_select:
+    def _add_rule_select_operations_to_xml(self, container_element):
+        for rule_id in sorted(self.rules_to_select):
             change = ET.SubElement(container_element, "{%s}select" % NS)
             change.set("idref", self._full_rule_id(rule_id))
             change.set("selected", "true")
 
-        for rule_id in self.rules_to_unselect:
+        for rule_id in sorted(self.rules_to_unselect):
             change = ET.SubElement(container_element, "{%s}select" % NS)
             change.set("idref", self._full_rule_id(rule_id))
             change.set("selected", "false")
 
-    def _add_value_overrides(self, container_element):
-        for varname, value in self.value_changes:
+    def _add_value_overrides_to_xml(self, container_element):
+        for varname, value in sorted(self.value_changes):
             change = ET.SubElement(container_element, "{%s}set-value" % NS)
             change.set("idref", self._full_var_id(varname))
             change.text = str(value)
@@ -238,50 +235,14 @@ class Tailoring:
             for attr, val in refinements.items():
                 ref_value_el.set(attr, val)
 
-    def to_xml(self, location=None):
-        root = ET.Element("{%s}Tailoring" % NS)
-        root.set("id", self.id)
-
-        benchmark = ET.SubElement(root, "{%s}benchmark" % NS)
-        datastream_uri = pathlib.Path(
-            self.original_ds_filename).absolute().as_uri()
-        benchmark.set("href", datastream_uri)
-
-        version = ET.SubElement(root, "{%s}version" % NS)
-        version.set("time", datetime.datetime.now().isoformat())
-        version.text = str(self.version)
-
-        profile = ET.SubElement(root, "{%s}Profile" % NS)
-        profile.set("id", self._full_profile_id(self.profile_id))
-        profile.set("extends", self._full_profile_id(self.extends))
-
-        # Title has to be there due to the schema definition.
-        title = ET.SubElement(profile, "{%s}title" % NS)
-        if self.profile_title:
-            title.set("override", "true")
-        else:
-            title.set("override", "false")
-        title.text = self.profile_title
-
-        self._add_group_select_operations(profile)
-        self._add_rule_select_operations(profile)
-        self._add_value_overrides(profile)
-        self.rule_refinements_to_xml(profile)
-        self.value_refinements_to_xml(profile)
-
-        root_str = ET.tostring(root)
-        pretty_xml = xml.dom.minidom.parseString(root_str).toprettyxml()
-        with open(location, "w") if location != "-" else sys.stdout as f:
-            f.write(pretty_xml)
-
     def _import_groups_from_tailoring(self, tailoring):
         if "groups" in tailoring:
             for group_id, props in tailoring["groups"].items():
                 if "evaluate" in props:
                     if props["evaluate"]:
-                        self.groups_to_select.append(group_id)
+                        self.groups_to_select.add(group_id)
                     else:
-                        self.groups_to_unselect.append(group_id)
+                        self.groups_to_unselect.add(group_id)
 
     def _import_variables_from_tailoring(self, tailoring):
         if "variables" in tailoring:
@@ -296,32 +257,99 @@ class Tailoring:
             for rule_id, props in tailoring["rules"].items():
                 if "evaluate" in props:
                     if props["evaluate"]:
-                        self.rules_to_select.append(rule_id)
+                        self.rules_to_select.add(rule_id)
                     else:
-                        self.rules_to_unselect.append(rule_id)
+                        self.rules_to_unselect.add(rule_id)
                 for attr in ATTRIBUTES:
                     if attr in props:
                         self.change_rule_attribute(rule_id, attr, props[attr])
 
+    def to_xml(self, root):
+        profile = ET.SubElement(root, "{%s}Profile" % NS)
+        profile.set("id", self._full_profile_id(self.profile_id))
+        profile.set("extends", self._full_profile_id(self.extends))
+
+        # Title has to be there due to the schema definition.
+        title = ET.SubElement(profile, "{%s}title" % NS)
+        if self.profile_title:
+            title.set("override", "true")
+        else:
+            title.set("override", "false")
+        title.text = self.profile_title
+
+        self._add_group_select_operations_to_xml(profile)
+        self._add_rule_select_operations_to_xml(profile)
+        self._add_value_overrides_to_xml(profile)
+        self.rule_refinements_to_xml(profile)
+        self.value_refinements_to_xml(profile)
+
+    def import_json_tailoring_profile(self, profile_dict):
+        self.extends = profile_dict["base_profile_id"]
+
+        self.profile_id = profile_dict.get("id", self.profile_id)
+        self.profile_title = profile_dict.get("title", self.profile_title)
+
+        self._import_groups_from_tailoring(profile_dict)
+        self._import_rules_from_tailoring(profile_dict)
+        self._import_variables_from_tailoring(profile_dict)
+
+
+class Tailoring:
+    def __init__(self):
+        self.reverse_dns = DEFAULT_REVERSE_DNS
+        self.id = "xccdf_auto_tailoring_default"
+        self.version = 1
+        self.original_ds_filename = ""
+
+        self.profiles = []
+
+    def get_or_create_tailored_profile_with_id(self, profile_id):
+        if profile_id is not None:
+            for profile in self.profiles:
+                if profile.profile_id == profile_id:
+                    return profile
+        profile = Profile()
+        if profile_id is not None:
+            profile.profile_id = profile_id
+        profile.reverse_dns = self.reverse_dns
+        self.profiles.append(profile)
+        return profile
+
+    def to_xml(self, root):
+        root.set("id", self.id)
+
+        benchmark = ET.SubElement(root, "{%s}benchmark" % NS)
+        datastream_uri = pathlib.Path(
+            self.original_ds_filename).absolute().as_uri()
+        benchmark.set("href", datastream_uri)
+
+        version = ET.SubElement(root, "{%s}version" % NS)
+        version.set("time", datetime.datetime.now().isoformat())
+        version.text = str(self.version)
+
+        for profile in self.profiles:
+            profile.to_xml(root)
+
+    def as_xml_string(self, location=None):
+        root = ET.Element("{%s}Tailoring" % NS)
+        self.to_xml(root)
+        root_str = ET.tostring(root)
+        pretty_xml = xml.dom.minidom.parseString(root_str).toprettyxml()
+        with open(location, "w") if location != "-" else sys.stdout as f:
+            f.write(pretty_xml)
+
     def import_json_tailoring(self, json_tailoring):
         with open(json_tailoring, "r") as jf:
-            all_tailorings = json.load(jf)
+            tailoring_dict = json.load(jf)
 
-        if 'profiles' in all_tailorings and all_tailorings['profiles']:
-            if len(all_tailorings['profiles']) > 1:
-                raise ValueError("The autotailor tool currently does not support multi-profile JSON tailoring.")
-            tailoring = all_tailorings['profiles'][0]
+        if 'profiles' in tailoring_dict and tailoring_dict['profiles']:
+            for profile_dict in tailoring_dict['profiles']:
+                profile = Profile()
+                profile.reverse_dns = self.reverse_dns
+                profile.import_json_tailoring_profile(profile_dict)
+                self.profiles.append(profile)
         else:
             raise ValueError("JSON Tailoring does not define any profiles.")
-
-        self.extends = tailoring["base_profile_id"]
-
-        self.profile_id = tailoring.get("id", self.profile_id)
-        self.profile_title = tailoring.get("title", self.profile_title)
-
-        self._import_groups_from_tailoring(tailoring)
-        self._import_rules_from_tailoring(tailoring)
-        self._import_variables_from_tailoring(tailoring)
 
 
 def get_parser():
@@ -338,8 +366,12 @@ def get_parser():
         "'xccdf_<id-namespace>_profile' prefix will be prepended internally.")
     parser.add_argument(
         "-j", "--json-tailoring", metavar="JSON_TAILORING_FILENAME", default="",
-        help="JSON Tailoring (https://github.com/ComplianceAsCode/schemas/blob/main/tailoring/schema.json) "
-        "filename.")
+        help="Provide a JSON Tailoring (https://github.com/ComplianceAsCode/schemas/blob/main/tailoring/schema.json) "
+        "file to use as the base for XCCDF tailoring generation. JSON tailoring can be accompanied with "
+        "additional command-line options to either override contents of an existing profile "
+        "(along with --tailored-profile-id identifier) or to create an extra profile (BASE_PROFILE_ID is "
+        "a mandatory argument in this case and --tailored-profile-id is optional) in the resulting "
+        "XCCDF tailoring file.")
     parser.add_argument(
         "--title", default="",
         help="Title of the new profile.")
@@ -390,7 +422,7 @@ def get_parser():
         help="Specify what rules to unselect. "
         "The argument works the same way as the --select argument.")
     parser.add_argument(
-        "-p", "--new-profile-id",
+        "-p", "--tailored-profile-id", "--new-profile-id",
         help="Specify the ID of the tailored profile. "
         "The ID of the new profile can be either its full ID, or the suffix, "
         "in which case the 'xccdf_<id-namespace>_profile_' prefix will be "
@@ -419,19 +451,19 @@ if __name__ == "__main__":
     if args.json_tailoring:
         t.import_json_tailoring(args.json_tailoring)
 
-    if args.profile:
-        t.extends = args.profile
-    if args.new_profile_id:
-        t.profile_id = args.new_profile_id
-    if args.title:
-        t.profile_title = args.title
+    if args.profile or (args.json_tailoring and args.tailored_profile_id):
+        p = t.get_or_create_tailored_profile_with_id(args.tailored_profile_id)
+        p.extends = args.profile
+        if args.title:
+            p.profile_title = args.title
 
-    t.rules_to_select.extend(args.select)
-    t.rules_to_unselect.extend(args.unselect)
+        p.rules_to_select.update(args.select)
+        p.rules_to_unselect.update(args.unselect)
+        p.rules_to_select.difference_update(p.rules_to_unselect)
 
-    t.change_values(args.var_value)
-    t.change_selectors(args.var_select)
-    t.change_roles(args.rule_role)
-    t.change_severities(args.rule_severity)
+        p.change_values(args.var_value)
+        p.change_selectors(args.var_select)
+        p.change_roles(args.rule_role)
+        p.change_severities(args.rule_severity)
 
-    t.to_xml(args.output)
+    t.as_xml_string(args.output)
