@@ -161,6 +161,7 @@ struct oscap_action {
 	char *local_files;
 	char *reference;
 	int references;
+	int raw;
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);
