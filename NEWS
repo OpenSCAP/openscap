@@ -1,3 +1,22 @@
+openscap-1.4.0                                                  2024-08-13
+- New features
+  - Introduce ability to generate Kickstarts for unattended OS installation using the `oscap xccdf generate fix --fix-type kickstart` command
+  - Add ability to process multi-profile JSON tailorings by the `autotailor` tool
+- Removed features
+  - Removed `cve`, `cvss`, `cvrf` modules
+  - Removed `ds` submodules `sds-compose`, `sds-add`, `sds-split`, `rds-create`, `rds-split`
+  - Removed `--template`, `--oval-template` and `--sce-template` options from the `xccdf generate` submodule
+  - Remove the `--skip-valid` option (replaced by `--skip-validation`)
+- Maintenance, bug fix
+  - Advertise path to SSG in remediation scripts
+  - Remove the option to build with PCRE
+  - Process CPE AL platforms if CPE dictionary isn't part of data stream
+  - Disable GConf probe by default (and remove dependencies from docs)
+  - Disable MD5 and SHA-1 by default
+  - Remove CPE dictionary
+  - Fix compiler warnings
+  - Update User Manual
+
 openscap-1.3.10                                                 18-03-2024
 - New features
   - Dump all env. variables that affects the behaviour on INFO log level
