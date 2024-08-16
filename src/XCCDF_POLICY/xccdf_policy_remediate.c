@@ -1113,6 +1113,7 @@ static int _xccdf_policy_rule_generate_kickstart_fix(struct xccdf_policy *policy
 	if (state != KS_R_P_NORMAL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unfinished block in kickstart remediation in rule %s\n", xccdf_rule_get_id(rule));
 	}
+	free(block);
 	free(lines);
 	free(dup);
 	free(fix_text);
