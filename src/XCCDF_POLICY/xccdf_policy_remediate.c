@@ -1605,18 +1605,22 @@ static int _generate_kickstart_packages(struct kickstart_commands *cmds, int out
 	return 0;
 }
 
-static void _write_tailoring_to_fd(struct oscap_source *tailoring, int output_fd)
+static int _write_tailoring_to_fd(struct oscap_source *tailoring, int output_fd)
 {
 	if (tailoring == NULL)
-		return;
+		return 0;
 	_write_text_to_fd(output_fd, "cat >/root/oscap_tailoring.xml <<END_OF_TAILORING\n");
-	oscap_source_to_fd(tailoring, output_fd);
+	if (oscap_source_to_fd(tailoring, output_fd) != 0)
+		return -1;
 	_write_text_to_fd(output_fd, "END_OF_TAILORING\n");
+	return 0;
 }
 
 static int _generate_kickstart_oscap_post(struct kickstart_commands *cmds, const char *profile_id, const char *input_path, struct oscap_source *tailoring, int output_fd)
 {
 	_write_text_to_fd(output_fd, "%post --erroronfail\n");
+	if (_write_tailoring_to_fd(tailoring, output_fd) != 0)
+		return -1;
 	const char *fmt = "oscap xccdf eval --remediate%s--results-arf /root/oscap_arf.xml --report /root/oscap_report.html%s/usr/share/xml/scap/ssg/content/%s\n";
 	const char *tailoring_part;
 	if (tailoring != NULL) {
@@ -1636,7 +1640,6 @@ static int _generate_kickstart_oscap_post(struct kickstart_commands *cmds, const
 	char *oscap_command = oscap_sprintf(fmt, tailoring_part, profile_part, basename);
 	free(profile_part);
 	free(basename);
-	_write_tailoring_to_fd(tailoring, output_fd);
 	_write_text_to_fd_and_free(output_fd, oscap_command);
 	_write_text_to_fd(output_fd, "[ $? -eq 0 -o $? -eq 2 ] || exit 1\n");
 	_write_text_to_fd(output_fd, "%end\n");
@@ -1833,13 +1836,17 @@ static int _xccdf_policy_generate_fix_kickstart(struct oscap_list *rules_to_fix,
 	if (raw == 0)
 		_write_text_to_fd(output_fd, "# Perform OpenSCAP hardening (required for security compliance)\n");
 	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
-	_generate_kickstart_oscap_post(&cmds, profile_id, input_file_name, tailoring, output_fd);
+	if (_generate_kickstart_oscap_post(&cmds, profile_id, input_file_name, tailoring, output_fd) != 0) {
+		ret = -1;
+		goto cleanup;
+	}
 
 	_generate_kickstart_post(&cmds, output_fd, raw);
 
 	if (raw == 0)
 		_write_text_to_fd(output_fd, "# Reboot after the installation is complete\nreboot\n");
 
+cleanup:
 	oscap_list_free(cmds.package_install, free);
 	oscap_list_free(cmds.package_remove, free);
 	oscap_list_free(cmds.service_enable, free);
