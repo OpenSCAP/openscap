@@ -252,7 +252,9 @@ static int crapi_digest_update(struct crapi_digest_ctx *ctx, void *bptr, size_t 
 static int crapi_digest_fini(struct crapi_digest_ctx *ctx, crapi_alg_t alg)
 {
 #if defined(HAVE_NSS3)
-	HASH_End (ctx->ctx, ctx->dst, (unsigned int *)ctx->size, *ctx->size);
+	unsigned int result_len;
+	HASH_End(ctx->ctx, ctx->dst, &result_len, *ctx->size);
+	*ctx->size = result_len;
 	HASH_Destroy (ctx->ctx);
 #elif defined(HAVE_GCRYPT)
 	void *buffer;
