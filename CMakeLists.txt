@@ -78,6 +78,7 @@ include(CheckIncludeFile)
 include(CheckIncludeFiles)
 include(CheckCSourceCompiles)
 include(CMakeDependentOption)
+include(FindPythonModule)
 
 # ---------- DEPENDENCIES
 
@@ -126,6 +127,8 @@ find_package(PythonLibs 3)
 
 set(PREFERRED_PYTHON_PATH "${PYTHON_EXECUTABLE}" CACHE PATH "Path to preferred Python")
 set(PYTHON3_PATH "${PYTHON_EXECUTABLE}" CACHE PATH "Path to Python3")
+
+find_python_module(pytest)
 
 find_package(RPM)
 if(RPM_FOUND)
