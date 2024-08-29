@@ -475,6 +475,7 @@ message(STATUS "Testing:")
 message(STATUS "tests: ${ENABLE_TESTS}")
 message(STATUS "valgrind: ${ENABLE_VALGRIND}")
 message(STATUS "MITRE: ${ENABLE_MITRE}")
+message(STATUS "pytest: ${PY_PYTEST}")
 message(STATUS " ")
 
 message(STATUS "Documentation:")
