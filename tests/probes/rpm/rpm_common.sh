@@ -11,10 +11,7 @@ RPMBUILD="${RPMBASE}/build"
 
 # Since Fedora 36 RPM database location changed, see
 # https://fedoraproject.org/wiki/Changes/RelocateRPMToUsr
-# However, /var/lib/rpm/ still works as it is a symlink to
-# the new path, /usr/lib/sysimage/rpm/, in Fedora >= 36
-# Therefore, always use /var/lib/rpm/ as it always works.
-RPMDB_PATH="/var/lib/rpm/"
+RPMDB_PATH="/usr/lib/sysimage/rpm/"
 
 function rpm_build {
     require "rpmbuild" || return 255
