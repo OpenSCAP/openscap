@@ -33,6 +33,7 @@
 #if defined(OS_LINUX)
 #include <linux/limits.h>
 #endif
+#include <limits.h>
 
 #include "common/debug_priv.h"
 #include "common/util.h"
