@@ -1658,6 +1658,7 @@ If OpenSCAP is executed with verbosity level INFO or DEVEL their runtime values 
 * `OSCAP_PROBE_MEMORY_USAGE_RATIO` - maximum memory usage ratio (used/total) for OpenSCAP probes, default: 0.1
 * `OSCAP_PROBE_MAX_COLLECTED_ITEMS` - maximal count of collected items by OpenSCAP probe for a single OVAL object evaluation
 * `OSCAP_PROBE_IGNORE_PATHS` - Skip given paths during evaluation. If multiple paths should be skipped they need to be separated by a colon. The paths should be absolute canonical paths.
+* `OSCAP_PREFERRED_ENGINE` - Set a preffered check engine for XCCDF rules. If a rule has multiple checks, the checks for the preffered check engine will be used. Allowed values: `SCE`, `OVAL`. If this variable is set to `SCE` and a rule has both SCE and OVAL checks the SCE check will be used. If this variable is set to `OVAL` and a rule has both SCE and OVAL checks the OVAL check will be used. If this environment variable isn't set, the standard XCCDF mechanism will be used for check selection.
 
 Also, OpenSCAP uses `libcurl` library which also can be configured using environment variables. See https://curl.se/libcurl/c/libcurl-env.html[the list of libcurl environment variables].
 

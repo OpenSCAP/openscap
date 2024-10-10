@@ -1,4 +1,5 @@
 if(ENABLE_SCE)
+	add_oscap_test("test_prefer_sce.sh")
 	if(${PYTHON_VERSION_MAJOR} EQUAL "3")
 		add_oscap_test("test_sce.sh")
 	endif()
