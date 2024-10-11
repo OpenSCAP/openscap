@@ -285,7 +285,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .help = GEN_OPTS
         "\nFix Options:\n"
 		"   --fix-type <type>             - Fix type. Should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes,\n"
-		"                                   blueprint (default: bash).\n"
+		"                                   blueprint, bootc (default: bash).\n"
 		"   --output <file>               - Write the script into file.\n"
 		"   --result-id <id>              - Fixes will be generated for failed rule-results of the specified TestResult.\n"
 		"   --template <id|filename>      - Fix template. (default: bash)\n"
@@ -971,10 +971,12 @@ int app_generate_fix(const struct oscap_action *action)
 			template = "urn:xccdf:fix:script:kubernetes";
 		} else if (strcmp(action->fix_type, "blueprint") == 0) {
 			template = "urn:redhat:osbuild:blueprint";
+		} else if (strcmp(action->fix_type, "bootc") == 0) {
+			template = "urn:xccdf:fix:script:bootc";
 		} else {
 			fprintf(stderr,
 					"Unknown fix type '%s'.\n"
-					"Please provide one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint.\n"
+					"Please provide one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint, bootc.\n"
 					"Or provide a custom template using '--template' instead.\n",
 					action->fix_type);
 			return OSCAP_ERROR;
@@ -983,6 +985,10 @@ int app_generate_fix(const struct oscap_action *action)
 		template = action->tmpl;
 	} else {
 		template = "urn:xccdf:fix:script:sh";
+	}
+	if (action->id != NULL && action->fix_type != NULL && !strcmp(action->fix_type, "bootc")) {
+		fprintf(stderr, "It isn't possible to generate results-oriented bootc remediations.\n");
+		return OSCAP_ERROR;
 	}
 
 	int ret = OSCAP_ERROR;
