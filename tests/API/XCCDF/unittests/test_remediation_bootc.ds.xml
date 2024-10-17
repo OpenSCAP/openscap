@@ -61,25 +61,25 @@
       <Rule selected="false" id="xccdf_org.openscap.www_rule_1">
         <title>Rule 1: Install rsyslog package</title>
         <fix system="urn:xccdf:fix:script:bootc">
-          package install rsyslog
+          dnf install rsyslog
         </fix>
       </Rule>
       <Rule selected="false" id="xccdf_org.openscap.www_rule_2">
         <title>Rule 2: Remove USBGuard</title>
         <fix system="urn:xccdf:fix:script:bootc">
-          package remove usbguard
+          dnf remove usbguard
         </fix>
       </Rule>
       <Rule selected="false" id="xccdf_org.openscap.www_rule_3">
         <title>Rule 3: Install reboot package</title>
         <fix system="urn:xccdf:fix:script:bootc">
-          package install reboot
+          dnf install reboot
         </fix>
       </Rule>
       <Rule selected="false" id="xccdf_org.openscap.www_rule_4">
         <title>Rule 4: Install podman package</title>
         <fix system="urn:xccdf:fix:script:bootc">
-          package install podman
+          dnf install podman
         </fix>
       </Rule>
     </Benchmark>

@@ -50,8 +50,8 @@
 #include "oscap_helpers.h"
 
 struct bootc_commands {
-	struct oscap_list *package_install;
-	struct oscap_list *package_remove;
+	struct oscap_list *dnf_install;
+	struct oscap_list *dnf_remove;
 };
 
 static int _rule_add_info_message(struct xccdf_rule_result *rr, ...)
@@ -1298,9 +1298,9 @@ static int _parse_bootc_line(const char *line, struct bootc_commands *cmds)
 	char **words = oscap_split(dup, " ");
 	enum states {
 		BOOTC_START,
-		BOOTC_PACKAGE,
-		BOOTC_PACKAGE_INSTALL,
-		BOOTC_PACKAGE_REMOVE,
+		BOOTC_DNF,
+		BOOTC_DNF_INSTALL,
+		BOOTC_DNF_REMOVE,
 		BOOTC_ERROR
 	};
 	int state = BOOTC_START;
@@ -1310,30 +1310,30 @@ static int _parse_bootc_line(const char *line, struct bootc_commands *cmds)
 			continue;
 		switch (state) {
 		case BOOTC_START:
-			if (!strcmp(word, "package")) {
-				state = BOOTC_PACKAGE;
+			if (!strcmp(word, "dnf")) {
+				state = BOOTC_DNF;
 			} else {
 				ret = 1;
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported command keyword '%s' in command: '%s'", word, line);
 				goto cleanup;
 			}
 			break;
-		case BOOTC_PACKAGE:
+		case BOOTC_DNF:
 			if (!strcmp(word, "install")) {
-				state = BOOTC_PACKAGE_INSTALL;
+				state = BOOTC_DNF_INSTALL;
 			} else if (!strcmp(word, "remove")) {
-				state = BOOTC_PACKAGE_REMOVE;
+				state = BOOTC_DNF_REMOVE;
 			} else {
 				ret = 1;
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'package' command keyword '%s' in command:'%s'", word, line);
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'dnf' command keyword '%s' in command:'%s'", word, line);
 				goto cleanup;
 			}
 			break;
-		case BOOTC_PACKAGE_INSTALL:
-			oscap_list_add(cmds->package_install, strdup(word));
+		case BOOTC_DNF_INSTALL:
+			oscap_list_add(cmds->dnf_install, strdup(word));
 			break;
-		case BOOTC_PACKAGE_REMOVE:
-			oscap_list_add(cmds->package_remove, strdup(word));
+		case BOOTC_DNF_REMOVE:
+			oscap_list_add(cmds->dnf_remove, strdup(word));
 			break;
 		case BOOTC_ERROR:
 			ret = 1;
@@ -1373,43 +1373,43 @@ static int _xccdf_policy_rule_generate_bootc_fix(struct xccdf_policy *policy, st
 	return ret;
 }
 
-static int _generate_bootc_packages(struct bootc_commands *cmds, int output_fd)
+static int _generate_bootc_dnf(struct bootc_commands *cmds, int output_fd)
 {
-	struct oscap_iterator *package_install_it = oscap_iterator_new(cmds->package_install);
-	if (oscap_iterator_has_more(package_install_it)) {
+	struct oscap_iterator *dnf_install_it = oscap_iterator_new(cmds->dnf_install);
+	if (oscap_iterator_has_more(dnf_install_it)) {
 		_write_text_to_fd(output_fd, "dnf -y install \\\n");
-		while (oscap_iterator_has_more(package_install_it)) {
-			char *package = (char *) oscap_iterator_next(package_install_it);
+		while (oscap_iterator_has_more(dnf_install_it)) {
+			char *package = (char *) oscap_iterator_next(dnf_install_it);
 			_write_text_to_fd(output_fd, "    ");
 			_write_text_to_fd(output_fd, package);
-			if (oscap_iterator_has_more(package_install_it))
+			if (oscap_iterator_has_more(dnf_install_it))
 				_write_text_to_fd(output_fd, " \\\n");
 		}
 		_write_text_to_fd(output_fd, "\n\n");
 	}
-	oscap_iterator_free(package_install_it);
+	oscap_iterator_free(dnf_install_it);
 
-	struct oscap_iterator *package_remove_it = oscap_iterator_new(cmds->package_remove);
-	if (oscap_iterator_has_more(package_remove_it)) {
+	struct oscap_iterator *dnf_remove_it = oscap_iterator_new(cmds->dnf_remove);
+	if (oscap_iterator_has_more(dnf_remove_it)) {
 		_write_text_to_fd(output_fd, "dnf -y remove \\\n");
-		while (oscap_iterator_has_more(package_remove_it)) {
-			char *package = (char *) oscap_iterator_next(package_remove_it);
+		while (oscap_iterator_has_more(dnf_remove_it)) {
+			char *package = (char *) oscap_iterator_next(dnf_remove_it);
 			_write_text_to_fd(output_fd, "    ");
 			_write_text_to_fd(output_fd, package);
-			if (oscap_iterator_has_more(package_remove_it))
+			if (oscap_iterator_has_more(dnf_remove_it))
 				_write_text_to_fd(output_fd, " \\\n");
 		}
 		_write_text_to_fd(output_fd, "\n");
 	}
-	oscap_iterator_free(package_remove_it);
+	oscap_iterator_free(dnf_remove_it);
 	return 0;
 }
 
 static int _xccdf_policy_generate_fix_bootc(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
 {
 	struct bootc_commands cmds = {
-		.package_install = oscap_list_new(),
-		.package_remove = oscap_list_new(),
+		.dnf_install = oscap_list_new(),
+		.dnf_remove = oscap_list_new(),
 	};
 	int ret = 0;
 	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
@@ -1422,10 +1422,10 @@ static int _xccdf_policy_generate_fix_bootc(struct oscap_list *rules_to_fix, str
 	oscap_iterator_free(rules_to_fix_it);
 
 	_write_text_to_fd(output_fd, "#!/bin/bash\n");
-	_generate_bootc_packages(&cmds, output_fd);
+	_generate_bootc_dnf(&cmds, output_fd);
 
-	oscap_list_free(cmds.package_install, free);
-	oscap_list_free(cmds.package_remove, free);
+	oscap_list_free(cmds.dnf_install, free);
+	oscap_list_free(cmds.dnf_remove, free);
 	return ret;
 }
 
