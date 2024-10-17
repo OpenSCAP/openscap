@@ -588,6 +588,16 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 			struct xccdf_check *check = xccdf_check_iterator_next(candidate_it);
 			if (_xccdf_policy_is_engine_registered(policy, (char *) xccdf_check_get_system(check))) {
 				result = check;
+				char *preferred_engine = getenv("OSCAP_PREFERRED_ENGINE");
+				if (preferred_engine) {
+					if (strcmp("SCE", preferred_engine) && strcmp("OVAL", preferred_engine))  {
+						dW("Unknown value of OSCAP_PREFFERED_ENGINE: '%s'. It will be ignored.", preferred_engine);
+					}
+					if ((!strcmp("SCE", preferred_engine) && !strcmp("http://open-scap.org/page/SCE", check->system)) ||
+							(!strcmp("OVAL", preferred_engine) && !strcmp("http://oval.mitre.org/XMLSchema/oval-definitions-5", check->system))) {
+						break;
+					}
+				}
 			} else if (strcmp("http://oval.mitre.org/XMLSchema/oval-definitions-5", check->system) == 0) {
 				print_oval_warning = true;
 			} else if (strcmp("http://scap.nist.gov/schema/ocil/2", check->system) == 0) {

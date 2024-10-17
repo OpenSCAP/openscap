@@ -311,6 +311,7 @@ void oscap_print_env_vars()
 		"OSCAP_PROBE_MEMORY_USAGE_RATIO",
 		"OSCAP_PROBE_MAX_COLLECTED_ITEMS",
 		"OSCAP_PROBE_IGNORE_PATHS",
+		"OSCAP_PREFERRED_ENGINE",
 		NULL
 	};
 	dI("Using environment variables:");
