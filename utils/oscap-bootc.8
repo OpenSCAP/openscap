@@ -1,0 +1,29 @@
+.TH oscap-bootc "8" "November 2024" "Red Hat, Inc." "System Administration Utilities"
+
+.SH NAME
+oscap-bootc \- Tool for building hardened bootable container images
+
+.SH DESCRIPTION
+The oscap-bootc tool is a convenience script that makes building hardened bootable container images easier.
+This tool is designed to be used during the build of the bootable container image.
+Include oscap-bootc in your Containerfile that will be used to build your bootable container image.
+The oscap-bootc runs oscap tool on a given container image.
+
+The oscap-bootc tool can't be used anywhere else than in a Containerfile.
+
+.SH USAGE
+
+Usage of the tool mimics usage and options of oscap(8) tool.
+
+oscap-bootc OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
+
+Refer to oscap(8) to learn about OSCAP_ARGUMENT options.
+
+.SH REPORTING BUGS
+.nf
+Please report bugs using https://github.com/OpenSCAP/openscap/issues
+
+.SH AUTHORS
+.nf
+Jan Černý <jcerny@redhat.com>
+.fi
