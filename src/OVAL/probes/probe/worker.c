@@ -974,7 +974,7 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
 static void _add_blocked_paths(struct oscap_list *bpaths)
 {
-	char *envar = getenv("OSCAP_PROBE_IGNORE_PATHS");
+	char *envar = oscap_strdup(getenv("OSCAP_PROBE_IGNORE_PATHS"));
 	if (envar == NULL) {
 		return;
 	}
@@ -985,6 +985,7 @@ static void _add_blocked_paths(struct oscap_list *bpaths)
 	for (int i = 0; paths[i]; ++i) {
 		oscap_list_add(bpaths, strdup(paths[i]));
 	}
+	free(envar);
 	free(paths);
 #endif
 }
