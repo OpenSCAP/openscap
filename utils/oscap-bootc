@@ -56,11 +56,9 @@ def ensure_sce_installed():
     query_cmd = ["rpm", "-q", "openscap-engine-sce"]
     query_process = subprocess.run(query_cmd, capture_output=True)
     if query_process.returncode != 0:
-        install_cmd = ["dnf", "-y", "install", "openscap-engine-sce"]
-        try:
-            subprocess.run(install_cmd, check=True, capture_output=True)
-        except subprocess.CalledProcessError as e:
-            print(e.stderr.decode("utf-8"), file=sys.stderr)
+        raise RuntimeError(
+            "The script requires to have the openscap-engine-sce package "
+            "installed.")
 
 
 def add_args(option_args_list, cmd):
