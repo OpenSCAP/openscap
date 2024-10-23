@@ -13,11 +13,36 @@ The oscap-bootc tool can't be used anywhere else than in a Containerfile.
 
 .SH USAGE
 
+oscap-bootc [OPTION...] DATASTREAM_FILE
+
 Usage of the tool mimics usage and options of oscap(8) tool.
 
-oscap-bootc OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
-
-Refer to oscap(8) to learn about OSCAP_ARGUMENT options.
+.SH OPTIONS
+.TP
+\fB\-\-profile PROFILE_ID\fR
+.RS
+ID of the profile to be evaluated.
+.RE
+.TP
+\fB\-\-tailoring-file TAILORING_FILE\fR
+.RS
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.RE
+.TP
+\fB\-\-tailoring-id COMPONENT_REF_ID\fR
+.RS
+Use tailoring component in input source data stream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source data stream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.RE
+.TP
+\fB\-\-results-arf FILE\fR
+.RS
+Writes results to a given FILE in Asset Reporting Format.
+.RE
+.TP
+\fB\-\-report FILE\fR
+.RS
+Write HTML report into FILE.
+.RE
 
 .SH REPORTING BUGS
 .nf
