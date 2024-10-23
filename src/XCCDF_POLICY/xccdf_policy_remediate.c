@@ -450,9 +450,9 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 
 	int fork_result = fork();
 	if (fork_result >= 0) {
-		/* fork succeded */
+		/* fork succeeded */
 		if (fork_result == 0) {
-			/* Execute fix and forward output to the parrent. */
+			/* Execute fix and forward output to the parent. */
 			close(pipefd[0]);
 			dup2(pipefd[1], fileno(stdout));
 			dup2(pipefd[1], fileno(stderr));
@@ -464,8 +464,14 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 				NULL
 			};
 
-			char *const envp[2] = {
+			char *oscap_bootc_build = getenv("OSCAP_BOOTC_BUILD");
+			char *oscap_bootc_build_kvarg = NULL;
+			if (oscap_bootc_build != NULL) {
+				oscap_bootc_build_kvarg = oscap_sprintf("OSCAP_BOOTC_BUILD=%s", oscap_bootc_build);
+			}
+			char *const envp[3] = {
 				"PATH=/bin:/sbin:/usr/bin:/usr/sbin",
+				oscap_bootc_build_kvarg,
 				NULL
 			};
 
