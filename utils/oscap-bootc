@@ -61,6 +61,19 @@ def ensure_sce_installed():
             "installed.")
 
 
+def install_sce_dependencies():
+    required_packages = [
+        "setools-console"  # seinfo is used by the sebool template
+    ]
+    install_cmd = ["dnf", "-y", "install"] + required_packages
+    install_process = subprocess.run(
+        install_cmd, universal_newlines=True,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if install_process.returncode != 0:
+        raise RuntimeError(
+            f"{install_process.stdout}\nFailed to install SCE dependencies.")
+
+
 def add_args(option_args_list, cmd):
     for o, a in option_args_list:
         if a:
@@ -112,6 +125,7 @@ def scan_and_remediate(args):
 def main():
     args = parse_args()
     ensure_sce_installed()
+    install_sce_dependencies()
     pre_scan_fix(args)
     scan_and_remediate(args)
 
