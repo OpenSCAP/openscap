@@ -59,6 +59,10 @@ class OscapDockerScan(object):
 
         if self.is_image:
             self.image_name, self.config = self._get_image_name_and_config(target)
+            if "," in self.image_name:
+                # Fix when a single image has multiple tags
+                self.image_name = self.image_name.split(",")[0]
+            
             if self.image_name:
                 print("Creating a temporary container for the image...")
 
