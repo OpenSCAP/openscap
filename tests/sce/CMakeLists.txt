@@ -1,4 +1,5 @@
 if(ENABLE_SCE)
+	add_oscap_test("test_prefer_sce.sh")
 	add_oscap_test("test_sce.sh")
 	add_oscap_test("test_passing_vars.sh")
 	add_oscap_test("test_check_engine_results.sh")

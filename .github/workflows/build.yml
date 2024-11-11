@@ -6,9 +6,9 @@ name: Gating
 # events but only for the main branch
 on:
   push:
-    branches: [ '*' ]
+    branches: [ maint-1.3 ]
   pull_request:
-    branches: [ main, maint-1.3 ]
+    branches: [ maint-1.3 ]
 
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-latest]
+        os: [ubuntu-22.04]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -148,7 +148,7 @@ jobs:
         path: ${{ github.workspace }}/vcpkg
         repository: microsoft/vcpkg
         fetch-depth: 1
-    
+
     - name: Bootstrap vcpkg
       shell: pwsh
       run: "${{ github.workspace }}\\vcpkg\\scripts\\bootstrap.ps1 -disableMetrics"
@@ -159,9 +159,8 @@ jobs:
         script: |
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
-
     - name: Install Deps
-      run: "${{ github.workspace }}\\vcpkg\\vcpkg.exe install curl libxml2 libxslt bzip2 pcre2 pthreads zlib getopt-win32 xmlsec --triplet x64-windows"
+      run: "${{ github.workspace }}\\vcpkg\\vcpkg.exe install curl libxml2 libxslt bzip2 pcre pthreads zlib getopt-win32 xmlsec --triplet x64-windows"
 
     - name: Configure
       working-directory: ./build
@@ -170,7 +169,7 @@ jobs:
     - name: Build
       run: cmake --build . --config Release
       working-directory: ./build
-    
+
     - name: Package
       run: cpack
       working-directory: build

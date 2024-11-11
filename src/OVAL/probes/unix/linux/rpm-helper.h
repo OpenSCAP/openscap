@@ -99,4 +99,7 @@ int rpmVerifyFile(const rpmts ts, const rpmfi fi,
  */
 void rpmLibsPreload(void);
 
+void set_rpm_db_path(void);
+
+
 #endif

@@ -370,6 +370,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		struct xccdf_check_import_iterator *check_import_it,
 		void *usr)
 {
+	dI("Executing SCE check '%s'", href);
 	struct sce_parameters* parameters = (struct sce_parameters*)usr;
 	const char* xccdf_directory = parameters->xccdf_directory;
 	bool use_sce_wrapper = false; // use osca-run-sce-script ?

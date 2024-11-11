@@ -1614,6 +1614,7 @@ If OpenSCAP is executed with verbosity level INFO or DEVEL their runtime values 
 * `OSCAP_PROBE_MEMORY_USAGE_RATIO` - maximum memory usage ratio (used/total) for OpenSCAP probes, default: 0.1
 * `OSCAP_PROBE_MAX_COLLECTED_ITEMS` - maximal count of collected items by OpenSCAP probe for a single OVAL object evaluation
 * `OSCAP_PROBE_IGNORE_PATHS` - Skip given paths during evaluation. If multiple paths should be skipped they need to be separated by a colon. The paths should be absolute canonical paths.
+* `OSCAP_PREFERRED_ENGINE` - Set a preffered check engine for XCCDF rules. If a rule has multiple checks, the checks for the preffered check engine will be used. Allowed values: `SCE`, `OVAL`. If this variable is set to `SCE` and a rule has both SCE and OVAL checks the SCE check will be used. If this variable is set to `OVAL` and a rule has both SCE and OVAL checks the OVAL check will be used. If this environment variable isn't set, the standard XCCDF mechanism will be used for check selection.
 
 Also, OpenSCAP uses `libcurl` library which also can be configured using environment variables. See https://curl.se/libcurl/c/libcurl-env.html[the list of libcurl environment variables].
 
@@ -1838,6 +1839,43 @@ registry.access.redhat.com/ubi8  latest  3269c37eae33  2 months ago  208 MB
 ----
 
 Note that the `oscap-podman` command requires root privileges.
+
+=== Building hardened bootable container images using oscap-bootc
+
+The `oscap-bootc` tool is a convenience script that makes building hardened bootable container images easier.
+This tool is designed to be used during the build of the bootable container image.
+
+Include `oscap-bootc` in your `Containerfile` that will be used to build your bootable container image.
+The `Containerfile` first needs to install the `openscap-utils` package which ships the `oscap-bootc` tool.
+
+Also, SCAP content needs to be installed to the image before `oscap-bootc` will be run.
+Although any SCAP content can be consumed by the tool, the SCAP source data streams shipped in `scap-security-guide` are specially cared to be compatible with bootable containers.
+
+Example `Containerfile`:
+
+----
+FROM quay.io/centos-bootc/centos-bootc:stream9
+
+RUN dnf install -y openscap-utils scap-security-guide
+
+RUN oscap-bootc --profile stig /usr/share/xml/scap/ssg/content/ssg-cs9-ds.xml
+----
+
+Once you have your `Containerfile`, execute the image build:
+
+----
+podman build -t hardened_image .
+----
+
+The `oscap-bootc` tool installs and removes all packages required by the selected profile to or from the image.
+Then, it runs a scan and remediation with the selected profile.
+It doesn't use offline scanning.
+The configuration files and other content in the image are modified by this process, depending on the used SCAP content.
+
+The built bootable container image can be then deployed and booted.
+After booting the image, the state of the resulting system will be in line with the selected security profile.
+
+The `oscap-bootc` tool can't be used anywhere else than in a `Containerfile`.
 
 === Scanning of Docker containers and images using oscap-docker
 

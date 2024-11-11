@@ -68,6 +68,11 @@ struct logvol_cmd {
 	char *size;
 };
 
+struct bootc_commands {
+	struct oscap_list *dnf_install;
+	struct oscap_list *dnf_remove;
+};
+
 static int _rule_add_info_message(struct xccdf_rule_result *rr, ...)
 {
 	va_list ap;
@@ -464,9 +469,9 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 
 	int fork_result = fork();
 	if (fork_result >= 0) {
-		/* fork succeded */
+		/* fork succeeded */
 		if (fork_result == 0) {
-			/* Execute fix and forward output to the parrent. */
+			/* Execute fix and forward output to the parent. */
 			close(pipefd[0]);
 			dup2(pipefd[1], fileno(stdout));
 			dup2(pipefd[1], fileno(stderr));
@@ -478,8 +483,14 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 				NULL
 			};
 
-			char *const envp[2] = {
+			char *oscap_bootc_build = getenv("OSCAP_BOOTC_BUILD");
+			char *oscap_bootc_build_kvarg = NULL;
+			if (oscap_bootc_build != NULL) {
+				oscap_bootc_build_kvarg = oscap_sprintf("OSCAP_BOOTC_BUILD=%s", oscap_bootc_build);
+			}
+			char *const envp[3] = {
 				"PATH=/bin:/sbin:/usr/bin:/usr/sbin",
+				oscap_bootc_build_kvarg,
 				NULL
 			};
 
@@ -1860,6 +1871,144 @@ cleanup:
 	return ret;
 }
 
+static int _parse_bootc_line(const char *line, struct bootc_commands *cmds)
+{
+	int ret = 0;
+	char *dup = strdup(line);
+	char **words = oscap_split(dup, " ");
+	enum states {
+		BOOTC_START,
+		BOOTC_DNF,
+		BOOTC_DNF_INSTALL,
+		BOOTC_DNF_REMOVE,
+		BOOTC_ERROR
+	};
+	int state = BOOTC_START;
+	for (unsigned int i = 0; words[i] != NULL; i++) {
+		char *word = oscap_trim(words[i]);
+		if (*word == '\0')
+			continue;
+		switch (state) {
+		case BOOTC_START:
+			if (!strcmp(word, "dnf")) {
+				state = BOOTC_DNF;
+			} else {
+				ret = 1;
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported command keyword '%s' in command: '%s'", word, line);
+				goto cleanup;
+			}
+			break;
+		case BOOTC_DNF:
+			if (!strcmp(word, "install")) {
+				state = BOOTC_DNF_INSTALL;
+			} else if (!strcmp(word, "remove")) {
+				state = BOOTC_DNF_REMOVE;
+			} else {
+				ret = 1;
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported 'dnf' command keyword '%s' in command:'%s'", word, line);
+				goto cleanup;
+			}
+			break;
+		case BOOTC_DNF_INSTALL:
+			oscap_list_add(cmds->dnf_install, strdup(word));
+			break;
+		case BOOTC_DNF_REMOVE:
+			oscap_list_add(cmds->dnf_remove, strdup(word));
+			break;
+		case BOOTC_ERROR:
+			ret = 1;
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected string '%s' in command: '%s'", word, line);
+			goto cleanup;
+		default:
+			break;
+		}
+	}
+
+cleanup:
+	free(words);
+	free(dup);
+	return ret;
+}
+
+static int _xccdf_policy_rule_generate_bootc_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct bootc_commands *cmds)
+{
+	char *fix_text = NULL;
+	int ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
+	if (fix_text == NULL) {
+		return ret;
+	}
+	char *dup = strdup(fix_text);
+	char **lines = oscap_split(dup, "\n");
+	for (unsigned int i = 0; lines[i] != NULL; i++) {
+		char *line = lines[i];
+		char *trim_line = oscap_trim(strdup(line));
+		if (*trim_line != '#' && *trim_line != '\0') {
+			_parse_bootc_line(trim_line, cmds);
+		}
+		free(trim_line);
+	}
+	free(lines);
+	free(dup);
+	free(fix_text);
+	return ret;
+}
+
+static int _generate_bootc_dnf(struct bootc_commands *cmds, int output_fd)
+{
+	struct oscap_iterator *dnf_install_it = oscap_iterator_new(cmds->dnf_install);
+	if (oscap_iterator_has_more(dnf_install_it)) {
+		_write_text_to_fd(output_fd, "dnf -y install \\\n");
+		while (oscap_iterator_has_more(dnf_install_it)) {
+			char *package = (char *) oscap_iterator_next(dnf_install_it);
+			_write_text_to_fd(output_fd, "    ");
+			_write_text_to_fd(output_fd, package);
+			if (oscap_iterator_has_more(dnf_install_it))
+				_write_text_to_fd(output_fd, " \\\n");
+		}
+		_write_text_to_fd(output_fd, "\n\n");
+	}
+	oscap_iterator_free(dnf_install_it);
+
+	struct oscap_iterator *dnf_remove_it = oscap_iterator_new(cmds->dnf_remove);
+	if (oscap_iterator_has_more(dnf_remove_it)) {
+		_write_text_to_fd(output_fd, "dnf -y remove \\\n");
+		while (oscap_iterator_has_more(dnf_remove_it)) {
+			char *package = (char *) oscap_iterator_next(dnf_remove_it);
+			_write_text_to_fd(output_fd, "    ");
+			_write_text_to_fd(output_fd, package);
+			if (oscap_iterator_has_more(dnf_remove_it))
+				_write_text_to_fd(output_fd, " \\\n");
+		}
+		_write_text_to_fd(output_fd, "\n");
+	}
+	oscap_iterator_free(dnf_remove_it);
+	return 0;
+}
+
+static int _xccdf_policy_generate_fix_bootc(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
+{
+	struct bootc_commands cmds = {
+		.dnf_install = oscap_list_new(),
+		.dnf_remove = oscap_list_new(),
+	};
+	int ret = 0;
+	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
+	while (oscap_iterator_has_more(rules_to_fix_it)) {
+		struct xccdf_rule *rule = (struct xccdf_rule *) oscap_iterator_next(rules_to_fix_it);
+		ret = _xccdf_policy_rule_generate_bootc_fix(policy, rule, sys, &cmds);
+		if (ret != 0)
+			break;
+	}
+	oscap_iterator_free(rules_to_fix_it);
+
+	_write_text_to_fd(output_fd, "#!/bin/bash\n");
+	_generate_bootc_dnf(&cmds, output_fd);
+
+	oscap_list_free(cmds.dnf_install, free);
+	oscap_list_free(cmds.dnf_remove, free);
+	return ret;
+}
+
 int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, const char *input_file_name, struct oscap_source *tailoring, int output_fd, int raw)
 {
 	__attribute__nonnull__(policy);
@@ -1919,6 +2068,8 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		ret = _xccdf_policy_generate_fix_blueprint(rules_to_fix, policy, sys, output_fd);
 	} else if (strcmp(sys, "urn:xccdf:fix:script:kickstart") == 0) {
 		ret = _xccdf_policy_generate_fix_kickstart(rules_to_fix, policy, sys, input_file_name, tailoring, raw, output_fd);
+	} else if (strcmp(sys, "urn:xccdf:fix:script:bootc") == 0) {
+		ret = _xccdf_policy_generate_fix_bootc(rules_to_fix, policy, sys, output_fd);
 	} else {
 		ret =  _xccdf_policy_generate_fix_other(rules_to_fix, policy, sys, output_fd);
 	}
