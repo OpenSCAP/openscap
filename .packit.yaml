@@ -27,3 +27,5 @@ jobs:
 
 - <<: *build
   trigger: commit
+  metadata:
+    branch: maint-1.3
