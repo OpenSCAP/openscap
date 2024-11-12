@@ -64,7 +64,7 @@ class OscapDockerScan(object):
 
                 try:
                     tmp_cont = self.client.create_container(
-                        self.image_name, name=self.container_name)
+                        self.image_name, name=self.container_name, command="\x00")
 
                     self.container_name = tmp_cont["Id"]
                     self.config = self.client.inspect_container(self.container_name)
