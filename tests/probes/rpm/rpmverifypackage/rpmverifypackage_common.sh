@@ -30,7 +30,7 @@ function test_probes_rpmverifypackage {
 
     rm -f $RF
 
-    $OSCAP oval eval --results $RF $DF
+    $OSCAP oval eval --verbose INFO --results $RF $DF
 
     result=$RF
 
