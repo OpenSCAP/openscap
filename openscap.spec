@@ -92,7 +92,6 @@ Summary:        OpenSCAP Utilities
 Requires:       %{name}%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       rpmdevtools rpm-build
 Requires:       %{name}-scanner%{?_isa} = %{epoch}:%{version}-%{release}
-Requires:       %{name}-engine-sce%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description    utils
 The %{name}-utils package contains command-line tools build on top
