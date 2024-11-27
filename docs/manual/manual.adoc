@@ -198,13 +198,6 @@ Checklists:
 				system: http://scap.nist.gov/schema/ocil/2
 			security-data-oval-com.redhat.rhsa-RHEL8.xml
 				system: http://oval.mitre.org/XMLSchema/oval-definitions-5
-Checks:
-	Ref-Id: scap_org.open-scap_cref_ssg-rhel8-oval.xml
-	Ref-Id: scap_org.open-scap_cref_ssg-rhel8-ocil.xml
-	Ref-Id: scap_org.open-scap_cref_ssg-rhel8-cpe-oval.xml
-	Ref-Id: scap_org.open-scap_cref_security-data-oval-com.redhat.rhsa-RHEL8.xml
-Dictionaries:
-	Ref-Id: scap_org.open-scap_cref_ssg-rhel8-cpe-dictionary.xml
 ----
 
 * **Document type** describes what format the file is in. Common types include
@@ -225,8 +218,6 @@ shown for XCCDF files and Checklists and is sourced from the XCCDF **Status**
 element.
 * **Profiles** lists available profiles, their titles and IDs that you can use for
 the `--profile` command line attribute.
-* **Checks** and **Dictionaries** lists OVAL checks components and CPE
-dictionaries components in the given data stream.
 
 To display more detailed information about a profile including the profile
 description, use the `--profile` option followed by the profile ID.
