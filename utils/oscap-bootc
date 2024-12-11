@@ -46,6 +46,9 @@ def parse_args():
         "data_stream", metavar="DATA_STREAM",
         help="Path to a SCAP source data stream, eg. "
         "/usr/share/xml/scap/ssg/content/ssg-rhel10-ds.xml")
+    parser.add_argument(
+        "--fetch-remote-resources", action="store_true",
+        help="Fetch remote resources referenced in the XCCDF content")
     # Unfortunately, we can't add "--rule", "--skip-rule", or "--reference"
     # because the "oscap xccdf generate fix" submodule doesn't support these
     # options.
@@ -88,6 +91,8 @@ def add_common_args(args, cmd):
         ("--tailoring-id", args.tailoring_id)
     ]
     add_args(oal, cmd)
+    if args.fetch_remote_resources:
+        cmd.append("--fetch-remote-resources")
 
 
 def add_eval_args(args, cmd):
