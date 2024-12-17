@@ -408,8 +408,8 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	};
 
 	// bound values in KEY=VALUE form, ready to be passed as environment variables
-	char ** env_values = malloc(10 * sizeof(char * ));
 	size_t env_value_count = 10;
+	char **env_values = malloc(env_value_count * sizeof(char *));
 	const size_t index_of_first_env_value_not_compiled_in = 10;
 
 	env_values[0] = "PATH=/bin:/sbin:/usr/bin:/usr/local/bin:/usr/sbin";
@@ -423,6 +423,20 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	env_values[7] = "XCCDF_RESULT_NOT_SELECTED=107";
 	env_values[8] = "XCCDF_RESULT_INFORMATIONAL=108";
 	env_values[9] = "XCCDF_RESULT_FIXED=109";
+
+	char *oscap_bootc_build = getenv("OSCAP_BOOTC_BUILD");
+	if (oscap_bootc_build != NULL) {
+		char *oscap_bootc_build_kvarg = oscap_sprintf("OSCAP_BOOTC_BUILD=%s", oscap_bootc_build);
+		void *new_env_values = realloc(env_values, (env_value_count + 1) * sizeof(char *));
+		if (new_env_values == NULL) {
+			dE("Unable to re-allocate memory");
+			free(oscap_bootc_build_kvarg);
+			return XCCDF_RESULT_ERROR;
+		}
+		env_values = new_env_values;
+		env_values[10] = oscap_bootc_build_kvarg;
+		env_value_count++;
+	}
 
 	while (xccdf_value_binding_iterator_has_more(value_binding_it))
 	{
