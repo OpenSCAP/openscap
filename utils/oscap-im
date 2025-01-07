@@ -21,6 +21,8 @@ import subprocess
 import sys
 import tempfile
 
+from pathlib import Path
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -55,17 +57,21 @@ def parse_args():
     return parser.parse_args()
 
 
-def ensure_sce_installed():
-    query_cmd = ["rpm", "-q", "openscap-engine-sce"]
-    query_process = subprocess.run(query_cmd, capture_output=True)
-    if query_process.returncode != 0:
+def verify_bootc_build_env():
+    rv = subprocess.run(
+        ["rpm", "-q", "bootc"],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    bootc_env = (rv.returncode == 0)
+    container_env = Path("/run/.containerenv").exists()
+    if not bootc_env or not container_env:
         raise RuntimeError(
-            "The script requires to have the openscap-engine-sce package "
-            "installed.")
+            "This script is supposed to be used only in the bootable "
+            "container build environment.")
 
 
 def install_sce_dependencies():
     required_packages = [
+        "openscap-engine-sce",
         "setools-console"  # seinfo is used by the sebool template
     ]
     install_cmd = ["dnf", "-y", "install"] + required_packages
@@ -129,7 +135,7 @@ def scan_and_remediate(args):
 
 def main():
     args = parse_args()
-    ensure_sce_installed()
+    verify_bootc_build_env()
     install_sce_dependencies()
     pre_scan_fix(args)
     scan_and_remediate(args)
