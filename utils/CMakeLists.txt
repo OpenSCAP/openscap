@@ -139,11 +139,11 @@ if(ENABLE_OSCAP_UTIL_PODMAN)
 		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
 	)
 endif()
-if(ENABLE_OSCAP_UTIL_BOOTC)
-	install(PROGRAMS "oscap-bootc"
+if(ENABLE_OSCAP_UTIL_IM)
+	install(PROGRAMS "oscap-im"
 		DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
-	install(FILES "oscap-bootc.8"
+	install(FILES "oscap-im.8"
 		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
 	)
 endif()
