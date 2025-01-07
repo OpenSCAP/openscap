@@ -209,8 +209,11 @@ static inline void _print_xccdf_referenced_files(struct xccdf_policy_model *poli
 	printf("%sReferenced check files:\n", prefix);
 	while (oscap_file_entry_iterator_has_more(files_it)) {
 		struct oscap_file_entry *file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
-		printf("%s\t%s\n", prefix, oscap_file_entry_get_file(file_entry));
-		printf("%s\t\tsystem: %s\n", prefix, oscap_file_entry_get_system(file_entry));
+		const char *system = oscap_file_entry_get_system(file_entry);
+		if (strcmp(system, "http://open-scap.org/page/SCE")) {
+			printf("%s\t%s\n", prefix, oscap_file_entry_get_file(file_entry));
+			printf("%s\t\tsystem: %s\n", prefix, oscap_file_entry_get_system(file_entry));
+		}
 	}
 	oscap_file_entry_iterator_free(files_it);
 	oscap_file_entry_list_free(referenced_files);
@@ -490,26 +493,6 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 		ds_sds_session_reset(session);
 	}
 	oscap_string_iterator_free(checklist_it);
-
-	printf("Checks:\n");
-	struct oscap_string_iterator* checks_it = ds_stream_index_get_checks(stream);
-	while (oscap_string_iterator_has_more(checks_it)) {
-		const char * id = oscap_string_iterator_next(checks_it);
-		printf("\tRef-Id: %s\n", id);
-	}
-	oscap_string_iterator_free(checks_it);
-
-	struct oscap_string_iterator* dict_it = ds_stream_index_get_dictionaries(stream);
-	if (oscap_string_iterator_has_more(dict_it)) {
-		printf("Dictionaries:\n");
-	} else {
-		printf("No dictionaries.\n");
-	}
-	while (oscap_string_iterator_has_more(dict_it)) {
-		const char * id = oscap_string_iterator_next(dict_it);
-		printf("\tRef-Id: %s\n", id);
-	}
-	oscap_string_iterator_free(dict_it);
 	return OSCAP_OK;
 }
 

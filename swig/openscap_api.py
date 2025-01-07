@@ -811,7 +811,7 @@ class OSCAP_Object(object):
             if OSCAP.oscap_err():
                 desc = OSCAP.oscap_err_desc()
             else:
-                desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
+                desc = "Unknown error, please report this bug (https://github.com/OpenSCAP/openscap/issues)"
             raise ImportError(
                 "Benchmark \"%s\" loading failed: %s" % (f_XCCDF, desc))
 
@@ -832,7 +832,7 @@ class OSCAP_Object(object):
                     if OSCAP.oscap_err():
                         desc = OSCAP.oscap_err_desc()
                     else:
-                        desc = "Unknown error,please report this bug (http://bugzilla.redhat.com/)"
+                        desc = "Unknown error,please report this bug (https://github.com/OpenSCAP/openscap/issues)"
                     raise ImportError(
                         "Cannot import definition model for \"%s\": %s" % (f_OVAL, desc))
                 def_models.append(def_model)
@@ -841,7 +841,7 @@ class OSCAP_Object(object):
                     if OSCAP.oscap_err():
                         desc = OSCAP.oscap_err_desc()
                     else:
-                        desc = "Unknown error,please report this bug (http://bugzilla.redhat.com/)"
+                        desc = "Unknown error,please report this bug (https://github.com/OpenSCAP/openscap/issues)"
                     raise ImportError(
                         "Cannot create agent session for \"%s\": %s" % (f_OVAL, desc))
                 sessions[file] = sess
