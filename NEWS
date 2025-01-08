@@ -1,3 +1,18 @@
+openscap-1.4.1                                                  2025-01-08
+- New features
+  - Introduce "oscap-im" - script that can be used in Containerfiles to build
+    hardened bootable container images to run as Image Mode Operating System
+- Maintenance, bug fix
+  - Add support for containers with no entrypoint/cmd in "oscap-docker"
+  - Stop printing useless component reference information in "oscap info"
+  - Fix missing declaration of PATH_MAX on Solaris
+  - Fix RPM database path in RPM probes (RHEL-55251, #2151)
+  - Fix issues reported by OpenScanHub after 1.4.0 release
+  - Fix failing test probes/filehash58/test_probes_filehash58.sh on s390x
+    architecture
+  - Ensure xlink namespace exists (RHEL-34104)
+  - Minor fixes in test suite and CI
+
 openscap-1.4.0                                                  2024-08-13
 - New features
   - Introduce ability to generate Kickstarts for unattended OS installation using the `oscap xccdf generate fix --fix-type kickstart` command
