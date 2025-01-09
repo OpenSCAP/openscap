@@ -1807,7 +1807,7 @@ bool probe_path_is_blocked(const char *path, struct oscap_list *blocked_paths)
 		}
 	}
 	oscap_iterator_free(it);
-	dD("Path:%s, res:%d", path, res);
+	dD("Path: %s, blocked (res): %d", path, res);
 	return res;
 }
 
