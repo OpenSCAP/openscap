@@ -707,7 +707,7 @@ struct blueprint_customizations {
 
 static inline int _parse_blueprint_fix(const char *fix_text, struct blueprint_customizations *customizations)
 {
-	char *err;
+	char *err = NULL;
 	int errofs;
 	int ret = 0;
 
@@ -768,6 +768,7 @@ static inline int _parse_blueprint_fix(const char *fix_text, struct blueprint_cu
 	}
 
 exit:
+	oscap_pcre_err_free(err);
 	for (int i = 0; tab[i].pattern != NULL; i++)
 		oscap_pcre_free(tab[i].re);
 
