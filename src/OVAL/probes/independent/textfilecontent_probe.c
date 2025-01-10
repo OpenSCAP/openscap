@@ -213,6 +213,7 @@ static int process_file(const char *prefix, const char *path, const char *filena
 
 			for (k = 0; k < substr_cnt; ++k)
 				free(substrs[k]);
+			free(substrs);
 		}
 	}
 
