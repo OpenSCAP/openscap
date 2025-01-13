@@ -31,3 +31,4 @@ jobs:
     targets:
     - centos-stream-8-x86_64
     - centos-stream-9-x86_64
+    preserve_project: True
