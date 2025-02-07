@@ -137,7 +137,10 @@ static void pkgh2rep(Header h, struct rpminfo_rep *r, regex_t *keyid_regex)
 
         r->evr = str;
 
-        str = headerFormat (h, "%|SIGGPG?{%{SIGGPG:pgpsig}}:{%{SIGPGP:pgpsig}}|", &rpmerr);
+        str = headerFormat (
+            h,
+            "%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|",
+            &rpmerr);
 
 	if (regexec(keyid_regex, str, 1, keyid_match, 0) != 0) {
 		sid = NULL;
