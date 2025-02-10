@@ -10,8 +10,7 @@ srpm_build_deps:
   - bash
 
 jobs:
-- &build
-  job: copr_build
+- job: copr_build
   trigger: pull_request
   metadata:
     targets:
@@ -27,5 +26,12 @@ jobs:
     - centos-stream-9-x86_64
     - centos-stream-10-x86_64
 
-- <<: *build
+- job: copr_build
   trigger: commit
+  metadata:
+    branch: main
+    targets:
+    - fedora-all-x86_64
+    - centos-stream-9-x86_64
+    - centos-stream-10-x86_64
+    preserve_project: True
