@@ -1,3 +1,15 @@
+openscap-1.3.11                                                 2025-02-10
+- New features
+  - Introduce "oscap-im" - script that can be used in Containerfiles to build
+    hardened bootable container images to run as Image Mode Operating System
+- Maintenance, bug fix
+  - Fix Python 3.13 compatibility
+  - Fix collecting signature in rpm_info probe
+  - Fix RPM database path in RPM probes (RHEL-55251, #2151)
+  - Ensure xlink namespace exists (RHEL-34104)
+  - Stop printing useless component reference information in "oscap info"
+  - Minor fixes in test suite and CI
+
 openscap-1.3.10                                                 18-03-2024
 - New features
   - Dump all env. variables that affects the behaviour on INFO log level
