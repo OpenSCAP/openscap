@@ -332,7 +332,7 @@ int rule_result_output_callback_wrapper(struct xccdf_rule_result* rule_result, v
       PyGILState_Release(state);
       return 1;
     }
-    result = PyEval_CallObject(func,arglist);
+    result = PyObject_CallObject(func,arglist);
     if (result == NULL) {
         if (PyErr_Occurred() != NULL)
             PyErr_PrintEx(0);
@@ -369,7 +369,7 @@ int rule_start_callback_wrapper(struct xccdf_rule* rule, void *arg)
       PyGILState_Release(state);
       return 1;
     }
-    result = PyEval_CallObject(func,arglist);
+    result = PyObject_CallObject(func,arglist);
     if (result == NULL) {
         if (PyErr_Occurred() != NULL)
             PyErr_PrintEx(0);
@@ -406,7 +406,7 @@ int agent_reporter_callback_wrapper(const struct oval_result_definition* res_def
       PyGILState_Release(state);
       return 1;
     }
-    result = PyEval_CallObject(func,arglist);
+    result = PyObject_CallObject(func,arglist);
     if (result == NULL) {
         if (PyErr_Occurred() != NULL)
             PyErr_PrintEx(0);
@@ -441,7 +441,7 @@ int validate_callback_wrapper(const char* file, int line, const char* msg, void 
       PyGILState_Release(state);
       return 1;
     }
-    result = PyEval_CallObject(func,arglist);
+    result = PyObject_CallObject(func,arglist);
     if (result == NULL) {
         if (PyErr_Occurred() != NULL)
             PyErr_PrintEx(0);
@@ -477,7 +477,7 @@ char * sub_callback_wrapper(xccdf_subst_type_t type, const char *id, void *arg)
       PyGILState_Release(state);
       return NULL;
     }
-    result = PyEval_CallObject(func, arglist);
+    result = PyObject_CallObject(func, arglist);
     if (result == NULL) {
         if (PyErr_Occurred() != NULL)
             PyErr_PrintEx(0);
