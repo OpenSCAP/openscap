@@ -26,7 +26,7 @@ endif()
 set(LT_CURRENT 32)
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-set(LT_REVISION 0)
+set(LT_REVISION 1)
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
