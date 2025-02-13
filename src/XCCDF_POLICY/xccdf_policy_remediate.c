@@ -464,14 +464,8 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 				NULL
 			};
 
-			char *oscap_bootc_build = getenv("OSCAP_BOOTC_BUILD");
-			char *oscap_bootc_build_kvarg = NULL;
-			if (oscap_bootc_build != NULL) {
-				oscap_bootc_build_kvarg = oscap_sprintf("OSCAP_BOOTC_BUILD=%s", oscap_bootc_build);
-			}
-			char *const envp[3] = {
+			char *const envp[2] = {
 				"PATH=/bin:/sbin:/usr/bin:/usr/sbin",
-				oscap_bootc_build_kvarg,
 				NULL
 			};
 
