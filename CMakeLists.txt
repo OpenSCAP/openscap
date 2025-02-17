@@ -572,6 +572,12 @@ include_directories(
 	${XMLSEC_INCLUDE_DIRS}
 	${OPENSSL_INCLUDE_DIR}
 	${PCRE2_INCLUDE_DIRS}
+	${LIBXSLT_INCLUDE_DIR}
+	${RPM_INCLUDE_DIRS}
+	${GCRYPT_INCLUDE_DIRS}
+	${BLKID_INCLUDE_DIRS}
+	${POPT_INCLUDE_DIRS}
+	${SELINUX_INCLUDE_DIRS}
 )
 
 # Honor visibility properties for all target types
