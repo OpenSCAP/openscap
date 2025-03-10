@@ -92,6 +92,7 @@ endif()
 find_package(Blkid)
 if(BLKID_FOUND)
 	check_library_exists("${BLKID_LIBRARY}" blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
+	include_directories("${BLKID_INCLUDE_DIRS}")
 endif()
 
 find_package(Cap)
@@ -138,6 +139,7 @@ if(RPM_FOUND)
 	check_library_exists("${RPM_LIBRARY}" rpmFreeFilesystems "" HAVE_RPMFREEFILESYSTEMS)
 	check_library_exists("${RPM_LIBRARY}" rpmVerifyFile "" HAVE_RPMVERIFYFILE)
 	set(HAVE_RPMVERCMP 1)
+	include_directories("${RPM_INCLUDE_DIRS}")
 endif()
 
 find_package(SELinux)
@@ -568,11 +570,25 @@ include_directories(
 	"src/XCCDF_POLICY/public/"
 	"yaml-filter/src/"
 	${CMAKE_BINARY_DIR} # config.h is generated to build directory
+	# Required dependencies include dirs can be added inconditionally
 	${LIBXML2_INCLUDE_DIR}
 	${XMLSEC_INCLUDE_DIRS}
+	${LIBXSLT_INCLUDE_DIR}
 	${OPENSSL_INCLUDE_DIR}
 	${PCRE2_INCLUDE_DIRS}
 )
+
+if (GCRYPT_FOUND)
+	include_directories("${GCRYPT_INCLUDE_DIRS}")
+endif()
+
+if (POPT_FOUND)
+	include_directories("${POPT_INCLUDE_DIRS}")
+endif()
+
+if (SELINUX_FOUND)
+	include_directories("${SELINUX_INCLUDE_DIRS}")
+endif()
 
 # Honor visibility properties for all target types
 # Run "cmake --help-policy CMP0063" for policy details
