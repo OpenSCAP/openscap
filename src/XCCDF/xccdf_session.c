@@ -1906,14 +1906,19 @@ struct xccdf_rule_result_iterator *xccdf_session_get_rule_results(const struct x
 	return xccdf_result_get_rule_results(session->xccdf.result);
 }
 
-static int system_is_in_bootc_mode(void)
+static bool _system_is_in_bootc_mode(void)
 {
 #ifdef OS_WINDOWS
-	return 0;
+	return false;
 #else
-	FILE *output = popen("bootc status --format json 2>/dev/null | jq \".status.booted\" 2>/dev/null", "r");
+	#define BOOTC_PATH "/usr/bin/bootc"
+	struct stat statbuf;
+	if (stat(BOOTC_PATH, &statbuf) == -1) {
+		return false;
+	}
+	FILE *output = popen(BOOTC_PATH " status --format json 2>/dev/null", "r");
 	if (output == NULL) {
-		return 0;
+		return false;
 	}
 	char buf[1024] = {0};
 	int c;
@@ -1923,7 +1928,7 @@ static int system_is_in_bootc_mode(void)
 		i++;
 	}
 	pclose(output);
-	return *buf != '\0' && strcmp(buf, "null\n") != 0;
+	return *buf != '\0' && strstr(buf, "\"booted\":null") == NULL;
 #endif
 }
 
@@ -1938,7 +1943,7 @@ int xccdf_session_remediate(struct xccdf_session *session)
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't perform remediation in offline mode: not implemented");
 		return 1;
 	}
-	if (system_is_in_bootc_mode()) {
+	if (_system_is_in_bootc_mode()) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP,
 			"Detected running Image Mode operating system. OpenSCAP can't "
 			"perform remediation of this system because majority of the "
