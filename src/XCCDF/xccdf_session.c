@@ -1906,32 +1906,6 @@ struct xccdf_rule_result_iterator *xccdf_session_get_rule_results(const struct x
 	return xccdf_result_get_rule_results(session->xccdf.result);
 }
 
-static bool _system_is_in_bootc_mode(void)
-{
-#ifdef OS_WINDOWS
-	return false;
-#else
-	#define BOOTC_PATH "/usr/bin/bootc"
-	struct stat statbuf;
-	if (stat(BOOTC_PATH, &statbuf) == -1) {
-		return false;
-	}
-	FILE *output = popen(BOOTC_PATH " status --format json 2>/dev/null", "r");
-	if (output == NULL) {
-		return false;
-	}
-	char buf[1024] = {0};
-	int c;
-	size_t i = 0;
-	while (i < sizeof(buf) && (c = fgetc(output)) != EOF) {
-		buf[i] = c;
-		i++;
-	}
-	pclose(output);
-	return *buf != '\0' && strstr(buf, "\"booted\":null") == NULL;
-#endif
-}
-
 int xccdf_session_remediate(struct xccdf_session *session)
 {
 	int res = 0;
@@ -1941,14 +1915,6 @@ int xccdf_session_remediate(struct xccdf_session *session)
 		return 1;
 	if(getenv("OSCAP_PROBE_ROOT") != NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't perform remediation in offline mode: not implemented");
-		return 1;
-	}
-	if (_system_is_in_bootc_mode()) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP,
-			"Detected running Image Mode operating system. OpenSCAP can't "
-			"perform remediation of this system because majority of the "
-			"system is read-only. Please apply remediation during bootable "
-			"container image build using 'oscap-im' instead.");
 		return 1;
 	}
 	xccdf_policy_model_unregister_engines(session->xccdf.policy_model, oval_sysname);
