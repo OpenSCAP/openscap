@@ -629,7 +629,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			"Detected running Image Mode operating system. OpenSCAP can't "
 			"perform remediation of this system because majority of the "
 			"system is read-only. Please apply remediation during bootable "
-			"container image build using 'oscap-im' instead.");
+			"container image build using 'oscap-im' instead.\n");
 		return result;
 	}
 
@@ -839,7 +839,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 			"Detected running Image Mode operating system. OpenSCAP can't "
 			"perform remediation of this system because majority of the "
 			"system is read-only. Please apply remediation during bootable "
-			"container image build using 'oscap-im' instead.");
+			"container image build using 'oscap-im' instead.\n");
 		return result;
 	}
 	session = xccdf_session_new(action->f_xccdf);
