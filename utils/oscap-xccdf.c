@@ -593,6 +593,7 @@ static bool _system_is_in_bootc_mode(void)
 	return false;
 #else
 	#define BOOTC_PATH "/usr/bin/bootc"
+	#define CHUNK_SIZE 1024
 	struct stat statbuf;
 	if (stat(BOOTC_PATH, &statbuf) == -1) {
 		return false;
@@ -601,12 +602,21 @@ static bool _system_is_in_bootc_mode(void)
 	if (output == NULL) {
 		return false;
 	}
-	char buf[1024] = {0};
+	size_t buf_size = CHUNK_SIZE;
+	char *buf = calloc(buf_size, sizeof(char));
 	int c;
 	size_t i = 0;
-	while (i < sizeof(buf) && (c = fgetc(output)) != EOF) {
-		buf[i] = c;
-		i++;
+	while ((c = fgetc(output)) != EOF) {
+		if (i >= buf_size) {
+			buf_size += CHUNK_SIZE;
+			char *new_buf = realloc(buf, buf_size);
+			if (new_buf == NULL) {
+				pclose(output);
+				return false;
+			}
+			buf = new_buf;
+		}
+		buf[i++] = c;
 	}
 	pclose(output);
 	return *buf != '\0' && strstr(buf, "\"booted\":null") == NULL;
