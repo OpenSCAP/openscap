@@ -586,6 +586,49 @@ int xccdf_set_profile_or_report_bad_id(struct xccdf_session *session, const char
 	return return_code;
 }
 
+
+static bool _system_is_in_bootc_mode(void)
+{
+#ifdef OS_WINDOWS
+	return false;
+#else
+	#define BOOTC_PATH "/usr/bin/bootc"
+	#define CHUNK_SIZE 1024
+	struct stat statbuf;
+	if (stat(BOOTC_PATH, &statbuf) == -1) {
+		return false;
+	}
+	FILE *output = popen(BOOTC_PATH " status --format json 2>/dev/null", "r");
+	if (output == NULL) {
+		return false;
+	}
+	size_t buf_size = CHUNK_SIZE;
+	char *buf = calloc(buf_size, sizeof(char));
+	if (buf == NULL) {
+		pclose(output);
+		return false;
+	}
+	int c;
+	size_t i = 0;
+	while ((c = fgetc(output)) != EOF) {
+		if (i >= buf_size) {
+			buf_size += CHUNK_SIZE;
+			char *new_buf = realloc(buf, buf_size);
+			if (new_buf == NULL) {
+				pclose(output);
+				return false;
+			}
+			buf = new_buf;
+		}
+		buf[i++] = c;
+	}
+	pclose(output);
+	bool result = (*buf != '\0' && strstr(buf, "\"booted\":null") == NULL);
+	free(buf);
+	return result;
+#endif
+}
+
 /**
  * XCCDF Processing fucntion
  * @param action OSCAP Action structure
@@ -596,6 +639,16 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_session *session = NULL;
 
 	int result = OSCAP_ERROR;
+
+	if (action->remediate && _system_is_in_bootc_mode()) {
+		fprintf(stderr,
+			"Detected running Image Mode operating system. OpenSCAP can't "
+			"perform remediation of this system because majority of the "
+			"system is read-only. Please apply remediation during bootable "
+			"container image build using 'oscap-im' instead.\n");
+		return result;
+	}
+
 #if defined(HAVE_SYSLOG_H)
 	int priority = LOG_NOTICE;
 
@@ -797,6 +850,14 @@ int app_xccdf_remediate(const struct oscap_action *action)
 {
 	struct xccdf_session *session = NULL;
 	int result = OSCAP_ERROR;
+	if (_system_is_in_bootc_mode()) {
+		fprintf(stderr,
+			"Detected running Image Mode operating system. OpenSCAP can't "
+			"perform remediation of this system because majority of the "
+			"system is read-only. Please apply remediation during bootable "
+			"container image build using 'oscap-im' instead.\n");
+		return result;
+	}
 	session = xccdf_session_new(action->f_xccdf);
 	if (session == NULL)
 		goto cleanup;
