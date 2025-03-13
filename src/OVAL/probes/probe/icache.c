@@ -201,7 +201,7 @@ const char* thread_name = "icache_worker";
 	pair = &pair_mem;
         dD("icache worker ready");
 
-        switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
+        switch (errno = pthread_barrier_wait(cache->th_barrier))
         {
         case 0:
         case PTHREAD_BARRIER_SERIAL_THREAD:
@@ -309,7 +309,7 @@ const char* thread_name = "icache_worker";
         return (NULL);
 }
 
-probe_icache_t *probe_icache_new(void)
+probe_icache_t *probe_icache_new(pthread_barrier_t *th_barrier)
 {
         probe_icache_t *cache = malloc(sizeof(probe_icache_t));
         cache->tree = rbt_i64_new();
@@ -323,6 +323,7 @@ probe_icache_t *probe_icache_new(void)
         cache->queue_end = 0;
         cache->queue_cnt = 0;
         cache->queue_max = PROBE_IQUEUE_CAPACITY;
+        cache->th_barrier = th_barrier;
 
         if (pthread_cond_init(&cache->queue_notempty, NULL) != 0) {
                 dE("Can't initialize icache queue condition variable (notempty): %u, %s",
