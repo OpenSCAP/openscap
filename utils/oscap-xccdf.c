@@ -604,6 +604,10 @@ static bool _system_is_in_bootc_mode(void)
 	}
 	size_t buf_size = CHUNK_SIZE;
 	char *buf = calloc(buf_size, sizeof(char));
+	if (buf == NULL) {
+		pclose(output);
+		return false;
+	}
 	int c;
 	size_t i = 0;
 	while ((c = fgetc(output)) != EOF) {
@@ -619,7 +623,9 @@ static bool _system_is_in_bootc_mode(void)
 		buf[i++] = c;
 	}
 	pclose(output);
-	return *buf != '\0' && strstr(buf, "\"booted\":null") == NULL;
+	bool result = (*buf != '\0' && strstr(buf, "\"booted\":null") == NULL);
+	free(buf);
+	return result;
 #endif
 }
 
