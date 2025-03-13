@@ -72,6 +72,13 @@ static void preload_libraries_before_chroot()
 	pthread_join(t, NULL);
 }
 
+static void pthread_pair_cleanup_handler(void *arg)
+{
+	probe_pwpair_t *pair = (probe_pwpair_t *)arg;
+	dW("Probe worker thread finished unxpectedly, trying to avoid deadlock now...");
+	SEAP_replyerr(pair->probe->SEAP_ctx, pair->probe->sd, pair->pth->msg, -100);
+}
+
 void *probe_worker_runfn(void *arg)
 {
 	dD("probe_worker_runfn has started");
@@ -88,6 +95,8 @@ void *probe_worker_runfn(void *arg)
 # endif
 #endif
 	dD("handling SEAP message ID %u", pair->pth->sid);
+	pthread_cleanup_push(pthread_pair_cleanup_handler, (void *)pair);
+
 	//
 	probe_ret = -1;
 	probe_res = pair->pth->msg_handler(pair->probe, pair->pth->msg, &probe_ret);
@@ -171,6 +180,8 @@ void *probe_worker_runfn(void *arg)
         free(pair->pth);
 	free(pair);
 	pthread_detach(pthread_self());
+
+	pthread_cleanup_pop(0);
 
 	dD("probe_worker_runfn has finished");
 	return (NULL);
