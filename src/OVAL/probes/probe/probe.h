@@ -66,6 +66,7 @@ typedef struct {
 
 	pthread_t th_input;
 	pthread_t th_signal;
+	pthread_barrier_t *th_barrier;
 
         rbt_t    *workers;
         uint32_t  max_threads;
@@ -104,7 +105,5 @@ typedef enum {
 	PROBE_OFFLINE_OWN = 0x04,
 	PROBE_OFFLINE_ALL = 0x0f
 } probe_offline_flags;
-
-extern pthread_barrier_t OSCAP_GSYM(th_barrier);
 
 #endif /* PROBE_H */
