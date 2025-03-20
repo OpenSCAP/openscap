@@ -123,11 +123,14 @@ struct pfdata {
 static int process_file(const char *prefix, const char *path, const char *file, struct pfdata *pfd, oval_schema_version_t over, struct oscap_list *blocked_paths)
 {
 	int ret = 0, path_len, file_len, cur_inst = 0, fd = -1, substr_cnt,
-		buf_size = 0, buf_used = 0, ofs = 0, buf_inc = 4096;
+		buf_size = 0, buf_used = 0, ofs = 0, buf_inc = 4096, instance_count = 0,
+		want_instance = 1, negative_instance_value = 0;
 	char **substrs = NULL;
 	char *whole_path = NULL, *whole_path_with_prefix = NULL, *buf = NULL;
-	SEXP_t *next_inst = NULL;
+	SEXP_t *next_inst = NULL, *items = SEXP_list_new(NULL), *instance_value_list = NULL,
+		*instance_value = NULL;
 	struct stat st;
+
 
 	if (file == NULL)
 		goto cleanup;
@@ -210,16 +213,6 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	buf[buf_used++] = '\0';
 
 	do {
-		int want_instance;
-
-		next_inst = SEXP_number_newi_32(cur_inst + 1);
-
-		if (probe_entobj_cmp(pfd->instance_ent, next_inst) == OVAL_RESULT_TRUE)
-			want_instance = 1;
-		else
-			want_instance = 0;
-
-		SEXP_free(next_inst);
 		substr_cnt = oscap_pcre_get_substrings(buf, &ofs, pfd->compiled_regex, want_instance, &substrs);
 
 		if (substr_cnt < 0) {
@@ -235,26 +228,48 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 		}
 
 		if (substr_cnt > 0) {
-			++cur_inst;
+			int k;
+			instance_count++;
 
-			if (want_instance) {
-				int k;
-				SEXP_t *item;
+			SEXP_list_add(items, create_item(path, file, pfd->pattern,
+				instance_count, substrs, substr_cnt, over));
 
-				item = create_item(path, file, pfd->pattern,
-						cur_inst, substrs, substr_cnt, over);
-
-				for (k = 0; k < substr_cnt; ++k)
-					free(substrs[k]);
-				free(substrs);
-				int pic_ret = probe_item_collect(pfd->ctx, item);
-				if (pic_ret == 2 || pic_ret == -1) {
-					ret = -4;
-					break;
-				}
-			}
+			for (k = 0; k < substr_cnt; ++k)
+				free(substrs[k]);
+			free(substrs);
 		}
 	} while (substr_cnt > 0 && ofs < buf_used);
+
+	probe_ent_getvals(pfd->instance_ent, &instance_value_list);
+	instance_value = SEXP_list_first(instance_value_list);
+	negative_instance_value = SEXP_number_geti_64(instance_value) < 0;
+	SEXP_free(instance_value_list);
+	SEXP_free(instance_value);
+
+	for(cur_inst = 0; cur_inst < instance_count; cur_inst++){
+		if(negative_instance_value)
+			next_inst = SEXP_number_newi_32(cur_inst - instance_count);
+
+		else
+			next_inst = SEXP_number_newi_32(cur_inst + 1);
+
+		if (probe_entobj_cmp(pfd->instance_ent, next_inst) == OVAL_RESULT_TRUE)
+			want_instance = 1;
+		else
+			want_instance = 0;
+
+		SEXP_free(next_inst);
+
+		if (want_instance){
+			int pic_ret = probe_item_collect(pfd->ctx, SEXP_list_nth(items, cur_inst + 1));
+			if (pic_ret == 2 || pic_ret == -1) {
+				ret = -4;
+				break;
+			}
+		}
+		else
+			SEXP_free(SEXP_list_nth(items, cur_inst + 1));
+	}
 
  cleanup:
 	if (fd != -1)
