@@ -205,7 +205,7 @@ static SEXP_t *__SEAP_cmd_sync_handler (SEXP_t *res, void *arg)
         h->args = res;
         (void) pthread_mutex_lock (&h->mtx);
         h->signaled = 1;
-        (void) pthread_cond_signal (&h->cond);
+        (void) pthread_cond_broadcast (&h->cond);
         (void) pthread_mutex_unlock (&h->mtx);
 
         return (NULL);
@@ -322,9 +322,6 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         h.args = NULL;
                         h.signaled = 0;
 
-                        if (pthread_mutex_lock (&(h.mtx)) != 0)
-                                abort ();
-
                         rec = SEAP_cmdrec_new ();
                         rec->code = cmdptr->id;
                         rec->func = &__SEAP_cmd_sync_handler;
@@ -377,8 +374,6 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                   timeout.tv_nsec = 0;
                                 */
                                 for (;;) {
-                                        pthread_mutex_unlock(&h.mtx);
-
                                         if (SEAP_packet_recv(ctx, sd, &packet_rcv) != 0) {
                                                 dD("FAIL: ctx=%p, sd=%d, errno=%u, %s.", ctx, sd, errno, strerror(errno));
 						SEAP_packet_free(packet);
@@ -407,21 +402,23 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                         }
 
                                         /* Morbo: THIS IS NOT HOW SYCHNRONIZATION WORKS! */
-                                        if (h.signaled)
+                                        if (h.signaled) {
+						h.signaled = 0;
                                                 break;
+					}
                                 }
                         } else {
                                 /*
                                  * Someone else does receiving of events for us.
                                  * Just wait for the condition to be signaled.
                                  */
-                                if (pthread_cond_wait(&h.cond, &h.mtx) != 0) {
-                                        /*
-                                         * Fatal error - don't know how to handle
-                                         * this so let's just call abort()...
-                                         */
-                                        abort();
-                                }
+				pthread_mutex_lock(&h.mtx);
+				while (!h.signaled) {
+					pthread_cond_wait(&h.cond, &h.mtx);
+				}
+				// This might not be needed, but still
+				h.signaled = 0;
+				pthread_mutex_unlock(&h.mtx);
                         }
 
                         dD("cond return: h.args=%p", h.args);
@@ -436,7 +433,6 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         /*
                          * SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
                          */
-                        pthread_mutex_unlock (&(h.mtx));
                         pthread_cond_destroy (&(h.cond));
                         pthread_mutex_destroy (&(h.mtx));
                         SEAP_packet_free(packet);
