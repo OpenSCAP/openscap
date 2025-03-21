@@ -85,7 +85,7 @@ void *probe_input_handler(void *arg)
 
 	pthread_cleanup_push(pthread_attr_cleanup_handler, (void *)&pth_attr);
         
-        switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
+        switch (errno = pthread_barrier_wait(probe->th_barrier))
         {
         case 0:
         case PTHREAD_BARRIER_SERIAL_THREAD:
