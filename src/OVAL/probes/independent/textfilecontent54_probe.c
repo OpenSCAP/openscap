@@ -247,7 +247,7 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	SEXP_free(instance_value);
 
 	for(cur_inst = 0; cur_inst < instance_count; cur_inst++){
-		if(negative_instance_value)
+		if (negative_instance_value)
 			next_inst = SEXP_number_newi_32(cur_inst - instance_count);
 
 		else
@@ -260,7 +260,7 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 
 		SEXP_free(next_inst);
 
-		if (want_instance){
+		if (want_instance) {
 			int pic_ret = probe_item_collect(pfd->ctx, SEXP_list_nth(items, cur_inst + 1));
 			if (pic_ret == 2 || pic_ret == -1) {
 				ret = -4;
