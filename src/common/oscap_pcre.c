@@ -142,7 +142,6 @@ oscap_pcre_t *oscap_pcre_compile(const char *pattern, oscap_pcre_options_t optio
 	int errno;
 	PCRE2_SIZE erroffset2;
 	res->re_ctx = NULL;
-	dD("pcre2_compile_8: patt=%s", pattern);
 	res->re = pcre2_compile_8((PCRE2_SPTR)pattern, PCRE2_ZERO_TERMINATED, _oscap_pcre_opts_to_pcre(options), &errno, &erroffset2, NULL);
 	if (res->re == NULL) {
 		PCRE2_UCHAR8 errmsg[PCRE2_ERR_BUF_SIZE];
@@ -206,13 +205,9 @@ int oscap_pcre_exec(const oscap_pcre_t *opcre, const char *subject,
 	// The ovecsize is multiplied by 3 in the code for compatibility with PCRE1
 	int ovecsize2 = ovecsize/3;
 	pcre2_match_data_8 *mdata = pcre2_match_data_create_8(ovecsize2, NULL);
-	dD("pcre2_match_8: subj=%s", subject);
 	rc = pcre2_match_8(opcre->re, (PCRE2_SPTR8)subject, length, startoffset, _oscap_pcre_opts_to_pcre(options), mdata, opcre->re_ctx);
-	dD("pcre2_match_8: rc=%d, ", rc);
 	if (rc > PCRE2_ERROR_NOMATCH) {
 		PCRE2_SIZE *ovecp = pcre2_get_ovector_pointer_8(mdata);
-		uint32_t ovecp_count = pcre2_get_ovector_count_8(mdata);
-		dD("pcre2_match_8: pcre2_get_ovector_count_8=%d", ovecp_count);
 		for (int i = 0; i < rc; i++) {
 			if (i < ovecsize2) {
 				ovector[i*2] = ovecp[i*2];
