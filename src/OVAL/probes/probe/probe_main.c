@@ -71,8 +71,6 @@ bool   OSCAP_GSYM(varref_handling)    = true;
 char **OSCAP_GSYM(no_varref_ents)     = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
 
-pthread_barrier_t OSCAP_GSYM(th_barrier);
-
 extern probe_ncache_t *OSCAP_GSYM(ncache);
 
 static int probe_optecmp(char **a, char **b)
@@ -191,8 +189,10 @@ void *probe_common_main(void *arg)
 
 	dD("probe_common_main started");
 
+	pthread_barrier_t barrier;
+
 	const unsigned thread_count = 2; // input and icache threads
-	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL, thread_count)) != 0) {
+	if ((errno = pthread_barrier_init(&barrier, NULL, thread_count)) != 0) {
 		fail(errno, "pthread_barrier_init", __LINE__ - 6);
 	}
 
@@ -218,9 +218,10 @@ void *probe_common_main(void *arg)
 	 * Initialize result & name caching
 	 */
 	probe.rcache = probe_rcache_new();
-	probe.icache = probe_icache_new();
+	probe.icache = probe_icache_new(&barrier);
 	probe_ncache_clear(OSCAP_GSYM(ncache));
 	probe.ncache = OSCAP_GSYM(ncache);
+	probe.th_barrier = &barrier;
 
 	/*
 	 * Initialize probe option handlers
@@ -265,6 +266,8 @@ void *probe_common_main(void *arg)
 	dD("probe_input_handler thread has joined with status %ld", (long) status);
 
 	pthread_cleanup_pop(1);
+
+	pthread_barrier_destroy(&barrier);
 
 	return NULL;
 }

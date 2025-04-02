@@ -25,6 +25,7 @@
 #include <stddef.h>
 #include <sexp.h>
 #include "../SEAP/generic/rbt/rbt.h"
+#include "common/compat_pthread_barrier.h"
 
 #ifndef PROBE_IQUEUE_CAPACITY
 #define PROBE_IQUEUE_CAPACITY 1024
@@ -41,6 +42,7 @@ typedef struct {
 typedef struct {
         rbt_t    *tree; /* XXX: rewrite to extensible or linear hashing */
         pthread_t thid;
+        pthread_barrier_t *th_barrier;
 
         pthread_mutex_t queue_mutex;
         pthread_cond_t  queue_notempty;
@@ -58,7 +60,7 @@ typedef struct {
         uint16_t  count;
 } probe_citem_t;
 
-probe_icache_t *probe_icache_new(void);
+probe_icache_t *probe_icache_new(pthread_barrier_t *th_barrier);
 int probe_icache_add(probe_icache_t *cache, SEXP_t *cobj, SEXP_t *item);
 int probe_icache_nop(probe_icache_t *cache);
 void probe_icache_free(probe_icache_t *cache);
