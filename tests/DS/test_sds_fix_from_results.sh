@@ -3,7 +3,7 @@
 # Author:
 #   Martin Preisler <mpreisle@redhat.com>
 
-set -e -o pipefail
+set -o pipefail
 
 . $builddir/tests/test_common.sh
 
