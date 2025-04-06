@@ -1,3 +1,9 @@
+openscap-1.4.2                                                  06-04-2025
+- Maintenance, bug fix
+  - Fix thread synchronization bugs
+  - Fix textfilecontent54_probe behaviour for negative instance numbers
+  - Fix signature obtaining in rpm_info probe
+
 openscap-1.4.1                                                  2025-01-08
 - New features
   - Introduce "oscap-im" - script that can be used in Containerfiles to build
