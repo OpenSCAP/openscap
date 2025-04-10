@@ -100,7 +100,10 @@ static struct oscap_module XCCDF_RESOLVE = {
     .usage = "[options] -o output-xccdf.xml input-xccdf.xml",
     .help =
 		"Options:\n"
-		"   --force                       - Force resolving XCCDF document even if it is aleready marked as resolved.",
+		"   --force                       - Force resolving XCCDF document even if it is aleready marked as resolved.\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_xccdf,
     .func = app_xccdf_resolve
 };
@@ -114,7 +117,9 @@ static struct oscap_module XCCDF_VALIDATE = {
 	.func = app_xccdf_validate,
 	.help = "Options:\n"
 		"   --skip-schematron             - Do not use schematron-based validation in addition to XML Schema\n"
-	,
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
 };
 
 static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
@@ -138,7 +143,9 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
 		"                                   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
 		"                                   for applicability checks.\n"
-	,
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
 };
 
 static struct oscap_module XCCDF_EVAL = {
@@ -185,7 +192,10 @@ static struct oscap_module XCCDF_EVAL = {
 		"                                   (only applicable for source data streams)\n"
 		"                                   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 		"   --remediate                   - Automatically execute XCCDF fix elements for failed rules.\n"
-		"                                   Use of this option is always at your own risk.\n",
+		"                                   Use of this option is always at your own risk.\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
@@ -214,7 +224,9 @@ static struct oscap_module XCCDF_REMEDIATE = {
 		"                                   Format is \"$rule_id:$result\\n\".\n"
 		"   --progress-full               - Switch to sparse but a bit more saturated output also suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id|$rule_title|$result\\n\".\n"
-	,
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
 	.opt_parser = getopt_xccdf,
 	.func = app_xccdf_remediate
 };
@@ -242,7 +254,10 @@ static struct oscap_module XCCDF_GEN_REPORT = {
     .help = GEN_OPTS
 		"\nReport Options:\n"
 		"   --result-id <id>              - TestResult ID to be processed. Default is the most recent one.\n"
-		"   --output <file>               - Write the document into file.\n",
+		"   --output <file>               - Write the document into file.\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_xccdf,
     .user = "xccdf-report.xsl",
     .func = app_xccdf_xslt
@@ -267,7 +282,10 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
 		"                                   (only applicable for source data streams)\n"
 		"   --skip-signature-validation   - Skip data stream signature validation.\n"
 		"                                   (only applicable for source data streams)\n"
-		"   --enforce-signature           - Process only signed data streams.\n",
+		"   --enforce-signature           - Process only signed data streams.\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_xccdf,
     .user = NULL,
     .func = app_generate_guide
@@ -295,7 +313,10 @@ static struct oscap_module XCCDF_GEN_FIX = {
 		"                                   (only applicable for source data streams)\n"
 		"   --skip-signature-validation   - Skip data stream signature validation.\n"
 		"                                   (only applicable for source data streams)\n"
-		"   --enforce-signature           - Process only signed data streams.\n",
+		"   --enforce-signature           - Process only signed data streams.\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_xccdf,
     .user = "legacy-fix.xsl",
     .func = app_generate_fix
@@ -309,7 +330,10 @@ static struct oscap_module XCCDF_GEN_CUSTOM = {
     .help = GEN_OPTS
 		"\nCustom Options:\n"
 		"   --stylesheet <file>           - Specify an absolute path to a custom stylesheet to format the output.\n"
-		"   --output <file>               - Write the document into file.\n",
+		"   --output <file>               - Write the document into file.\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_xccdf,
     .user = NULL,
     .func = app_xccdf_xslt
@@ -1205,7 +1229,9 @@ enum oval_opt {
     XCCDF_OPT_RESULT_ID = 'i',
 	XCCDF_OPT_FIX_TYPE,
 	XCCDF_OPT_LOCAL_FILES,
-	XCCDF_OPT_REFERENCE
+	XCCDF_OPT_REFERENCE,
+	XCCDF_OPT_VERBOSE,
+	XCCDF_OPT_VERBOSE_LOG_FILE
 };
 
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
@@ -1237,6 +1263,8 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"fix-type", required_argument, NULL, XCCDF_OPT_FIX_TYPE},
 		{"local-files", required_argument, NULL, XCCDF_OPT_LOCAL_FILES},
 		{"reference", required_argument, NULL, XCCDF_OPT_REFERENCE},
+		{"verbose", required_argument, NULL, XCCDF_OPT_VERBOSE},
+		{"verbose-log-file", required_argument, NULL, XCCDF_OPT_VERBOSE_LOG_FILE},
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
@@ -1297,6 +1325,12 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 			break;
 		case XCCDF_OPT_REFERENCE:
 			action->reference = optarg;
+			break;
+		case XCCDF_OPT_VERBOSE:
+			action->verbosity_level = optarg;
+			break;
+		case XCCDF_OPT_VERBOSE_LOG_FILE:
+			action->f_verbose_log = optarg;
 			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
