@@ -248,8 +248,6 @@ or possible bugs in their security policies have these possibilities:
 The verbose mode provides user additional information about process of system
 scanning. The mode is useful for diagnostics of SCAP content evaluation
 and also for debugging. It produces a detailed report log with various messages.
-The mode is available for `xccdf eval`, `oval eval`, `oval collect`
-and `oval analyse` modules.
 There is no need to special compilation, the feature is available for all
 OpenSCAP users.
 

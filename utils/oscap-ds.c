@@ -73,7 +73,10 @@ static struct oscap_module DS_SDS_VALIDATE_MODULE = {
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Validate given source data stream",
 	.usage = "source_datastream.xml",
-	.help = NULL,
+	.help = "Options:\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_validate
 };
@@ -83,7 +86,10 @@ static struct oscap_module DS_RDS_VALIDATE_MODULE = {
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Validate given result data stream",
 	.usage = "[options] result_datastream.xml",
-	.help = NULL,
+	.help = "Options:\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_validate
 };
@@ -98,7 +104,9 @@ enum ds_opt {
 	DS_OPT_DATASTREAM_ID = 1,
 	DS_OPT_XCCDF_ID,
 	DS_OPT_REPORT_ID,
-	DS_OPT_LOCAL_FILES
+	DS_OPT_LOCAL_FILES,
+	DS_OPT_VERBOSE,
+	DS_OPT_VERBOSE_LOG_FILE,
 };
 
 bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
@@ -113,6 +121,8 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		{"report-id",		required_argument, NULL, DS_OPT_REPORT_ID},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{"local-files", required_argument, NULL, DS_OPT_LOCAL_FILES},
+		{"verbose", required_argument, NULL, DS_OPT_VERBOSE},
+		{"verbose-log-file", required_argument, NULL, DS_OPT_VERBOSE_LOG_FILE},
 	// end
 		{0, 0, 0, 0}
 	};
@@ -126,6 +136,12 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		case DS_OPT_REPORT_ID:	action->f_report_id = optarg; break;
 		case DS_OPT_LOCAL_FILES:
 			action->local_files = optarg;
+			break;
+		case DS_OPT_VERBOSE:
+			action->verbosity_level = optarg;
+			break;
+		case DS_OPT_VERBOSE_LOG_FILE:
+			action->f_verbose_log = optarg;
 			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);

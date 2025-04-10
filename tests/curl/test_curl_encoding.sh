@@ -12,7 +12,7 @@ function curl_accept_encoding {
 	local RF="results.xml"
 	local LOG="verbose.log"
 
-	$OSCAP xccdf --verbose=DEVEL eval --fetch-remote-resources --results $RF $DF 2>$LOG || echo "OK"
+	$OSCAP xccdf eval --verbose=DEVEL --fetch-remote-resources --results $RF $DF 2>$LOG || echo "OK"
 
 	case $(uname) in
 		FreeBSD)

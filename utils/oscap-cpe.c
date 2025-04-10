@@ -60,7 +60,10 @@ static struct oscap_module CPE_MATCH_MODULE = {
     .parent = &OSCAP_CPE_MODULE,
     .summary = "Match CPE name against provided dictionary",
     .usage = "name dictionary.xml",
-    .help = NULL,
+	.help = "Options:\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_cpe,
     .func = app_cpe_match
 };
@@ -70,7 +73,10 @@ static struct oscap_module CPE_CHECK_MODULE = {
     .parent = &OSCAP_CPE_MODULE,
     .summary = "Check if CPE name is valid",
     .usage = "name",
-    .help = NULL,
+	.help = "Options:\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_cpe,
     .func = app_cpe_check
 };
@@ -80,7 +86,10 @@ static struct oscap_module CPE_VALIDATE = {
     .parent = &OSCAP_CPE_MODULE,
     .summary = "Validate CPE Dictionary content",
     .usage = "cpe-dict.xml",
-    .help = NULL,
+	.help = "Options:\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_cpe,
     .func = app_cpe_validate
 };
@@ -93,37 +102,44 @@ static struct oscap_module* CPE_SUBMODULES[CPE_SUBMODULES_NUM] = {
 };
 
 bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
-
+	enum oscap_cpe_opts {
+		OSCAP_CPE_OPT_VERBOSE = 1,
+		OSCAP_CPE_OPT_VERBOSE_LOG_FILE,
+	};
+	const struct option long_options[] = {
+	// options
+		{"verbose", required_argument, NULL, OSCAP_CPE_OPT_VERBOSE},
+		{"verbose-log-file", required_argument, NULL, OSCAP_CPE_OPT_VERBOSE_LOG_FILE},
+	// end
+		{0, 0, 0, 0}
+	};
+	int c;
+	while ((c = getopt_long(argc, argv, "o:i:", long_options, NULL)) != -1) {
+		switch (c) {
+		case OSCAP_CPE_OPT_VERBOSE:
+			action->verbosity_level = optarg;
+			break;
+		case OSCAP_CPE_OPT_VERBOSE_LOG_FILE:
+			action->f_verbose_log = optarg;
+			break;
+		case 0: break;
+		default: return oscap_module_usage(action->module, stderr, NULL);
+		}
+	}
+	if (optind >= argc) {
+		return oscap_module_usage(action->module, stderr, "Wrong number of arguments!\n");
+	}
+	action->cpe_action = malloc(sizeof(struct cpe_action));
 	if (action->module == &CPE_MATCH_MODULE) {
-		if(  argc != 5 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
-			return false;
-		}
-		action->cpe_action = malloc(sizeof(struct cpe_action));
-		action->cpe_action->name=argv[3];
-		action->cpe_action->dict=argv[4];
+		action->cpe_action->name = argv[optind];
+		action->cpe_action->dict = argv[optind + 1];
 	}
-
 	if (action->module == &CPE_CHECK_MODULE) {
-		if( argc != 4 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
-			return false;
-		}
-		action->cpe_action = malloc(sizeof(struct cpe_action));
-		action->cpe_action->name=argv[3];
+		action->cpe_action->name = argv[optind];
 	}
-
 	if (action->module == &CPE_VALIDATE) {
-		if( argc != 4 ) {
-			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
-			return false;
-		}
-
-		action->cpe_action = malloc(sizeof(struct cpe_action));
-		action->cpe_action->dict=argv[3];
+		action->cpe_action->dict = argv[optind];
 	}
-
-
 	return true;
 }
 
