@@ -90,6 +90,7 @@ struct oscap_module OSCAP_XCCDF_MODULE = {
     .parent = &OSCAP_ROOT_MODULE,
     .summary = "eXtensible Configuration Checklist Description Format",
     .usage_extra = "command [command-specific-options]",
+    .opt_parser = getopt_xccdf,
     .submodules = XCCDF_SUBMODULES
 };
 
