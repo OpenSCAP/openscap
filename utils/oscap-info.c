@@ -787,7 +787,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	};
 
 	int c;
-	while ((c = getopt_long(argc, argv, "o:i:p:", long_options, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch(c) {
 			case 0: break;
 			case OSCAP_INFO_OPT_PROFILE:
