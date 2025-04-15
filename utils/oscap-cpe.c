@@ -130,6 +130,10 @@ bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 		return oscap_module_usage(action->module, stderr, "Wrong number of arguments!\n");
 	}
 	action->cpe_action = malloc(sizeof(struct cpe_action));
+	if (action->cpe_action == NULL) {
+		fprintf(stderr, "Memory allocation error.\n");
+		return false;
+	}
 	if (action->module == &CPE_MATCH_MODULE) {
 		action->cpe_action->name = argv[optind];
 		action->cpe_action->dict = argv[optind + 1];
