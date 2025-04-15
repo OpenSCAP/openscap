@@ -1,5 +1,6 @@
 add_oscap_test("autotailor_integration_test.sh")
 add_oscap_test("test_utils_args.sh")
+add_oscap_test("test_verbose_options.sh")
 
 if(PY_PYTEST)
     add_test(

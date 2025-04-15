@@ -66,7 +66,10 @@ struct oscap_module OSCAP_INFO_MODULE = {
 		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --profile <id>                - Show info of the profile with the given ID.\n"
 		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n"
-		"   --references                  - Show references available in the input benchmark",
+		"   --references                  - Show references available in the input benchmark\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
+		"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_info,
     .func = app_info
 };
@@ -761,33 +764,50 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 {
 	assert(action != NULL);
 
+	enum oscap_info_opts {
+		OSCAP_INFO_OPT_REMOTE_RESOURCES,
+		OSCAP_INFO_OPT_LOCAL_FILES,
+		OSCAP_INFO_OPT_PROFILE,
+		OSCAP_INFO_OPT_PROFILES,
+		OSCAP_INFO_OPT_REFERENCES,
+		OSCAP_INFO_OPT_VERBOSE,
+		OSCAP_INFO_OPT_VERBOSE_LOG_FILE,
+	};
 	/* Command-options */
 	const struct option long_options[] = {
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
-		{"local-files", required_argument, NULL, 'l'},
-		{"profile", required_argument, 0, 'p'},
-		{"profiles", no_argument, 0, 'n'},
-		{"references", no_argument, 0, 'r'},
+		{"local-files", required_argument, NULL, OSCAP_INFO_OPT_LOCAL_FILES},
+		{"profile", required_argument, 0, OSCAP_INFO_OPT_PROFILE},
+		{"profiles", no_argument, 0, OSCAP_INFO_OPT_PROFILES},
+		{"references", no_argument, 0, OSCAP_INFO_OPT_REFERENCES},
+		{"verbose", required_argument, NULL, OSCAP_INFO_OPT_VERBOSE},
+		{"verbose-log-file", required_argument, NULL, OSCAP_INFO_OPT_VERBOSE_LOG_FILE},
 		// end
 		{0, 0, 0, 0}
 	};
 
 	int c;
-	while ((c = getopt_long(argc, argv, "o:i:p:", long_options, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch(c) {
 			case 0: break;
-			case 'p':
+			case OSCAP_INFO_OPT_PROFILE:
 				action->profile = optarg;
 				break;
-			case 'n':
+			case OSCAP_INFO_OPT_PROFILES:
 				action->show_profiles_only = 1;
 				action->provide_machine_readable_output = 1;
 				break;
-			case 'l':
+			case OSCAP_INFO_OPT_LOCAL_FILES:
 				action->local_files = optarg;
 				break;
-			case 'r':
+			case OSCAP_INFO_OPT_REFERENCES:
 				action->references = 1;
+				break;
+			case OSCAP_INFO_OPT_VERBOSE:
+				action->verbosity_level = optarg;
+				break;
+			case OSCAP_INFO_OPT_VERBOSE_LOG_FILE:
+				action->f_verbose_log = optarg;
 				break;
 			default: return oscap_module_usage(action->module, stderr, NULL);
 		}

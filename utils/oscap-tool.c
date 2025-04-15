@@ -187,12 +187,6 @@ bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err,
     return (out != stderr);
 }
 
-static const char *common_opts_help =
-	"Common options:\n"
-	"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
-	"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
-	"   --verbose-log-file <file>     - Write verbose information into file.\n";
-
 static void oscap_module_print_help(struct oscap_module *module, FILE *out)
 {
     assert(module != NULL);
@@ -207,7 +201,6 @@ static void oscap_module_print_help(struct oscap_module *module, FILE *out)
     oscap_module_print_usage(module, out, true);
     fprintf(out, "\n\n");
 
-	fprintf(out, "%s\n", common_opts_help);
 	if (module->help)
 		fprintf(out, "%s\n\n", module->help);
 
@@ -256,8 +249,6 @@ static enum oscap_common_opts oscap_parse_common_opts(int argc, char **argv, str
         { "list-submodules",     0, 0, OPT_LISTMODS    },
         { "list-all-submodules", 0, 0, OPT_LISTALLMODS },
         { "module-tree",         0, 0, OPT_MODTREE     },
-		{ "verbose", required_argument, NULL, OPT_VERBOSE },
-		{ "verbose-log-file", required_argument, NULL, OPT_VERBOSE_LOG_FILE },
         { 0, 0, 0, 0 }
     };
 
@@ -265,12 +256,6 @@ static enum oscap_common_opts oscap_parse_common_opts(int argc, char **argv, str
 	opterr = 0;
 	while ((r = getopt_long(argc, argv, "+h", opts, NULL)) != -1) {
 		switch (r) {
-		case OPT_VERBOSE:
-			action->verbosity_level = optarg;
-			break;
-		case OPT_VERBOSE_LOG_FILE:
-			action->f_verbose_log = optarg;
-			break;
 		case 0:
 			break;
 		case '?':
