@@ -90,12 +90,12 @@
     <textfilecontent54_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" version="1" id="oval:x:obj:3">
       <filepath>/tmp/oscap_test_skip_paths/a/x</filepath>
       <pattern>^.*$</pattern>
-      <instance datatype="int" operation="greater than or equal">1</instance>
+      <instance datatype="int">1</instance>
     </textfilecontent54_object>
     <textfilecontent54_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" version="1" id="oval:x:obj:4">
       <filepath>/tmp/oscap_test_skip_paths/b/y</filepath>
       <pattern>^.*$</pattern>
-      <instance datatype="int" operation="greater than or equal">1</instance>
+      <instance datatype="int">1</instance>
     </textfilecontent54_object>
     <filehash58_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" version="1" id="oval:x:obj:5">
       <filepath>/tmp/oscap_test_skip_paths/a/x</filepath>
