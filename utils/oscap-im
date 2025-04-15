@@ -111,22 +111,19 @@ def pre_scan_fix(args):
             "--output", remediation_script.name]
         add_common_args(args, gen_fix_cmd)
         gen_fix_cmd.append(args.data_stream)
-    try:
-        subprocess.run(gen_fix_cmd, check=True, capture_output=True)
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(
-            f"OpenSCAP generate fix failed with return code {e.returncode}.\n"
-            f"Output: {e.stderr.decode()}")
-    try:
-        subprocess.run(
-            ["bash", remediation_script.name], check=True,
-            capture_output=True)
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(
-            f"Remediation script failed with return code {e.returncode}.\n"
-            f"Output: {e.stderr.decode()}")
-    finally:
-        Path(remediation_script.name).unlink()
+        try:
+            subprocess.run(gen_fix_cmd, check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(
+                f"OpenSCAP generate fix failed with return code "
+                f"{e.returncode}.\nOutput: {e.stderr.decode()}")
+        try:
+            subprocess.run(["bash", remediation_script.name], check=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(
+                f"Remediation script failed with return code "
+                f"{e.returncode}.")
+
 
 def scan_and_remediate(args):
     oscap_cmd = ["oscap", "xccdf", "eval", "--progress", "--remediate"]
