@@ -105,14 +105,24 @@ def add_eval_args(args, cmd):
 
 
 def pre_scan_fix(args):
-    with tempfile.NamedTemporaryFile(delete=False) as remediation_script:
+    with tempfile.NamedTemporaryFile() as remediation_script:
         gen_fix_cmd = [
             "oscap", "xccdf", "generate", "fix", "--fix-type", "bootc",
             "--output", remediation_script.name]
         add_common_args(args, gen_fix_cmd)
         gen_fix_cmd.append(args.data_stream)
-        subprocess.run(gen_fix_cmd, check=True)
-        subprocess.run(["bash", remediation_script.name], check=True)
+        try:
+            subprocess.run(gen_fix_cmd, check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(
+                f"OpenSCAP generate fix failed with return code "
+                f"{e.returncode}.\nOutput: {e.stderr.decode()}")
+        try:
+            subprocess.run(["bash", remediation_script.name], check=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(
+                f"Remediation script failed with return code "
+                f"{e.returncode}.")
 
 
 def scan_and_remediate(args):
@@ -125,15 +135,20 @@ def scan_and_remediate(args):
         subprocess.run(oscap_cmd, env=env, check=True)
     except subprocess.CalledProcessError as e:
         if e.returncode not in [0, 2]:
-            print(e, file=sys.stderr)
+            raise RuntimeError(
+                f"OpenSCAP scan failed with return code {e.returncode}.\n")
 
 
 def main():
     args = parse_args()
     verify_bootc_build_env()
     install_sce_dependencies()
-    pre_scan_fix(args)
-    scan_and_remediate(args)
+    try:
+        pre_scan_fix(args)
+        scan_and_remediate(args)
+    except RuntimeError as e:
+        print(e, file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
