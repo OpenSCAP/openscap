@@ -15,8 +15,8 @@ cp "$srcdir/test.xml" "$root/b/"
 mkdir -p "$root/c"
 touch "$root/c/z"
 cp "$srcdir/test.xml" "$root/c/"
-# oscap probes will skip directories "b" and "c"
-export OSCAP_PROBE_IGNORE_PATHS="$root/b:$root/c"
+# oscap probes will skip directories "$root/n", "$root/b" and "$root/c"
+export OSCAP_PROBE_IGNORE_PATHS="$root/n:$root/c:$root/b"
 $OSCAP oval eval --results $result "$srcdir/test_skip_paths.xml"
 assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:x:def:1" and @result="true"]'
 assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:1" and @flag="complete"]'
