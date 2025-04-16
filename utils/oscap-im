@@ -105,7 +105,7 @@ def add_eval_args(args, cmd):
 
 
 def pre_scan_fix(args):
-    with tempfile.NamedTemporaryFile(delete=False) as remediation_script:
+    with tempfile.NamedTemporaryFile() as remediation_script:
         gen_fix_cmd = [
             "oscap", "xccdf", "generate", "fix", "--fix-type", "bootc",
             "--output", remediation_script.name]
