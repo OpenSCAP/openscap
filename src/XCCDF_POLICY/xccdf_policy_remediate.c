@@ -483,18 +483,8 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 				NULL
 			};
 
-			char *oscap_bootc_build = getenv("OSCAP_BOOTC_BUILD");
-			char *oscap_bootc_build_kvarg = NULL;
-			if (oscap_bootc_build != NULL) {
-				oscap_bootc_build_kvarg = oscap_sprintf("OSCAP_BOOTC_BUILD=%s", oscap_bootc_build);
-			}
-			char *const envp[3] = {
-				"PATH=/bin:/sbin:/usr/bin:/usr/sbin",
-				oscap_bootc_build_kvarg,
-				NULL
-			};
-
-			execve(interpret, argvp, envp);
+			// We are inheriting openscap environment
+			execve(interpret, argvp, environ);
 			/* Wow, execve returned. In this special case, we failed to execute the fix
 			 * and we return 0 from function. At least the following error message will
 			 * indicate the problem in xccdf:message. */
