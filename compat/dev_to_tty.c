@@ -142,7 +142,7 @@ static int driver_name(char *restrict const buf, unsigned maj, unsigned min){
 }
 
 // major 204 is a mess -- "Low-density serial ports"
-static const char low_density_names[][6] = {
+static const char low_density_names[][7] = {
 "LU0",  "LU1",  "LU2",  "LU3",
 "FB0",
 "SA0",  "SA1",  "SA2",
