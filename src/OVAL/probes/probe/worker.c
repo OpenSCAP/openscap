@@ -103,6 +103,11 @@ void *probe_worker_runfn(void *arg)
 	//
 	dD("handler result = %p, return code = %d", probe_res, probe_ret);
 
+	if (probe_res == NULL) {
+		dE("An error was returned by the input message handler: %s.", strerror(errno));
+		exit(1);
+	}
+
 	/* Assuming that the red-black tree API is doing locking for us... */
 	if (rbt_i32_del(pair->probe->workers, pair->pth->sid, NULL) != 0) {
 		dW("thread not found in the probe thread tree, probably canceled by an external signal");
