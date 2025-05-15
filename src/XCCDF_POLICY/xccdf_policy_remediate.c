@@ -716,7 +716,6 @@ static inline int _parse_blueprint_fix(const char *fix_text, struct blueprint_cu
 		tab[i].re = oscap_pcre_compile(tab[i].pattern, OSCAP_PCRE_OPTS_UTF8, &err, &errofs);
 		if (tab[i].re == NULL) {
 			dE("Unable to compile /%s/ regex pattern, oscap_pcre_compile() returned error (offset: %d): '%s'.\n", tab[i].pattern, errofs, err);
-			oscap_pcre_err_free(err);
 			ret = 1;
 			goto exit;
 		}
