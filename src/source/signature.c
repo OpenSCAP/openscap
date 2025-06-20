@@ -194,6 +194,21 @@ static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t sc
 		goto cleanup;
 	}
 
+	/* XMLSec 1.3 API Change: Enable KeyValue reading in the signature context */
+	xmlSecKeyDataId kv_data_id = xmlSecKeyDataIdListFindByName(xmlSecKeyDataIdsGet(), BAD_CAST "key-value", xmlSecKeyDataUsageAny);
+	xmlSecKeyDataId rsa_data_id = xmlSecKeyDataIdListFindByName(xmlSecKeyDataIdsGet(), BAD_CAST "rsa", xmlSecKeyDataUsageAny);
+
+	res = xmlSecPtrListAdd(&(dsigCtx->keyInfoReadCtx.enabledKeyData), (const xmlSecPtr)kv_data_id);
+	if (res < 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "failed to enable key data: key-value");
+		goto cleanup;
+	}
+	res = xmlSecPtrListAdd(&(dsigCtx->keyInfoReadCtx.enabledKeyData), (const xmlSecPtr)rsa_data_id);
+	if (res < 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "failed to enable key data: rsa");
+		goto cleanup;
+	}
+
 	/* Verify signature */
 	if (xmlSecDSigCtxVerify(dsigCtx, node) < 0) {
 		oscap_seterr(OSCAP_EFAMILY_XML, "Signature verification failed");
