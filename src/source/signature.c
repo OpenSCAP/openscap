@@ -118,6 +118,7 @@ static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t sc
 	xmlSecDSigCtxPtr dsigCtx = NULL;
 	xmlSecKeysMngrPtr mngr = NULL;
 	xsltSecurityPrefsPtr xsltSecPrefs = NULL;
+	xmlSecKeyInfoCtxPtr keyinfo_ctx = NULL;
 
 	dI("Validating XML signature.");
 
@@ -187,6 +188,27 @@ static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t sc
 		goto cleanup;
 	}
 
+	keyinfo_ctx = xmlSecKeyInfoCtxCreate(mngr);
+	if (keyinfo_ctx == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "failed to create key info context");
+		goto cleanup;
+	}
+
+	xmlSecKeyDataId kv_data_id = xmlSecKeyDataIdListFindByName(xmlSecKeyDataIdsGet(), BAD_CAST "key-value", xmlSecKeyDataUsageAny);
+	xmlSecKeyDataId rsa_data_id = xmlSecKeyDataIdListFindByName(xmlSecKeyDataIdsGet(), BAD_CAST "rsa", xmlSecKeyDataUsageAny);
+
+
+	res = xmlSecPtrListAdd(&(keyinfo_ctx->enabledKeyData), (const xmlSecPtr)kv_data_id);
+	if(res < 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "failed to enable key data: key-value");
+		goto cleanup;
+	}
+	res = xmlSecPtrListAdd(&(keyinfo_ctx->enabledKeyData), (const xmlSecPtr)rsa_data_id);
+	if(res < 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "failed to enable key data: rsa");
+		goto cleanup;
+	}
+
 	/* create signature context */
 	dsigCtx = xmlSecDSigCtxCreate(mngr);
 	if (dsigCtx == NULL) {
@@ -249,6 +271,10 @@ cleanup:
 	/* cleanup */
 	if (dsigCtx != NULL)
 		xmlSecDSigCtxDestroy(dsigCtx);
+
+	/* destroy key info context */
+	if (keyinfo_ctx != NULL)
+		xmlSecKeyInfoCtxDestroy(keyinfo_ctx);
 
 	/* destroy keys manager */
 	if (mngr != NULL)
