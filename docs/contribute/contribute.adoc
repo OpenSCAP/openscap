@@ -54,7 +54,7 @@ to investigate the correct branch first or ask experienced developers on our
 FreeNode IRC channel called `#openscap` or
 link:https://www.redhat.com/mailman/listinfo/open-scap-list[mailing list].
 
-NOTE: The default branch of the openscap repository is set to the `maint-1.2`.
+NOTE: The default branch of the openscap repository is set to the `main`.
 
 Once you have forked the repository and decided that the fix will go into the
 `maint-1.2` branch you can create a new branch from it, which we will call
