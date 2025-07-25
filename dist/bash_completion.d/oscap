@@ -31,7 +31,7 @@ function _oscap {
     opts[oscap:oval:generate:report]="-o --output"
     opts[oscap:xccdf:eval]="--benchmark-id --check-engine-results --cpe --datastream-id --enforce-signature --export-variables --fetch-remote-resources --local-files --oval-results --profile --progress --progress-full --remediate --report --results --results-arf --rule --skip-rule --skip-validation --skip-signature-validation --stig-viewer --tailoring-file --tailoring-id --thin-results --verbose --verbose-log-file --without-syschar --xccdf-id"
     opts[oscap:xccdf:validate]="--skip-schematron"
-    opts[oscap:xccdf:export-oval-variables]="--datastream-id --xccdf-id --profile --skip-validation --fetch-remote-resources --local-files --cpe"
+    opts[oscap:xccdf:export-oval-variables]="--datastream-id --xccdf-id --profile --skip-validation --fetch-remote-resources --local-files --benchmark-id --cpe"
     opts[oscap:xccdf:remediate]="--result-id --skip-validation --fetch-remote-resources --local-files --results --results-arf --report --oval-results --export-variables --cpe --check-engine-results --progress --progress-full"
     opts[oscap:xccdf:resolve]="-o --output -f --force"
     opts[oscap:xccdf:generate]="--profile"
@@ -39,7 +39,7 @@ function _oscap {
     opts[oscap:xccdf:generate:guide]="-o --output --hide-profile-info --profile --benchmark-id --xccdf-id --tailoring-file --tailoring-id --skip-signature-validation --enforce-signature"
     opts[oscap:xccdf:generate:fix]="-o --output --profile --result-id --profile --fix-type --xccdf-id --benchmark-id --tailoring-file --tailoring-id --skip-signature-validation --enforce-signature"
     opts[oscap:xccdf:generate:custom]="-o --output --stylesheet"
-    opts[oscap:info]="--fetch-remote-resources --local-files --profile --profiles"
+    opts[oscap:info]="--fetch-remote-resources --local-files --profile --profiles --references"
 
     # local variables
 	local std cmd i prev
@@ -47,7 +47,7 @@ function _oscap {
 	local cur="`_get_cword`"
 	local prog="${COMP_WORDS[0]}"
     local modpath='oscap'
-	_split_longopt || prev="${COMP_WORDS[$COMP_CWORD-1]}"
+	_comp__split_longopt || prev="${COMP_WORDS[$COMP_CWORD-1]}"
 
     # get module path
 	while [ $c -lt $COMP_CWORD ]; do
