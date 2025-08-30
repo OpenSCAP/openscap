@@ -48,7 +48,10 @@ SEAP_packet_t *SEAP_packet_new (void)
 
 void SEAP_packet_free (SEAP_packet_t *packet)
 {
-	free(packet);
+        if (packet != NULL) { 
+		free(packet);
+        }
+        return;
 }
 
 void *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type)
