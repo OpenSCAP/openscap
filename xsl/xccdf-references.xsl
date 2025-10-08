@@ -82,7 +82,9 @@ Authors:
         <xsl:when test="starts-with($href, 'https://www.iso.org/standard/54534.html')">
             <xsl:text>ISO 27001-2013</xsl:text>
         </xsl:when>
-        <xsl:when test="starts-with($href, 'https://iase.disa.mil/stigs/pages/stig-viewing-guidance')">
+      <xsl:when test="starts-with($href, 'https://iase.disa.mil/stigs/pages/stig-viewing-guidance') or
+                 starts-with($href, 'https://public.cyber.mil/stigs/srg-stig-tools/') or
+                 starts-with($href, 'https://www.cyber.mil/stigs/srg-stig-tools/')">
             <xsl:text>STIG Viewer</xsl:text>
         </xsl:when>
         <xsl:otherwise>
