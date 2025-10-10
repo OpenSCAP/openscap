@@ -146,23 +146,10 @@ Authors:
                     </thead>
                     <tbody>
                         <tr>
-                            <xsl:variable name='variable_id' select='$object_info/*/@var_ref'/>
-                            <xsl:if test='$variable_id'>
-                                <td>
-                                    <xsl:choose>
-                                        <xsl:when test='count(ovalres:tested_variable)>1'>
-                                            <table>
-                                                <xsl:apply-templates mode='tableintable' select='ovalres:tested_variable'/>
-                                            </table>
-                                        </xsl:when>
-                                        <xsl:when test='count(ovalres:tested_variable)=1'>
-                                            <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
-                                        </xsl:when>
-                                    </xsl:choose>
-                                    <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
-                                </td>
-                            </xsl:if>
-                            <xsl:apply-templates mode='object' select='$object_info[1]'/>
+                            <xsl:apply-templates mode='object' select='$object_info[1]'>
+                                <xsl:with-param name="tested_var" select="ovalres:tested_variable"/>
+                                <xsl:with-param name="object_id" select="$object_id"/>
+                            </xsl:apply-templates>
                         </tr>
                     </tbody>
                 </table>
@@ -188,13 +175,31 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='object' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_object")]'>
+    <xsl:param name="tested_var"/>
+    <xsl:param name="object_id"/>
+
     <xsl:for-each select='*'>
-        <xsl:if test='not(*) and not(normalize-space()) and not(@var_ref)'><td>no value</td></xsl:if>
-        <xsl:if test='* or normalize-space()'>
-            <td>
-                <xsl:value-of select='.'/>
-            </td>
-        </xsl:if>
+        <td>
+            <xsl:choose>
+                <xsl:when test="@var_ref">
+                    <xsl:choose>
+                        <xsl:when test="count($tested_var) > 1">
+                            <table>
+                                <xsl:apply-templates mode='tableintable' select="$tested_var"/>
+                            </table>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:apply-templates mode='normal' select="$tested_var"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:apply-templates mode='message' select='key("ovalsys-object", $object_id)'/>
+                </xsl:when>
+
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </td>
     </xsl:for-each>
 </xsl:template>
 
