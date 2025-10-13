@@ -144,6 +144,13 @@ char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct x
 	return resolved;
 }
 
+bool xccdf_policy_show_rule_details(struct xccdf_policy *policy)
+{
+	if (policy == NULL)
+		return false;
+	return policy->show_rule_details;
+}
+
 char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
 {
 	/* Get description in prefered language */
@@ -158,7 +165,28 @@ char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, st
 	/* Get a rid of xhtml elements */
 	char *plaintext = _xhtml_to_plaintext(resolved);
 	free(resolved);
-	return plaintext;
+	char *filtered_plaintext = oscap_remove_excess_whitespace(plaintext);
+	free(plaintext);
+	return filtered_plaintext;
+}
+
+char *xccdf_policy_get_readable_item_rationale(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
+{
+	/* Get rationale in prefered language */
+	struct oscap_text_iterator *rat_it = xccdf_item_get_rationale(item);
+	struct oscap_text *unresolved_text = oscap_textlist_get_preferred_text(rat_it, preferred_lang);
+	oscap_text_iterator_free(rat_it);
+	if (!unresolved_text)
+		return oscap_strdup("");
+	const char *unresolved = oscap_text_get_text(unresolved_text);
+	/* Resolve <xccdf:sub> elements */
+	char *resolved = xccdf_policy_substitute(unresolved, policy);
+	/* Get a rid of xhtml elements */
+	char *plaintext = _xhtml_to_plaintext(resolved);
+	free(resolved);
+	char *filtered_plaintext = oscap_remove_excess_whitespace(plaintext);
+	free(plaintext);
+	return filtered_plaintext;
 }
 
 /**
@@ -1934,6 +1962,7 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
             xccdf_policy_resolve_item(policy, item, true);
         }
         xccdf_item_iterator_free(item_it);
+	policy->show_rule_details = model->show_rule_details;
 	return policy;
 }
 
@@ -2371,4 +2400,7 @@ void xccdf_value_binding_free(struct xccdf_value_binding * binding) {
         free(binding);
 }
 
-
+void xccdf_policy_model_set_show_rule_details(struct xccdf_policy_model *policy_model, bool show_rule_details)
+{
+	policy_model->show_rule_details = show_rule_details;
+}

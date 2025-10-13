@@ -653,6 +653,14 @@ OSCAP_API int xccdf_session_export_all(struct xccdf_session *session);
  * @param reference_filter a string in a form "key:identifier"
  */
 OSCAP_API void xccdf_session_set_reference_filter(struct xccdf_session *session, const char *reference_filter);
+
+/**
+ * Enable or disable showing rule details such as description or rationale in command line output.
+ * @param session XCCDF session
+ * @param show_rule_details whether to show rule details in command line output
+ */
+OSCAP_API void xccdf_session_set_show_rule_details(struct xccdf_session *session, bool show_rule_details);
+
 /// @}
 /// @}
 #endif

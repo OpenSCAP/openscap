@@ -44,6 +44,7 @@ struct xccdf_policy_model {
 	struct oscap_list       * engines;      ///< Callbacks for checking engines (see xccdf_policy_engine)
 
 	struct cpe_session *cpe;
+	bool show_rule_details;
 };
 
 /**
@@ -77,6 +78,7 @@ struct xccdf_policy {
 		char *href;
 		char *title;
 	} reference_filter;
+	bool show_rule_details;
 };
 
 

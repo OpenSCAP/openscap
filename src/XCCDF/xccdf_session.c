@@ -121,6 +121,7 @@ struct xccdf_session {
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
 	bool validate_signature;		///< False value indicates to skip XML signature validation.
 	bool enforce_signature; 		///< True value forces session to treat all XMLs without signature as invalid.
+	bool show_rule_details;		///< True value indicates that rule details will be shown.
 	struct oscap_signature_ctx *signature_ctx; ///< Paths to public keys, certificates, signature related info
 
 	struct oscap_list *check_engine_plugins; ///< Extra non-OVAL check engines that may or may not have been loaded
@@ -160,6 +161,7 @@ struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source)
 	session->validate = true;
 	session->validate_signature = true;
 	session->enforce_signature = false;
+	session->show_rule_details = false;
 	session->signature_ctx = oscap_signature_ctx_new();
 	session->xccdf.base_score = 0;
 	session->oval.progress = download_progress_empty_calllback;
@@ -797,6 +799,7 @@ static inline int _xccdf_session_load_xccdf_benchmark(struct xccdf_session *sess
 		xccdf_benchmark_free(benchmark);
 		return 1;
 	}
+	xccdf_policy_model_set_show_rule_details(session->xccdf.policy_model, session->show_rule_details);
 	return 0;
 }
 
@@ -2072,4 +2075,9 @@ cleanup:
 void xccdf_session_set_reference_filter(struct xccdf_session *session, const char *reference_filter)
 {
 	session->reference_parameter = reference_filter;
+}
+
+void xccdf_session_set_show_rule_details(struct xccdf_session *session, bool show_rule_details)
+{
+	session->show_rule_details = show_rule_details;
 }
