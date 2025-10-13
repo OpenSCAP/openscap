@@ -182,14 +182,15 @@ Authors:
         <td>
             <xsl:choose>
                 <xsl:when test="@var_ref">
+                    <xsl:variable name="matching_var" select="$tested_var[@variable_id = current()/@var_ref]"/>
                     <xsl:choose>
-                        <xsl:when test="count($tested_var) > 1">
+                        <xsl:when test="count($matching_var) > 1">
                             <table>
-                                <xsl:apply-templates mode='tableintable' select="$tested_var"/>
+                                <xsl:apply-templates mode='tableintable' select="$matching_var"/>
                             </table>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:apply-templates mode='normal' select="$tested_var"/>
+                            <xsl:apply-templates mode='normal' select="$matching_var"/>
                         </xsl:otherwise>
                     </xsl:choose>
                     <xsl:apply-templates mode='message' select='key("ovalsys-object", $object_id)'/>
