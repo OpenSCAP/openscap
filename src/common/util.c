@@ -504,3 +504,92 @@ char *oscap_concat(char *str1, char *str2)
 	strncat(str1, str2, str2_len);
 	return str1;
 }
+
+char *oscap_indent(const char *str, int indent)
+{
+	if (str == NULL) {
+		return NULL;
+	}
+	if (indent <= 0) {
+		return oscap_strdup(str);
+	}
+
+	size_t line_count = 1;
+	for (const char *p = str; *p; p++) {
+		if (*p == '\n' && *(p + 1) != '\0' && *(p + 1) != '\n') {
+			line_count++;
+		}
+	}
+
+	size_t str_len = strlen(str);
+	size_t result_len = str_len + (indent * line_count);
+	char *result = malloc(result_len + 1);
+	if (result == NULL) {
+		return NULL;
+	}
+
+	char *dst = result;
+	const char *src = str;
+
+	for (int i = 0; i < indent; i++) {
+		*dst++ = ' ';
+	}
+
+	while (*src) {
+		*dst++ = *src;
+		if (*src == '\n' && *(src + 1) != '\0'  && *(src + 1) != '\n') {
+			// Add indent after newline (unless it's the last character)
+			for (int i = 0; i < indent; i++) {
+				*dst++ = ' ';
+			}
+		}
+		src++;
+	}
+	
+	*dst = '\0';
+	return result;
+}
+
+char *oscap_remove_excess_whitespace(const char *str)
+{
+	if (str == NULL) {
+		return NULL;
+	}
+
+	size_t str_len = strlen(str);
+	char *result = malloc(str_len + 1);
+	if (result == NULL) {
+		return NULL;
+	}
+
+	const char *src = str;
+	char *dst = result;
+	bool at_line_start = true;
+	int trailing_spaces = 0;
+
+	while (*src) {
+		if (*src == '\n') {
+			trailing_spaces = 0;
+			if (!at_line_start) {
+				*dst++ = '\n';
+			}
+			at_line_start = true;
+			src++;
+		} else if (at_line_start && isspace(*src)) {
+			src++;
+		} else if (isspace(*src)) {
+			trailing_spaces++;
+			src++;
+		} else {
+			at_line_start = false;
+			for (int i = 0; i < trailing_spaces; i++) {
+				*dst++ = ' ';
+			}
+			trailing_spaces = 0;
+			*dst++ = *src++;
+		}
+	}
+
+	*dst = '\0';
+	return result;
+}

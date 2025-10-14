@@ -571,4 +571,12 @@ bool oscap_path_startswith(const char *path, const char *prefix);
  */
 char *oscap_concat(char *str1, char *str2);
 
+/**
+ * Remove excess leading and trailing whitespace from a string
+ * Caller is responsible for freeing the returned string.
+ * @param str input string
+ * @return A new string with excess leading and trailing whitespace removed, or NULL if input is NULL
+ */
+char *oscap_remove_excess_whitespace(const char *str);
+
 #endif              /* OSCAP_UTIL_H_ */

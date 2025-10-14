@@ -69,4 +69,12 @@ OSCAP_API char *oscap_dirname(char *path);
  */
 OSCAP_API char *oscap_strtok_r(char *str, const char *delim, char **saveptr);
 
+/**
+ * Indent a string
+ * @param str string to indent
+ * @param indent number of spaces to indent
+ * @return indented string
+ */
+OSCAP_API char *oscap_indent(const char *str, int indent);
+
 #endif /* OSCAP_HELPERS_H */
