@@ -75,6 +75,7 @@ Allow download of remote components referenced from data stream.
 \fB\-\-local-files DIRECTORY\fR
 .RS
 Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
 .RE
 .TP
 \fB\-\-profile PROFILE\fR
@@ -225,6 +226,7 @@ Allow download of remote OVAL content referenced from XCCDF by check-content-ref
 \fB\-\-local-files DIRECTORY\fR
 .RS
 Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
 .RE
 .TP
 \fB\-\-remediate\fR
@@ -255,6 +257,7 @@ Allow download of remote OVAL content referenced from XCCDF by check-content-ref
 \fB\-\-local-files DIRECTORY\fR
 .RS
 Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
 .RE
 .TP
 \fB\-\-cpe CPE_FILE\fR
@@ -342,6 +345,7 @@ Allow download of remote OVAL content referenced from XCCDF by check-content-ref
 \fB\-\-local-files DIRECTORY\fR
 .RS
 Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
 .RE
 .TP
 \fB\-\-skip-valid\fR, \fB\-\-skip-validation\fR
@@ -518,6 +522,7 @@ Allow download of remote components referenced from data stream.
 .TP
 \fB\-\-local-files DIRECTORY\fR
 Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
 .RE
 
 .TP
@@ -682,6 +687,7 @@ Allow download of remote components referenced from data stream.
 .TP
 \fB\-\-local-files DIRECTORY\fR
 Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
 .RE
 .TP
 .B \fBsds-validate\fR SOURCE_DS

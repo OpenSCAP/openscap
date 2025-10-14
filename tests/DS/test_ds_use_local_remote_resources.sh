@@ -4,7 +4,6 @@
 #   Jan Černý <jcerny@redhat.com>
 
 set -e -o pipefail
-set -x
 
 . $builddir/tests/test_common.sh
 	
@@ -81,3 +80,13 @@ assert_exists 1 '//rule-result[@idref="xccdf_com.example.www_rule_test-pass2"]/r
 popd
 rm -f "$result" "$stderr"
 rm -rf "$tmpdir1" "$tmpdir2" "$tmpdir3"
+
+
+# test that a warning is shown when --local-files is provided with SCAP 1.2 DS
+result=$(mktemp)
+stderr=$(mktemp)
+tmpdir=$(mktemp -d)
+$OSCAP xccdf eval --local-files "$tmpdir" --profile "$PROFILE" --results "$result" "${srcdir}/ds_continue_without_remote_resources/remote_content_1.2.ds.xml" 2>"$stderr" || ret=$?
+[ "$ret" = 2 ]
+grep -q "WARNING: The '--local-files' option can be used only with SCAP 1.3 source data streams, but the provided data stream is version '1.2'. No local files will be used." "$stderr"
+rm -rf "$result" "$stderr" "$tmpdir"
