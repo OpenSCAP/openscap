@@ -140,7 +140,7 @@ static char *_xccdf_policy_get_readable_item_text(struct xccdf_policy *policy, s
 	const char *unresolved = oscap_text_get_text(unresolved_text);
 	/* Resolve <xccdf:sub> elements */
 	char *resolved = xccdf_policy_substitute(unresolved, policy);
-	/* Get a rid of xhtml elements */
+	/* Get rid of xhtml elements */
 	char *plaintext = _xhtml_to_plaintext(resolved);
 	free(resolved);
 	char *filtered_plaintext = oscap_remove_excess_whitespace(plaintext);
@@ -165,7 +165,7 @@ bool xccdf_policy_get_show_rule_details(struct xccdf_policy *policy)
 
 char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
 {
-	/* Get description in prefered language */
+	/* Get description in preferred language */
 	struct oscap_text_iterator *description_it = xccdf_item_get_description(item);
 	char *readable_text = _xccdf_policy_get_readable_item_text(policy, item, preferred_lang, description_it);
 	oscap_text_iterator_free(description_it);
@@ -174,7 +174,7 @@ char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, st
 
 char *xccdf_policy_get_readable_item_rationale(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
 {
-	/* Get rationale in prefered language */
+	/* Get rationale in preferred language */
 	struct oscap_text_iterator *rat_it = xccdf_item_get_rationale(item);
 	char *readable_text = _xccdf_policy_get_readable_item_text(policy, item, preferred_lang, rat_it);
 	oscap_text_iterator_free(rat_it);
