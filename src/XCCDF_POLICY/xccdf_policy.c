@@ -156,7 +156,7 @@ char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct x
 	return readable_text;
 }
 
-bool xccdf_policy_show_rule_details(struct xccdf_policy *policy)
+bool xccdf_policy_get_show_rule_details(struct xccdf_policy *policy)
 {
 	if (policy == NULL)
 		return false;

@@ -176,7 +176,7 @@ OSCAP_API struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_
  * @param policy XCCDF policy
  * @returns true if rule details should be shown, false otherwise
  */
-OSCAP_API bool xccdf_policy_show_rule_details(struct xccdf_policy *policy);
+OSCAP_API bool xccdf_policy_get_show_rule_details(struct xccdf_policy *policy);
 
 /**
  * Set whether rule details such as description or rationale should be shown in command line output.

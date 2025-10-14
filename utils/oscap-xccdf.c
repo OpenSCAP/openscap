@@ -380,7 +380,7 @@ static char custom_stylesheet_path[PATH_MAX];
 
 static void _print_rule_details(struct xccdf_policy *policy, struct xccdf_item *item)
 {
-	if (!xccdf_policy_show_rule_details(policy)) {
+	if (!xccdf_policy_get_show_rule_details(policy)) {
 		return;
 	}
 	char *description = xccdf_policy_get_readable_item_description(policy, item, NULL);
