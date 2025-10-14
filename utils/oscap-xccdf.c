@@ -20,6 +20,8 @@
  *      Peter Vrabec   <pvrabec@redhat.com>
  */
 
+#include "oscap_string.h"
+#include "oscap_text.h"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -393,6 +395,16 @@ static void _print_rule_details(struct xccdf_policy *policy, struct xccdf_item *
 	printf("Rationale\n%s\n", indented_rationale);
 	free(indented_rationale);
 	free(rationale);
+	struct oscap_stringlist *warnings = xccdf_rule_get_readable_warnings((struct xccdf_rule *) item);
+	struct oscap_string_iterator *warnings_it = oscap_stringlist_get_strings(warnings);
+	while (oscap_string_iterator_has_more(warnings_it)) {
+		const char *warning = oscap_string_iterator_next(warnings_it);
+		char *indented_warning = oscap_indent(warning, 8);
+		printf("Warning\n%s\n", indented_warning);
+		free(indented_warning);
+	}
+	oscap_string_iterator_free(warnings_it);
+	oscap_stringlist_free(warnings);
 }
 
 static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
