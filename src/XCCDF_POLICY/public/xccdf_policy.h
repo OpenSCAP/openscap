@@ -206,7 +206,7 @@ OSCAP_API char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy
  * @param preferred_lang Language of your choice, Null value for the default.
  * @returns plaintext C string which must be freed by caller
  */
-OSCAP_API char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
+OSCAP_API char *xccdf_policy_get_readable_item_rationale(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
 
 /**
  * Get human readable description of given XCCDF Item. This function searches for description
@@ -218,7 +218,7 @@ OSCAP_API char *xccdf_policy_get_readable_item_description(struct xccdf_policy *
  * @param preferred_lang Language of your choice, Null value for the default.
  * @returns plaintext C string which must be freed by caller
  */
-OSCAP_API char *xccdf_policy_get_readable_item_rationale(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
+OSCAP_API char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
 
 /**
  * Registers an additional CPE dictionary for applicability testing
