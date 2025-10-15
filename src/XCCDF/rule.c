@@ -113,6 +113,7 @@ static bool xccdf_item_parse_deps(xmlTextReaderPtr reader, struct xccdf_item *it
 			}
 			if (reqs->itemcount == 0) {
 				oscap_list_free(reqs, NULL);
+				free(idsstr);
 				return false;
 			}
 
