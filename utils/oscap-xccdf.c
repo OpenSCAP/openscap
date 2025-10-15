@@ -386,14 +386,18 @@ static void _print_rule_details(struct xccdf_policy *policy, struct xccdf_item *
 		return;
 	}
 	char *description = xccdf_policy_get_readable_item_description(policy, item, NULL);
-	char *indented_description = oscap_indent(description, 8);
-	printf("Description\n%s\n", indented_description);
-	free(indented_description);
+	if (strlen(description) > 0) {
+		char *indented_description = oscap_indent(description, 8);
+		printf("Description\n%s\n", indented_description);
+		free(indented_description);
+	}
 	free(description);
 	char *rationale = xccdf_policy_get_readable_item_rationale(policy, item, NULL);
-	char *indented_rationale = oscap_indent(rationale, 8);
-	printf("Rationale\n%s\n", indented_rationale);
-	free(indented_rationale);
+	if (strlen(rationale) > 0) {
+		char *indented_rationale = oscap_indent(rationale, 8);
+		printf("Rationale\n%s\n", indented_rationale);
+		free(indented_rationale);
+	}
 	free(rationale);
 	struct oscap_stringlist *warnings = xccdf_rule_get_warnings_strings((struct xccdf_rule *) item);
 	struct oscap_string_iterator *warnings_it = oscap_stringlist_get_strings(warnings);
