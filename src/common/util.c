@@ -516,7 +516,7 @@ char *oscap_indent(const char *str, int indent)
 
 	size_t line_count = 1;
 	for (const char *p = str; *p; p++) {
-		if (*p == '\n' && *(p + 1) != '\0' && *(p + 1) != '\n') {
+		if (*p == '\n' && *(p + 1) != '\0') {
 			line_count++;
 		}
 	}
@@ -531,13 +531,15 @@ char *oscap_indent(const char *str, int indent)
 	char *dst = result;
 	const char *src = str;
 
-	for (int i = 0; i < indent; i++) {
-		*dst++ = ' ';
+	if (*src != '\n') {
+		for (int i = 0; i < indent; i++) {
+			*dst++ = ' ';
+		}
 	}
 
 	while (*src) {
 		*dst++ = *src;
-		if (*src == '\n' && *(src + 1) != '\0'  && *(src + 1) != '\n') {
+		if (*src == '\n' && *(src + 1) != '\0' && *(src + 1) != '\n') {
 			// Add indent after newline (unless it's the last character)
 			for (int i = 0; i < indent; i++) {
 				*dst++ = ' ';
