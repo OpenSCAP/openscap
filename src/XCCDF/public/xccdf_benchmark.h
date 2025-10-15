@@ -2077,7 +2077,7 @@ OSCAP_API struct xccdf_warning_iterator *xccdf_rule_get_warnings(const struct xc
 /**
  * @memberof xccdf_rule
  */
-OSCAP_API struct oscap_stringlist *xccdf_rule_get_readable_warnings(struct xccdf_rule *rule);
+OSCAP_API struct oscap_stringlist *xccdf_rule_get_warnings_strings(struct xccdf_rule *rule);
 /**
  * @memberof xccdf_rule
  */

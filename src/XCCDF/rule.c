@@ -1115,7 +1115,7 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 
 }
 
-struct oscap_stringlist *xccdf_rule_get_readable_warnings(struct xccdf_rule *rule)
+struct oscap_stringlist *xccdf_rule_get_warnings_strings(struct xccdf_rule *rule)
 {
 	struct oscap_stringlist *warnings_list = oscap_stringlist_new();
 	/* Handle generic item child nodes */
