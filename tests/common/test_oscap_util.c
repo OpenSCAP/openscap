@@ -156,7 +156,7 @@ int test_oscap_remove_excess_whitespace()
 	char *str3 = "  \n  \n  \n";
 	result = oscap_remove_excess_whitespace(str3);
 	if (strcmp(result, "") != 0)
-		return 2;
+		return 3;
 	free(result);
 
 	char *str4 = "";
