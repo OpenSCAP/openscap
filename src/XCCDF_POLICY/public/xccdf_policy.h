@@ -172,6 +172,20 @@ OSCAP_API bool xccdf_policy_model_set_tailoring(struct xccdf_policy_model *model
 OSCAP_API struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_policy_model *model);
 
 /**
+ * Get whether rule details such as description or rationale should be shown in command line output.
+ * @param policy XCCDF policy
+ * @returns true if rule details should be shown, false otherwise
+ */
+OSCAP_API bool xccdf_policy_get_show_rule_details(struct xccdf_policy *policy);
+
+/**
+ * Set whether rule details such as description or rationale should be shown in command line output.
+ * @param policy_model XCCDF policy model
+ * @param show_rule_details true if rule details should be shown, false otherwise
+ */
+OSCAP_API void xccdf_policy_model_set_show_rule_details(struct xccdf_policy_model *policy_model, bool show_rule_details);
+
+/**
  * Get human readable title of given XCCDF Item. This finds title with best matching language
  * and resolves <xccdf:sub> substitution in accordance with the given XCCDF Policy.
  * @memberof xccdf_policy
@@ -181,6 +195,18 @@ OSCAP_API struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_
  * @returns plaintext C string which must be freed by caller
  */
 OSCAP_API char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
+
+/**
+ * Get human readable rationale of given XCCDF Item. This function searches for description
+ * with the best matching language and resolves any inner <xccdf:sub> substitution (in accordance
+ * with the given XCCDF Policy.
+ * @memberof xccdf_policy
+ * @param policy XCCDF Policy
+ * @param item XCCDF Item to query rationale from
+ * @param preferred_lang Language of your choice, Null value for the default.
+ * @returns plaintext C string which must be freed by caller
+ */
+OSCAP_API char *xccdf_policy_get_readable_item_rationale(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
 
 /**
  * Get human readable description of given XCCDF Item. This function searches for description

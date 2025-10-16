@@ -294,6 +294,12 @@ TIP: Instead of the complete profile ID you can provide only a suffix of the
 profile ID. For example, instead of `--profile
 xccdf_org.ssgproject.content_profile_ospp` you can use just `--profile ospp`.
 
+Rule description, rule rationale and rule warnings will be displayed in the output if the `--show-rule-details` option is provided.
+
+----
+# oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig --results-arf results.xml --show-rule-details /usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml
+----
+
 === Selecting SCAP source data stream components
 
 To evaluate a specific XCCDF benchmark that is part of a specific SCAP source

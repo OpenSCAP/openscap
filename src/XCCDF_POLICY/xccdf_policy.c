@@ -132,33 +132,53 @@ static struct oscap_iterator *_xccdf_policy_get_engines_by_sysname(struct xccdf_
 	return oscap_iterator_new_filter(policy->model->engines, (oscap_filter_func) xccdf_policy_engine_filter, (void *) sysname);
 }
 
-char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
+static char *_xccdf_policy_get_readable_item_text(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang, struct oscap_text_iterator *it)
 {
-	struct oscap_text_iterator *title_it = xccdf_item_get_title(item);
-	char *unresolved = oscap_textlist_get_preferred_plaintext(title_it, preferred_lang);
-	oscap_text_iterator_free(title_it);
-	if (!unresolved)
-		return oscap_strdup("");
-	char *resolved = xccdf_policy_substitute(unresolved, policy);
-	free(unresolved);
-	return resolved;
-}
-
-char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
-{
-	/* Get description in prefered language */
-	struct oscap_text_iterator *description_it = xccdf_item_get_description(item);
-	struct oscap_text *unresolved_text = oscap_textlist_get_preferred_text(description_it, preferred_lang);
-	oscap_text_iterator_free(description_it);
+	struct oscap_text *unresolved_text = oscap_textlist_get_preferred_text(it, preferred_lang);
 	if (!unresolved_text)
 		return oscap_strdup("");
 	const char *unresolved = oscap_text_get_text(unresolved_text);
 	/* Resolve <xccdf:sub> elements */
 	char *resolved = xccdf_policy_substitute(unresolved, policy);
-	/* Get a rid of xhtml elements */
+	/* Get rid of xhtml elements */
 	char *plaintext = _xhtml_to_plaintext(resolved);
 	free(resolved);
-	return plaintext;
+	char *filtered_plaintext = oscap_remove_excess_whitespace(plaintext);
+	free(plaintext);
+	return filtered_plaintext;
+}
+
+char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
+{
+	struct oscap_text_iterator *title_it = xccdf_item_get_title(item);
+	char *readable_text = _xccdf_policy_get_readable_item_text(policy, item, preferred_lang, title_it);
+	oscap_text_iterator_free(title_it);
+	return readable_text;
+}
+
+bool xccdf_policy_get_show_rule_details(struct xccdf_policy *policy)
+{
+	if (policy == NULL)
+		return false;
+	return policy->show_rule_details;
+}
+
+char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
+{
+	/* Get description in preferred language */
+	struct oscap_text_iterator *description_it = xccdf_item_get_description(item);
+	char *readable_text = _xccdf_policy_get_readable_item_text(policy, item, preferred_lang, description_it);
+	oscap_text_iterator_free(description_it);
+	return readable_text;
+}
+
+char *xccdf_policy_get_readable_item_rationale(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang)
+{
+	/* Get rationale in preferred language */
+	struct oscap_text_iterator *rat_it = xccdf_item_get_rationale(item);
+	char *readable_text = _xccdf_policy_get_readable_item_text(policy, item, preferred_lang, rat_it);
+	oscap_text_iterator_free(rat_it);
+	return readable_text;
 }
 
 /**
@@ -1934,6 +1954,7 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
             xccdf_policy_resolve_item(policy, item, true);
         }
         xccdf_item_iterator_free(item_it);
+	policy->show_rule_details = model->show_rule_details;
 	return policy;
 }
 
@@ -2371,4 +2392,7 @@ void xccdf_value_binding_free(struct xccdf_value_binding * binding) {
         free(binding);
 }
 
-
+void xccdf_policy_model_set_show_rule_details(struct xccdf_policy_model *policy_model, bool show_rule_details)
+{
+	policy_model->show_rule_details = show_rule_details;
+}

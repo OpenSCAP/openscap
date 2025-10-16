@@ -20,6 +20,8 @@
  *      Peter Vrabec   <pvrabec@redhat.com>
  */
 
+#include "oscap_string.h"
+#include "oscap_text.h"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -196,7 +198,8 @@ static struct oscap_module XCCDF_EVAL = {
 		"                                   Use of this option is always at your own risk.\n"
 		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
 		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
-		"   --verbose-log-file <file>     - Write verbose information into file.\n",
+		"   --verbose-log-file <file>     - Write verbose information into file.\n"
+		"   --show-rule-details           - Show rule description and rationale when reporting results.\n",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
@@ -377,16 +380,48 @@ static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1", "1",
 
 static char custom_stylesheet_path[PATH_MAX];
 
+static void _print_rule_details(struct xccdf_policy *policy, struct xccdf_item *item)
+{
+	if (!xccdf_policy_get_show_rule_details(policy)) {
+		return;
+	}
+	char *description = xccdf_policy_get_readable_item_description(policy, item, NULL);
+	if (strlen(description) > 0) {
+		char *indented_description = oscap_indent(description, 8);
+		printf("Description\n%s\n", indented_description);
+		free(indented_description);
+	}
+	free(description);
+	char *rationale = xccdf_policy_get_readable_item_rationale(policy, item, NULL);
+	if (strlen(rationale) > 0) {
+		char *indented_rationale = oscap_indent(rationale, 8);
+		printf("Rationale\n%s\n", indented_rationale);
+		free(indented_rationale);
+	}
+	free(rationale);
+	struct oscap_stringlist *warnings = xccdf_rule_get_warnings_strings((struct xccdf_rule *) item);
+	struct oscap_string_iterator *warnings_it = oscap_stringlist_get_strings(warnings);
+	while (oscap_string_iterator_has_more(warnings_it)) {
+		const char *warning = oscap_string_iterator_next(warnings_it);
+		char *indented_warning = oscap_indent(warning, 8);
+		printf("Warning\n%s\n", indented_warning);
+		free(indented_warning);
+	}
+	oscap_string_iterator_free(warnings_it);
+	oscap_stringlist_free(warnings);
+}
+
 static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 {
+	struct xccdf_policy *policy = (struct xccdf_policy *) arg;
 	const char * rule_id = xccdf_rule_get_id(rule);
 
 	/* is rule selected? we print only selected rules */
-	const bool selected = xccdf_policy_is_item_selected((struct xccdf_policy *) arg, rule_id);
+	const bool selected = xccdf_policy_is_item_selected(policy, rule_id);
 	if (!selected)
 		return 0;
 
-	const char *title = xccdf_policy_get_readable_item_title((struct xccdf_policy *)arg, (struct xccdf_item *) rule, NULL);
+	const char *title = xccdf_policy_get_readable_item_title(policy, (struct xccdf_item *) rule, NULL);
 
 	/* print */
 	if (isatty(1)) {
@@ -408,6 +443,7 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 #else
 	printf("Rule\r\t%s\n", rule_id);
 #endif
+	_print_rule_details(policy, (struct xccdf_item *) rule);
 
 	struct xccdf_ident_iterator *idents = xccdf_rule_get_idents(rule);
 	while (xccdf_ident_iterator_has_more(idents)) {
@@ -666,6 +702,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		}
 		xccdf_session_set_reference_filter(session, action->reference);
 	}
+	if (action->show_rule_details)
+		xccdf_session_set_show_rule_details(session, true);
 
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
@@ -1283,6 +1321,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"without-syschar",     no_argument, &action->without_sys_chars, 1},
 		{"thin-results",        no_argument, &action->thin_results, 1},
 		{"raw",                 no_argument, &action->raw, 1},
+		{"show-rule-details", no_argument, &action->show_rule_details, 1},
 	// end
 		{0, 0, 0, 0}
 	};

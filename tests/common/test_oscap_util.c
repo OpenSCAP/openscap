@@ -28,9 +28,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "common/util.h"
+#include "common/public/oscap_helpers.h"
 
 int test_oscap_path_startswith(void);
 int test_oscap_strrm(void);
+int test_oscap_indent(void);
+int test_oscap_remove_excess_whitespace(void);
 
 int test_oscap_path_startswith()
 {
@@ -91,6 +94,80 @@ int test_oscap_strrm()
 	return 0;
 }
 
+int test_oscap_indent()
+{
+	char *indented;
+
+	char *str1 = "hello";
+	indented = oscap_indent(str1, 2);
+	if (strcmp(indented, "  hello") != 0)
+		return 1;
+	free(indented);
+
+	char *str2 = "hello";
+	indented = oscap_indent(str2, 0);
+	if (strcmp(indented, "hello") != 0)
+		return 2;
+	free(indented);
+
+	char *str3 = "hello\nworld\nsee you tomorrow";
+	indented = oscap_indent(str3, 4);
+	if (strcmp(indented, "    hello\n    world\n    see you tomorrow") != 0)
+		return 3;
+	free(indented);
+
+	char *str4 = "";
+	indented = oscap_indent(str4, 2);
+	if (strcmp(indented, "  ") != 0)
+		return 4;
+	free(indented);
+
+	char *str5 = "hello\n\n\n\nbye\n";
+	indented = oscap_indent(str5, 2);
+	if (strcmp(indented, "  hello\n\n\n\n  bye\n") != 0)
+		return 5;
+	free(indented);
+
+	char *str6 = "\n\n\n\n\n\n\n\n";
+	indented = oscap_indent(str6, 2);
+	if (strcmp(indented, "\n\n\n\n\n\n\n\n") != 0)
+		return 6;
+	free(indented);
+
+	return 0;
+}
+
+int test_oscap_remove_excess_whitespace()
+{
+	char *result;
+
+	char *str1 = "  hello  \n  world  \n";
+	result = oscap_remove_excess_whitespace(str1);
+	if (strcmp(result, "hello\nworld\n") != 0)
+		return 1;
+	free(result);
+
+	char *str2 = "  hello    world  ";
+	result = oscap_remove_excess_whitespace(str2);
+	if (strcmp(result, "hello    world") != 0)
+		return 2;
+	free(result);
+
+	char *str3 = "  \n  \n  \n";
+	result = oscap_remove_excess_whitespace(str3);
+	if (strcmp(result, "") != 0)
+		return 3;
+	free(result);
+
+	char *str4 = "";
+	result = oscap_remove_excess_whitespace(str4);
+	if (strcmp(result, "") != 0)
+		return 4;
+	free(result);
+
+	return 0;
+}
+
 int main (int argc, char *argv[])
 {
 	int retval = 0;
@@ -98,6 +175,10 @@ int main (int argc, char *argv[])
 	if ((retval = test_oscap_path_startswith()) != 0)
 		return retval;
 	if ((retval = test_oscap_strrm()) != 0)
+		return retval;
+	if ((retval = test_oscap_indent()) != 0)
+		return retval;
+	if ((retval = test_oscap_remove_excess_whitespace()) != 0)
 		return retval;
 
 	return retval;

@@ -1115,6 +1115,23 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 
 }
 
+struct oscap_stringlist *xccdf_rule_get_warnings_strings(struct xccdf_rule *rule)
+{
+	struct oscap_stringlist *warnings_list = oscap_stringlist_new();
+	/* Handle generic item child nodes */
+	struct xccdf_warning_iterator *warnings = xccdf_rule_get_warnings(rule);
+	while (xccdf_warning_iterator_has_more(warnings)) {
+		struct xccdf_warning *warning = xccdf_warning_iterator_next(warnings);
+		struct oscap_text *warning_text = xccdf_warning_get_text(warning);
+		const char *warning_cstr = oscap_text_get_text(warning_text);
+		char *warning_plaintext = _xhtml_to_plaintext(warning_cstr);
+		oscap_stringlist_add_string(warnings_list, warning_plaintext);
+		free(warning_plaintext);
+	}
+	xccdf_warning_iterator_free(warnings);
+	return warnings_list;
+}
+
 XCCDF_STATUS_CURRENT(rule)
 XCCDF_STATUS_CURRENT(group)
 XCCDF_GROUP_IGETTER(item, content)
