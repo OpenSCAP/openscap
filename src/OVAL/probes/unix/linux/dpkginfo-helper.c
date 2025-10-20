@@ -68,7 +68,7 @@ err:
 struct dpkginfo_reply_t* dpkginfo_get_by_name(const char *name, int *err)
 {
 	FILE *f;
-	char buf[DPKG_STATUS_BUFFER_SIZE], path[PATH_MAX], *root, *key, *value;
+	char buf[DPKG_STATUS_BUFFER_SIZE], path[PATH_MAX], *root, *key, *value, *p;
 	struct dpkginfo_reply_t *reply;
 
 	*err = 0;
@@ -93,8 +93,14 @@ struct dpkginfo_reply_t* dpkginfo_get_by_name(const char *name, int *err)
 		if (buf[0] == '\n') {
 			// New package entry.
 			if (reply != NULL) {
-				// Package found.
-				goto out;
+				if (reply->name != NULL) {
+					// Package found.
+					goto out;
+				} else {
+					// Package not found yet.
+					dpkginfo_free_reply(reply);
+					reply = NULL;
+				}
 			}
 			continue;
 		}
@@ -113,12 +119,12 @@ struct dpkginfo_reply_t* dpkginfo_get_by_name(const char *name, int *err)
 		value = trimleft(value);
 		// Package should be the first line.
 		if (strcmp(key, "Package") == 0) {
+			if (reply != NULL)
+				continue;
+			reply = calloc(1, sizeof(*reply));
+			if (reply == NULL)
+				goto err;
 			if (strcmp(value, name) == 0) {
-				if (reply != NULL)
-					continue;
-				reply = calloc(1, sizeof(*reply));
-				if (reply == NULL)
-					goto err;
 				reply->name = strdup(value);
 				if (reply->name == NULL)
 					goto err;
@@ -142,6 +148,23 @@ struct dpkginfo_reply_t* dpkginfo_get_by_name(const char *name, int *err)
 					goto err;
 				if (version(reply) < 0)
 					goto err;
+			} else if (strcmp(key, "Provides") == 0) {
+				// Handle virtual packages.
+				char *s = strtok(value, ",");
+				while (s != NULL) {
+					s = trimleft(s);
+					// Ignore version.
+					p = strchr(s, ' ');
+					if (p != NULL)
+						*p++ = '\0';
+					if (strcmp(s, name) == 0) {
+						reply->name = strdup(value);
+						if (reply->name == NULL)
+							goto err;
+						break;
+					}
+					s = strtok(NULL, ",");
+				}
 			}
 		}
 	}
