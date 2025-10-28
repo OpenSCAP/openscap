@@ -329,6 +329,14 @@ int routingtable_probe_main(probe_ctx *ctx, void *arg)
 	switch(probe_ent_getdatatype(dst_ent)) {
 	  case OVAL_DATATYPE_IPV4ADDR:
 	    fp = fopen("/proc/net/route", "r");
+        if (fp == NULL) {
+            if (errno == ENOENT) {
+                dI("/proc/net/route does not exist. No IPv4 routing table available.");
+            } else {
+                dE("Failed to open /proc/net/route: %s", strerror(errno));
+            }
+            break;
+        }
             /* Skip the header line */
             if (getline(&line_buf, &line_len, fp) != -1) {
                 while(getline(&line_buf, &line_len, fp) != -1) {
@@ -346,6 +354,14 @@ int routingtable_probe_main(probe_ctx *ctx, void *arg)
 	    break;
 	  case OVAL_DATATYPE_IPV6ADDR:
 	    fp = fopen("/proc/net/ipv6_route", "r");
+        if (fp == NULL) {
+            if (errno == ENOENT) {
+                dI("/proc/net/route does not exist. No IPv4 routing table available.");
+            } else {
+                dE("Failed to open /proc/net/route: %s", strerror(errno));
+            }
+            break;
+        }
 
 	    while(getline(&line_buf, &line_len, fp) != -1) {
 	      if (process_line_ip6(line_buf, &rt) != 0)
