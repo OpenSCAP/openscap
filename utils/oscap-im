@@ -17,6 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import argparse
+import os
 import subprocess
 import sys
 import tempfile
@@ -130,7 +131,7 @@ def scan_and_remediate(args):
     add_common_args(args, oscap_cmd)
     add_eval_args(args, oscap_cmd)
     oscap_cmd.append(args.data_stream)
-    env = {"OSCAP_PREFERRED_ENGINE": "SCE"}
+    env = {**os.environ, "OSCAP_PREFERRED_ENGINE": "SCE"}
     try:
         subprocess.run(oscap_cmd, env=env, check=True)
     except subprocess.CalledProcessError as e:
