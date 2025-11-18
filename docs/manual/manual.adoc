@@ -1617,9 +1617,12 @@ Also, OpenSCAP uses `libcurl` library which also can be configured using environ
 
 == Using external or remote resources
 
-Some SCAP content references external resources. For example, some content
-can use external OVAL file to check that the system is up to date and has no known
-security vulnerabilities.
+Some SCAP content references external resources. For example, older versions of SCAP Security Guide (prior to version 0.1.73)
+used external OVAL file to check that the system is up to date and has no known
+security vulnerabilities. However, other content can use external resources for
+other purposes.
+
+NOTE: Starting with version 0.1.73, SCAP Security Guide content doesn't use external resources anymore.
 
 When you are evaluating SCAP content with external resources the `oscap` tool
 will warn you:
