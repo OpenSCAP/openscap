@@ -1617,9 +1617,12 @@ Also, OpenSCAP uses `libcurl` library which also can be configured using environ
 
 == Using external or remote resources
 
-Some SCAP content references external resources. For example, some content
-can use external OVAL file to check that the system is up to date and has no known
-security vulnerabilities.
+Some SCAP content references external resources. For example, older versions of SCAP Security Guide (prior to version 0.1.73)
+used external OVAL file to check that the system is up to date and has no known
+security vulnerabilities. However, other content can use external resources for
+other purposes.
+
+NOTE: Starting with version 0.1.73, SCAP Security Guide content doesn't use external resources anymore.
 
 When you are evaluating SCAP content with external resources the `oscap` tool
 will warn you:
@@ -1668,6 +1671,8 @@ $ wget -O ~/scap-files/security-data-oval-com.redhat.rhsa-RHEL8.xml https://www.
 ...
 $ oscap xccdf eval --local-files ~/scap-files --profile ospp ssg-rhel8-ds.xml
 ----
+
+NOTE: The `--local-files` option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
 
 == Practical Examples
 This section demonstrates practical usage of certain security content provided
@@ -2000,6 +2005,7 @@ You can find the ID of the customized profile with `oscap info <your_tailoring_f
 
 Yes, it's possible, you can download the file on other computer that is connected to the internet and then copy the file to the system where you run `oscap`.
 Instead of the `--fetch-remote-resources` option you will use the `--local-files` option.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
 For more information, please refer to section <<_using_external_or_remote_resources,Using external or remote resources>>.
 
 *I have generated a kickstart but the generated file isn't a valid kickstart.*

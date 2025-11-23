@@ -342,6 +342,25 @@ void ds_sds_session_configure_remote_resources(struct ds_sds_session *session, b
 	session->fetch_remote_resources = allowed;
 	session->local_files = local_files;
 	session->progress = (callback != NULL) ? callback : download_progress_empty_calllback;
+	if (local_files != NULL) {
+		struct ds_sds_index *idx = ds_sds_session_get_sds_idx(session);
+		struct ds_stream_index_iterator *streams = ds_sds_index_get_streams(idx);
+		while (ds_stream_index_iterator_has_more(streams)) {
+			struct ds_stream_index *stream = ds_stream_index_iterator_next(streams);
+			const char *version = ds_stream_index_get_version(stream);
+			if (strcmp(version, "1.3")) {
+				ds_sds_session_remote_resources_progress(session)(
+					true,
+					"WARNING: The '--local-files' option can be used only with "
+					"SCAP 1.3 source data streams, but the provided data stream "
+					"is version '%s'. No local files will be used.\n",
+					version);
+				break;
+			}
+
+		}
+		ds_stream_index_iterator_free(streams);
+	}
 }
 
 const char *ds_sds_session_local_files(struct ds_sds_session *session)
