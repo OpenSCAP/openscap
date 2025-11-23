@@ -1,3 +1,19 @@
+openscap-1.4.3                                                  23-11-2025
+- New features
+  - Show rule details in output
+- Maintenance, bug fix
+  - Fix inverted fields in HTML report
+  - Add new STIG URL - 1.4
+  - Bump OVAL_SUPPORTED to 5.11.3
+  - Handle virtual packages in dpkginfo probe
+  - Inherit environment for scanning and remediating in `oscap-im` wrapper
+  - Fix the way we check rpm library version in CMake
+  - Explicitly allow xmlsec1 to load key data from KeyValue
+  - Fix double-free in xccdf_policy_remediate.c
+  - Fix `unterminated-string-initialization` errors
+  - Inherit OpenSCAP environment when executing Bash remediations with `--remediate` option
+  - Fix verbose command line option
+
 openscap-1.4.2                                                  06-04-2025
 - Maintenance, bug fix
   - Fix thread synchronization bugs
