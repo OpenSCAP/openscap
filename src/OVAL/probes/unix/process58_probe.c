@@ -59,6 +59,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <limits.h>
 #ifdef HAVE_STDIO_EXT_H
 # include <stdio_ext.h>
 #endif

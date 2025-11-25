@@ -35,7 +35,7 @@
 #include <config.h>
 #endif
 
-#include <limits.h>
+#include <libgen.h>
 #include <stdio.h>
 #include "common/debug_priv.h"
 #include "oscap_helpers.h"
