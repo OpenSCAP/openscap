@@ -109,4 +109,14 @@ masked = ["evil"]
       <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
     </check>
   </Rule>
+ <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_11">
+    <title>Enable sshd</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[customizations.services]
+enabled = ["sshd"]
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
 </Benchmark>
