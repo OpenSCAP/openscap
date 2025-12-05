@@ -724,7 +724,7 @@ static inline int _parse_blueprint_fix(const char *fix_text, struct blueprint_cu
 			memcpy(val, &fix_text[ovector[2]], ovector[3] - ovector[2]);
 			val[ovector[3] - ovector[2]] = '\0';
 
-			if (!oscap_list_contains(customizations->kernel_append, val, (oscap_cmp_func) oscap_streq)) {
+			if (!oscap_list_contains(tab[i].list, val, (oscap_cmp_func) oscap_streq)) {
 				oscap_list_prepend(tab[i].list, val);
 			} else {
 				free(val);
