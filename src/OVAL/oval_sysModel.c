@@ -248,7 +248,11 @@ int oval_syschar_model_import_source(struct oval_syschar_model *model, struct os
 	/* make sure this is syschar */
 	char *tagname = (char *)xmlTextReaderLocalName(context.reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(context.reader);
-	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+
+	int is_ovalsys = 0;
+	if (namespace != NULL) {
+		is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+	}
 	/* start parsing */
 	if (is_ovalsys && (strcmp(tagname, OVAL_ROOT_ELM_SYSCHARS) == 0)) {
 		ret = oval_syschar_model_parse(context.reader, &context);

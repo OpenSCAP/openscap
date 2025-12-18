@@ -123,7 +123,10 @@ int oval_directives_model_import_source(struct oval_directives_model *model, str
         /* make sure this is a right schema and tag */
         tagname = (char *)xmlTextReaderLocalName(context.reader);
         namespace = (char *)xmlTextReaderNamespaceUri(context.reader);
-        int is_ovaldir = strcmp((const char *)OVAL_DIRECTIVES_NAMESPACE, namespace) == 0;
+        int is_ovaldir = 0;
+        if (namespace != NULL) {
+             is_ovaldir = strcmp((const char *)OVAL_DIRECTIVES_NAMESPACE, namespace) == 0;
+        }
         /* start parsing */
         if (is_ovaldir && (strcmp(tagname, OVAL_ROOT_ELM_DIRECTIVES) == 0)) {
                 ret = oval_directives_model_parse(context.reader, &context);
@@ -300,7 +303,10 @@ static int oval_directives_model_parse(xmlTextReaderPtr reader, struct oval_pars
 			char *tagname = (char *)xmlTextReaderLocalName(reader);
 			char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 
-			int is_ovaldir = strcmp((const char*)OVAL_DIRECTIVES_NAMESPACE, namespace) == 0;
+			int is_ovaldir = 0;
+			if (namespace != NULL) {
+				is_ovaldir = strcmp((const char*)OVAL_DIRECTIVES_NAMESPACE, namespace) == 0;
+			}
 			if (is_ovaldir && (strcmp(tagname, "generator") == 0)) {
 				struct oval_generator *gen;
 				gen = oval_directives_model_get_generator(context->directives_model);

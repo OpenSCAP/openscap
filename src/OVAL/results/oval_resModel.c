@@ -213,7 +213,11 @@ int oval_results_model_import_source(struct oval_results_model *model, struct os
 	/* make sure these are results */
 	tagname = (char *)xmlTextReaderLocalName(context.reader);
 	namespace = (char *)xmlTextReaderNamespaceUri(context.reader);
-	int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
+
+	int is_ovalres = 0;
+	if (namespace != NULL) {
+		is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
+	}
 	/* star parsing */
 	if (is_ovalres && (strcmp(tagname, OVAL_ROOT_ELM_RESULTS) == 0)) {
 		ret = oval_results_model_parse(context.reader, &context);
@@ -333,8 +337,12 @@ int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
                         char *tagname = (char *)xmlTextReaderLocalName(reader);
                         char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 
-                        int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
-                        int is_ovaldef = (is_ovalres) ? false : (strcmp((const char *)OVAL_DEFINITIONS_NAMESPACE, namespace) == 0);
+						int is_ovalres = 0;
+						int is_ovaldef = 0;
+						if (namespace != NULL) {
+							is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
+							is_ovaldef = (is_ovalres) ? false : (strcmp((const char *)OVAL_DEFINITIONS_NAMESPACE, namespace) == 0);
+						}
                         if (is_ovalres && (strcmp(tagname, "generator") == 0)) {
                                 struct oval_generator *gen;
                                 gen = oval_results_model_get_generator(context->results_model);
