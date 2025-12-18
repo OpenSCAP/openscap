@@ -57,7 +57,10 @@ int oval_syschar_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
 			char *tagname = (char *)xmlTextReaderLocalName(reader);
 			char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 
-			int is_ovalsys = strcmp((const char*)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+			int is_ovalsys = 0;
+			if (namespace != NULL) {
+				is_ovalsys = strcmp((const char*)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+			}
 			if (is_ovalsys && (strcmp(tagname, "generator") == 0)) {
 				struct oval_generator *gen;
 				gen = oval_syschar_model_get_generator(context->syschar_model);

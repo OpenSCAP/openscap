@@ -292,7 +292,10 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int return_code = 0;
 
-	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+	int is_ovalsys = 0;
+	if (namespace != NULL) {
+		is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+	}
 	if (is_ovalsys && (strcmp(tagname, "object") == 0)) {
 		char *object_id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 		struct oval_object *object = oval_definition_model_get_new_object(context->definition_model, object_id);
