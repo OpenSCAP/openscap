@@ -166,7 +166,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 			parsed_model = xccdf_model_new_xml(reader);
 
 			// we won't add the implied default scoring model, it is already in the benchmark
-			if (strcmp(xccdf_model_get_system(parsed_model), "urn:xccdf:scoring:default") != 0)
+			if (oscap_strcmp(xccdf_model_get_system(parsed_model), "urn:xccdf:scoring:default") != 0)
 				xccdf_benchmark_add_model(XBENCHMARK(benchmark), parsed_model);
 			else
 				xccdf_model_free(parsed_model);
