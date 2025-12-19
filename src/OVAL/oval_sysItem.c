@@ -205,7 +205,7 @@ static int _oval_sysitem_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int return_code = 0;
-	if (strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0) {
+	if (oscap_strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0) {
 		/* This is a message */
 		return_code = oval_message_parse_tag(reader, context, (oscap_consumer_func) _oval_sysitem_parse_subtag_message_consumer, sysitem);
 	} else {

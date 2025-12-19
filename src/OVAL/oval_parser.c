@@ -154,7 +154,10 @@ int oval_definition_model_parse(xmlTextReaderPtr reader, struct oval_parser_cont
 			char *tagname = (char *)xmlTextReaderLocalName(reader);
 			char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 
-			int is_oval = strcmp((const char *)OVAL_DEFINITIONS_NAMESPACE, namespace) == 0;
+			int is_oval = 0;
+			if (namespace != NULL) {
+				is_oval = strcmp((const char *)OVAL_DEFINITIONS_NAMESPACE, namespace) == 0;
+			}
 			if (is_oval && (strcmp(tagname, tagname_definitions) == 0)) {
 				ret = oval_parser_parse_tag(reader, context, &oval_definition_parse_tag, NULL);
 			} else if (is_oval && strcmp(tagname, tagname_tests) == 0) {

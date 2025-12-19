@@ -181,7 +181,10 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int return_code = 0;
 
-	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+	int is_ovalsys = 0;
+	if (namespace != NULL) {
+		is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+	}
 	if (is_ovalsys && (strcmp(tagname, "interface_name") == 0)) {
 		return_code = oscap_parser_text_value(reader, &oval_consume_interface_name, sysint);
 	} else if (is_ovalsys && (strcmp(tagname, "ip_address") == 0)) {
@@ -209,7 +212,10 @@ int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int return_code = 0;
 
-	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+	int is_ovalsys = 0;
+	if (namespace != NULL) {
+		is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
+	}
 	if (is_ovalsys && (strcmp(tagname, "interface") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysint_parse_tag, sysint);
 	} else {
