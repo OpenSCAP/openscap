@@ -736,9 +736,14 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 			} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ITEM_METADATA_STR) == 0) {
 				data = (char *)xmlTextReaderGetAttribute(reader, ATTR_MODIFICATION_DATE_STR);
 				if ((data == NULL) || ((ret->metadata = cpe_item_metadata_new()) == NULL)) {
-					oscap_seterr(OSCAP_EFAMILY_OSCAP,
-							"Failed to parse item-metadata element within cpe-item/@name='%s'",
-							cpe_name_get_as_str(ret->name));
+					if (ret->name != NULL) {
+						oscap_seterr(OSCAP_EFAMILY_OSCAP,
+								"Failed to parse item-metadata element within cpe-item/@name='%s'",
+								cpe_name_get_as_str(ret->name));
+					} else {
+						oscap_seterr(OSCAP_EFAMILY_OSCAP,
+							"Failed to parse item-metadata element within cpe-item");
+					}
 					cpe_item_free(ret);
 					free(data);
 					return NULL;
