@@ -47,7 +47,7 @@ jobs:
       working-directory: ./build
       run: |
         export $(dbus-launch)
-        ctest --output-on-failure
+        ctest --output-on-failure -j$(nproc)
 
   build-fedora:
     name: Build, Test on Fedora Latest (Container)
@@ -70,7 +70,7 @@ jobs:
       working-directory: ./build
       run: |
         export $(dbus-launch)
-        ctest --output-on-failure
+        ctest --output-on-failure -j$(nproc)
 
   build-fedora-nss:
     name: Build, Test on Fedora Rawhide (NSS) (Container)
@@ -93,7 +93,7 @@ jobs:
       working-directory: ./build
       run: |
         export $(dbus-launch)
-        ctest --output-on-failure
+        ctest --output-on-failure -j$(nproc)
 
   build-macos:
     # The type of runner that the job will run on
