@@ -155,61 +155,61 @@
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:1">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.kind</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:2">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.metadata.namespace</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:3">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.metadata</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:4">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.doesnt.exist</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:5">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.status.conditions[:]['status','type']</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:6">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.status.conditions[:]</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:7">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.status.conditions[:]['nonexistent','dummy']</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:8">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.spec.outputs</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:9">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.items[:]['requiredDropCapabilities','name','q','z'][:]</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:10">
       <ind-def:path>/tmp</ind-def:path>
-      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:filename>openshift-logging_key.yaml</ind-def:filename>
       <ind-def:yamlpath>.items[:].requiredDropCapabilities[:]</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
   </objects>

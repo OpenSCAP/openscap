@@ -12,9 +12,9 @@ function test_probes_yamlfilecontent_key {
 
     [ -f $RF ] && rm -f $RF
 
-    cp "${srcdir}/openshift-logging.yaml" /tmp
+    cp "${srcdir}/openshift-logging.yaml" /tmp/openshift-logging_key.yaml
 
-    local YAML_FILE="/tmp/openshift-logging.yaml"
+    local YAML_FILE="/tmp/openshift-logging_key.yaml"
 
     $OSCAP oval eval --results $RF $DF
 
