@@ -20,7 +20,7 @@ function test_probes_textfilecontent54 {
 	
     local ret_val=0;
     local DF="${srcdir}/test_probes_textfilecontent54.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
     
     [ -f $RF ] && rm -f $RF
 

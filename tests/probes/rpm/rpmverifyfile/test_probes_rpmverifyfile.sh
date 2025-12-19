@@ -14,7 +14,7 @@ function test_probes_rpmverifyfile {
     require "rpm" || return 255
 
     DF="$srcdir/test_probes_rpmverifyfile.xml"
-    RF="results.xml"
+    RF="$(mktemp results.XXXXXXX.xml)"
 
     rm -f $RF
 
