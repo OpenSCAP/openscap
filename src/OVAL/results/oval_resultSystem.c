@@ -317,7 +317,10 @@ int oval_result_system_parse_tag(xmlTextReaderPtr reader, struct oval_parser_con
         char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int return_code = 0;
 
-	int is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
+	int is_ovalres = 0;
+	if (namespace != NULL) {
+		is_ovalres = strcmp((const char *)OVAL_RESULTS_NAMESPACE, namespace) == 0;
+	}
 	if (is_ovalres && (strcmp(tagname, "system") == 0)) {
 		/* create new empty syschar for this model */
 		struct oval_syschar_model *syschar_model = oval_syschar_model_new(context->definition_model);

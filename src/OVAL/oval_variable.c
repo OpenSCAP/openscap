@@ -1082,7 +1082,7 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader, struct ova
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	struct oval_variable *variable = (struct oval_variable *)user;
 
-	if (strcmp("value", (char *) tagname) || strcmp(DEFINITION_NAMESPACE, (char *) namespace)) {
+	if (oscap_strcmp("value", (char *) tagname) || oscap_strcmp(DEFINITION_NAMESPACE, (char *) namespace)) {
 		dW("Invalid element <%s:%s> in constant variable %s on line %d.",
 		   namespace, tagname, variable->id, xmlTextReaderGetParserLineNumber(reader));
 		goto out;
