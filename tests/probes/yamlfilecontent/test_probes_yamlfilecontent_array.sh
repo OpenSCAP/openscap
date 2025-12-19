@@ -8,7 +8,7 @@ function test_probes_yamlfilecontent_array {
 
     local ret_val=0
     local DF="${srcdir}/test_probes_yamlfilecontent_array.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RF ] && rm -f $RF
 

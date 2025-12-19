@@ -8,7 +8,7 @@ function test_negative_instance {
 	
     local ret_val=0;
     local DF="${srcdir}/test_negative_instance.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
     
     [ -f $RF ] && rm -f $RF
 

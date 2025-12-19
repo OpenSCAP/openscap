@@ -22,7 +22,7 @@ function test_probes_shadow {
 
     local ret_val=0;
     local DF="test_probes_shadow.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RF ] && rm -f $RF
 
