@@ -10,7 +10,7 @@ function perform_test {
     probecheck "rpmverify" || return 255
 
     DF="$srcdir/test_probes_rpmverify_not_equals_operation_offline.xml"
-    RF="results.xml"
+    RF="$(mktemp results.XXXXXXX.xml)"
 
     rm -f $RF
 

@@ -14,7 +14,7 @@ function test_probes_rpmverifyfile {
     probecheck "rpmverifyfile" || return 255
 
     DF="$srcdir/test_probes_rpmverifyfile_offline.xml"
-    RF="results.xml"
+    RF="$(mktemp results.XXXXXXX.xml)"
 
     rm -f $RF
 

@@ -12,7 +12,7 @@ function test_probes_fileextendedattribute {
 
     local ret_val=0;
     local DEFFILE="$srcdir/test_probes_fileextendedattribute.xml"
-    local RESFILE="results.xml"
+    local RESFILE="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RESFILE ] && rm -f $RESFILE
 

@@ -7,7 +7,7 @@ set -e -o pipefail
 probecheck "yamlfilecontent" || exit 255
 
 oval_file="${srcdir}/test_probes_yamlfilecontent_content.xml"
-result="results.xml"
+result="$(mktemp results.XXXXXXX.xml)"
 
 [ -f $result ] && rm -f $result
 

@@ -40,7 +40,7 @@ function test_probes_file_behaviour {
 
 	local ret_val=0
 	local DF="$srcdir/test_probes_file_behaviour.xml"
-	result="results.xml"
+	result="$(mktemp results.XXXXXXX.xml)"
 
 	test_probes_behaviour_setup
 
