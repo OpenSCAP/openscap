@@ -607,6 +607,16 @@ at_least_one_exists ||  0   |  0+  |  1+  |  0+  ||  Error
                     <xsd:annotation>
                          <xsd:documentation>The windows value describes the Microsoft Windows operating system.</xsd:documentation>
                     </xsd:annotation>
+               </xsd:enumeration> 
+               <xsd:enumeration value="nxos">
+                    <xsd:annotation>
+                         <xsd:documentation>The NX-OS value describes the Cisco NX-OS operating system.</xsd:documentation>
+                    </xsd:annotation>
+               </xsd:enumeration> 
+               <xsd:enumeration value="panos">
+                    <xsd:annotation>
+                         <xsd:documentation>The PAN-OS value describes the Palo Alto Networks PAN-OS operating system.</xsd:documentation>
+                    </xsd:annotation>
                </xsd:enumeration>               
           </xsd:restriction>
      </xsd:simpleType>
