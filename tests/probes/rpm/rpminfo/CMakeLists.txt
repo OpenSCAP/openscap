@@ -5,6 +5,6 @@ if(ENABLE_PROBES_LINUX)
   set_tests_properties(
     "probes/rpm/rpminfo/test_probes_rpminfo_offline.sh"
     "probes/rpm/rpminfo/test_probes_rpminfo.sh"
-    PROPERTIES RESOURCE_LOCK rpminfo
+    PROPERTIES RESOURCE_LOCK rpm_shared
   )
 endif()
