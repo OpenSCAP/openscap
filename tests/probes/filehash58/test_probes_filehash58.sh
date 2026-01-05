@@ -24,7 +24,7 @@ function test_probes_filehash58_old_algos {
 
     local ret_val=0;
     local DF="test_probes_filehash58_old_algos.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RF ] && rm -f $RF
 
@@ -52,7 +52,7 @@ function test_probes_filehash58_new_algos {
 
     local ret_val=0
     local DF="test_probes_filehash58_new_algos.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RF ] && rm -f $RF
 

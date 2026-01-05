@@ -168,10 +168,6 @@ Now you can execute the following command to run library self-checks:
 $ ctest
 ----
 
-Note that using the `--jobs/-j` flag is currently not supported.
-It will cause unexpected test failures.
-See link:https://github.com/OpenSCAP/openscap/issues/2057[#2057] for more details.
-
 It's also possible to use `ctest` to test any other oscap binary present in the system. You just have to set the path of the binary to the CUSTOM_OSCAP variable:
 
 ----
