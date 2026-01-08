@@ -710,7 +710,7 @@ static int _ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
 
 	if (tailoring_doc && strcmp(tailoring_filepath, "NONEXISTENT")) {
 		char *mangled_tailoring_filepath = ds_sds_mangle_filepath(tailoring_filepath);
-		char *tailoring_component_id = oscap_sprintf("scap_org.open-scap_comp_%s_tailoring", mangled_tailoring_filepath);
+		char *tailoring_component_id = oscap_sprintf("scap_org.open-scap_ecomp_%s_tailoring", mangled_tailoring_filepath);
 		char *tailoring_component_ref_id = oscap_sprintf("scap_org.open-scap_cref_%s_tailoring", mangled_tailoring_filepath);
 
 		// Need unique id (ref_id) - if generated already exists, then create new one
@@ -733,7 +733,7 @@ static int _ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
 		xmlDOMWrapCloneNode(tailoring_wrap_ctxt, tailoring_doc, xmlDocGetRootElement(tailoring_doc),
 				&tailoring_res_node, doc, NULL, 1, 0);
 		xmlNsPtr sds_ns = sds_res_node->ns;
-		xmlNodePtr tailoring_component = xmlNewNode(sds_ns, BAD_CAST "component");
+		xmlNodePtr tailoring_component = xmlNewNode(sds_ns, BAD_CAST "extended-component");
 		xmlSetProp(tailoring_component, BAD_CAST "id", BAD_CAST tailoring_component_id);
 		xmlSetProp(tailoring_component, BAD_CAST "timestamp", BAD_CAST tailoring_doc_timestamp);
 		xmlAddChild(tailoring_component, tailoring_res_node);

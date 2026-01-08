@@ -94,7 +94,7 @@ function test_api_xccdf_tailoring_simple_include_in_arf {
         return 1
     fi
 
-    assert_exists 1 '/arf:asset-report-collection/arf:report-requests/arf:report-request/arf:content/ds:data-stream-collection/ds:component/Tailoring'
+    assert_exists 1 '/arf:asset-report-collection/arf:report-requests/arf:report-request/arf:content/ds:data-stream-collection/ds:extended-component/Tailoring'
     rm -f $result
 }
 
@@ -112,7 +112,7 @@ function test_api_xccdf_tailoring_simple_include_in_arf_xlink_namespace {
     fi
 
     [ ! -s "$stderr" ]
-    assert_exists 1 '/arf:asset-report-collection/arf:report-requests/arf:report-request/arf:content/ds:data-stream-collection/ds:component/Tailoring'
+    assert_exists 1 '/arf:asset-report-collection/arf:report-requests/arf:report-request/arf:content/ds:data-stream-collection/ds:extended-component/Tailoring'
 
     rm -f "$result"
     rm -f "$stderr"
@@ -127,12 +127,15 @@ function test_api_xccdf_tailoring_profile_include_in_arf {
     $OSCAP xccdf eval --tailoring-file $TAILORING --profile "xccdf_com.example.www_profile_customized" --results-arf $result $INPUT || [ "$?" == "2" ]
 
     component_xpath='/arf:asset-report-collection/arf:report-requests/arf:report-request/arf:content/ds:data-stream-collection/ds:component'
-    assert_exists 3 $component_xpath
-    assert_exists 3 $component_xpath'/@timestamp'
-    assert_exists 1 $component_xpath'/xccdf:Tailoring'
-    assert_exists 1 $component_xpath'/xccdf:Tailoring/xccdf:Profile'
-    assert_exists 1 $component_xpath'/xccdf:Tailoring/xccdf:Profile[@id="xccdf_com.example.www_profile_customized"]'
-    assert_exists 1 $component_xpath'/xccdf:Tailoring/xccdf:Profile[@extends="xccdf_com.example.www_profile_baseline1"]'
+    extended_component_xpath='/arf:asset-report-collection/arf:report-requests/arf:report-request/arf:content/ds:data-stream-collection/ds:extended-component'
+    # 2 regular components (XCCDF and OVAL) + 1 extended component (Tailoring)
+    assert_exists 2 $component_xpath
+    assert_exists 1 $extended_component_xpath
+    assert_exists 1 $extended_component_xpath'/@timestamp'
+    assert_exists 1 $extended_component_xpath'/xccdf:Tailoring'
+    assert_exists 1 $extended_component_xpath'/xccdf:Tailoring/xccdf:Profile'
+    assert_exists 1 $extended_component_xpath'/xccdf:Tailoring/xccdf:Profile[@id="xccdf_com.example.www_profile_customized"]'
+    assert_exists 1 $extended_component_xpath'/xccdf:Tailoring/xccdf:Profile[@extends="xccdf_com.example.www_profile_baseline1"]'
     rm -f $result
 }
 
@@ -169,6 +172,38 @@ function test_api_xccdf_tailoring_profile_generate_guide {
     rm -f $guide
 }
 
+function test_api_xccdf_tailoring_arf_validation {
+    # Regression test for https://github.com/OpenSCAP/openscap/issues/2260 where tailoring was stored in <ds:component>
+    # instead of <ds:extended-component>, and ID used '_comp_' instead of '_ecomp_'
+    # This caused ARF validation failures and generate fix errors.
+
+    local INPUT=$srcdir/$1
+    local TAILORING=$srcdir/$2
+
+    result=`mktemp`
+    stderr=`mktemp`
+
+    # Generate ARF with tailoring
+    $OSCAP xccdf eval --tailoring-file $TAILORING --profile "xccdf_com.example.www_profile_customized" --results-arf $result $INPUT 2>$stderr || [ "$?" == "2" ]
+
+    # Check that the extended-component ID contains 'ecomp' (not just 'comp')
+    grep -q 'extended-component.*id="scap_org.open-scap_ecomp_.*tailoring"' $result
+    local ret1=$?
+
+    # Validate the ARF against schema (most important - this was failing before the fix)
+    $OSCAP ds rds-validate $result 2>$stderr
+    local ret2=$?
+
+    rm -f $result $stderr
+
+    if [ $ret1 -ne 0 ]; then
+        return 1
+    fi
+    if [ $ret2 -ne 0 ]; then
+        return 1
+    fi
+}
+
 # Testing.
 
 test_init "test_api_xccdf_tailoring.log"
@@ -191,6 +226,7 @@ test_run "test_api_xccdf_tailoring_simple_include_in_arf_xlink_namespace" test_a
 test_run "test_api_xccdf_tailoring_profile_include_in_arf" test_api_xccdf_tailoring_profile_include_in_arf baseline.xccdf.xml baseline.tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_generate_fix" test_api_xccdf_tailoring_profile_generate_fix baseline.xccdf.xml baseline.tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_generate_guide" test_api_xccdf_tailoring_profile_generate_guide baseline.xccdf.xml baseline.tailoring.xml
+test_run "test_api_xccdf_tailoring_arf_validation" test_api_xccdf_tailoring_arf_validation baseline.xccdf.xml baseline.tailoring.xml
 
 
 test_exit
