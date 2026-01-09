@@ -1869,9 +1869,10 @@ static long unsigned int _comp_sec(int year, int month, int day, int hour, int m
 {
 	time_t t;
 	struct tm *ts;
+	struct tm result;
 
 	t = time(NULL);
-	ts = localtime(&t);
+	ts = localtime_r(&t, &result);
 
 	ts->tm_year = year - 1900;
 	ts->tm_mon = month - 1;
@@ -1881,7 +1882,7 @@ static long unsigned int _comp_sec(int year, int month, int day, int hour, int m
 	ts->tm_sec = second;
 	ts->tm_isdst = -1;
 	t = mktime(ts);
-	ts = localtime(&t);
+	ts = localtime_r(&t, &result);
 
 	if (ts->tm_isdst == 1)
 		t -= 3600;
@@ -1969,9 +1970,10 @@ static long unsigned int _parse_fmt_sse(char *dt)
 {
 	time_t t;
 	struct tm *ts;
+	struct tm result;
 
 	t = (time_t) atol(dt);
-	ts = localtime(&t);
+	ts = localtime_r(&t, &result);
 	if (ts->tm_isdst == 1)
 		t -= 3600;
 

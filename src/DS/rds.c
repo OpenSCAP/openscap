@@ -846,8 +846,9 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 		struct stat file_stat;
 		if (stat(tailoring_filepath, &file_stat) == 0) {
 			const size_t max_timestamp_len = 32;
+			struct tm result;
 			tailoring_doc_timestamp = malloc(max_timestamp_len);
-			strftime(tailoring_doc_timestamp, max_timestamp_len, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
+			strftime(tailoring_doc_timestamp, max_timestamp_len, "%Y-%m-%dT%H:%M:%S", localtime_r(&file_stat.st_mtime, &result));
 		}
 	}
 
