@@ -542,7 +542,8 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 
 	time_t date_time = xccdf_status_get_date(status);
 	if (date_time) {
-		struct tm *date = localtime(&date_time);
+		struct tm result;
+		struct tm *date = localtime_r(&date_time, &result);
 		/* "YYYY-DD-MM" */
 		int date_len = snprintf(NULL, 0, "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
 		if (date_len < 0) {

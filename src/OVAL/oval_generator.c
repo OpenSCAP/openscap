@@ -155,7 +155,8 @@ void oval_generator_update_timestamp(struct oval_generator *generator)
 	struct tm *lt;
 
 	time(&et);
-	lt = localtime(&et);
+	struct tm localtime_state;
+	lt = localtime_r(&et, &localtime_state);
 	int timestamp_size = snprintf(NULL, 0, "%4d-%02d-%02dT%02d:%02d:%02d",
 		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
 	if (timestamp_size < 0) {
