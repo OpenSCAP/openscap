@@ -790,7 +790,7 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 	int ovector[9];
 
 	const size_t fix_text_len = strlen(fix_text);
-	int start_offset = 0;
+	size_t start_offset = 0;
 	while (true) {
 		const int match = oscap_pcre_exec(re, fix_text, fix_text_len, start_offset,
 				0, ovector, sizeof(ovector) / sizeof(ovector[0]));
