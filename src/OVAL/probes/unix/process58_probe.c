@@ -477,6 +477,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	DIR *d;
 	struct dirent *ent;
 	oval_schema_version_t oval_version;
+	struct tm result;
 
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
 	snprintf(buf, PATH_MAX, "%s/proc", prefix ? prefix : "");
@@ -605,11 +606,11 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 
 			// Calculate the start time
 			s_time = time(NULL);
-			now = localtime(&s_time);
+			now = localtime_r(&s_time, &result);
 			tyear = now->tm_year;
 			tday = now->tm_yday;
 			s_time = boot + (start / ticks);
-			proc = localtime(&s_time);
+			proc = localtime_r(&s_time, &result);
 
 			// Select format based on how long we've been running
 			//
@@ -729,6 +730,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 	int err = 1;
 	DIR *d;
 	struct dirent *ent;
+	struct tm result;
 
 	d = opendir("/proc");
 	if (d == NULL)
@@ -784,13 +786,13 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 
 			// Get the start time
 			s_time = time(NULL);
-			now = localtime(&s_time);
+			now = localtime_r(&s_time, &result);
 			tyear = now->tm_year;
 			tday = now->tm_yday;
 
 			// Get current time
 			s_time = psinfo->pr_start.tv_sec;
-			proc = localtime(&s_time);
+			proc = localtime_r(&s_time, &result);
 
 			// Select format based on how long we've been running
 			//

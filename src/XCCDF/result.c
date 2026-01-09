@@ -1770,11 +1770,12 @@ static inline const char *_get_timestamp(void)
 	static char timestamp[] = "yyyy-mm-ddThh:mm:ss+zz:zz";
 	time_t tm;
 	struct tm *lt;
+	struct tm result;
 	int tz_diff;
 	char tz_sign;
 
 	tm = time(NULL);
-	lt = localtime(&tm);
+	lt = localtime_r(&tm, &result);
 
 	if (!lt)
 		return NULL;
