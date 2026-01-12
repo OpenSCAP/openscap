@@ -9,7 +9,7 @@ function curl_accept_encoding {
 	require_internet || return 255
 
 	local DF="${srcdir}/ds.xml"
-	local RF="results.xml"
+	local RF="$(mktemp results.XXXXXXX.xml)"
 	local LOG="verbose.log"
 
 	$OSCAP xccdf --verbose=DEVEL eval --fetch-remote-resources --results $RF $DF 2>$LOG || echo "OK"

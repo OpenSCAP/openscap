@@ -115,3 +115,41 @@ add_oscap_test("test_single_line_tailoring.sh")
 add_oscap_test("test_reference.sh")
 add_oscap_test("test_remediation_bootc.sh")
 add_oscap_test("openscap_2289_regression.sh")
+
+ set_tests_properties(
+      "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval2.sh"
+      "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval_multicheck.sh"
+      "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval.sh"
+      "API/XCCDF/unittests/test_fix_arf.sh"
+      "API/XCCDF/unittests/test_multiple_oval_files_with_same_basename.sh"
+      "API/XCCDF/unittests/test_xccdf_check_multi_check2.sh"
+      "API/XCCDF/unittests/test_xccdf_check_processing_complex_priority.sh"
+      "API/XCCDF/unittests/test_xccdf_check_processing_selector_bad.sh"
+      "API/XCCDF/unittests/test_xccdf_selectors_cluster2.sh"
+      "API/XCCDF/unittests/test_xccdf_selectors_cluster3.sh"
+      PROPERTIES RESOURCE_LOCK not_executable_file
+)
+
+set_tests_properties(
+     "API/XCCDF/unittests/test_fix_instance.sh"
+     "API/XCCDF/unittests/test_profile_selection_by_suffix.sh"
+     "API/XCCDF/unittests/test_remediate_perl.sh"
+     "API/XCCDF/unittests/test_remediate_simple.sh"
+     "API/XCCDF/unittests/test_remediate_unresolved.sh"
+     "API/XCCDF/unittests/test_remediation_amp_escaping.sh"
+     "API/XCCDF/unittests/test_remediation_bad_fix.sh"
+     "API/XCCDF/unittests/test_remediation_cdata.sh"
+     "API/XCCDF/unittests/test_remediation_environment.sh"
+     "API/XCCDF/unittests/test_remediation_fix_without_system.sh"
+     "API/XCCDF/unittests/test_remediation_invalid_characters.sh"
+     "API/XCCDF/unittests/test_remediation_simple.sh"
+     "API/XCCDF/unittests/test_remediation_subs_plain_text_empty.sh"
+     "API/XCCDF/unittests/test_remediation_subs_plain_text.sh"
+     "API/XCCDF/unittests/test_remediation_subs_unresolved.sh"
+     "API/XCCDF/unittests/test_remediation_subs_value_refine_value.sh"
+     "API/XCCDF/unittests/test_remediation_subs_value_take_first.sh"
+     "API/XCCDF/unittests/test_remediation_subs_value_title.sh"
+     "API/XCCDF/unittests/test_remediation_subs_value_without_selector.sh"
+     "API/XCCDF/unittests/test_remediation_xml_comments.sh"
+     PROPERTIES RESOURCE_LOCK test_file_lock
+)

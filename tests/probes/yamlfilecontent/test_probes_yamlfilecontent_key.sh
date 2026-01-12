@@ -8,13 +8,13 @@ function test_probes_yamlfilecontent_key {
 
     local ret_val=0
     local DF="${srcdir}/test_probes_yamlfilecontent_key.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RF ] && rm -f $RF
 
     cp "${srcdir}/openshift-logging.yaml" /tmp
 
-    local YAML_FILE="/tmp/openshift-logging.yaml"
+    local YAML_FILE="/tmp/openshift-logging_key.yaml"
 
     $OSCAP oval eval --results $RF $DF
 

@@ -16,7 +16,7 @@ function test_probes_fwupdsecattr {
 
     local ret_val=0
     local DF="${srcdir}/test_probes_fwupdsecattr.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RF ] && rm -f $RF
 

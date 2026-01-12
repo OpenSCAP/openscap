@@ -7,7 +7,7 @@ set -o pipefail
 
 function test_xccdf_results_arf_asset {
     local DS="${srcdir}/test_xccdf_results_arf_no_oval.xccdf.xml"
-    local result="results.xml"
+    local result="$(mktemp results.XXXXXXX.xml)"
     local stderr="error.log"
 
     [ -f $result ] && rm -f $result

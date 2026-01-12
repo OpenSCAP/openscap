@@ -36,3 +36,9 @@ add_oscap_test("test_variable_in_filter.sh")
 add_oscap_test("test_without_syschars.sh")
 add_oscap_test("test_xmlns_missing.sh")
 add_oscap_test("test_xsinil_envv58_pid.sh")
+
+set_tests_properties(
+    "API/OVAL/unittests/test_state_check_existence.sh"
+    "API/OVAL/unittests/test_statetype_operator.sh"
+    PROPERTIES RESOURCE_LOCK tmp_foo_file_lock
+)
