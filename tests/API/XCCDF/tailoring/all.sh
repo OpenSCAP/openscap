@@ -169,6 +169,28 @@ function test_api_xccdf_tailoring_profile_generate_guide {
     rm -f $guide
 }
 
+function test_api_xccdf_tailoring_with_extended_component_ordering {
+    # Regression test for the fix ensuring tailoring extended-component is inserted
+    # before existing extended-components (e.g. SCE scripts) to maintain schema ordering
+    # See https://github.com/OpenSCAP/openscap/issues/2260 for more details
+
+    local INPUT=$srcdir/$1
+    local TAILORING=$srcdir/$2
+
+    result=`mktemp`
+    stderr=`mktemp`
+
+    # Generate ARF with tailoring
+    $OSCAP xccdf eval --tailoring-file $TAILORING --profile "xccdf_org.open-scap.sce-community-content_profile_pci-dss" --results-arf $result $INPUT 2>$stderr || [ "$?" == "2" ]
+
+    # Validate the ARF against schema - this would fail if ordering is wrong
+    $OSCAP ds rds-validate $result 2>$stderr
+
+    # Verify that tailoring extended-component exists
+    assert_exists 1 '/arf:asset-report-collection/arf:report-requests/arf:report-request/arf:content/ds:data-stream-collection/ds:component/xccdf:Tailoring'
+    rm -f "$result" "$stderr"
+}
+
 # Testing.
 
 test_init "test_api_xccdf_tailoring.log"
@@ -191,6 +213,6 @@ test_run "test_api_xccdf_tailoring_simple_include_in_arf_xlink_namespace" test_a
 test_run "test_api_xccdf_tailoring_profile_include_in_arf" test_api_xccdf_tailoring_profile_include_in_arf baseline.xccdf.xml baseline.tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_generate_fix" test_api_xccdf_tailoring_profile_generate_fix baseline.xccdf.xml baseline.tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_generate_guide" test_api_xccdf_tailoring_profile_generate_guide baseline.xccdf.xml baseline.tailoring.xml
-
+test_run "test_api_xccdf_tailoring_with_extended_component_ordering" test_api_xccdf_tailoring_with_extended_component_ordering ds_with_sce.xccdf.xml baseline.tailoring.xml
 
 test_exit

@@ -737,7 +737,16 @@ static int _ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
 		xmlSetProp(tailoring_component, BAD_CAST "id", BAD_CAST tailoring_component_id);
 		xmlSetProp(tailoring_component, BAD_CAST "timestamp", BAD_CAST tailoring_doc_timestamp);
 		xmlAddChild(tailoring_component, tailoring_res_node);
-		xmlAddChild(sds_res_node, tailoring_component);
+
+		// Insert tailoring component after regular components but before extended-components
+		// to maintain proper schema ordering (all components must come before extended-components)
+		xmlNodePtr first_extended_component = node_get_child_element(sds_res_node, "extended-component");
+		if (first_extended_component == NULL) {
+			// no extended component yet, add to the end
+			xmlAddChild(sds_res_node, tailoring_component);
+		} else {
+			xmlAddPrevSibling(first_extended_component, tailoring_component);
+		}
 
 		xmlNodePtr checklists_element = NULL;
 		xmlNodePtr datastream_element = node_get_child_element(sds_res_node, "data-stream");
