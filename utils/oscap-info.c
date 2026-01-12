@@ -76,10 +76,11 @@ struct oscap_module OSCAP_INFO_MODULE = {
 
 static void print_time(const char *file) {
 	struct stat buffer;
+	struct tm result;
 	char timeStr[ 100 ] = "";
 
 	if(!stat(file, &buffer)) {
-		strftime(timeStr, 100, "%Y-%m-%dT%H:%M:%S", localtime(&buffer.st_mtime));
+		strftime(timeStr, 100, "%Y-%m-%dT%H:%M:%S", localtime_r(&buffer.st_mtime, &result));
 		printf("Imported: %s\n", timeStr);
 	}
 }
@@ -90,7 +91,8 @@ static inline void _print_xccdf_status(struct xccdf_status *status, const char *
 		printf("%sStatus: %s\n", prefix, xccdf_status_type_to_text(xccdf_status_get_status(status)));
 		const time_t date_time = xccdf_status_get_date(status);
 		if (date_time != 0) {
-			struct tm *date = localtime(&date_time);
+			struct tm result;
+			struct tm *date = localtime_r(&date_time, &result);
 			char date_str[] = "YYYY-DD-MM";
 			int ret = snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
 			if (ret < 0) {

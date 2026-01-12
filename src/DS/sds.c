@@ -685,12 +685,13 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 	struct stat file_stat;
 	if (stat(filepath, &file_stat) == 0) {
 		time_t mtime;
+		struct tm result;
 		char *source_date_epoch = getenv("SOURCE_DATE_EPOCH");
 		if (source_date_epoch == NULL ||
 			(mtime = (time_t)strtoll(source_date_epoch, NULL, 10)) <= 0 ||
 			mtime > file_stat.st_mtime)
 			mtime = file_stat.st_mtime;
-		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&mtime));
+		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime_r(&mtime, &result));
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Could not find file %s: %s.", filepath, strerror(errno));
 		// Return positive number, indicating less severe problem.
@@ -796,7 +797,7 @@ static int ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, con
 
 		return -1;
 	}
-	
+
 	xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
 			BAD_CAST expression,
 			xpathCtx);
