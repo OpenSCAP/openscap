@@ -73,7 +73,7 @@ oscap_pcre_t* oscap_pcre_compile(const char *pattern, oscap_pcre_options_t optio
  * negative error code on failure
  */
 int oscap_pcre_exec(const oscap_pcre_t *opcre, const char *subject,
-                    int length, int startoffset, oscap_pcre_options_t options,
+                    size_t length, size_t startoffset, oscap_pcre_options_t options,
                     int *ovector, int ovecsize);
 
 /**
