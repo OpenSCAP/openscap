@@ -43,9 +43,9 @@ struct oscap_pcre {
 };
 
 
-static inline int _oscap_pcre_opts_to_pcre(oscap_pcre_options_t opts)
+static inline uint32_t _oscap_pcre_opts_to_pcre(oscap_pcre_options_t opts)
 {
-	int res = 0;
+	uint32_t res = 0;
 	if (opts & OSCAP_PCRE_OPTS_UTF8)
 		res |= PCRE2_UTF;
 	if (opts & OSCAP_PCRE_OPTS_MULTILINE)
