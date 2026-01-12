@@ -131,7 +131,7 @@ void oscap_pcre_set_match_limit_recursion(oscap_pcre_t *opcre, unsigned long lim
 }
 
 int oscap_pcre_exec(const oscap_pcre_t *opcre, const char *subject,
-                    int length, int startoffset, oscap_pcre_options_t options,
+                    size_t length, size_t startoffset, oscap_pcre_options_t options,
                     int *ovector, int ovecsize)
 {
 	int rc = 0;
