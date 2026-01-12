@@ -194,14 +194,14 @@ static int filehash58_cb(const char *prefix, const char *p, const char *f, const
 	hash_type = oscap_string_to_enum(CRAPI_ALG_MAP, h);
 	if (hash_type == 0) {
 		char *msg = oscap_sprintf("This version of OpenSCAP doesn't support the '%s' hash algorithm.", h);
-		dW(msg);
+		dW("%s", msg);
 		itm = probe_item_create (OVAL_INDEPENDENT_FILE_HASH58, NULL,
 			"filepath", OVAL_DATATYPE_STRING, pbuf,
 			"path", OVAL_DATATYPE_STRING, p,
 			"filename", OVAL_DATATYPE_STRING, f,
 			"hash_type", OVAL_DATATYPE_STRING, h,
 			NULL);
-		probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR, msg);
+		probe_item_add_msg(itm, OVAL_MESSAGE_LEVEL_ERROR, "%s", msg);
 		free(msg);
 		probe_item_setstatus(itm, SYSCHAR_STATUS_ERROR);
 		probe_item_collect(ctx, itm);
