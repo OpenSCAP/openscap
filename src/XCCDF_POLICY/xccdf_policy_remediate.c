@@ -48,6 +48,7 @@
 #include "xccdf_policy_model_priv.h"
 #include "public/xccdf_policy.h"
 #include "oscap_helpers.h"
+#include "xccdf_benchmark.h"
 
 struct kickstart_commands {
 	struct oscap_list *package_install;
@@ -764,12 +765,12 @@ exit:
 	return ret;
 }
 
-static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *variables, struct oscap_list *tasks)
+static inline int _parse_ansible_fix(struct xccdf_policy *policy, const char *fix_text, struct oscap_list *variables, struct oscap_list *tasks)
 {
 	// TODO: Tolerate different indentation styles in this regex
 	const char *pattern =
 		"- name: XCCDF Value [^ ]+ # promote to variable\n  set_fact:\n"
-		"    ([^:]+): (.+)\n  tags:\n    - always\n";
+		"    ([^:]+): (!!str )?(.+)\n  tags:\n    - always\n";
 	char *err;
 	int errofs;
 
@@ -783,11 +784,11 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 
 	// ovector sizing:
 	// 2 elements are used for the whole needle,
-	// 4 elements are used for the 2 capture groups
+	// 6 elements are used for the 3 capture groups
 	// pcre documentation says we should allocate a third extra for additional
 	// workspace.
-	// (2 + 4) * (3 / 2) = 9
-	int ovector[9];
+	// (2 + 6) * (3 / 2) = 12
+	int ovector[12];
 
 	const size_t fix_text_len = strlen(fix_text);
 	int start_offset = 0;
@@ -796,8 +797,8 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 				0, ovector, sizeof(ovector) / sizeof(ovector[0]));
 		if (match == -1)
 			break;
-		if (match != 3) {
-			dE("Expected 2 capture group matches per XCCDF variable. Found %i!",
+		if (match != 4) {
+			dE("Expected 3 capture group matches per XCCDF variable. Found %i!",
 				match - 1);
 			oscap_pcre_free(re);
 			return 1;
@@ -806,18 +807,44 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 		// ovector[0] and [1] hold the start and end of the whole needle match
 		// ovector[2] and [3] hold the start and end of the first capture group
 		// ovector[4] and [5] hold the start and end of the second capture group
+		// ovector[6] and [7] hold the start and end of the third capture group
 		char *variable_name = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
 		memcpy(variable_name, &fix_text[ovector[2]], ovector[3] - ovector[2]);
 		variable_name[ovector[3] - ovector[2]] = '\0';
 
-		char *variable_value = malloc((ovector[5] - ovector[4] + 1) * sizeof(char));
-		memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
-		variable_value[ovector[5] - ovector[4]] = '\0';
+		char *cast = malloc((ovector[5] - ovector[4] + 1) * sizeof(char));
+		memcpy(cast, &fix_text[ovector[4]], ovector[5] - ovector[4]);
+		cast[ovector[5] - ovector[4]] = '\0';
 
-		char *var_line = oscap_sprintf("    %s: %s\n", variable_name, variable_value);
+		char *variable_id = malloc((ovector[7] - ovector[6] + 1) * sizeof(char));
+		memcpy(variable_id, &fix_text[ovector[6]], ovector[7] - ovector[6]);
+		variable_id[ovector[7] - ovector[6]] = '\0';
+
+		char *variable_value = NULL;
+		struct xccdf_item *item = xccdf_benchmark_get_item(xccdf_policy_get_benchmark(policy), variable_id);
+		if (item == NULL) {
+			dI("Variable not found: %s", variable_id);
+			variable_value = strdup(variable_id);
+		} else {
+			variable_value = strdup(xccdf_policy_get_value_of_item(policy, item));
+		}
+		free(variable_id);
+
+		char *var_line;
+		if (strchr(variable_value, '\n') != NULL) {
+			/* The value contains a multiline string. To ensure a valid YAML output
+			we need to put is as scalar block and indent it.*/
+			char *indented_variable_value = oscap_indent(variable_value, 6);
+			const char *terminator = oscap_str_endswith(indented_variable_value, "\n") ? "" : "\n";
+			var_line = oscap_sprintf("    %s: %s|\n%s%s", variable_name, cast, indented_variable_value, terminator);
+			free(indented_variable_value);
+		} else {
+			var_line = oscap_sprintf("    %s: %s%s\n", variable_name, cast, variable_value);
+		}
 
 		free(variable_name);
 		free(variable_value);
+		free(cast);
 
 		if (!oscap_list_contains(variables, var_line, (oscap_cmp_func) oscap_streq)) {
 			oscap_list_add(variables, var_line);
@@ -829,7 +856,10 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 		char *remediation_part = malloc((length_between_matches + 1) * sizeof(char));
 		memcpy(remediation_part, &fix_text[start_offset], length_between_matches);
 		remediation_part[length_between_matches] = '\0';
-		oscap_list_add(tasks, remediation_part);
+		oscap_trim(remediation_part);
+		if (strlen(remediation_part) > 0) {
+			oscap_list_add(tasks, remediation_part);
+		}
 
 		start_offset = ovector[1]; // next time start after the entire pattern
 	}
@@ -838,7 +868,10 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 		char *remediation_part = malloc((fix_text_len - start_offset + 1) * sizeof(char));
 		memcpy(remediation_part, &fix_text[start_offset], fix_text_len - start_offset);
 		remediation_part[fix_text_len - start_offset] = '\0';
-		oscap_list_add(tasks, remediation_part);
+		oscap_trim(remediation_part);
+		if (strlen(remediation_part) > 0) {
+			oscap_list_add(tasks, remediation_part);
+		}
 	}
 
 	oscap_pcre_free(re);
@@ -863,7 +896,12 @@ static int _xccdf_policy_rule_get_fix_text(struct xccdf_policy *policy, struct x
 
 	// Process Text Substitute within the fix
 	struct xccdf_fix *cfix = xccdf_fix_clone(fix);
-	int res = xccdf_policy_resolve_fix_substitution(policy, cfix, NULL, NULL);
+	int res = 0;
+	if (strcmp(template, "urn:xccdf:fix:script:ansible") == 0) {
+		res = xccdf_policy_resolve_fix_substitution_ansible(policy, cfix, NULL, NULL);
+	} else {
+		res = xccdf_policy_resolve_fix_substitution(policy, cfix, NULL, NULL);
+	}
 	if (res != 0) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "A fix for Rule/@id=\"%s\" was skipped: Text substitution failed.",
 				xccdf_rule_get_id(rule));
@@ -1128,7 +1166,7 @@ static int _xccdf_policy_rule_generate_ansible_fix(struct xccdf_policy *policy, 
 	if (fix_text == NULL) {
 		return ret;
 	}
-	ret = _parse_ansible_fix(fix_text, variables, tasks);
+	ret = _parse_ansible_fix(policy, fix_text, variables, tasks);
 	free(fix_text);
 	return ret;
 }

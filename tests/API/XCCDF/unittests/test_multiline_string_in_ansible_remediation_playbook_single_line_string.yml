@@ -1,0 +1,25 @@
+---
+
+
+- hosts: all
+  vars:
+    www_value_val1: This is a test string without newlines.
+    www_value_nonexistent: "dummy value because the variable does not exist"
+    www_value_val2: !!str Very long string that should be converted to a multiline string. It's so long that it doesn't fit here.
+  tasks:
+    - name: rule1
+      ansible.builtin.copy:
+        dest: /foo/bar
+        content: "bar {{ www_value_val1 }}"
+      tags:
+        - foo
+        - bar
+
+    - name: rule2
+      ansible.builtin.copy:
+        dest: /foo/baz
+        content: "baz {{ www_value_val2 }}"
+      tags:
+        - foo
+        - baz
+

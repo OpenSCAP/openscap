@@ -358,10 +358,11 @@ Authors:
             </table>
         </xsl:if>
         <pre><code>
-            <xsl:apply-templates mode="sub-testresult" select="$fix">
+            <xsl:apply-templates mode="sub-testresult-fix" select="$fix">
                 <xsl:with-param name="testresult" select="$testresult"/>
                 <xsl:with-param name="benchmark" select="$benchmark"/>
                 <xsl:with-param name="profile" select="$profile"/>
+                <xsl:with-param name="fix_system" select="$fix/@system"/>
             </xsl:apply-templates>
         </code></pre>
     </div>
@@ -471,6 +472,118 @@ Authors:
         <xsl:message>WARNING: Processing an unresolved XCCDF document. This may have unexpected results.</xsl:message>
         <xsl:message>You can resolve the document using "oscap xccdf resolve -o resolved-xccdf.xml xccdf.xml"</xsl:message>
     </xsl:if>
+</xsl:template>
+
+<xsl:template mode="sub-testresult-fix" match="cdf:sub">
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+    <xsl:param name="fix_system"/>
+
+    <xsl:variable name="subid" select="./@idref"/>
+
+    <xsl:choose>
+        <!-- TestResult or Profile set-value: resolve and output in one place -->
+        <xsl:when test="$testresult and $testresult/cdf:set-value[@idref = $subid]">
+            <xsl:call-template name="format-value-text-with-abbr">
+                <xsl:with-param name="fix_system" select="$fix_system"/>
+                <xsl:with-param name="value_text" select="$testresult/cdf:set-value[@idref = $subid][last()]"/>
+                <xsl:with-param name="abbreviation_title" select="concat('from TestResult: ', $subid)"/>
+            </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$profile and $profile/cdf:set-value[@idref = $subid]">
+            <xsl:call-template name="format-value-text-with-abbr">
+                <xsl:with-param name="fix_system" select="$fix_system"/>
+                <xsl:with-param name="value_text" select="$profile/cdf:set-value[@idref = $subid][last()]/text()"/>
+                <xsl:with-param name="abbreviation_title" select="concat('from Profile/set-value: ', $subid)"/>
+            </xsl:call-template>
+        </xsl:when>
+        <!-- Benchmark Value: single key() lookup, then one output branch -->
+        <xsl:otherwise>
+            <xsl:variable name="value" select="key('values', concat($benchmark/@id, '|', $subid))"/>
+            <xsl:variable name="value_text">
+                <xsl:choose>
+                    <xsl:when test="$profile and $profile/cdf:refine-value[@idref = $subid]">
+                        <xsl:variable name="selector" select="$profile/cdf:refine-value[@idref = $subid][last()]/@selector"/>
+                        <xsl:value-of select="$value/cdf:value[@selector = $selector][last()]/text()"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value/cdf:value[not(@selector)][last()]"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <xsl:variable name="abbreviation_title">
+                <xsl:choose>
+                    <xsl:when test="$profile and $profile/cdf:refine-value[@idref = $subid]">
+                        <xsl:value-of select="concat('from Profile/refine-value: ', $subid)"/>
+                    </xsl:when>
+                    <xsl:when test="$value/cdf:value[not(@selector)][last()]">
+                        <xsl:value-of select="concat('from Benchmark/Value: ', $subid)"/>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:variable>
+            <xsl:choose>
+                <xsl:when test="string($abbreviation_title) != ''">
+                    <xsl:call-template name="format-value-text-with-abbr">
+                        <xsl:with-param name="fix_system" select="$fix_system"/>
+                        <xsl:with-param name="value_text" select="$value_text"/>
+                        <xsl:with-param name="abbreviation_title" select="$abbreviation_title"/>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:otherwise>
+                    <abbr title="Substitution failed: {$subid}">(N/A)</abbr>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+<xsl:template name="format-value-text-with-abbr">
+    <xsl:param name="fix_system"/>
+    <xsl:param name="value_text"/>
+    <xsl:param name="abbreviation_title"/>
+    <xsl:choose>
+        <xsl:when test="$fix_system = 'urn:xccdf:fix:script:ansible' and contains($value_text, '&#10;')">
+            <xsl:text>| </xsl:text>
+            <abbr title="{$abbreviation_title}"># block scalar value</abbr>
+            <xsl:text>&#10;</xsl:text>
+                <xsl:call-template name="indent-each-line">
+                    <xsl:with-param name="text" select="$value_text"/>
+                    <xsl:with-param name="indent" select="'      '"/>
+                </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+            <abbr title="{$abbreviation_title}">
+                <xsl:value-of select="$value_text"/>
+            </abbr>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+<xsl:template name="indent-each-line">
+    <xsl:param name="text"/>
+    <xsl:param name="indent" select="'    '"/>
+
+    <xsl:variable name="newline" select="'&#10;'"/>
+    <xsl:choose>
+        <xsl:when test="contains($text, $newline)">
+            <xsl:variable name="line" select="substring-before($text, $newline)"/>
+            <xsl:if test="normalize-space($line) != ''">
+                <xsl:value-of select="$indent"/>
+            </xsl:if>
+            <xsl:value-of select="$line"/>
+            <xsl:value-of select="$newline"/>
+            <xsl:call-template name="indent-each-line">
+                <xsl:with-param name="text" select="substring-after($text, $newline)"/>
+                <xsl:with-param name="indent" select="$indent"/>
+                <xsl:with-param name="newline" select="$newline"/>
+            </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="normalize-space($text) != ''">
+            <xsl:value-of select="$indent"/>
+            <xsl:value-of select="$text"/>
+        </xsl:when>
+    </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>

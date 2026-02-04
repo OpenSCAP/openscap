@@ -192,7 +192,34 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 	}
 }
 
-int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_rule_result *rule_result, struct xccdf_result *test_result)
+static int _xccdf_text_substitution_cb_ansible(xmlNode **node, void *user_data)
+{
+	if (node == NULL || *node == NULL || user_data == NULL)
+		return 1;
+
+	xmlNode *cur = *node;
+	if (!oscap_streq((const char *) cur->name, "sub") || !xccdf_is_supported_namespace(cur->ns))
+		return 0;
+
+	if (cur->children != NULL)
+		dW("The xccdf:sub element SHALL NOT have any content.");
+
+	char *sub_idref = (char *) xmlGetProp(cur, BAD_CAST "idref");
+	if (sub_idref == NULL || *sub_idref == '\0') {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "The xccdf:sub MUST have a single @idref attribute.");
+		free(sub_idref);
+		return 2;
+	}
+
+	xmlNode *new_node = xmlNewText(BAD_CAST sub_idref);
+	xmlReplaceNode(cur, new_node);
+	xmlFreeNode(cur);
+	*node = new_node;
+	free(sub_idref);
+	return 0;
+}
+
+static int _xccdf_policy_resolve_fix_substitution_impl(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_rule_result *rule_result, struct xccdf_result *test_result, int (*callback)(xmlNode **, void *))
 {
 	struct _xccdf_text_substitution_data data;
 	data.policy = policy;
@@ -200,11 +227,21 @@ int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xc
 	data.rule_result = rule_result;
 
 	char *result = NULL;
-	int res = xml_iterate_dfs(xccdf_fix_get_content(fix), &result, _xccdf_text_substitution_cb, &data);
+	int res = xml_iterate_dfs(xccdf_fix_get_content(fix), &result, callback, &data);
 	if (res == 0)
 		xccdf_fix_set_content(fix, result);
 	free(result);
 	return res;
+}
+
+int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_rule_result *rule_result, struct xccdf_result *test_result)
+{
+	return _xccdf_policy_resolve_fix_substitution_impl(policy, fix, rule_result, test_result, _xccdf_text_substitution_cb);
+}
+
+int xccdf_policy_resolve_fix_substitution_ansible(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_rule_result *rule_result, struct xccdf_result *test_result)
+{
+	return _xccdf_policy_resolve_fix_substitution_impl(policy, fix, rule_result, test_result, _xccdf_text_substitution_cb_ansible);
 }
 
 char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy) {
