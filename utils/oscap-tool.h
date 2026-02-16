@@ -164,6 +164,7 @@ struct oscap_action {
 	int raw;
 	int show_rule_details;
 	int list_rules;
+	int list_vars;
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);

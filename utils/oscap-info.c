@@ -64,6 +64,7 @@ struct oscap_module OSCAP_INFO_MODULE = {
 	.help = "Options:\n"
 		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
 		"   --list-rules                  - Print selected rule IDs for the given profile (requires --profile).\n"
+		"   --list-vars                   - Print XCCDF Value IDs and their resolved values for the given profile (requires --profile).\n"
 		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --profile <id>                - Show info of the profile with the given ID.\n"
 		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n"
@@ -418,6 +419,49 @@ static void _print_rules_for_profile(struct xccdf_benchmark *bench, const char *
 	xccdf_policy_model_free(policy_model);
 }
 
+static void _print_vars_for_profile(struct xccdf_benchmark *bench, const char *profile_id)
+{
+	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+	struct xccdf_policy *policy = xccdf_policy_model_get_policy_by_id(policy_model, profile_id);
+	if (policy == NULL) {
+		xccdf_policy_model_free(policy_model);
+		return;
+	}
+	struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
+	if (profile == NULL) {
+		xccdf_policy_model_free(policy_model);
+		return;
+	}
+
+	struct xccdf_setvalue_iterator *sv_it = xccdf_profile_get_setvalues(profile);
+	while (xccdf_setvalue_iterator_has_more(sv_it)) {
+		struct xccdf_setvalue *sv = xccdf_setvalue_iterator_next(sv_it);
+		const char *value_id = xccdf_setvalue_get_item(sv);
+		struct xccdf_item *item = xccdf_benchmark_get_item(bench, value_id);
+		if (item != NULL) {
+			const char *resolved = xccdf_policy_get_value_of_item(policy, item);
+			if (resolved != NULL)
+				printf("%s\t%s\n", value_id, resolved);
+		}
+	}
+	xccdf_setvalue_iterator_free(sv_it);
+
+	struct xccdf_refine_value_iterator *rv_it = xccdf_profile_get_refine_values(profile);
+	while (xccdf_refine_value_iterator_has_more(rv_it)) {
+		struct xccdf_refine_value *rv = xccdf_refine_value_iterator_next(rv_it);
+		const char *value_id = xccdf_refine_value_get_item(rv);
+		struct xccdf_item *item = xccdf_benchmark_get_item(bench, value_id);
+		if (item != NULL) {
+			const char *resolved = xccdf_policy_get_value_of_item(policy, item);
+			if (resolved != NULL)
+				printf("%s\t%s\n", value_id, resolved);
+		}
+	}
+	xccdf_refine_value_iterator_free(rv_it);
+
+	xccdf_policy_model_free(policy_model);
+}
+
 static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
 {
 	const char *profile_suffix = action->profile;
@@ -426,7 +470,7 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
 	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
 
-	if (!action->list_rules) {
+	if (!action->list_rules && !action->list_vars) {
 		printf("\nStream: %s\n", ds_stream_index_get_id(stream));
 		printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
 		printf("Version: %s\n", ds_stream_index_get_version(stream));
@@ -458,6 +502,9 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 				if (action->list_rules) {
 					_print_rules_for_profile(bench, profile_id);
 					// bench is freed by policy_model inside _print_rules_for_profile
+				} else if (action->list_vars) {
+					_print_vars_for_profile(bench, profile_id);
+					// bench is freed by policy_model inside _print_vars_for_profile
 				} else {
 					_print_single_benchmark_one_profile(bench, profile_id);
 					xccdf_benchmark_free(bench);
@@ -541,6 +588,9 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 			if (action->list_rules) {
 				_print_rules_for_profile(bench, profile_id);
 				// bench is freed by policy_model inside _print_rules_for_profile
+			} else if (action->list_vars) {
+				_print_vars_for_profile(bench, profile_id);
+				// bench is freed by policy_model inside _print_vars_for_profile
 			} else {
 				_print_single_benchmark_one_profile(bench, profile_id);
 				xccdf_benchmark_free(bench);
@@ -805,6 +855,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	enum oscap_info_opts {
 		OSCAP_INFO_OPT_REMOTE_RESOURCES,
 		OSCAP_INFO_OPT_LIST_RULES,
+		OSCAP_INFO_OPT_LIST_VARS,
 		OSCAP_INFO_OPT_LOCAL_FILES,
 		OSCAP_INFO_OPT_PROFILE,
 		OSCAP_INFO_OPT_PROFILES,
@@ -816,6 +867,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	const struct option long_options[] = {
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{"list-rules", no_argument, 0, OSCAP_INFO_OPT_LIST_RULES},
+		{"list-vars", no_argument, 0, OSCAP_INFO_OPT_LIST_VARS},
 		{"local-files", required_argument, NULL, OSCAP_INFO_OPT_LOCAL_FILES},
 		{"profile", required_argument, 0, OSCAP_INFO_OPT_PROFILE},
 		{"profiles", no_argument, 0, OSCAP_INFO_OPT_PROFILES},
@@ -832,6 +884,10 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 			case 0: break;
 			case OSCAP_INFO_OPT_LIST_RULES:
 				action->list_rules = 1;
+				action->provide_machine_readable_output = 1;
+				break;
+			case OSCAP_INFO_OPT_LIST_VARS:
+				action->list_vars = 1;
 				action->provide_machine_readable_output = 1;
 				break;
 			case OSCAP_INFO_OPT_PROFILE:
@@ -859,6 +915,11 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 
 	if (action->list_rules && action->profile == NULL) {
 		oscap_module_usage(action->module, stderr, "The --list-rules option requires --profile.\n");
+		return false;
+	}
+
+	if (action->list_vars && action->profile == NULL) {
+		oscap_module_usage(action->module, stderr, "The --list-vars option requires --profile.\n");
 		return false;
 	}
 

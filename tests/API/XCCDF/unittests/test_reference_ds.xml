@@ -67,7 +67,19 @@
         <select idref="xccdf_com.example.www_rule_R2" selected="true"/>
         <select idref="xccdf_com.example.www_rule_R3" selected="true"/>
         <select idref="xccdf_com.example.www_rule_R4" selected="true"/>
+        <set-value idref="xccdf_com.example.www_value_V1">42</set-value>
+        <refine-value idref="xccdf_com.example.www_value_V2" selector="custom"/>
       </Profile>
+      <Value id="xccdf_com.example.www_value_V1" type="number">
+        <title>Value V1</title>
+        <value>10</value>
+        <value selector="twenty">20</value>
+      </Value>
+      <Value id="xccdf_com.example.www_value_V2" type="string">
+        <title>Value V2</title>
+        <value>default_val</value>
+        <value selector="custom">custom_val</value>
+      </Value>
       <Rule selected="true" id="xccdf_com.example.www_rule_R1">
         <title>Rule R1</title>
         <description>Description</description>

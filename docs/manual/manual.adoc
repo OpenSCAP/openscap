@@ -234,6 +234,22 @@ xccdf_org.ssgproject.content_rule_partition_for_var
 The `--list-rules` option requires `--profile`. Running `--list-rules` without
 `--profile` will produce an error.
 
+=== Listing variables set by a profile
+
+To list the XCCDF Values (variables) and their resolved values for a given
+profile, use the `--list-vars` option together with `--profile`. Each line
+contains a Value ID and its resolved value, separated by a tab character.
+
+----
+$ oscap info --profile ospp --list-vars /usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml
+xccdf_org.ssgproject.content_value_var_password_minlen	15
+xccdf_org.ssgproject.content_value_var_accounts_max_concurrent_login_sessions	10
+...
+----
+
+The `--list-vars` option requires `--profile`. Running `--list-vars` without
+`--profile` will produce an error.
+
 === Displaying information about SCAP result data streams
 
 The `oscap info` command is also helpful with other SCAP file types such as
