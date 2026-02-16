@@ -63,6 +63,7 @@ struct oscap_module OSCAP_INFO_MODULE = {
     .usage = "some-file.xml",
 	.help = "Options:\n"
 		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
+		"   --list-rules                  - Print selected rule IDs for the given profile (requires --profile).\n"
 		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --profile <id>                - Show info of the profile with the given ID.\n"
 		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n"
@@ -400,15 +401,36 @@ static const char *benchmark_get_profile_or_report_id_issues(struct xccdf_benchm
 	return result;
 }
 
-static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const char *profile_suffix, const char *filename)
+static void _print_rules_for_profile(struct xccdf_benchmark *bench, const char *profile_id)
 {
+	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+	struct xccdf_policy *policy = xccdf_policy_model_get_policy_by_id(policy_model, profile_id);
+	if (policy == NULL) {
+		xccdf_policy_model_free(policy_model);
+		return;
+	}
+	struct xccdf_select_iterator *sel_it = xccdf_policy_get_selected_rules(policy);
+	while (xccdf_select_iterator_has_more(sel_it)) {
+		struct xccdf_select *sel = xccdf_select_iterator_next(sel_it);
+		printf("%s\n", xccdf_select_get_item(sel));
+	}
+	xccdf_select_iterator_free(sel_it);
+	xccdf_policy_model_free(policy_model);
+}
+
+static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
+{
+	const char *profile_suffix = action->profile;
+	const char *filename = action->file;
 	const char *prefix = "";
 	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
 	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
 
-	printf("\nStream: %s\n", ds_stream_index_get_id(stream));
-	printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
-	printf("Version: %s\n", ds_stream_index_get_version(stream));
+	if (!action->list_rules) {
+		printf("\nStream: %s\n", ds_stream_index_get_id(stream));
+		printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
+		printf("Version: %s\n", ds_stream_index_get_version(stream));
+	}
 	bool profile_not_found = true;
 
 	while (oscap_string_iterator_has_more(checklist_it) && profile_not_found) {
@@ -433,10 +455,17 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 			}
 			const char *profile_id = benchmark_get_profile_or_report_multiple_ids(bench, profile_suffix, filename);
 			if (profile_id != NULL) {
-				_print_single_benchmark_one_profile(bench, profile_id);
+				if (action->list_rules) {
+					_print_rules_for_profile(bench, profile_id);
+					// bench is freed by policy_model inside _print_rules_for_profile
+				} else {
+					_print_single_benchmark_one_profile(bench, profile_id);
+					xccdf_benchmark_free(bench);
+				}
 				profile_not_found = false;
+			} else {
+				xccdf_benchmark_free(bench);
 			}
-			xccdf_benchmark_free(bench);
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(xccdf_source, NULL);
 
@@ -509,9 +538,16 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 	} else if (action->profile) {
 		const char *profile_id = benchmark_get_profile_or_report_id_issues(bench, action->profile, action->file);
 		if (profile_id != NULL) {
-			_print_single_benchmark_one_profile(bench, profile_id);
+			if (action->list_rules) {
+				_print_rules_for_profile(bench, profile_id);
+				// bench is freed by policy_model inside _print_rules_for_profile
+			} else {
+				_print_single_benchmark_one_profile(bench, profile_id);
+				xccdf_benchmark_free(bench);
+			}
+		} else {
+			xccdf_benchmark_free(bench);
 		}
-		xccdf_benchmark_free(bench);
 	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		print_time(action->file);
@@ -527,7 +563,7 @@ static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds
 	if (action->show_profiles_only) {
 		return_value = app_info_single_ds_profiles_only(sds_it, session, action);
 	} else if (action->profile) {
-		return_value = app_info_single_ds_one_profile(sds_it, session, action->profile, action->file);
+		return_value = app_info_single_ds_one_profile(sds_it, session, action);
 	} else {
 		return_value = app_info_single_ds_all(sds_it, session, action);
 	}
@@ -768,6 +804,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 
 	enum oscap_info_opts {
 		OSCAP_INFO_OPT_REMOTE_RESOURCES,
+		OSCAP_INFO_OPT_LIST_RULES,
 		OSCAP_INFO_OPT_LOCAL_FILES,
 		OSCAP_INFO_OPT_PROFILE,
 		OSCAP_INFO_OPT_PROFILES,
@@ -778,6 +815,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	/* Command-options */
 	const struct option long_options[] = {
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"list-rules", no_argument, 0, OSCAP_INFO_OPT_LIST_RULES},
 		{"local-files", required_argument, NULL, OSCAP_INFO_OPT_LOCAL_FILES},
 		{"profile", required_argument, 0, OSCAP_INFO_OPT_PROFILE},
 		{"profiles", no_argument, 0, OSCAP_INFO_OPT_PROFILES},
@@ -792,6 +830,10 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch(c) {
 			case 0: break;
+			case OSCAP_INFO_OPT_LIST_RULES:
+				action->list_rules = 1;
+				action->provide_machine_readable_output = 1;
+				break;
 			case OSCAP_INFO_OPT_PROFILE:
 				action->profile = optarg;
 				break;
@@ -813,6 +855,11 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 				break;
 			default: return oscap_module_usage(action->module, stderr, NULL);
 		}
+	}
+
+	if (action->list_rules && action->profile == NULL) {
+		oscap_module_usage(action->module, stderr, "The --list-rules option requires --profile.\n");
+		return false;
 	}
 
 	if (optind >= argc) {

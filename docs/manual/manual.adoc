@@ -217,6 +217,23 @@ description, use the `--profile` option followed by the profile ID.
 $ oscap info --profile xccdf_org.ssgproject.content_profile_ospp /usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml
 ----
 
+=== Listing rules selected by a profile
+
+To list the IDs of all XCCDF rules that are selected by a given profile, use
+the `--list-rules` option together with `--profile`. The output contains one
+rule ID per line and is machine-readable, which makes it suitable for scripting,
+CI/CD pipelines, and tailoring validation workflows.
+
+----
+$ oscap info --profile ospp --list-rules /usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml
+xccdf_org.ssgproject.content_rule_partition_for_tmp
+xccdf_org.ssgproject.content_rule_partition_for_var
+...
+----
+
+The `--list-rules` option requires `--profile`. Running `--list-rules` without
+`--profile` will produce an error.
+
 === Displaying information about SCAP result data streams
 
 The `oscap info` command is also helpful with other SCAP file types such as
