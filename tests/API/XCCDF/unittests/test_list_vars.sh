@@ -31,4 +31,24 @@ grep -q "The \-\-list-rules and \-\-list-vars options can't be used at the same 
 :> $stdout
 :> $stderr
 
+# Test 4: --list-vars with standalone XCCDF tailoring file
+tailoring="$srcdir/test_tailoring_file.xml"
+tp="xccdf_com.example.www_profile_P1_tailored"
+$OSCAP info --profile $tp --list-vars $tailoring > $stdout 2> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+# V1 is overridden to 99 by tailoring, V2 is inherited from base profile
+grep -q "xccdf_com.example.www_value_V1	99" $stdout
+grep -q "xccdf_com.example.www_value_V2	custom_val" $stdout
+[ "$(wc -l < $stdout)" -eq 2 ]
+:> $stdout
+
+# Test 5: --list-vars with SDS containing tailoring
+ds_tailoring="$srcdir/test_reference_ds_with_tailoring.xml"
+$OSCAP info --profile $tp --list-vars $ds_tailoring > $stdout 2> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+grep -q "xccdf_com.example.www_value_V1	99" $stdout
+grep -q "xccdf_com.example.www_value_V2	custom_val" $stdout
+[ "$(wc -l < $stdout)" -eq 2 ]
+:> $stdout
+
 rm -f $stdout $stderr

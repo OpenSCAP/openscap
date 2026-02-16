@@ -39,6 +39,7 @@
 #include <limits.h>
 
 #include <oscap.h>
+#include <oscap_helpers.h>
 #include "oscap_source.h"
 #include <xccdf_policy.h>
 #include <oval_results.h>
@@ -402,12 +403,10 @@ static const char *benchmark_get_profile_or_report_id_issues(struct xccdf_benchm
 	return result;
 }
 
-static void _print_rules_for_profile(struct xccdf_benchmark *bench, const char *profile_id)
+static void _print_rules_for_profile(struct xccdf_policy_model *policy_model, const char *profile_id)
 {
-	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 	struct xccdf_policy *policy = xccdf_policy_model_get_policy_by_id(policy_model, profile_id);
 	if (policy == NULL) {
-		xccdf_policy_model_free(policy_model);
 		return;
 	}
 	struct xccdf_select_iterator *sel_it = xccdf_policy_get_selected_rules(policy);
@@ -416,22 +415,20 @@ static void _print_rules_for_profile(struct xccdf_benchmark *bench, const char *
 		printf("%s\n", xccdf_select_get_item(sel));
 	}
 	xccdf_select_iterator_free(sel_it);
-	xccdf_policy_model_free(policy_model);
 }
 
-static void _print_vars_for_profile(struct xccdf_benchmark *bench, const char *profile_id)
+static void _print_vars_for_profile(struct xccdf_policy_model *policy_model, const char *profile_id)
 {
-	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 	struct xccdf_policy *policy = xccdf_policy_model_get_policy_by_id(policy_model, profile_id);
 	if (policy == NULL) {
-		xccdf_policy_model_free(policy_model);
 		return;
 	}
 	struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
 	if (profile == NULL) {
-		xccdf_policy_model_free(policy_model);
 		return;
 	}
+
+	struct xccdf_benchmark *bench = xccdf_policy_model_get_benchmark(policy_model);
 
 	struct xccdf_setvalue_iterator *sv_it = xccdf_profile_get_setvalues(profile);
 	while (xccdf_setvalue_iterator_has_more(sv_it)) {
@@ -458,8 +455,51 @@ static void _print_vars_for_profile(struct xccdf_benchmark *bench, const char *p
 		}
 	}
 	xccdf_refine_value_iterator_free(rv_it);
+}
 
-	xccdf_policy_model_free(policy_model);
+static struct xccdf_benchmark *_resolve_benchmark_for_tailoring(
+	struct oscap_source *tailoring_source,
+	const char *tailoring_filepath,
+	struct oscap_source **out_bench_source)
+{
+	*out_bench_source = NULL;
+
+	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(tailoring_source, NULL);
+	if (tailoring == NULL) {
+		return NULL;
+	}
+
+	const char *ref = xccdf_tailoring_get_benchmark_ref(tailoring);
+	char *benchmark_ref = ref ? strdup(ref) : NULL;
+	xccdf_tailoring_free(tailoring);
+
+	if (benchmark_ref == NULL) {
+		fprintf(stderr, "The tailoring file doesn't contain a benchmark reference.\n");
+		return NULL;
+	}
+
+	char *filepath_cpy = strdup(tailoring_filepath);
+	char *dir = oscap_dirname(filepath_cpy);
+	char *benchmark_path = benchmark_ref[0] == '/' ?
+		strdup(benchmark_ref) : oscap_sprintf("%s/%s", dir, benchmark_ref);
+	free(dir);
+	free(filepath_cpy);
+	free(benchmark_ref);
+
+	struct oscap_source *bench_source = oscap_source_new_from_file(benchmark_path);
+	free(benchmark_path);
+	if (bench_source == NULL) {
+		return NULL;
+	}
+
+	struct xccdf_benchmark *bench = xccdf_benchmark_import_source(bench_source);
+	if (bench == NULL) {
+		oscap_source_free(bench_source);
+		return NULL;
+	}
+
+	*out_bench_source = bench_source;
+	return bench;
 }
 
 static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
@@ -500,11 +540,13 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 			const char *profile_id = benchmark_get_profile_or_report_multiple_ids(bench, profile_suffix, filename);
 			if (profile_id != NULL) {
 				if (action->list_rules) {
-					_print_rules_for_profile(bench, profile_id);
-					// bench is freed by policy_model inside _print_rules_for_profile
+					struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+					_print_rules_for_profile(policy_model, profile_id);
+					xccdf_policy_model_free(policy_model);
 				} else if (action->list_vars) {
-					_print_vars_for_profile(bench, profile_id);
-					// bench is freed by policy_model inside _print_vars_for_profile
+					struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+					_print_vars_for_profile(policy_model, profile_id);
+					xccdf_policy_model_free(policy_model);
 				} else {
 					_print_single_benchmark_one_profile(bench, profile_id);
 					xccdf_benchmark_free(bench);
@@ -518,12 +560,61 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 
 			const char *profile_id = tailoring_get_profile_or_report_multiple_ids(tailoring, profile_suffix, filename);
 			if (profile_id != NULL) {
-				struct xccdf_profile *profile = xccdf_tailoring_get_profile_by_id(tailoring, profile_id);
-				_print_xccdf_profile_with_id(profile, prefix);
-				profile_not_found = false;
-			}
+				if (action->list_rules || action->list_vars) {
+					char *profile_id_dup = strdup(profile_id);
+					xccdf_tailoring_free(tailoring);
+					tailoring = NULL;
 
-			xccdf_tailoring_free(tailoring);
+					const char *stream_id = ds_stream_index_get_id(stream);
+
+					/* Find the XCCDF benchmark component in the stream */
+					ds_sds_session_reset(session);
+					struct oscap_string_iterator *bench_it = ds_stream_index_get_checklists(stream);
+					struct xccdf_benchmark *bench = NULL;
+					while (oscap_string_iterator_has_more(bench_it)) {
+						const char *cl_id = oscap_string_iterator_next(bench_it);
+						struct oscap_source *src = ds_sds_session_select_checklist(session, stream_id, cl_id, NULL);
+						if (src != NULL && oscap_source_get_scap_type(src) == OSCAP_DOCUMENT_XCCDF) {
+							bench = xccdf_benchmark_import_source(src);
+							break;
+						}
+						ds_sds_session_reset(session);
+					}
+					oscap_string_iterator_free(bench_it);
+
+					if (bench == NULL) {
+						fprintf(stderr, "Could not find a benchmark in the datastream.\n");
+						free(profile_id_dup);
+						oscap_string_iterator_free(checklist_it);
+						ds_stream_index_iterator_free(sds_it);
+						ds_sds_session_free(session);
+						return OSCAP_ERROR;
+					}
+
+					/* Re-select the tailoring component and import with benchmark */
+					ds_sds_session_reset(session);
+					struct oscap_source *tail_source = ds_sds_session_select_checklist(session, stream_id, id, NULL);
+					struct xccdf_tailoring *resolved_tailoring = xccdf_tailoring_import_source(tail_source, bench);
+
+					struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+					xccdf_policy_model_set_tailoring(policy_model, resolved_tailoring);
+
+					if (action->list_rules) {
+						_print_rules_for_profile(policy_model, profile_id_dup);
+					} else {
+						_print_vars_for_profile(policy_model, profile_id_dup);
+					}
+					xccdf_policy_model_free(policy_model);
+					free(profile_id_dup);
+				} else {
+					struct xccdf_profile *profile = xccdf_tailoring_get_profile_by_id(tailoring, profile_id);
+					_print_xccdf_profile_with_id(profile, prefix);
+					xccdf_tailoring_free(tailoring);
+				}
+				profile_not_found = false;
+			} else {
+				xccdf_tailoring_free(tailoring);
+			}
 		}
 		ds_sds_session_reset(session);
 	}
@@ -586,11 +677,13 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 		const char *profile_id = benchmark_get_profile_or_report_id_issues(bench, action->profile, action->file);
 		if (profile_id != NULL) {
 			if (action->list_rules) {
-				_print_rules_for_profile(bench, profile_id);
-				// bench is freed by policy_model inside _print_rules_for_profile
+				struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+				_print_rules_for_profile(policy_model, profile_id);
+				xccdf_policy_model_free(policy_model);
 			} else if (action->list_vars) {
-				_print_vars_for_profile(bench, profile_id);
-				// bench is freed by policy_model inside _print_vars_for_profile
+				struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+				_print_vars_for_profile(policy_model, profile_id);
+				xccdf_policy_model_free(policy_model);
 			} else {
 				_print_single_benchmark_one_profile(bench, profile_id);
 				xccdf_benchmark_free(bench);
@@ -821,9 +914,36 @@ static int app_info(const struct oscap_action *action)
 	}
 	break;
 	case OSCAP_DOCUMENT_XCCDF_TAILORING:
-		printf("Document type: XCCDF Tailoring\n");
-		print_time(action->file);
-		_print_xccdf_tailoring(source, "", 0);
+		if (action->profile && (action->list_rules || action->list_vars)) {
+			struct oscap_source *bench_source = NULL;
+			struct xccdf_benchmark *bench = _resolve_benchmark_for_tailoring(source, action->file, &bench_source);
+			if (bench == NULL) {
+				goto cleanup;
+			}
+			struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+			/* Re-import tailoring with benchmark for proper profile resolution */
+			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, bench);
+			if (tailoring == NULL) {
+				xccdf_policy_model_free(policy_model);
+				oscap_source_free(bench_source);
+				goto cleanup;
+			}
+			xccdf_policy_model_set_tailoring(policy_model, tailoring);
+			const char *profile_id = tailoring_get_profile_or_report_multiple_ids(tailoring, action->profile, action->file);
+			if (profile_id != NULL) {
+				if (action->list_rules) {
+					_print_rules_for_profile(policy_model, profile_id);
+				} else {
+					_print_vars_for_profile(policy_model, profile_id);
+				}
+			}
+			xccdf_policy_model_free(policy_model);
+			oscap_source_free(bench_source);
+		} else {
+			printf("Document type: XCCDF Tailoring\n");
+			print_time(action->file);
+			_print_xccdf_tailoring(source, "", 0);
+		}
 	break;
 	case OSCAP_DOCUMENT_SCE_RESULT:
 		printf("Document type: SCE Result File\n");

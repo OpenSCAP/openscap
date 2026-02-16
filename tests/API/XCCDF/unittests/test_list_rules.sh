@@ -27,4 +27,28 @@ grep -q "\-\-list-rules option requires \-\-profile" $stderr
 :> $stdout
 :> $stderr
 
+# Test 3: --list-rules with standalone XCCDF tailoring file
+tailoring="$srcdir/test_tailoring_file.xml"
+tp="xccdf_com.example.www_profile_P1_tailored"
+$OSCAP info --profile $tp --list-rules $tailoring > $stdout 2> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+grep -q "xccdf_com.example.www_rule_R1" $stdout
+grep -q "xccdf_com.example.www_rule_R2" $stdout
+# R3 and R4 are deselected by tailoring
+! grep -q "xccdf_com.example.www_rule_R3" $stdout
+! grep -q "xccdf_com.example.www_rule_R4" $stdout
+[ "$(wc -l < $stdout)" -eq 2 ]
+:> $stdout
+
+# Test 4: --list-rules with SDS containing tailoring
+ds_tailoring="$srcdir/test_reference_ds_with_tailoring.xml"
+$OSCAP info --profile $tp --list-rules $ds_tailoring > $stdout 2> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+grep -q "xccdf_com.example.www_rule_R1" $stdout
+grep -q "xccdf_com.example.www_rule_R2" $stdout
+! grep -q "xccdf_com.example.www_rule_R3" $stdout
+! grep -q "xccdf_com.example.www_rule_R4" $stdout
+[ "$(wc -l < $stdout)" -eq 2 ]
+:> $stdout
+
 rm -f $stdout $stderr
