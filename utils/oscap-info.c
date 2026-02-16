@@ -923,6 +923,11 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 		return false;
 	}
 
+	if (action->list_rules && action->list_vars) {
+		oscap_module_usage(action->module, stderr, "The --list-rules and --list-vars options can't be used at the same time.\n");
+		return false;
+	}
+
 	if (optind >= argc) {
 		oscap_module_usage(action->module, stderr, "SCAP file needs to be specified!\n");
 		return false;

@@ -25,4 +25,10 @@ grep -q "\-\-list-vars option requires \-\-profile" $stderr
 :> $stdout
 :> $stderr
 
+# Test 3: --list-vars with --list-rules produces an error
+$OSCAP info --profile $p1 --list-vars --list-rules $ds > $stdout 2> $stderr && exit 1 || true
+grep -q "The \-\-list-rules and \-\-list-vars options can't be used at the same time." $stderr
+:> $stdout
+:> $stderr
+
 rm -f $stdout $stderr
