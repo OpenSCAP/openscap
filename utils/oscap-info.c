@@ -411,7 +411,7 @@ static void _print_rules_for_profile(struct xccdf_policy_model *policy_model, co
 	}
 	struct xccdf_select_iterator *sel_it = xccdf_policy_get_selected_rules(policy);
 	while (xccdf_select_iterator_has_more(sel_it)) {
-		struct xccdf_select *sel = xccdf_select_iterator_next(sel_it);
+		const struct xccdf_select *sel = xccdf_select_iterator_next(sel_it);
 		printf("%s\n", xccdf_select_get_item(sel));
 	}
 	xccdf_select_iterator_free(sel_it);
@@ -423,16 +423,16 @@ static void _print_vars_for_profile(struct xccdf_policy_model *policy_model, con
 	if (policy == NULL) {
 		return;
 	}
-	struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
+	const struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
 	if (profile == NULL) {
 		return;
 	}
 
-	struct xccdf_benchmark *bench = xccdf_policy_model_get_benchmark(policy_model);
+	const struct xccdf_benchmark *bench = xccdf_policy_model_get_benchmark(policy_model);
 
 	struct xccdf_setvalue_iterator *sv_it = xccdf_profile_get_setvalues(profile);
 	while (xccdf_setvalue_iterator_has_more(sv_it)) {
-		struct xccdf_setvalue *sv = xccdf_setvalue_iterator_next(sv_it);
+		const struct xccdf_setvalue *sv = xccdf_setvalue_iterator_next(sv_it);
 		const char *value_id = xccdf_setvalue_get_item(sv);
 		struct xccdf_item *item = xccdf_benchmark_get_item(bench, value_id);
 		if (item != NULL) {
@@ -445,7 +445,7 @@ static void _print_vars_for_profile(struct xccdf_policy_model *policy_model, con
 
 	struct xccdf_refine_value_iterator *rv_it = xccdf_profile_get_refine_values(profile);
 	while (xccdf_refine_value_iterator_has_more(rv_it)) {
-		struct xccdf_refine_value *rv = xccdf_refine_value_iterator_next(rv_it);
+		const struct xccdf_refine_value *rv = xccdf_refine_value_iterator_next(rv_it);
 		const char *value_id = xccdf_refine_value_get_item(rv);
 		struct xccdf_item *item = xccdf_benchmark_get_item(bench, value_id);
 		if (item != NULL) {
