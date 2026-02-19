@@ -457,6 +457,26 @@ static void _print_vars_for_profile(struct xccdf_policy_model *policy_model, con
 	xccdf_refine_value_iterator_free(rv_it);
 }
 
+static struct xccdf_benchmark *_find_benchmark_in_stream(
+	struct ds_sds_session *session,
+	struct ds_stream_index *stream)
+{
+	const char *stream_id = ds_stream_index_get_id(stream);
+	struct oscap_string_iterator *bench_it = ds_stream_index_get_checklists(stream);
+	struct xccdf_benchmark *bench = NULL;
+	while (oscap_string_iterator_has_more(bench_it)) {
+		const char *cl_id = oscap_string_iterator_next(bench_it);
+		struct oscap_source *src = ds_sds_session_select_checklist(session, stream_id, cl_id, NULL);
+		if (src != NULL && oscap_source_get_scap_type(src) == OSCAP_DOCUMENT_XCCDF) {
+			bench = xccdf_benchmark_import_source(src);
+			break;
+		}
+		ds_sds_session_reset(session);
+	}
+	oscap_string_iterator_free(bench_it);
+	return bench;
+}
+
 static struct xccdf_benchmark *_resolve_benchmark_for_tailoring(
 	struct oscap_source *tailoring_source,
 	const char *tailoring_filepath,
@@ -478,47 +498,70 @@ static struct xccdf_benchmark *_resolve_benchmark_for_tailoring(
 		return NULL;
 	}
 
+	// Extract #component_ref fragment from benchmark_ref, if present
+	const char *component_ref = NULL;
+	char *sep = strchr(benchmark_ref, '#');
+	if (sep != NULL) {
+		component_ref = sep + 1;
+		*sep = '\0';
+	}
+
+	// Strip file:// prefix
+	const char *path_start = benchmark_ref;
+	if (strncmp(benchmark_ref, "file://", 7) == 0) {
+		path_start = benchmark_ref + 7;
+	}
+
 	char *filepath_cpy = strdup(tailoring_filepath);
 	char *dir = oscap_dirname(filepath_cpy);
-	char *benchmark_path = benchmark_ref[0] == '/' ?
-		strdup(benchmark_ref) : oscap_sprintf("%s/%s", dir, benchmark_ref);
+	char *benchmark_path = path_start[0] == '/' ?
+		strdup(path_start) : oscap_sprintf("%s/%s", dir, path_start);
 	free(dir);
 	free(filepath_cpy);
-	free(benchmark_ref);
 
 	struct oscap_source *bench_source = oscap_source_new_from_file(benchmark_path);
 	free(benchmark_path);
 	if (bench_source == NULL) {
+		free(benchmark_ref);
 		return NULL;
 	}
 
-	struct xccdf_benchmark *bench = xccdf_benchmark_import_source(bench_source);
+	struct xccdf_benchmark *bench = NULL;
+	oscap_document_type_t doc_type = oscap_source_get_scap_type(bench_source);
+	if (doc_type == OSCAP_DOCUMENT_SDS) {
+		struct ds_sds_session *sds_session = ds_sds_session_new_from_source(bench_source);
+		if (sds_session == NULL) {
+			oscap_source_free(bench_source);
+			free(benchmark_ref);
+			return NULL;
+		}
+		if (component_ref != NULL) {
+			struct oscap_source *xccdf_source = ds_sds_session_select_checklist(sds_session, NULL, component_ref, NULL);
+			if (xccdf_source != NULL) {
+				bench = xccdf_benchmark_import_source(xccdf_source);
+			}
+		} else {
+			struct ds_sds_index *sds_index = ds_sds_session_get_sds_idx(sds_session);
+			struct ds_stream_index_iterator *streams = ds_sds_index_get_streams(sds_index);
+			if (ds_stream_index_iterator_has_more(streams)) {
+				struct ds_stream_index *stream = ds_stream_index_iterator_next(streams);
+				bench = _find_benchmark_in_stream(sds_session, stream);
+			}
+			ds_stream_index_iterator_free(streams);
+		}
+		ds_sds_session_free(sds_session);
+	} else {
+		bench = xccdf_benchmark_import_source(bench_source);
+	}
+
+	free(benchmark_ref);
+
 	if (bench == NULL) {
 		oscap_source_free(bench_source);
 		return NULL;
 	}
 
 	*out_bench_source = bench_source;
-	return bench;
-}
-
-static struct xccdf_benchmark *_find_benchmark_in_stream(
-	struct ds_sds_session *session,
-	struct ds_stream_index *stream)
-{
-	const char *stream_id = ds_stream_index_get_id(stream);
-	struct oscap_string_iterator *bench_it = ds_stream_index_get_checklists(stream);
-	struct xccdf_benchmark *bench = NULL;
-	while (oscap_string_iterator_has_more(bench_it)) {
-		const char *cl_id = oscap_string_iterator_next(bench_it);
-		struct oscap_source *src = ds_sds_session_select_checklist(session, stream_id, cl_id, NULL);
-		if (src != NULL && oscap_source_get_scap_type(src) == OSCAP_DOCUMENT_XCCDF) {
-			bench = xccdf_benchmark_import_source(src);
-			break;
-		}
-		ds_sds_session_reset(session);
-	}
-	oscap_string_iterator_free(bench_it);
 	return bench;
 }
 

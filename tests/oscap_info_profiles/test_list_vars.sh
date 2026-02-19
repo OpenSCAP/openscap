@@ -51,4 +51,30 @@ grep -q "xccdf_com.example.www_value_V2	custom_val" $stdout
 [[ "$(wc -l < $stdout)" -eq 2 ]]
 :> $stdout
 
+# Test 6: --list-vars with tailoring referencing SDS via file: prefix + cref
+temp_dir="$(mktemp -d)"
+cp "$srcdir/test_reference_ds.xml" $temp_dir
+tailoring_sds="test_tailoring_file_sds_cref.xml"
+sed "s;TEMP_DIRECTORY_PLACEHOLDER;$temp_dir;" "$srcdir/$tailoring_sds" > "$temp_dir/$tailoring_sds"
+$OSCAP info --profile $tp --list-vars "$temp_dir/$tailoring_sds" > $stdout 2> $stderr
+[[ -f $stderr ]]; [[ ! -s $stderr ]]; :> $stderr
+grep -q "xccdf_com.example.www_value_V1	99" $stdout
+grep -q "xccdf_com.example.www_value_V2	custom_val" $stdout
+[[ "$(wc -l < $stdout)" -eq 2 ]]
+:> $stdout
+rm -rf "$temp_dir"
+
+# Test 7: --list-vars with tailoring referencing SDS via file: prefix, no cref
+temp_dir="$(mktemp -d)"
+cp "$srcdir/test_reference_ds.xml" $temp_dir
+tailoring_sds_nf="test_tailoring_file_sds.xml"
+sed "s;TEMP_DIRECTORY_PLACEHOLDER;$temp_dir;" "$srcdir/$tailoring_sds_nf" > "$temp_dir/$tailoring_sds_nf"
+$OSCAP info --profile $tp --list-vars "$temp_dir/$tailoring_sds_nf" > $stdout 2> $stderr
+[[ -f $stderr ]]; [[ ! -s $stderr ]]; :> $stderr
+grep -q "xccdf_com.example.www_value_V1	99" $stdout
+grep -q "xccdf_com.example.www_value_V2	custom_val" $stdout
+[[ "$(wc -l < $stdout)" -eq 2 ]]
+:> $stdout
+rm -rf "$temp_dir"
+
 rm -f $stdout $stderr
