@@ -1006,7 +1006,11 @@ static int app_info(const struct oscap_action *action)
 			}
 			xccdf_policy_model_set_tailoring(policy_model, tailoring);
 			const char *profile_id = tailoring_get_profile_or_report_multiple_ids(tailoring, action->profile, action->file);
-			if (profile_id != NULL) {
+			if (profile_id == NULL) {
+				fprintf(stderr,
+					"Profile '%s' not found in the tailoring file. Provide the customized profile ID. "
+					"Get available profiles using:\n$ oscap info %s\n", action->profile, action->file);
+			} else {
 				if (action->list_rules) {
 					_print_rules_for_profile(policy_model, profile_id);
 				} else {

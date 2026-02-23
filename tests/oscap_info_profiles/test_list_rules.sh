@@ -81,4 +81,18 @@ grep -q "xccdf_com.example.www_rule_R2" $stdout
 :> $stdout
 rm -rf "$temp_dir"
 
+# Test 7: --list-rules with tailoring referencing SDS via file: prefix, no cref,
+#         providing the original profile instead of the customized one
+temp_dir="$(mktemp -d)"
+cp "$srcdir/test_reference_ds.xml" $temp_dir
+tailoring_sds_nf="test_tailoring_file_sds.xml"
+sed "s;TEMP_DIRECTORY_PLACEHOLDER;$temp_dir;" "$srcdir/$tailoring_sds_nf" > "$temp_dir/$tailoring_sds_nf"
+$OSCAP info --profile "xccdf_com.example.www_profile_P1" --list-rules "$temp_dir/$tailoring_sds_nf" > $stdout 2> $stderr
+[[ -f $stdout ]]; [[ ! -s $stdout ]]; :> $stdout
+grep -q "Profile 'xccdf_com.example.www_profile_P1' not found in the tailoring file. Provide the customized profile ID. Get available profiles using:" "$stderr"
+grep -q "$ oscap info $temp_dir/$tailoring_sds_nf" "$stderr"
+[[ "$(wc -l < $stderr)" -eq 2 ]]
+:> $stderr
+rm -rf "$temp_dir"
+
 rm -f $stdout $stderr
