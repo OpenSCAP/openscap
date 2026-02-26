@@ -681,6 +681,10 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 			ret = _handle_xccdf_benchmark_profile(bench, action, profile_suffix, filename, &profile_found);
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(xccdf_source, NULL);
+			if (!tailoring) {
+				ret = OSCAP_ERROR;
+				goto cleanup;
+			}
 			ret = _handle_xccdf_tailoring_profile(tailoring, action, profile_suffix, filename, session, stream, id, &profile_found);
 		}
 		if (ret != OSCAP_OK) {
