@@ -39,7 +39,7 @@ function _oscap {
     opts[oscap:xccdf:generate:guide]="-o --output --hide-profile-info --profile --benchmark-id --xccdf-id --tailoring-file --tailoring-id --skip-signature-validation --enforce-signature"
     opts[oscap:xccdf:generate:fix]="-o --output --profile --result-id --profile --fix-type --xccdf-id --benchmark-id --tailoring-file --tailoring-id --skip-signature-validation --enforce-signature"
     opts[oscap:xccdf:generate:custom]="-o --output --stylesheet"
-    opts[oscap:info]="--fetch-remote-resources --local-files --profile --profiles --references"
+    opts[oscap:info]="--fetch-remote-resources --local-files --profile --profiles --references --list-rules --list-vars"
 
     # local variables
     local cur prev words cword split

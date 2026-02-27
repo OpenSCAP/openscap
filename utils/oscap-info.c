@@ -39,6 +39,7 @@
 #include <limits.h>
 
 #include <oscap.h>
+#include <oscap_helpers.h>
 #include "oscap_source.h"
 #include <xccdf_policy.h>
 #include <oval_results.h>
@@ -63,6 +64,8 @@ struct oscap_module OSCAP_INFO_MODULE = {
     .usage = "some-file.xml",
 	.help = "Options:\n"
 		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
+		"   --list-rules                  - Print selected rule IDs for the given profile (requires --profile).\n"
+		"   --list-vars                   - Print XCCDF Value IDs and their resolved values for the given profile (requires --profile).\n"
 		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --profile <id>                - Show info of the profile with the given ID.\n"
 		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n"
@@ -400,62 +403,306 @@ static const char *benchmark_get_profile_or_report_id_issues(struct xccdf_benchm
 	return result;
 }
 
-static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const char *profile_suffix, const char *filename)
+static void _print_rules_for_profile(struct xccdf_policy_model *policy_model, const char *profile_id)
 {
-	const char *prefix = "";
-	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
-	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
+	struct xccdf_policy *policy = xccdf_policy_model_get_policy_by_id(policy_model, profile_id);
+	if (policy == NULL) {
+		return;
+	}
+	struct xccdf_select_iterator *sel_it = xccdf_policy_get_selected_rules(policy);
+	while (xccdf_select_iterator_has_more(sel_it)) {
+		const struct xccdf_select *sel = xccdf_select_iterator_next(sel_it);
+		printf("%s\n", xccdf_select_get_item(sel));
+	}
+	xccdf_select_iterator_free(sel_it);
+}
 
-	printf("\nStream: %s\n", ds_stream_index_get_id(stream));
-	printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
-	printf("Version: %s\n", ds_stream_index_get_version(stream));
-	bool profile_not_found = true;
+static void _print_vars_for_profile(struct xccdf_policy_model *policy_model, const char *profile_id)
+{
+	struct xccdf_policy *policy = xccdf_policy_model_get_policy_by_id(policy_model, profile_id);
+	if (policy == NULL) {
+		return;
+	}
+	const struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
+	if (profile == NULL) {
+		return;
+	}
 
-	while (oscap_string_iterator_has_more(checklist_it) && profile_not_found) {
-		const char * id = oscap_string_iterator_next(checklist_it);
+	const struct xccdf_benchmark *bench = xccdf_policy_model_get_benchmark(policy_model);
+
+	struct xccdf_setvalue_iterator *sv_it = xccdf_profile_get_setvalues(profile);
+	while (xccdf_setvalue_iterator_has_more(sv_it)) {
+		const struct xccdf_setvalue *sv = xccdf_setvalue_iterator_next(sv_it);
+		const char *value_id = xccdf_setvalue_get_item(sv);
+		struct xccdf_item *item = xccdf_benchmark_get_item(bench, value_id);
+		if (item != NULL) {
+			const char *resolved = xccdf_policy_get_value_of_item(policy, item);
+			if (resolved != NULL)
+				printf("%s\t%s\n", value_id, resolved);
+		}
+	}
+	xccdf_setvalue_iterator_free(sv_it);
+
+	struct xccdf_refine_value_iterator *rv_it = xccdf_profile_get_refine_values(profile);
+	while (xccdf_refine_value_iterator_has_more(rv_it)) {
+		const struct xccdf_refine_value *rv = xccdf_refine_value_iterator_next(rv_it);
+		const char *value_id = xccdf_refine_value_get_item(rv);
+		struct xccdf_item *item = xccdf_benchmark_get_item(bench, value_id);
+		if (item != NULL) {
+			const char *resolved = xccdf_policy_get_value_of_item(policy, item);
+			if (resolved != NULL)
+				printf("%s\t%s\n", value_id, resolved);
+		}
+	}
+	xccdf_refine_value_iterator_free(rv_it);
+}
+
+static struct xccdf_benchmark *_find_benchmark_in_stream(
+	struct ds_sds_session *session,
+	struct ds_stream_index *stream)
+{
+	const char *stream_id = ds_stream_index_get_id(stream);
+	struct oscap_string_iterator *bench_it = ds_stream_index_get_checklists(stream);
+	struct xccdf_benchmark *bench = NULL;
+	while (oscap_string_iterator_has_more(bench_it)) {
+		const char *cl_id = oscap_string_iterator_next(bench_it);
+		struct oscap_source *src = ds_sds_session_select_checklist(session, stream_id, cl_id, NULL);
+		if (src != NULL && oscap_source_get_scap_type(src) == OSCAP_DOCUMENT_XCCDF) {
+			bench = xccdf_benchmark_import_source(src);
+			break;
+		}
+		ds_sds_session_reset(session);
+	}
+	oscap_string_iterator_free(bench_it);
+	return bench;
+}
+
+static struct xccdf_benchmark *_resolve_benchmark_for_tailoring(
+	struct oscap_source *tailoring_source,
+	const char *tailoring_filepath,
+	struct oscap_source **out_bench_source)
+{
+	*out_bench_source = NULL;
+
+	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(tailoring_source, NULL);
+	if (tailoring == NULL) {
+		return NULL;
+	}
+
+	const char *ref = xccdf_tailoring_get_benchmark_ref(tailoring);
+	char *benchmark_ref = ref ? strdup(ref) : NULL;
+	xccdf_tailoring_free(tailoring);
+
+	if (benchmark_ref == NULL) {
+		fprintf(stderr, "The tailoring file doesn't contain a benchmark reference.\n");
+		return NULL;
+	}
+
+	// Extract #component_ref fragment from benchmark_ref, if present
+	const char *component_ref = NULL;
+	char *sep = strchr(benchmark_ref, '#');
+	if (sep != NULL) {
+		component_ref = sep + 1;
+		*sep = '\0';
+	}
+
+	// Strip file:// prefix
+	const char *path_start = benchmark_ref;
+	if (strncmp(benchmark_ref, "file://", 7) == 0) {
+		path_start = benchmark_ref + 7;
+	}
+
+	char *filepath_cpy = strdup(tailoring_filepath);
+	char *dir = oscap_dirname(filepath_cpy);
+	char *benchmark_path = path_start[0] == '/' ?
+		strdup(path_start) : oscap_sprintf("%s/%s", dir, path_start);
+	free(dir);
+	free(filepath_cpy);
+
+	struct oscap_source *bench_source = oscap_source_new_from_file(benchmark_path);
+	free(benchmark_path);
+	if (bench_source == NULL) {
+		free(benchmark_ref);
+		return NULL;
+	}
+
+	struct xccdf_benchmark *bench = NULL;
+	oscap_document_type_t doc_type = oscap_source_get_scap_type(bench_source);
+	if (doc_type == OSCAP_DOCUMENT_SDS) {
+		struct ds_sds_session *sds_session = ds_sds_session_new_from_source(bench_source);
+		if (sds_session == NULL) {
+			oscap_source_free(bench_source);
+			free(benchmark_ref);
+			return NULL;
+		}
+		if (component_ref != NULL) {
+			struct oscap_source *xccdf_source = ds_sds_session_select_checklist(sds_session, NULL, component_ref, NULL);
+			if (xccdf_source != NULL) {
+				bench = xccdf_benchmark_import_source(xccdf_source);
+			}
+		} else {
+			struct ds_sds_index *sds_index = ds_sds_session_get_sds_idx(sds_session);
+			struct ds_stream_index_iterator *streams = ds_sds_index_get_streams(sds_index);
+			if (ds_stream_index_iterator_has_more(streams)) {
+				struct ds_stream_index *stream = ds_stream_index_iterator_next(streams);
+				bench = _find_benchmark_in_stream(sds_session, stream);
+			}
+			ds_stream_index_iterator_free(streams);
+		}
+		ds_sds_session_free(sds_session);
+	} else {
+		bench = xccdf_benchmark_import_source(bench_source);
+	}
+
+	free(benchmark_ref);
+
+	if (bench == NULL) {
+		oscap_source_free(bench_source);
+		return NULL;
+	}
+
+	*out_bench_source = bench_source;
+	return bench;
+}
+
+static int _handle_xccdf_benchmark_profile(
+	struct xccdf_benchmark *bench,
+	const struct oscap_action *action,
+	const char *profile_suffix,
+	const char *filename,
+	bool *profile_found)
+{
+	const char *profile_id = benchmark_get_profile_or_report_multiple_ids(bench, profile_suffix, filename);
+	if (profile_id == NULL) {
+		xccdf_benchmark_free(bench);
+		return OSCAP_OK;
+	}
+	if (action->list_rules || action->list_vars) {
+		struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+		if (action->list_rules) {
+			_print_rules_for_profile(policy_model, profile_id);
+		} else {
+			_print_vars_for_profile(policy_model, profile_id);
+		}
+		xccdf_policy_model_free(policy_model);
+	} else {
+		_print_single_benchmark_one_profile(bench, profile_id);
+		xccdf_benchmark_free(bench);
+	}
+	*profile_found = true;
+	return OSCAP_OK;
+}
+
+static int _handle_xccdf_tailoring_profile(
+	struct xccdf_tailoring *tailoring,
+	const struct oscap_action *action,
+	const char *profile_suffix,
+	const char *filename,
+	struct ds_sds_session *session,
+	struct ds_stream_index *stream,
+	const char *checklist_id,
+	bool *profile_found)
+{
+	const char *profile_id = tailoring_get_profile_or_report_multiple_ids(tailoring, profile_suffix, filename);
+	if (profile_id == NULL) {
+		xccdf_tailoring_free(tailoring);
+		return OSCAP_OK;
+	}
+	if (!(action->list_rules || action->list_vars)) {
+		struct xccdf_profile *profile = xccdf_tailoring_get_profile_by_id(tailoring, profile_id);
+		_print_xccdf_profile_with_id(profile, "");
+		xccdf_tailoring_free(tailoring);
+		*profile_found = true;
+		return OSCAP_OK;
+	}
+	char *profile_id_dup = strdup(profile_id);
+	xccdf_tailoring_free(tailoring);
+
+	/* Find the XCCDF benchmark component in the stream */
+	ds_sds_session_reset(session);
+	struct xccdf_benchmark *bench = _find_benchmark_in_stream(session, stream);
+	if (bench == NULL) {
+		fprintf(stderr, "Could not find a benchmark in the datastream.\n");
+		free(profile_id_dup);
+		return OSCAP_ERROR;
+	}
+
+	/* Re-select the tailoring component and import with benchmark */
+	const char *stream_id = ds_stream_index_get_id(stream);
+	ds_sds_session_reset(session);
+	struct oscap_source *tail_source = ds_sds_session_select_checklist(session, stream_id, checklist_id, NULL);
+	struct xccdf_tailoring *resolved_tailoring = xccdf_tailoring_import_source(tail_source, bench);
+
+	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+	xccdf_policy_model_set_tailoring(policy_model, resolved_tailoring);
+
+	if (action->list_rules) {
+		_print_rules_for_profile(policy_model, profile_id_dup);
+	} else {
+		_print_vars_for_profile(policy_model, profile_id_dup);
+	}
+	xccdf_policy_model_free(policy_model);
+	free(profile_id_dup);
+	*profile_found = true;
+	return OSCAP_OK;
+}
+
+static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
+{
+	int ret = OSCAP_OK;
+	const char *profile_suffix = action->profile;
+	const char *filename = action->file;
+	struct ds_stream_index *stream = ds_stream_index_iterator_next(sds_it);
+	struct oscap_string_iterator *checklist_it = ds_stream_index_get_checklists(stream);
+
+	if (!action->list_rules && !action->list_vars) {
+		printf("\nStream: %s\n", ds_stream_index_get_id(stream));
+		printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
+		printf("Version: %s\n", ds_stream_index_get_version(stream));
+	}
+	bool profile_found = false;
+
+	while (oscap_string_iterator_has_more(checklist_it) && !profile_found) {
+		const char *id = oscap_string_iterator_next(checklist_it);
 
 		/* decompose */
 		struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
 		if (xccdf_source == NULL) {
-			oscap_string_iterator_free(checklist_it);
-			ds_stream_index_iterator_free(sds_it);
-			ds_sds_session_free(session);
-			return OSCAP_ERROR;
+			ret = OSCAP_ERROR;
+			goto cleanup;
 		}
 
 		if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
 			struct xccdf_benchmark *bench = xccdf_benchmark_import_source(xccdf_source);
-			if(!bench) {
-				oscap_string_iterator_free(checklist_it);
-				ds_stream_index_iterator_free(sds_it);
-				ds_sds_session_free(session);
-				return OSCAP_ERROR;
+			if (!bench) {
+				ret = OSCAP_ERROR;
+				goto cleanup;
 			}
-			const char *profile_id = benchmark_get_profile_or_report_multiple_ids(bench, profile_suffix, filename);
-			if (profile_id != NULL) {
-				_print_single_benchmark_one_profile(bench, profile_id);
-				profile_not_found = false;
-			}
-			xccdf_benchmark_free(bench);
+			ret = _handle_xccdf_benchmark_profile(bench, action, profile_suffix, filename, &profile_found);
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(xccdf_source, NULL);
-
-			const char *profile_id = tailoring_get_profile_or_report_multiple_ids(tailoring, profile_suffix, filename);
-			if (profile_id != NULL) {
-				struct xccdf_profile *profile = xccdf_tailoring_get_profile_by_id(tailoring, profile_id);
-				_print_xccdf_profile_with_id(profile, prefix);
-				profile_not_found = false;
+			if (!tailoring) {
+				ret = OSCAP_ERROR;
+				goto cleanup;
 			}
-
-			xccdf_tailoring_free(tailoring);
+			ret = _handle_xccdf_tailoring_profile(tailoring, action, profile_suffix, filename, session, stream, id, &profile_found);
+		}
+		if (ret != OSCAP_OK) {
+			goto cleanup;
 		}
 		ds_sds_session_reset(session);
 	}
-	oscap_string_iterator_free(checklist_it);
-	if (profile_not_found) {
+	if (!profile_found) {
 		report_missing_profile(profile_suffix, filename);
 	}
-	return OSCAP_OK;
+
+cleanup:
+	oscap_string_iterator_free(checklist_it);
+	if (ret != OSCAP_OK) {
+		ds_stream_index_iterator_free(sds_it);
+		ds_sds_session_free(session);
+	}
+	return ret;
 }
 
 static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
@@ -509,9 +756,21 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 	} else if (action->profile) {
 		const char *profile_id = benchmark_get_profile_or_report_id_issues(bench, action->profile, action->file);
 		if (profile_id != NULL) {
-			_print_single_benchmark_one_profile(bench, profile_id);
+			if (action->list_rules) {
+				struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+				_print_rules_for_profile(policy_model, profile_id);
+				xccdf_policy_model_free(policy_model);
+			} else if (action->list_vars) {
+				struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+				_print_vars_for_profile(policy_model, profile_id);
+				xccdf_policy_model_free(policy_model);
+			} else {
+				_print_single_benchmark_one_profile(bench, profile_id);
+				xccdf_benchmark_free(bench);
+			}
+		} else {
+			xccdf_benchmark_free(bench);
 		}
-		xccdf_benchmark_free(bench);
 	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		print_time(action->file);
@@ -527,7 +786,7 @@ static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds
 	if (action->show_profiles_only) {
 		return_value = app_info_single_ds_profiles_only(sds_it, session, action);
 	} else if (action->profile) {
-		return_value = app_info_single_ds_one_profile(sds_it, session, action->profile, action->file);
+		return_value = app_info_single_ds_one_profile(sds_it, session, action);
 	} else {
 		return_value = app_info_single_ds_all(sds_it, session, action);
 	}
@@ -735,9 +994,40 @@ static int app_info(const struct oscap_action *action)
 	}
 	break;
 	case OSCAP_DOCUMENT_XCCDF_TAILORING:
-		printf("Document type: XCCDF Tailoring\n");
-		print_time(action->file);
-		_print_xccdf_tailoring(source, "", 0);
+		if (action->profile && (action->list_rules || action->list_vars)) {
+			struct oscap_source *bench_source = NULL;
+			struct xccdf_benchmark *bench = _resolve_benchmark_for_tailoring(source, action->file, &bench_source);
+			if (bench == NULL) {
+				goto cleanup;
+			}
+			struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+			/* Re-import tailoring with benchmark for proper profile resolution */
+			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, bench);
+			if (tailoring == NULL) {
+				xccdf_policy_model_free(policy_model);
+				oscap_source_free(bench_source);
+				goto cleanup;
+			}
+			xccdf_policy_model_set_tailoring(policy_model, tailoring);
+			const char *profile_id = tailoring_get_profile_or_report_multiple_ids(tailoring, action->profile, action->file);
+			if (profile_id == NULL) {
+				fprintf(stderr,
+					"Profile '%s' not found in the tailoring file. Provide the customized profile ID. "
+					"Get available profiles using:\n$ oscap info %s\n", action->profile, action->file);
+			} else {
+				if (action->list_rules) {
+					_print_rules_for_profile(policy_model, profile_id);
+				} else {
+					_print_vars_for_profile(policy_model, profile_id);
+				}
+			}
+			xccdf_policy_model_free(policy_model);
+			oscap_source_free(bench_source);
+		} else {
+			printf("Document type: XCCDF Tailoring\n");
+			print_time(action->file);
+			_print_xccdf_tailoring(source, "", 0);
+		}
 	break;
 	case OSCAP_DOCUMENT_SCE_RESULT:
 		printf("Document type: SCE Result File\n");
@@ -768,6 +1058,8 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 
 	enum oscap_info_opts {
 		OSCAP_INFO_OPT_REMOTE_RESOURCES,
+		OSCAP_INFO_OPT_LIST_RULES,
+		OSCAP_INFO_OPT_LIST_VARS,
 		OSCAP_INFO_OPT_LOCAL_FILES,
 		OSCAP_INFO_OPT_PROFILE,
 		OSCAP_INFO_OPT_PROFILES,
@@ -778,6 +1070,8 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	/* Command-options */
 	const struct option long_options[] = {
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"list-rules", no_argument, 0, OSCAP_INFO_OPT_LIST_RULES},
+		{"list-vars", no_argument, 0, OSCAP_INFO_OPT_LIST_VARS},
 		{"local-files", required_argument, NULL, OSCAP_INFO_OPT_LOCAL_FILES},
 		{"profile", required_argument, 0, OSCAP_INFO_OPT_PROFILE},
 		{"profiles", no_argument, 0, OSCAP_INFO_OPT_PROFILES},
@@ -792,6 +1086,14 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
 		switch(c) {
 			case 0: break;
+			case OSCAP_INFO_OPT_LIST_RULES:
+				action->list_rules = 1;
+				action->provide_machine_readable_output = 1;
+				break;
+			case OSCAP_INFO_OPT_LIST_VARS:
+				action->list_vars = 1;
+				action->provide_machine_readable_output = 1;
+				break;
 			case OSCAP_INFO_OPT_PROFILE:
 				action->profile = optarg;
 				break;
@@ -813,6 +1115,21 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 				break;
 			default: return oscap_module_usage(action->module, stderr, NULL);
 		}
+	}
+
+	if (action->list_rules && action->profile == NULL) {
+		oscap_module_usage(action->module, stderr, "The --list-rules option requires --profile.\n");
+		return false;
+	}
+
+	if (action->list_vars && action->profile == NULL) {
+		oscap_module_usage(action->module, stderr, "The --list-vars option requires --profile.\n");
+		return false;
+	}
+
+	if (action->list_rules && action->list_vars) {
+		oscap_module_usage(action->module, stderr, "The --list-rules and --list-vars options can't be used at the same time.\n");
+		return false;
 	}
 
 	if (optind >= argc) {

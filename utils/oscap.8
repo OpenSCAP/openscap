@@ -63,6 +63,16 @@ For XCCDF or SCAP source data stream files, the info module prints out IDs of in
 Allow download of remote components referenced from data stream.
 .RE
 .TP
+\fB\-\-list-rules\fR
+.RS
+Print IDs of XCCDF rules that are selected by the given profile, one per line. This option must be used together with \fB\-\-profile\fR. The output is machine-readable and contains only rule IDs with no additional decoration.
+.RE
+.TP
+\fB\-\-list-vars\fR
+.RS
+Print XCCDF Value IDs and their resolved values for the given profile, one per line, tab-separated. This option must be used together with \fB\-\-profile\fR. The output is machine-readable.
+.RE
+.TP
 \fB\-\-local-files DIRECTORY\fR
 .RS
 Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.

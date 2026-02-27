@@ -7,6 +7,7 @@
           <cat:uri name="test_single_rule.oval.xml" uri="#scap_org.open-scap_cref_test_single_rule.oval.xml"/>
         </cat:catalog>
       </ds:component-ref>
+      <ds:component-ref id="scap_org.open-scap_cref_tailoring.xml" xlink:href="#scap_org.open-scap_comp_tailoring.xml"/>
     </ds:checklists>
     <ds:checks>
       <ds:component-ref id="scap_org.open-scap_cref_test_single_rule.oval.xml" xlink:href="#scap_org.open-scap_comp_test_single_rule.oval.xml"/>
@@ -115,5 +116,17 @@
         </check>
       </Rule>
     </Benchmark>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_tailoring.xml" timestamp="2021-02-01T08:07:06+01:00">
+    <Tailoring xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_com.example.www_tailoring_test">
+      <benchmark href="#scap_org.open-scap_comp_test_single_rule.xccdf.xml"/>
+      <version>1.0</version>
+      <Profile id="xccdf_com.example.www_profile_P1_tailored" extends="xccdf_com.example.www_profile_P1">
+        <title>Tailored P1</title>
+        <select idref="xccdf_com.example.www_rule_R3" selected="false"/>
+        <select idref="xccdf_com.example.www_rule_R4" selected="false"/>
+        <set-value idref="xccdf_com.example.www_value_V1">99</set-value>
+      </Profile>
+    </Tailoring>
   </ds:component>
 </ds:data-stream-collection>
