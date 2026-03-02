@@ -268,7 +268,8 @@ class Profile:
     def to_xml(self, root):
         profile = ET.SubElement(root, "{%s}Profile" % NS)
         profile.set("id", self._full_profile_id(self.profile_id))
-        profile.set("extends", self._full_profile_id(self.extends))
+        if self.extends:
+            profile.set("extends", self._full_profile_id(self.extends))
 
         # Title has to be there due to the schema definition.
         title = ET.SubElement(profile, "{%s}title" % NS)
@@ -285,9 +286,10 @@ class Profile:
         self.value_refinements_to_xml(profile)
 
     def import_json_tailoring_profile(self, profile_dict):
-        self.extends = profile_dict["base_profile_id"]
-
-        self.profile_id = profile_dict.get("id", self.profile_id)
+        if not profile_dict.get("base_profile_id") and not profile_dict.get("id"):
+            raise ValueError("You must define a base_profile_id or an id")
+        self.extends = profile_dict.get("base_profile_id")
+        self.profile_id = profile_dict.get("id")
         self.profile_title = profile_dict.get("title", self.profile_title)
 
         self._import_groups_from_tailoring(profile_dict)
