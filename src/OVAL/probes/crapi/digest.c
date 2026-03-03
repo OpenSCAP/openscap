@@ -41,8 +41,21 @@
 #include <sechash.h>
 #elif defined(HAVE_GCRYPT)
 #include <gcrypt.h>
+#elif defined(HAVE_OPENSSL_CRYPTO)
+#include <openssl/evp.h>
+#include <openssl/opensslv.h>
 #else
 #error "No crypto library available!"
+#endif
+
+/*
+ * Compatibility shim for OpenSSL < 1.1.0, which used EVP_MD_CTX_create() and
+ * EVP_MD_CTX_destroy() instead of the EVP_MD_CTX_new() / EVP_MD_CTX_free()
+ * names introduced in 1.1.0.
+ */
+#if defined(HAVE_OPENSSL_CRYPTO) && OPENSSL_VERSION_NUMBER < 0x10100000L
+# define EVP_MD_CTX_new()     EVP_MD_CTX_create()
+# define EVP_MD_CTX_free(c)   EVP_MD_CTX_destroy(c)
 #endif
 
 #if defined(HAVE_NSS3)
@@ -95,7 +108,71 @@ static int crapi_alg_t_to_lib_arg(crapi_alg_t alg)
 		return -1;
 	}
 }
+#elif defined(HAVE_OPENSSL_CRYPTO)
+static const EVP_MD *crapi_alg_t_to_evp_md(crapi_alg_t alg)
+{
+	switch (alg) {
+#ifdef OPENSCAP_ENABLE_MD5
+	case CRAPI_DIGEST_MD5:
+		return EVP_md5();
 #endif
+#ifdef OPENSCAP_ENABLE_SHA1
+	case CRAPI_DIGEST_SHA1:
+		return EVP_sha1();
+#endif
+	case CRAPI_DIGEST_SHA224:
+		return EVP_sha224();
+	case CRAPI_DIGEST_SHA256:
+		return EVP_sha256();
+	case CRAPI_DIGEST_SHA384:
+		return EVP_sha384();
+	case CRAPI_DIGEST_SHA512:
+		return EVP_sha512();
+	default:
+		return NULL;
+	}
+}
+#endif
+
+#if defined(HAVE_OPENSSL_CRYPTO)
+/* Read fd and compute its digest using the streaming EVP API. */
+static int crapi_digest_fd_stream(int fd, const EVP_MD *evp_md, void *dst, size_t *size)
+{
+	uint8_t buf[CRAPI_IO_BUFSZ];
+	ssize_t ret;
+
+	EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+	if (ctx == NULL)
+		return -1;
+	if (EVP_DigestInit_ex(ctx, evp_md, NULL) != 1) {
+		EVP_MD_CTX_free(ctx);
+		return -1;
+	}
+	while ((ret = read(fd, buf, sizeof buf)) == sizeof buf)
+		EVP_DigestUpdate(ctx, (const void *)buf, sizeof buf);
+	switch (ret) {
+	case 0:
+		break;
+	case -1:
+		EVP_MD_CTX_free(ctx);
+		return -1;
+	default:
+		if (ret <= 0) {
+			EVP_MD_CTX_free(ctx);
+			return -1;
+		}
+		EVP_DigestUpdate(ctx, (const void *)buf, (size_t)ret);
+	}
+	unsigned int md_len = (unsigned int)*size;
+	if (EVP_DigestFinal_ex(ctx, (unsigned char *)dst, &md_len) != 1) {
+		EVP_MD_CTX_free(ctx);
+		return -1;
+	}
+	*size = (size_t)md_len;
+	EVP_MD_CTX_free(ctx);
+	return 0;
+}
+#endif /* HAVE_OPENSSL_CRYPTO */
 
 int crapi_digest_fd(int fd, crapi_alg_t alg, void *dst, size_t *size)
 {
@@ -107,6 +184,22 @@ int crapi_digest_fd(int fd, crapi_alg_t alg, void *dst, size_t *size)
 		errno = EFAULT;
 		return -1;
 	}
+
+	/*
+	 * Resolve the algorithm and verify the output buffer is large enough
+	 * to hold the digest.
+	 */
+#if defined(HAVE_OPENSSL_CRYPTO)
+	const EVP_MD *evp_md = crapi_alg_t_to_evp_md(alg);
+	if (evp_md == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
+	if (*size < (size_t)EVP_MD_size(evp_md)) {
+		errno = ENOBUFS;
+		return -1;
+	}
+#else
 	int lib_alg = crapi_alg_t_to_lib_arg(alg);
 #if defined(HAVE_NSS3)
 	if (*size < HASH_ResultLen(lib_alg)) {
@@ -116,6 +209,7 @@ int crapi_digest_fd(int fd, crapi_alg_t alg, void *dst, size_t *size)
 		errno = ENOBUFS;
 		return -1;
 	}
+#endif /* HAVE_OPENSSL_CRYPTO */
 
 	if (fstat (fd, &st) != 0)
 		return (-1);
@@ -129,6 +223,10 @@ int crapi_digest_fd(int fd, crapi_alg_t alg, void *dst, size_t *size)
 # endif
 		if (buffer == NULL) {
 #endif /* _FILE_OFFSET_BITS == 32 */
+#if defined(HAVE_OPENSSL_CRYPTO)
+			if (crapi_digest_fd_stream(fd, evp_md, dst, size) != 0)
+				return -1;
+#else
 			uint8_t _buffer[CRAPI_IO_BUFSZ];
 			ssize_t ret;
 
@@ -181,10 +279,18 @@ int crapi_digest_fd(int fd, crapi_alg_t alg, void *dst, size_t *size)
 			memcpy (dst, buffer, gcry_md_get_algo_dlen(lib_alg));
 			gcry_md_close (hd);
 #endif
+#endif /* !HAVE_OPENSSL_CRYPTO */
 
 #if _FILE_OFFSET_BITS == 32
 		} else {
-#if defined(HAVE_NSS3)
+#if defined(HAVE_OPENSSL_CRYPTO)
+			unsigned int md_len = (unsigned int)*size;
+			if (EVP_Digest(buffer, buflen, (unsigned char *)dst, &md_len, evp_md, NULL) != 1) {
+				munmap(buffer, buflen);
+				return -1;
+			}
+			*size = (size_t)md_len;
+#elif defined(HAVE_NSS3)
 			HASH_HashBuf(lib_alg, (unsigned char *)dst, (unsigned char *)buffer, (unsigned int)buflen);
 #elif defined(HAVE_GCRYPT)
 			gcry_md_hash_buffer(lib_alg, dst, (const void *)buffer, buflen);
@@ -201,6 +307,8 @@ struct crapi_digest_ctx {
 	HASHContext *ctx;
 #elif defined(HAVE_GCRYPT)
 	gcry_md_hd_t ctx;
+#elif defined(HAVE_OPENSSL_CRYPTO)
+	EVP_MD_CTX *ctx;
 #endif
 	void *dst;
 	size_t *size;
@@ -215,11 +323,32 @@ static void *crapi_digest_init (void *dst, void *size, crapi_alg_t alg)
 {
 	struct crapi_digest_ctx *ctx = malloc(sizeof(struct crapi_digest_ctx));
 
+#if defined(HAVE_NSS3) || defined(HAVE_GCRYPT)
 	int lib_alg = crapi_alg_t_to_lib_arg(alg);
+#endif
 #if defined(HAVE_NSS3)
 	ctx->ctx  = HASH_Create(lib_alg);
 #elif defined(HAVE_GCRYPT)
 	if (gcry_md_open(&ctx->ctx, lib_alg, 0) != 0) {
+		free(ctx);
+		return NULL;
+	}
+#elif defined(HAVE_OPENSSL_CRYPTO)
+	if (ctx == NULL)
+		return NULL;
+	const EVP_MD *evp_md = crapi_alg_t_to_evp_md(alg);
+	if (evp_md == NULL) {
+		free(ctx);
+		errno = EINVAL;
+		return NULL;
+	}
+	ctx->ctx = EVP_MD_CTX_new();
+	if (ctx->ctx == NULL) {
+		free(ctx);
+		return NULL;
+	}
+	if (EVP_DigestInit_ex(ctx->ctx, evp_md, NULL) != 1) {
+		EVP_MD_CTX_free(ctx->ctx);
 		free(ctx);
 		return NULL;
 	}
@@ -245,6 +374,9 @@ static int crapi_digest_update(struct crapi_digest_ctx *ctx, void *bptr, size_t 
 	HASH_Update(ctx->ctx, (const unsigned char *)bptr, (unsigned int)blen);
 #elif defined(HAVE_GCRYPT)
 	gcry_md_write(ctx->ctx, (const void *)bptr, blen);
+#elif defined(HAVE_OPENSSL_CRYPTO)
+	if (EVP_DigestUpdate(ctx->ctx, (const void *)bptr, blen) != 1)
+		return -1;
 #endif
 	return (0);
 }
@@ -264,6 +396,15 @@ static int crapi_digest_fini(struct crapi_digest_ctx *ctx, crapi_alg_t alg)
 	buffer = (void *)gcry_md_read(ctx->ctx, lib_alg);
 	memcpy(ctx->dst, buffer, gcry_md_get_algo_dlen(lib_alg));
 	gcry_md_close(ctx->ctx);
+#elif defined(HAVE_OPENSSL_CRYPTO)
+	unsigned int md_len = (unsigned int)*ctx->size;
+	if (EVP_DigestFinal_ex(ctx->ctx, (unsigned char *)ctx->dst, &md_len) != 1) {
+		EVP_MD_CTX_free(ctx->ctx);
+		free(ctx);
+		return -1;
+	}
+	*ctx->size = (size_t)md_len;
+	EVP_MD_CTX_free(ctx->ctx);
 #endif
 	free (ctx);
 
@@ -274,6 +415,9 @@ static void crapi_digest_free(struct crapi_digest_ctx *ctx)
 {
 #if defined(HAVE_NSS3)
 	HASH_Destroy(ctx->ctx);
+	free(ctx);
+#elif defined(HAVE_OPENSSL_CRYPTO)
+	EVP_MD_CTX_free(ctx->ctx);
 	free(ctx);
 #endif
 	return;

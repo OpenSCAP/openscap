@@ -47,6 +47,17 @@ int crapi_init (void *unused)
 
         return(0);
 }
+#elif defined(HAVE_OPENSSL_CRYPTO)
+#include <openssl/evp.h>
+#include <openssl/opensslv.h>
+int crapi_init (void *)
+{
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+        /* OpenSSL < 1.1.0 requires explicit digest algorithm registration. */
+        OpenSSL_add_all_digests();
+#endif
+        return 0;
+}
 #else
 int crapi_init (void *unused)
 {
