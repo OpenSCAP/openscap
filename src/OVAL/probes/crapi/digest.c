@@ -148,8 +148,12 @@ static int crapi_digest_fd_stream(int fd, const EVP_MD *evp_md, void *dst, size_
 		EVP_MD_CTX_free(ctx);
 		return -1;
 	}
-	while ((ret = read(fd, buf, sizeof buf)) == sizeof buf)
-		EVP_DigestUpdate(ctx, (const void *)buf, sizeof buf);
+	while ((ret = read(fd, buf, sizeof buf)) == sizeof buf) {
+		if (EVP_DigestUpdate(ctx, (const void *)buf, sizeof buf) != 1) {
+			EVP_MD_CTX_free(ctx);
+			return -1;
+		}
+	}
 	switch (ret) {
 	case 0:
 		break;
@@ -161,7 +165,10 @@ static int crapi_digest_fd_stream(int fd, const EVP_MD *evp_md, void *dst, size_
 			EVP_MD_CTX_free(ctx);
 			return -1;
 		}
-		EVP_DigestUpdate(ctx, (const void *)buf, (size_t)ret);
+		if (EVP_DigestUpdate(ctx, (const void *)buf, (size_t)ret) != 1) {
+			EVP_MD_CTX_free(ctx);
+			return -1;
+		}
 	}
 	unsigned int md_len = (unsigned int)*size;
 	if (EVP_DigestFinal_ex(ctx, (unsigned char *)dst, &md_len) != 1) {
