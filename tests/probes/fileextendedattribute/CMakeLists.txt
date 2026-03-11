@@ -1,3 +1,3 @@
 if(ENABLE_PROBES_UNIX)
-	add_oscap_test("test_probes_fileextendedattribute.sh")
+	add_oscap_test("test_probes_fileextendedattribute.sh" LABELS unix)
 endif()

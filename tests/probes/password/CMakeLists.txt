@@ -1,4 +1,5 @@
 if(ENABLE_PROBES_UNIX)
-	add_oscap_test("test_probes_password.sh")
-	add_oscap_test("test_probes_password_offline.sh")
+	add_oscap_test("test_probes_password.sh" LABELS unix freebsd macos)
+	add_oscap_test("test_probes_password_offline.sh" LABELS unix)
+	add_oscap_test("test_probes_password_offline_fallback.sh" LABELS unix macos)
 endif()
