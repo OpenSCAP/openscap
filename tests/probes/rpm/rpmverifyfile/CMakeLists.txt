@@ -1,5 +1,5 @@
 if(ENABLE_PROBES_LINUX)
-	add_oscap_test("test_probes_rpmverifyfile.sh")
-	add_oscap_test("test_probes_rpmverifyfile_older.sh")
-	add_oscap_test("test_probes_rpmverifyfile_offline.sh")
+	add_oscap_test("test_probes_rpmverifyfile.sh" LABELS linux linux_only)
+	add_oscap_test("test_probes_rpmverifyfile_older.sh" LABELS linux linux_only)
+	add_oscap_test("test_probes_rpmverifyfile_offline.sh" LABELS linux linux_only)
 endif()
