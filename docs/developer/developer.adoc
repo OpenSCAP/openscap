@@ -168,6 +168,34 @@ Now you can execute the following command to run library self-checks:
 $ ctest
 ----
 
+The test suite supports filtering by labels. This is useful for platform-specific
+or subsystem-specific runs:
+
+----
+$ ctest -L probes
+$ ctest -L api
+$ ctest -L unix
+$ ctest -L independent
+$ ctest -L linux_only
+$ ctest -L macos
+$ ctest -L freebsd
+----
+
+Labels are assigned in `tests/CMakeLists.txt` by helper functions:
+
+* `add_oscap_test(script.sh [LABELS ...])`:
+** registers shell-based tests,
+** always adds `shell`,
+** automatically adds a suite label based on the top-level test path
+  (`api`, `probes`, `report`, `sources`, etc.),
+** appends optional explicit labels (for example `unix`, `linux_only`, `macos`).
+
+* `add_oscap_ctest(name COMMAND ... [LABELS ...])`:
+** registers direct CTest commands (for example Python/pytest tests),
+** always adds `ctest`,
+** automatically adds the same top-level suite label,
+** appends optional explicit labels.
+
 Note that using the `--jobs/-j` flag is currently not supported.
 It will cause unexpected test failures.
 See link:https://github.com/OpenSCAP/openscap/issues/2057[#2057] for more details.
@@ -207,6 +235,46 @@ $ docker build --tag openscap_mitre_tests:latest -f Dockerfiles/mitre_tests . &&
 ----
 
 --
+
+== Building on macOS and FreeBSD
+
+OpenSCAP can be built on macOS and FreeBSD with a reduced feature set depending
+on available libraries and enabled probes.
+
+Typical configuration starts with:
+
+----
+$ mkdir -p build && cd build
+$ cmake .. -DENABLE_TESTS=ON -DENABLE_PROBES_LINUX=OFF
+$ make
+----
+
+Notes:
+
+* Linux-specific probes (`ENABLE_PROBES_LINUX`) should be disabled on non-Linux
+  systems unless you are explicitly cross-compiling for Linux.
+* Some tests are intentionally labeled `linux_only` and should be filtered out
+  using CTest labels.
+* On macOS, `SCE` is disabled by default in the main CMake configuration.
+
+=== Recent portability updates
+
+The codebase contains recent portability work for macOS/FreeBSD, including:
+
+* `sysctl` probe support for macOS (`/usr/sbin/sysctl -ae`) and FreeBSD/macOS
+  branching,
+* `memusage` support on macOS via Mach APIs,
+* `XCCDF` target MAC collection on macOS via `AF_LINK`,
+* fallback parser for password probe offline mode on systems without
+  `fgetpwent(3)`,
+* runlevel probe behavior explicitly marked unsupported on macOS/FreeBSD
+  (SysV runlevels are Linux/Solaris specific).
+
+Targeted regression tests for these portability areas are located in:
+
+* `tests/API/probes/test_memusage_platform.sh`
+* `tests/probes/password/test_probes_password_offline_fallback.sh`
+* `tests/probes/sysctl/test_sysctl_probe.sh`
 
 . *Install*
 +
