@@ -6,8 +6,8 @@
 
 #include <stdio.h>
 #include "memusage.h"
+#define OSCAP_TEST_READ_COMMON_SIZET
 #include "memusage.c"
-#define OS_LINUX
 
 static int test_basic()
 {

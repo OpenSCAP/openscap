@@ -62,7 +62,7 @@
 #include "memusage.h"
 #include "bfind.h"
 
-#if defined(OS_LINUX) || defined(__FreeBSD__) || defined(OS_SOLARIS)
+#if defined(OS_LINUX) || defined(__FreeBSD__) || defined(OS_SOLARIS) || defined(OSCAP_TEST_READ_COMMON_SIZET)
 static int read_common_sizet(void *szp, char *strval)
 {
 	char *end;
@@ -87,6 +87,10 @@ static int read_common_sizet(void *szp, char *strval)
 
 	return (0);
 }
+
+#endif
+
+#if defined(OS_LINUX) || defined(__FreeBSD__) || defined(OS_SOLARIS)
 
 struct stat_parser {
 	char *keyword;
