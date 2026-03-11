@@ -70,6 +70,16 @@
 #include <sys/sockio.h>
 #endif
 
+#if defined(OS_APPLE)
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <net/if.h>
+#include <net/if_dl.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#endif
+
 #include "item.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
@@ -466,6 +476,58 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	out2:
 		close(fd);
 	out1:
+		freeifaddrs(ifaddr);
+	}
+#elif defined(OS_APPLE)
+	if (!probe_root) {
+		struct ifaddrs *ifaddr, *ifa;
+		if (getifaddrs(&ifaddr) == -1)
+			return;
+		for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+			int family;
+			char hostip[NI_MAXHOST];
+
+			if (!ifa->ifa_addr)
+				continue;
+			family = ifa->ifa_addr->sa_family;
+
+			if (family == AF_INET || family == AF_INET6) {
+				if (family == AF_INET) {
+					if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+							hostip, sizeof(hostip), NULL, 0, NI_NUMERICHOST))
+						continue;
+				} else {
+					struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)ifa->ifa_addr;
+					if (!inet_ntop(family, &sin6->sin6_addr, hostip, sizeof(hostip)))
+						continue;
+				}
+				xccdf_result_add_target_address(result, hostip);
+				fact = xccdf_target_fact_new();
+				xccdf_target_fact_set_name(fact, family == AF_INET ?
+					"urn:xccdf:fact:asset:identifier:ipv4" :
+					"urn:xccdf:fact:asset:identifier:ipv6");
+				xccdf_target_fact_set_string(fact, hostip);
+				_xccdf_result_add_target_fact_uniq(result, fact);
+			} else if (family == AF_LINK) {
+				/* macOS exposes MAC addresses as AF_LINK entries in getifaddrs */
+				struct sockaddr_dl *sdl = (struct sockaddr_dl *)ifa->ifa_addr;
+				if (sdl->sdl_alen == 6) {
+					unsigned char *mac = (unsigned char *)LLADDR(sdl);
+					char macbuf[20];
+					snprintf(macbuf, sizeof(macbuf),
+						"%02X:%02X:%02X:%02X:%02X:%02X",
+						mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+					fact = xccdf_target_fact_new();
+					xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
+					xccdf_target_fact_set_string(fact, macbuf);
+					_xccdf_result_add_target_fact_uniq(result, fact);
+					fact = xccdf_target_fact_new();
+					xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:mac");
+					xccdf_target_fact_set_string(fact, macbuf);
+					_xccdf_result_add_target_fact_uniq(result, fact);
+				}
+			}
+		}
 		freeifaddrs(ifaddr);
 	}
 #elif defined(OS_WINDOWS)

@@ -468,9 +468,10 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
         _A(rep != NULL);
         return GET_RUNLEVEL(LINUX_DISTRO, req, rep);
 }
-#elif defined(OS_FREEBSD)
+#elif defined(OS_FREEBSD) || defined(OS_APPLE)
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 {
+        /* SysV runlevels are a Linux/Solaris concept; not applicable on BSD/macOS */
         _A(req != NULL);
         _A(rep != NULL);
         return (-1);

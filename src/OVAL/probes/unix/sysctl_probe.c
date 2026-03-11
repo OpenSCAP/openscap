@@ -44,6 +44,16 @@
 #include "common/debug_priv.h"
 
 #define SYSCTL_CMD "/sbin/sysctl -ae"
+#elif defined(OS_APPLE)
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+
+#include "common/debug_priv.h"
+
+/* On macOS sysctl(8) lives under /usr/sbin */
+#define SYSCTL_CMD "/usr/sbin/sysctl -ae"
 #endif
 
 #if defined(OS_LINUX)
@@ -305,7 +315,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
         return (0);
 }
 
-#elif defined(OS_FREEBSD)
+#elif defined(OS_FREEBSD) || defined(OS_APPLE)
 
 int sysctl_probe_offline_mode_supported(void)
 {

@@ -67,6 +67,51 @@
 #include <probe/option.h>
 #include "password_probe.h"
 
+/*
+ * fgetpwent() is a GNU/glibc extension; provide a portable fallback.
+ * This parses a standard /etc/passwd-format file one entry at a time.
+ */
+#ifndef HAVE_FGETPWENT
+static struct passwd *oscap_fgetpwent(FILE *fp)
+{
+	static char line[2048];
+	static struct passwd pw;
+	char *fields[7], *p;
+	int f;
+
+	while (fgets(line, sizeof(line), fp) != NULL) {
+		if (line[0] == '#' || line[0] == '\n')
+			continue;
+		f = 0;
+		p = line;
+		while (f < 7) {
+			fields[f++] = p;
+			p = strchr(p, ':');
+			if (p)
+				*p++ = '\0';
+			else
+				break;
+		}
+		if (f < 7)
+			continue;
+		/* strip trailing newline from shell field */
+		size_t n = strlen(fields[6]);
+		if (n > 0 && fields[6][n - 1] == '\n')
+			fields[6][n - 1] = '\0';
+		pw.pw_name   = fields[0];
+		pw.pw_passwd = fields[1];
+		pw.pw_uid    = (uid_t)atoi(fields[2]);
+		pw.pw_gid    = (gid_t)atoi(fields[3]);
+		pw.pw_gecos  = fields[4];
+		pw.pw_dir    = fields[5];
+		pw.pw_shell  = fields[6];
+		return &pw;
+	}
+	return NULL;
+}
+#define fgetpwent oscap_fgetpwent
+#endif
+
 /* Convenience structure for the results being reported */
 struct result_info {
         const char *username;
