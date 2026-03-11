@@ -227,7 +227,7 @@ endif()
 mark_as_advanced(ENV_PRESENT VALGRIND_PRESENT)
 find_program(ENV_PRESENT env)
 find_program(VALGRIND_PRESENT valgrind)
-find_program(ASCIIDOC_EXECUTABLE asciidoc)
+find_program(ASCIIDOC_EXECUTABLE NAMES asciidoc asciidoctor)
 find_program(SED_EXECUTABLE sed)
 find_program(GIT_EXECUTABLE git)
 
