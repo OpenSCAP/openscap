@@ -50,7 +50,13 @@
 #define GET_VM_ACT_PAGE_COUNT   "vm.stats.vm.v_active_count"
 
 #define BYTES_TO_KIB(x) (x >> 10)
-#endif
+#endif /* OS_FREEBSD */
+
+#if defined(OS_APPLE)
+#include <mach/mach.h>
+#include <sys/sysctl.h>
+#define BYTES_TO_KIB(x) ((x) >> 10)
+#endif /* OS_APPLE */
 
 #include "debug_priv.h"
 #include "memusage.h"
@@ -305,6 +311,32 @@ int oscap_sys_memusage(struct sys_memusage *mu)
 #elif defined(OS_FREEBSD)
 	if (freebsd_sys_memusage(mu))
 		return -1;
+#elif defined(OS_APPLE)
+	{
+		vm_statistics64_data_t vm_stat;
+		mach_msg_type_number_t count = HOST_VM_INFO64_COUNT;
+		vm_size_t page_size;
+		host_page_size(mach_host_self(), &page_size);
+		if (host_statistics64(mach_host_self(), HOST_VM_INFO64,
+		                      (host_info64_t)&vm_stat, &count) != KERN_SUCCESS) {
+			errno = EOPNOTSUPP;
+			return -1;
+		}
+		mu->mu_free     = BYTES_TO_KIB((uint64_t)vm_stat.free_count     * page_size);
+		mu->mu_active   = BYTES_TO_KIB((uint64_t)vm_stat.active_count   * page_size);
+		mu->mu_inactive = BYTES_TO_KIB((uint64_t)vm_stat.inactive_count * page_size);
+		mu->mu_buffers  = 0;
+		mu->mu_cached   = 0;
+		mu->mu_realfree = mu->mu_free + mu->mu_inactive;
+		/* Query total physical RAM via sysctl HW_MEMSIZE */
+		int mib[2] = { CTL_HW, HW_MEMSIZE };
+		uint64_t memsize = 0;
+		size_t len = sizeof(memsize);
+		if (sysctl(mib, 2, &memsize, &len, NULL, 0) == 0)
+			mu->mu_total = BYTES_TO_KIB(memsize);
+		else
+			mu->mu_total = 0;
+	}
 #else
 	errno = EOPNOTSUPP;
 	return -1;
@@ -326,6 +358,24 @@ int oscap_proc_memusage(struct proc_memusage *mu)
 #elif defined(OS_FREEBSD)
 	if (freebsd_proc_memusage(mu))
 		return -1;
+#elif defined(OS_APPLE)
+	{
+		struct task_basic_info info;
+		mach_msg_type_number_t count = TASK_BASIC_INFO_COUNT;
+		if (task_info(mach_task_self(), TASK_BASIC_INFO,
+		              (task_info_t)&info, &count) != KERN_SUCCESS) {
+			errno = EOPNOTSUPP;
+			return -1;
+		}
+		mu->mu_rss   = info.resident_size / 1024;
+		mu->mu_data  = info.virtual_size  / 1024;
+		/* TASK_BASIC_INFO doesn't expose peak RSS; use current as approximation */
+		mu->mu_hwm   = mu->mu_rss;
+		mu->mu_text  = 0;
+		mu->mu_stack = 0;
+		mu->mu_lib   = 0;
+		mu->mu_lock  = 0;
+	}
 #else
 	errno = EOPNOTSUPP;
 	return -1;
