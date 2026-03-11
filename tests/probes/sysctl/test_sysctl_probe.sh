@@ -14,6 +14,9 @@ function perform_test {
 		FreeBSD)
 			$OSCAP oval eval --results $result $srcdir/test_sysctl_probe_freebsd.oval.xml 2>$stderr
 			;;
+		Darwin)
+			$OSCAP oval eval --results $result $srcdir/test_sysctl_probe_freebsd.oval.xml 2>$stderr
+			;;
 		*)
 			$OSCAP oval eval --results $result $srcdir/test_sysctl_probe.oval.xml 2>$stderr
 			;;
@@ -22,6 +25,10 @@ function perform_test {
 	[ ! -s $stderr ]
 	case $(uname) in
 		FreeBSD)
+			assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:sysctl_item/unix-sys:name[text()='kern.hostname']"
+			assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:sysctl_item/unix-sys:value[text()='$hostname']"
+			;;
+		Darwin)
 			assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:sysctl_item/unix-sys:name[text()='kern.hostname']"
 			assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:sysctl_item/unix-sys:value[text()='$hostname']"
 			;;
