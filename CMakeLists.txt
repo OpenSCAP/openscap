@@ -108,6 +108,13 @@ find_package(Ldap)
 find_package(OpenDbx)
 find_package(PCRE2 REQUIRED)
 
+foreach(_perl_cache_var IN ITEMS PERL_INCLUDE_PATH PERL_LIBRARY)
+	if(DEFINED ${_perl_cache_var} AND NOT "${${_perl_cache_var}}" STREQUAL "" AND NOT EXISTS "${${_perl_cache_var}}")
+		message(STATUS "Resetting stale ${_perl_cache_var} cache entry: ${${_perl_cache_var}}")
+		unset(${_perl_cache_var} CACHE)
+	endif()
+endforeach()
+
 find_package(PerlLibs)
 find_package(Popt)
 find_package(Systemd)
