@@ -32,12 +32,12 @@ function test_probes_password {
     tmpdir=$(mktemp -t -d "test_password.XXXXXX")
     mkdir -p "$tmpdir/etc"
     echo "root:x:0:0:root:/root:/bin/bash" > "$tmpdir/etc/passwd"
-    set_chroot_offline_test_mode "$tmpdir"
+    set_offline_chroot_dir "$tmpdir"
 
     $OSCAP oval eval --results $RF $DF
 
-    unset_chroot_offline_test_mode
-    rm -rf $tempdir
+    set_offline_chroot_dir ""
+    rm -rf "$tmpdir"
 
     if [ -f $RF ]; then
         result=$RF
