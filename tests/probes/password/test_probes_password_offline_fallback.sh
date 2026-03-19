@@ -26,9 +26,9 @@ invalid_line_without_separators
 root:x:0:0:root:/root:/bin/bash
 EOF
 
-	set_chroot_offline_test_mode "$tmpdir"
+	set_offline_chroot_dir "$tmpdir"
 	$OSCAP oval eval --results "$RF" "$DF"
-	unset_chroot_offline_test_mode
+	set_offline_chroot_dir ""
 	rm -rf "$tmpdir"
 
 	if [ -f "$RF" ]; then
