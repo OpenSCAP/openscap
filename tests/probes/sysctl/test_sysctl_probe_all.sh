@@ -60,7 +60,7 @@ function perform_test {
 	# on the same line as the <unix-sys:name> element. Match the explicit name
 	# tags so value payloads do not pollute the extracted key list.
 	grep '<unix-sys:name>' "$result" | \
-		xsed -E 's;.*<unix-sys:name>([^<]+)</unix-sys:name>.*;\1;g' | \
+		sed -E 's;.*<unix-sys:name>([^<]+)</unix-sys:name>.*;\1;g' | \
 		sort > "$ourNames"
 
 	echo "Diff (sysctlNames / ourNames): ------"

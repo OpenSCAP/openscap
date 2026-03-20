@@ -339,7 +339,35 @@ make_temp_file() {
 xsed() {
 	case $(uname) in
 		FreeBSD)
-			gsed "$@"
+			if command -v gsed >/dev/null 2>&1; then
+				gsed "$@"
+				return
+			fi
+
+			local inplace=0
+			local arg
+			local transformed=()
+
+			for arg in "$@"; do
+				if [ "$arg" = "-i" ]; then
+					inplace=1
+					continue
+				fi
+
+				# Translate the small subset of GNU sed escapes used by the test
+				# suite so the fallback works with FreeBSD sed too.
+				arg=${arg//\\s/[[:space:]]}
+				arg=${arg//\\S/[^[:space:]]}
+				arg=${arg//\\w/[[:alnum:]_]}
+				arg=${arg//\\W/[^[:alnum:]_]}
+				transformed+=("$arg")
+			done
+
+			if [ $inplace -eq 1 ]; then
+				sed -i '' "${transformed[@]}"
+			else
+				sed "${transformed[@]}"
+			fi
 			;;
 		*)
 			sed "$@"
