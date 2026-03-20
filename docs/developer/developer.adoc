@@ -97,6 +97,12 @@ $ cmake ../
 $ make
 ----
 
+If you reuse an existing build tree after a Perl upgrade or package-manager
+change, CMake may retain stale `PERL_INCLUDE_PATH` or `PERL_LIBRARY` cache
+entries. The top-level build now clears cached Perl paths that no longer exist,
+so rerunning `cmake ../` in the same build directory is usually sufficient.
+If Perl detection still looks wrong, remove `CMakeCache.txt` and reconfigure.
+
 On Ubuntu 18.04 and potentially other distro, the python3 dist-packages path is wrong.
 If the following command:
 
@@ -166,6 +172,15 @@ Now you can execute the following command to run library self-checks:
 
 ----
 $ ctest
+----
+
+For containerized Linux validation, start a local MTA and provide a session
+D-Bus before invoking the full suite so MITRE, `fwupd`, and `systemd`-related
+coverage stays active:
+
+----
+$ postfix start
+$ dbus-run-session -- ctest --output-on-failure
 ----
 
 The test suite supports filtering by labels. This is useful for platform-specific
@@ -255,6 +270,8 @@ Notes:
   systems unless you are explicitly cross-compiling for Linux.
 * Some tests are intentionally labeled `linux_only` and should be filtered out
   using CTest labels.
+* After a successful non-Linux build, `ctest -L macos` or `ctest -L freebsd`
+  provides a quick portability smoke test without pulling in Linux-only cases.
 * On macOS, `SCE` is disabled by default in the main CMake configuration.
 
 === Recent portability updates
@@ -262,19 +279,26 @@ Notes:
 The codebase contains recent portability work for macOS/FreeBSD, including:
 
 * `sysctl` probe support for macOS (`/usr/sbin/sysctl -ae`) and FreeBSD/macOS
-  branching,
+  branching, including parsing of multiline BSD `sysctl -ae` values by treating
+  only valid `name=value` headers as new items,
 * `memusage` support on macOS via Mach APIs,
 * `XCCDF` target MAC collection on macOS via `AF_LINK`,
 * fallback parser for password probe offline mode on systems without
   `fgetpwent(3)`,
+* shadow probe offline mode explicitly marked unsupported on platforms where
+  the Linux-style shadow path does not apply,
 * runlevel probe behavior explicitly marked unsupported on macOS/FreeBSD
   (SysV runlevels are Linux/Solaris specific).
 
 Targeted regression tests for these portability areas are located in:
 
+* `tests/API/XCCDF/unittests/test_xccdf_result_sysinfo_platform.sh`
 * `tests/API/probes/test_memusage_platform.sh`
 * `tests/probes/password/test_probes_password_offline_fallback.sh`
+* `tests/probes/runlevel/test_probes_runlevel_unsupported.sh`
+* `tests/probes/shadow/test_probes_shadow_offline_unsupported.sh`
 * `tests/probes/sysctl/test_sysctl_probe.sh`
+* `tests/probes/sysctl/test_sysctl_probe_all.sh`
 
 . *Install*
 +
@@ -437,4 +461,3 @@ For more information about OpenSCAP library, you can refer to this online
 reference manual: http://static.open-scap.org/openscap-1.2/[OpenSCAP
 reference manual]. This manual is included in a release tarball and can be
 regenerated from project sources by Doxygen documentation system.
-
