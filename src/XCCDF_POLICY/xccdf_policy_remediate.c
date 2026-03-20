@@ -35,6 +35,7 @@
 #include <io.h>
 #else
 #include <unistd.h>
+extern char **environ;
 #endif
 
 #include <libxml/tree.h>
@@ -2068,4 +2069,3 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 
 	return ret;
 }
-
