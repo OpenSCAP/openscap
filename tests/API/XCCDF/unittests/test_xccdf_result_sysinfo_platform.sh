@@ -7,7 +7,7 @@ if [ -n "${CUSTOM_OSCAP+x}" ] ; then
 fi
 
 case "$(uname)" in
-	Darwin) ;;
+	Darwin|FreeBSD) ;;
 	*) exit 255 ;;
 esac
 
