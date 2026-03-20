@@ -41,21 +41,25 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <sys/types.h>
 
 #include "common/debug_priv.h"
 
 #define SYSCTL_CMD "/sbin/sysctl -ae"
+#define SYSCTL_VALUE_MAX (64 * 1024)
 #elif defined(OS_APPLE)
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <sys/types.h>
 
 #include "common/debug_priv.h"
 
 /* On macOS sysctl(8) lives under /usr/sbin */
 #define SYSCTL_CMD "/usr/sbin/sysctl -ae"
+#define SYSCTL_VALUE_MAX (64 * 1024)
 #endif
 
 #if defined(OS_LINUX)
@@ -349,13 +353,25 @@ static int sysctl_parse_line(char *line, char **mib, char **sysval)
 	return 1;
 }
 
-static int sysctl_append_value(char **value, size_t *value_len, const char *line)
+static int sysctl_append_value(char **value, size_t *value_len, const char *line, int *truncated)
 {
-	size_t line_len, new_len;
+	size_t line_len, append_len, new_len;
 	char *new_value;
 
+	if (*truncated)
+		return 0;
+
 	line_len = strlen(line);
-	new_len = *value_len + line_len + (*value_len > 0 ? 1 : 0) + 1;
+	if (*value_len >= SYSCTL_VALUE_MAX) {
+		*truncated = 1;
+		return 0;
+	}
+
+	append_len = line_len;
+	if (*value_len + append_len > SYSCTL_VALUE_MAX)
+		append_len = SYSCTL_VALUE_MAX - *value_len;
+
+	new_len = *value_len + append_len + (*value_len > 0 ? 1 : 0) + 1;
 	new_value = realloc(*value, new_len);
 	if (new_value == NULL)
 		return -1;
@@ -364,8 +380,13 @@ static int sysctl_append_value(char **value, size_t *value_len, const char *line
 	if (*value_len > 0)
 		new_value[(*value_len)++] = '\n';
 
-	memcpy(new_value + *value_len, line, line_len + 1);
-	*value_len += line_len;
+	memcpy(new_value + *value_len, line, append_len);
+	*value_len += append_len;
+	new_value[*value_len] = '\0';
+
+	if (append_len < line_len)
+		*truncated = 1;
+
 	return 0;
 }
 
@@ -526,7 +547,9 @@ int sysctl_probe_offline_mode_supported(void)
 int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         FILE *fp;
-        char output[LINE_MAX];
+	char *output = NULL;
+	size_t output_cap = 0;
+	ssize_t output_len;
         SEXP_t *name_entity, *probe_in;
 	oval_schema_version_t over;
 	int over_cmp;
@@ -534,6 +557,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 	char *current_mib = NULL;
 	char *current_value = NULL;
 	size_t current_value_len = 0;
+	int current_value_truncated = 0;
 
         probe_in    = probe_ctx_getobject(ctx);
         name_entity = probe_obj_getent(probe_in, "name", 1);
@@ -558,7 +582,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
                 return (PROBE_EFATAL);
         }
 
-        while (fgets(output, sizeof(output), fp)) {
+        while ((output_len = getline(&output, &output_cap, fp)) != -1) {
 		char *mib, *sysval, *newline;
 
 		newline = strchr(output, '\n');
@@ -579,17 +603,22 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 			current_mib = strdup(mib);
 			current_value = NULL;
 			current_value_len = 0;
+			current_value_truncated = 0;
 			if (current_mib == NULL) {
 				dE("Failed to allocate new sysctl name buffer");
 				ret = PROBE_ENOENT;
 				goto cleanup;
 			}
 
-			if (sysctl_append_value(&current_value, &current_value_len, sysval) != 0) {
+			if (sysctl_append_value(&current_value, &current_value_len, sysval,
+					       &current_value_truncated) != 0) {
 				dE("Failed to append sysctl value");
 				ret = PROBE_ENOENT;
 				goto cleanup;
 			}
+
+			if (current_value_truncated)
+				dD("Truncated sysctl value for %s to %d bytes", current_mib, SYSCTL_VALUE_MAX);
 
 			continue;
 		}
@@ -597,12 +626,16 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 		if (current_mib == NULL)
 			continue;
 
-		if (sysctl_append_value(&current_value, &current_value_len, output) != 0) {
+		if (sysctl_append_value(&current_value, &current_value_len, output,
+				       &current_value_truncated) != 0) {
 			dE("Failed to append sysctl continuation value");
 			ret = PROBE_ENOENT;
 			goto cleanup;
 		}
-	}
+
+		if (current_value_truncated)
+			dD("Truncated sysctl value for %s to %d bytes", current_mib, SYSCTL_VALUE_MAX);
+        }
 
 	if (current_mib != NULL)
 		ret = sysctl_collect_item(ctx, name_entity, current_mib,
@@ -610,6 +643,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 					  over_cmp);
 
 cleanup:
+	free(output);
 	free(current_mib);
 	free(current_value);
         pclose(fp);
