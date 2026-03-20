@@ -8,7 +8,6 @@
 #include <errno.h>
 
 #include "memusage.h"
-#include "memusage.c"
 
 int main(void)
 {
