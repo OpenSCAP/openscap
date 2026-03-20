@@ -33,10 +33,7 @@
 #include <stdint.h>
 
 #if defined(OS_FREEBSD)
-#include <fcntl.h>
-#include <kvm.h>
 #include <limits.h>
-#include <paths.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -262,33 +259,39 @@ static int freebsd_sys_memusage(struct sys_memusage *mu)
 
 static int freebsd_proc_memusage(struct proc_memusage *mu)
 {
-	int count;
-	kvm_t *kd;
 	pid_t mypid;
-	char errbuf[LINE_MAX];
-	struct kinfo_proc *procinfo;
+	struct kinfo_proc procinfo;
+	size_t size;
+	size_t page_size;
+	int mib[4];
 
 	mypid = getpid();
-	kd = kvm_openfiles(NULL, _PATH_DEVNULL, NULL, O_RDONLY, errbuf);
+	size = sizeof(procinfo);
+	memset(&procinfo, 0, sizeof(procinfo));
+	mib[0] = CTL_KERN;
+	mib[1] = KERN_PROC;
+	mib[2] = KERN_PROC_PID;
+	mib[3] = mypid;
 
-	if (!kd)
+	if (sysctl(mib, 4, &procinfo, &size, NULL, 0) < 0)
 		return -1;
 
-	procinfo = kvm_getprocs(kd, KERN_PROC_PID, mypid, &count);
-
-	if (!procinfo)
+	if (size == 0) {
+		errno = ESRCH;
 		return -1;
+	}
 
-	mu->mu_rss = procinfo->ki_rssize;
-	mu->mu_text = procinfo->ki_tsize;
-	mu->mu_data = procinfo->ki_dsize;
-	mu->mu_stack = procinfo->ki_ssize;
+	page_size = (size_t)getpagesize();
+	mu->mu_rss = BYTES_TO_KIB((uint64_t)procinfo.ki_rssize * page_size);
+	mu->mu_text = BYTES_TO_KIB((uint64_t)procinfo.ki_tsize * page_size);
+	mu->mu_data = BYTES_TO_KIB((uint64_t)procinfo.ki_dsize * page_size);
+	mu->mu_stack = BYTES_TO_KIB((uint64_t)procinfo.ki_ssize * page_size);
 
 	/* ki_swrss is the resident set size before last swap, this
 	 * is the closest approximation to Linux's "VmHWM" which is the
 	 * peak resident set size of the process.
 	 */
-	mu->mu_hwm = procinfo->ki_swrss;
+	mu->mu_hwm = BYTES_TO_KIB((uint64_t)procinfo.ki_swrss * page_size);
 
 	/* Not exposed on FreeBSD */
 	mu->mu_lib = 0;

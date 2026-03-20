@@ -58,3 +58,14 @@ target_include_directories(test_memusage_platform PUBLIC
 	"${CMAKE_SOURCE_DIR}/src/common"
 )
 add_oscap_test("test_memusage_platform.sh" LABELS api probes freebsd macos linux)
+
+add_oscap_test_executable(test_memusage_freebsd_stress
+	"test_memusage_freebsd_stress.c"
+	"${CMAKE_SOURCE_DIR}/src/common/memusage.c"
+	"${CMAKE_SOURCE_DIR}/src/common/bfind.c"
+)
+target_include_directories(test_memusage_freebsd_stress PUBLIC
+	"${CMAKE_SOURCE_DIR}/src/common"
+)
+target_link_libraries(test_memusage_freebsd_stress Threads::Threads)
+add_oscap_test("test_memusage_freebsd_stress.sh" LABELS api probes freebsd)
