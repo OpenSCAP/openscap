@@ -369,10 +369,105 @@ static int sysctl_append_value(char **value, size_t *value_len, const char *line
 	return 0;
 }
 
+static char *sysctl_sanitize_single_value(const char *value)
+{
+	size_t i, in_len, out_len = 0;
+	char *sanitized;
+
+	in_len = strlen(value);
+	sanitized = malloc(in_len + 1);
+	if (sanitized == NULL)
+		return NULL;
+
+	for (i = 0; i < in_len; ++i) {
+		unsigned char ch = (unsigned char) value[i];
+
+		if (!isprint(ch) && !isspace(ch))
+			continue;
+
+		sanitized[out_len++] = value[i];
+	}
+
+	while (out_len > 0 && sanitized[out_len - 1] == '\n')
+		--out_len;
+
+	sanitized[out_len] = '\0';
+	return sanitized;
+}
+
+static int sysctl_sanitize_multi_value(const char *value, char **buffer_out, char ***values_out)
+{
+	size_t i, in_len, value_count = 0, value_index = 0;
+	int in_value = 0;
+	char *buffer;
+	char **values;
+
+	in_len = strlen(value);
+	buffer = malloc(in_len + 1);
+	if (buffer == NULL)
+		return -1;
+
+	memcpy(buffer, value, in_len + 1);
+
+	for (i = 0; i < in_len; ++i) {
+		unsigned char ch = (unsigned char) buffer[i];
+
+		if ((!isprint(ch) && !isspace(ch)) || buffer[i] == '\n')
+			buffer[i] = '\0';
+
+		if (buffer[i] == '\0') {
+			in_value = 0;
+			continue;
+		}
+
+		if (!in_value) {
+			++value_count;
+			in_value = 1;
+		}
+	}
+
+	if (value_count == 0)
+		value_count = 1;
+
+	values = calloc(value_count + 1, sizeof(char *));
+	if (values == NULL) {
+		free(buffer);
+		return -1;
+	}
+
+	if (buffer[0] == '\0' && value_count == 1) {
+		values[0] = buffer;
+		*buffer_out = buffer;
+		*values_out = values;
+		return 0;
+	}
+
+	in_value = 0;
+	for (i = 0; i < in_len; ++i) {
+		if (buffer[i] == '\0') {
+			in_value = 0;
+			continue;
+		}
+
+		if (!in_value) {
+			values[value_index++] = buffer + i;
+			in_value = 1;
+		}
+	}
+
+	*buffer_out = buffer;
+	*values_out = values;
+	return 0;
+}
+
 static int sysctl_collect_item(probe_ctx *ctx, SEXP_t *name_entity,
-			       const char *mib, const char *sysval)
+			       const char *mib, const char *sysval, int over_cmp)
 {
 	SEXP_t *item, *se_mib;
+	char *sanitized_value = NULL;
+	char *sanitized_buffer = NULL;
+	char **sanitized_values = NULL;
+	int ret = 0;
 
 	se_mib = SEXP_string_new(mib, strlen(mib));
 	if (!se_mib) {
@@ -381,21 +476,46 @@ static int sysctl_collect_item(probe_ctx *ctx, SEXP_t *name_entity,
 	}
 
 	if (probe_entobj_cmp(name_entity, se_mib) == OVAL_RESULT_TRUE) {
-		item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
-					 "name", OVAL_DATATYPE_SEXP, se_mib,
-					 "value", OVAL_DATATYPE_STRING, sysval,
-					 NULL);
+		if (over_cmp >= 0) {
+			if (sysctl_sanitize_multi_value(sysval, &sanitized_buffer, &sanitized_values) != 0) {
+				dE("Failed to sanitize sysctl value list");
+				ret = PROBE_ENOENT;
+				goto cleanup;
+			}
+
+			item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
+						 "name", OVAL_DATATYPE_SEXP, se_mib,
+						 "value", OVAL_DATATYPE_STRING_M, sanitized_values,
+						 NULL);
+		} else {
+			sanitized_value = sysctl_sanitize_single_value(sysval);
+			if (sanitized_value == NULL) {
+				dE("Failed to sanitize sysctl value");
+				ret = PROBE_ENOENT;
+				goto cleanup;
+			}
+
+			item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
+						 "name", OVAL_DATATYPE_SEXP, se_mib,
+						 "value", OVAL_DATATYPE_STRING, sanitized_value,
+						 NULL);
+		}
+
 		if (!item) {
 			dE("probe_item_create() returned a null item");
-			SEXP_free(se_mib);
-			return PROBE_ENOENT;
+			ret = PROBE_ENOENT;
+			goto cleanup;
 		}
 
 		probe_item_collect(ctx, item);
 	}
 
+cleanup:
+	free(sanitized_value);
+	free(sanitized_buffer);
+	free(sanitized_values);
 	SEXP_free(se_mib);
-	return 0;
+	return ret;
 }
 
 int sysctl_probe_offline_mode_supported(void)
@@ -408,6 +528,8 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
         FILE *fp;
         char output[LINE_MAX];
         SEXP_t *name_entity, *probe_in;
+	oval_schema_version_t over;
+	int over_cmp;
 	int ret = 0;
 	char *current_mib = NULL;
 	char *current_value = NULL;
@@ -415,6 +537,8 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 
         probe_in    = probe_ctx_getobject(ctx);
         name_entity = probe_obj_getent(probe_in, "name", 1);
+	over        = probe_obj_get_platform_schema_version(probe_in);
+	over_cmp    = oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10));
 
         if (name_entity == NULL) {
                 dE("Missing \"name\" entity in the input object");
@@ -444,7 +568,8 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 		if (sysctl_parse_line(output, &mib, &sysval)) {
 			if (current_mib != NULL) {
 				ret = sysctl_collect_item(ctx, name_entity, current_mib,
-							  current_value != NULL ? current_value : "");
+							  current_value != NULL ? current_value : "",
+							  over_cmp);
 				if (ret != 0)
 					goto cleanup;
 			}
@@ -477,11 +602,12 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 			ret = PROBE_ENOENT;
 			goto cleanup;
 		}
-        }
+	}
 
 	if (current_mib != NULL)
 		ret = sysctl_collect_item(ctx, name_entity, current_mib,
-					  current_value != NULL ? current_value : "");
+					  current_value != NULL ? current_value : "",
+					  over_cmp);
 
 cleanup:
 	free(current_mib);
