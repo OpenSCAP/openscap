@@ -51,6 +51,7 @@ add_oscap_test("test_memusage.sh" LABELS api probes)
 
 add_oscap_test_executable(test_memusage_platform
 	"test_memusage_platform.c"
+	"${CMAKE_SOURCE_DIR}/src/common/memusage.c"
 	"${CMAKE_SOURCE_DIR}/src/common/bfind.c"
 )
 target_include_directories(test_memusage_platform PUBLIC
