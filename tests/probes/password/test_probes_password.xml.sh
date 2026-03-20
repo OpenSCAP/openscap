@@ -11,10 +11,11 @@ if which systemctl &>/dev/null && \
 	grep -Ev '^(root|nobody)' /etc/passwd > "$passwd_file"
 else
 	case `uname` in
-		# The first two lines of /etc/passwd on FreeBSD are not account entries
-		FreeBSD)
-			sed 1,2d /etc/passwd > $passwd_file
+		# BSD passwd files may contain comments that are ignored by getpwent(3).
+		Darwin|FreeBSD)
+			grep -Ev '^(#|$)' /etc/passwd > "$passwd_file"
 			;;
+		# Fall back to the raw passwd file elsewhere.
 		*)
 			cp /etc/passwd "$passwd_file"
 			;;
@@ -33,10 +34,30 @@ function getField {
 	    echo $LINE | awk -F':' '{print $2}'
 	    ;;
 	'user_id' )
-	    echo $LINE | awk -F':' '{print $3}'
+	    case `uname` in
+		FreeBSD)
+		    id -u "`echo $LINE | awk -F':' '{print $1}'`"
+			;;
+		Darwin)
+		    id -u "`echo $LINE | awk -F':' '{print $1}'`"
+			;;
+		*)
+		    echo $LINE | awk -F':' '{print $3}'
+		    ;;
+	    esac
 	    ;;
 	'group_id' )
-	    echo $LINE | awk -F':' '{print $4}'
+	    case `uname` in
+		FreeBSD)
+		    id -g "`echo $LINE | awk -F':' '{print $1}'`"
+		    ;;
+		Darwin)
+		    id -g "`echo $LINE | awk -F':' '{print $1}'`"
+		    ;;
+		*)
+		    echo $LINE | awk -F':' '{print $4}'
+		    ;;
+	    esac
 	    ;;
 	'gcos' )
 	    echo $LINE | awk -F':' '{gsub(/&/,"&amp;",$5); print $5}'
