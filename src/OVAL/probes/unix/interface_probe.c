@@ -298,8 +298,10 @@ static void get_flags(const struct ifaddrs *ifa, char ***fp) {
                 if (ifa->ifa_flags & IFF_RENAMING)
                         flags_buf[i++] = "RENAMING";
 
+#ifdef IFF_NOGROUP
                 if (ifa->ifa_flags & IFF_NOGROUP)
                         flags_buf[i++] = "NOGROUP";
+#endif
 	}
 
 	flags_buf[i] = NULL;

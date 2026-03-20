@@ -34,10 +34,16 @@ function perform_test {
 
 	case $(uname) in
 		FreeBSD)
-			sysctl -aN 2> /dev/null > "$sysctlNames"
+			sysctl -ae 2> /dev/null | \
+				grep -E '^[[:alpha:]][[:alnum:]_.%-]*=' | \
+				cut -d "=" -f 1 | \
+				sort -u > "$sysctlNames"
 			;;
 		Darwin)
-			sysctl -aN 2> /dev/null > "$sysctlNames"
+			sysctl -ae 2> /dev/null | \
+				grep -E '^[[:alpha:]][[:alnum:]_.%-]*=' | \
+				cut -d "=" -f 1 | \
+				sort -u > "$sysctlNames"
 			;;
 		Linux)
 			# sysctl has duplicities in output
@@ -50,7 +56,12 @@ function perform_test {
 			;;
 	esac
 
-	grep unix-sys:name "$result" | xsed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
+	# Some platforms emit large values (for example FreeBSD's kern.geom.confxml)
+	# on the same line as the <unix-sys:name> element. Match the explicit name
+	# tags so value payloads do not pollute the extracted key list.
+	grep '<unix-sys:name>' "$result" | \
+		xsed -E 's;.*<unix-sys:name>([^<]+)</unix-sys:name>.*;\1;g' | \
+		sort > "$ourNames"
 
 	echo "Diff (sysctlNames / ourNames): ------"
 	diff "$sysctlNames" "$ourNames"

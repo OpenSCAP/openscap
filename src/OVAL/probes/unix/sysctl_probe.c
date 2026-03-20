@@ -36,6 +36,7 @@
 #include "sysctl_probe.h"
 
 #if defined(OS_FREEBSD)
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -45,6 +46,7 @@
 
 #define SYSCTL_CMD "/sbin/sysctl -ae"
 #elif defined(OS_APPLE)
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -317,6 +319,85 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 
 #elif defined(OS_FREEBSD) || defined(OS_APPLE)
 
+static int sysctl_name_char(int ch)
+{
+	return isalnum((unsigned char) ch) || ch == '.' || ch == '_' ||
+		ch == '%' || ch == '-';
+}
+
+static int sysctl_parse_line(char *line, char **mib, char **sysval)
+{
+	char *sep;
+	size_t i, mib_len;
+
+	sep = strchr(line, '=');
+	if (sep == NULL)
+		return 0;
+
+	mib_len = (size_t)(sep - line);
+	if (mib_len == 0 || !isalpha((unsigned char) line[0]))
+		return 0;
+
+	for (i = 0; i < mib_len; ++i) {
+		if (!sysctl_name_char(line[i]))
+			return 0;
+	}
+
+	*sep = '\0';
+	*mib = line;
+	*sysval = sep + 1;
+	return 1;
+}
+
+static int sysctl_append_value(char **value, size_t *value_len, const char *line)
+{
+	size_t line_len, new_len;
+	char *new_value;
+
+	line_len = strlen(line);
+	new_len = *value_len + line_len + (*value_len > 0 ? 1 : 0) + 1;
+	new_value = realloc(*value, new_len);
+	if (new_value == NULL)
+		return -1;
+
+	*value = new_value;
+	if (*value_len > 0)
+		new_value[(*value_len)++] = '\n';
+
+	memcpy(new_value + *value_len, line, line_len + 1);
+	*value_len += line_len;
+	return 0;
+}
+
+static int sysctl_collect_item(probe_ctx *ctx, SEXP_t *name_entity,
+			       const char *mib, const char *sysval)
+{
+	SEXP_t *item, *se_mib;
+
+	se_mib = SEXP_string_new(mib, strlen(mib));
+	if (!se_mib) {
+		dE("Failed to allocate new SEXP_string for se_mib");
+		return PROBE_ENOENT;
+	}
+
+	if (probe_entobj_cmp(name_entity, se_mib) == OVAL_RESULT_TRUE) {
+		item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
+					 "name", OVAL_DATATYPE_SEXP, se_mib,
+					 "value", OVAL_DATATYPE_STRING, sysval,
+					 NULL);
+		if (!item) {
+			dE("probe_item_create() returned a null item");
+			SEXP_free(se_mib);
+			return PROBE_ENOENT;
+		}
+
+		probe_item_collect(ctx, item);
+	}
+
+	SEXP_free(se_mib);
+	return 0;
+}
+
 int sysctl_probe_offline_mode_supported(void)
 {
         return PROBE_OFFLINE_NONE;
@@ -326,11 +407,11 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         FILE *fp;
         char output[LINE_MAX];
-        const char* SEP = "=";
-        char* mib;
-        char* sysval;
-        SEXP_t *se_mib;
         SEXP_t *name_entity, *probe_in;
+	int ret = 0;
+	char *current_mib = NULL;
+	char *current_value = NULL;
+	size_t current_value_len = 0;
 
         probe_in    = probe_ctx_getobject(ctx);
         name_entity = probe_obj_getent(probe_in, "name", 1);
@@ -354,50 +435,59 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
         }
 
         while (fgets(output, sizeof(output), fp)) {
-                char *strp;
-                mib = strtok_r(output, SEP, &strp);
-                sysval = strtok_r(NULL, SEP, &strp);
+		char *mib, *sysval, *newline;
 
-                if (!mib)
-                        continue;
+		newline = strchr(output, '\n');
+		if (newline != NULL)
+			*newline = '\0';
 
-                if (!sysval)
-                        continue;
+		if (sysctl_parse_line(output, &mib, &sysval)) {
+			if (current_mib != NULL) {
+				ret = sysctl_collect_item(ctx, name_entity, current_mib,
+							  current_value != NULL ? current_value : "");
+				if (ret != 0)
+					goto cleanup;
+			}
 
-                se_mib = SEXP_string_new(mib, strlen(mib));
+			free(current_mib);
+			free(current_value);
+			current_mib = strdup(mib);
+			current_value = NULL;
+			current_value_len = 0;
+			if (current_mib == NULL) {
+				dE("Failed to allocate new sysctl name buffer");
+				ret = PROBE_ENOENT;
+				goto cleanup;
+			}
 
-                if (!se_mib) {
-                        dE("Failed to allocate new SEXP_string for se_mib");
-                        pclose(fp);
-                        return (PROBE_ENOENT);
-                }
+			if (sysctl_append_value(&current_value, &current_value_len, sysval) != 0) {
+				dE("Failed to append sysctl value");
+				ret = PROBE_ENOENT;
+				goto cleanup;
+			}
 
-                /* Remove newline */
-                sysval[strlen(sysval)-1] = '\0';
+			continue;
+		}
 
-                if (probe_entobj_cmp(name_entity, se_mib) == OVAL_RESULT_TRUE) {
-                        SEXP_t *item;
+		if (current_mib == NULL)
+			continue;
 
-                        item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
-                                                "name", OVAL_DATATYPE_SEXP, se_mib,
-                                                "value", OVAL_DATATYPE_STRING, sysval,
-                                                NULL);
-
-                        if (!item) {
-                                dE("probe_item_create() returned a null item");
-                                pclose(fp);
-                                SEXP_free(se_mib);
-                                return (PROBE_ENOENT);
-                        }
-
-                        probe_item_collect(ctx, item);
-                }
-
-                SEXP_free(se_mib);
+		if (sysctl_append_value(&current_value, &current_value_len, output) != 0) {
+			dE("Failed to append sysctl continuation value");
+			ret = PROBE_ENOENT;
+			goto cleanup;
+		}
         }
 
+	if (current_mib != NULL)
+		ret = sysctl_collect_item(ctx, name_entity, current_mib,
+					  current_value != NULL ? current_value : "");
+
+cleanup:
+	free(current_mib);
+	free(current_value);
         pclose(fp);
-        return (0);
+        return ret;
 }
 
 #else
