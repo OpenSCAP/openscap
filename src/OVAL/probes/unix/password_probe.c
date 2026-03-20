@@ -49,6 +49,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <pwd.h>
 #include <paths.h>
 #if defined(OS_APPLE)
@@ -72,14 +73,43 @@
  * This parses a standard /etc/passwd-format file one entry at a time.
  */
 #ifndef HAVE_FGETPWENT
+static int oscap_parse_passwd_id(const char *field, uintmax_t max_value,
+				 uintmax_t *parsed_value)
+{
+	char *endptr;
+	uintmax_t value;
+
+	errno = 0;
+	value = strtoumax(field, &endptr, 10);
+	if (errno != 0 || endptr == field || *endptr != '\0' || value > max_value)
+		return -1;
+
+	*parsed_value = value;
+	return 0;
+}
+
 static struct passwd *oscap_fgetpwent(FILE *fp)
 {
 	static char line[2048];
 	static struct passwd pw;
-	char *fields[7], *p;
+	char *fields[7], *newline, *line_end, *p;
+	uintmax_t parsed_uid, parsed_gid;
 	int f;
 
 	while (fgets(line, sizeof(line), fp) != NULL) {
+		newline = memchr(line, '\n', sizeof(line) - 1);
+		line_end = memchr(line, '\0', sizeof(line));
+		if (newline != NULL)
+			*newline = '\0';
+		else if (line_end == &line[sizeof(line) - 1]) {
+			int ch;
+
+			/* Skip truncated records instead of parsing partial passwd entries. */
+			while ((ch = fgetc(fp)) != '\n' && ch != EOF)
+				;
+			continue;
+		}
+
 		if (line[0] == '#' || line[0] == '\n')
 			continue;
 		f = 0;
@@ -94,14 +124,13 @@ static struct passwd *oscap_fgetpwent(FILE *fp)
 		}
 		if (f < 7)
 			continue;
-		/* strip trailing newline from shell field */
-		size_t n = strlen(fields[6]);
-		if (n > 0 && fields[6][n - 1] == '\n')
-			fields[6][n - 1] = '\0';
+		if (oscap_parse_passwd_id(fields[2], (uintmax_t)(uid_t)-1, &parsed_uid) != 0 ||
+		    oscap_parse_passwd_id(fields[3], (uintmax_t)(gid_t)-1, &parsed_gid) != 0)
+			continue;
 		pw.pw_name   = fields[0];
 		pw.pw_passwd = fields[1];
-		pw.pw_uid    = (uid_t)atoi(fields[2]);
-		pw.pw_gid    = (gid_t)atoi(fields[3]);
+		pw.pw_uid    = (uid_t)parsed_uid;
+		pw.pw_gid    = (gid_t)parsed_gid;
 		pw.pw_gecos  = fields[4];
 		pw.pw_dir    = fields[5];
 		pw.pw_shell  = fields[6];
