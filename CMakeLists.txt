@@ -212,7 +212,6 @@ check_function_exists(memalign HAVE_MEMALIGN)
 check_function_exists(fts_open HAVE_FTS_OPEN)
 check_function_exists(strsep HAVE_STRSEP)
 check_function_exists(strptime HAVE_STRPTIME)
-check_function_exists(fgetpwent HAVE_FGETPWENT)
 
 check_include_file(syslog.h HAVE_SYSLOG_H)
 check_include_file(stdio_ext.h HAVE_STDIO_EXT_H)
