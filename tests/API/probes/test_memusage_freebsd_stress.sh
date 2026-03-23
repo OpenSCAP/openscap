@@ -2,7 +2,7 @@
 
 . $builddir/tests/test_common.sh
 
-if [ "$(uname)" != "FreeBSD" ] ; then
+if [[ "$(uname)" != "FreeBSD" ]] ; then
 	exit 255
 fi
 

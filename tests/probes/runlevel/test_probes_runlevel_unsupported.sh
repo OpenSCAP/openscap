@@ -14,7 +14,7 @@ function test_probes_runlevel_unsupported {
 
 	local definition="${top_srcdir}/tests/oval_details/runlevel.oval.xml"
 	local results="results_unsupported.xml"
-	[ -f "$results" ] && rm -f "$results"
+	[[ -f "$results" ]] && rm -f "$results"
 
 	$OSCAP oval eval --results "$results" "$definition"
 
