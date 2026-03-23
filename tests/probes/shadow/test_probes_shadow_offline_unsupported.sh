@@ -14,7 +14,7 @@ function test_probes_shadow_offline_unsupported {
 
 	local definition="${srcdir}/test_probes_shadow_offline.xml"
 	local results="results_unsupported.xml"
-	[ -f "$results" ] && rm -f "$results"
+	[[ -f "$results" ]] && rm -f "$results"
 
 	tmpdir=$(make_temp_dir /tmp "test_offline_mode_shadow_unsupported")
 	mkdir -p "${tmpdir}/etc"

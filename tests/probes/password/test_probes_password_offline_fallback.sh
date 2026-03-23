@@ -13,9 +13,9 @@ function test_probes_password_offline_fallback {
 		*) return 255 ;;
 	esac
 
-	local DF="${srcdir}/test_probes_password_offline.xml"
-	local RF="results.xml"
-	[ -f "$RF" ] && rm -f "$RF"
+	local definition_file="${srcdir}/test_probes_password_offline.xml"
+	local results_file="results.xml"
+	[[ -f "$results_file" ]] && rm -f "$results_file"
 
 	tmpdir=$(mktemp -t -d "test_password_fallback.XXXXXX")
 	mkdir -p "$tmpdir/etc"
@@ -27,12 +27,12 @@ root:x:0:0:root:/root:/bin/bash
 EOF
 
 	set_offline_chroot_dir "$tmpdir"
-	$OSCAP oval eval --results "$RF" "$DF"
+		$OSCAP oval eval --results "$results_file" "$definition_file"
 	set_offline_chroot_dir ""
 	rm -rf "$tmpdir"
 
-	if [ -f "$RF" ]; then
-		result="$RF"
+	if [[ -f "$results_file" ]]; then
+		result="$results_file"
 		assert_exists 1 'oval_results/results/system/tests/test[@test_id="oval:1:tst:1"][@result="true"]'
 	else
 		return 1

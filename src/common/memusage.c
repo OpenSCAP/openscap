@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
@@ -60,29 +61,24 @@
 #include "bfind.h"
 
 #if defined(OS_LINUX) || defined(__FreeBSD__) || defined(OS_SOLARIS) || defined(OSCAP_TEST_READ_COMMON_SIZET)
-static int read_common_sizet(void *szp, char *strval)
+static int read_common_sizet(void *szp, const char *strval)
 {
 	char *end;
+	long long value;
 
 	if (szp == NULL || strval == NULL) {
 		return -1;
 	}
 
-	end = strchr(strval, ' ');
-
-	if (end == NULL)
-		return (-1);
-
-	*end = '\0';
-
 	errno = 0;
-	*(size_t *)szp = strtoll(strval, NULL, 10);
+	value = strtoll(strval, &end, 10);
 
-	if (errno == EINVAL ||
-	    errno == ERANGE)
-		return (-1);
+	if (end == strval || !isspace((unsigned char)*end) ||
+	    errno == EINVAL || errno == ERANGE || value < 0)
+		return -1;
 
-	return (0);
+	*(size_t *)szp = (size_t)value;
+	return 0;
 }
 
 #endif
@@ -91,7 +87,7 @@ static int read_common_sizet(void *szp, char *strval)
 
 struct stat_parser {
 	char *keyword;
-	int (*storval)(void *, char *);
+	int (*storval)(void *, const char *);
 	ptrdiff_t offset;
 };
 

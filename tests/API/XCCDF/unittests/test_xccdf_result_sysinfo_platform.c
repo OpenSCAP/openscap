@@ -27,7 +27,7 @@ int main(void)
 	facts = xccdf_result_get_target_facts(result);
 
 	while (xccdf_target_fact_iterator_has_more(facts)) {
-		struct xccdf_target_fact *fact = xccdf_target_fact_iterator_next(facts);
+		const struct xccdf_target_fact *fact = xccdf_target_fact_iterator_next(facts);
 		const char *name = xccdf_target_fact_get_name(fact);
 
 		if (name == NULL)
