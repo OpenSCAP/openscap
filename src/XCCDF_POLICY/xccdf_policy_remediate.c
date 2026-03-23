@@ -35,7 +35,6 @@
 #include <io.h>
 #else
 #include <unistd.h>
-extern char **environ;
 #endif
 
 #include <libxml/tree.h>
@@ -413,6 +412,10 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 #if defined(unix) || defined(__unix__) || defined(__unix)
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
+#ifndef OS_WINDOWS
+	extern char **environ;
+#endif
+
 	if (rr == NULL) {
 		return 1;
 	}
