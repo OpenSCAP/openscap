@@ -5,11 +5,14 @@
 #endif
 
 #include <errno.h>
+#if defined(OS_FREEBSD)
 #include <pthread.h>
+#endif
 #include <stdio.h>
 
 #include "memusage.h"
 
+#if defined(OS_FREEBSD)
 #define STRESS_THREADS 4
 #define STRESS_ITERATIONS 2000
 
@@ -34,6 +37,7 @@ static void *worker(void *arg)
 	result->err = 0;
 	return NULL;
 }
+#endif
 
 int main(void)
 {

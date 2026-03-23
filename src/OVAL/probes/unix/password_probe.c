@@ -72,7 +72,7 @@
  * fgetpwent() is a GNU/glibc extension; provide a portable fallback.
  * This parses a standard /etc/passwd-format file one entry at a time.
  */
-#ifndef HAVE_FGETPWENT
+#if defined(OS_APPLE) || defined(OS_FREEBSD)
 static int oscap_parse_passwd_id(const char *field, uintmax_t max_value,
 				 uintmax_t *parsed_value)
 {
