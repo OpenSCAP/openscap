@@ -76,6 +76,10 @@ function getField {
 	'login_shell' )
 	    echo "$line" | awk -F':' '{print $7}'
 	    ;;
+	* )
+	    echo "Unexpected field: $field_name" >&2
+	    return 1
+	    ;;
     esac
 }
 
