@@ -110,7 +110,7 @@ static struct passwd *oscap_fgetpwent(FILE *fp)
 			continue;
 		}
 
-		if (line[0] == '#' || line[0] == '\n')
+		if (line[0] == '#')
 			continue;
 		f = 0;
 		p = line;
