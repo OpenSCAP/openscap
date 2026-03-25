@@ -370,8 +370,8 @@ int oscap_proc_memusage(struct proc_memusage *mu)
 			errno = EOPNOTSUPP;
 			return -1;
 		}
-		mu->mu_rss   = info.resident_size / 1024;
-		mu->mu_data  = info.virtual_size  / 1024;
+		mu->mu_rss   = BYTES_TO_KIB(info.resident_size);
+		mu->mu_data  = BYTES_TO_KIB(info.virtual_size);
 		/* TASK_BASIC_INFO doesn't expose peak RSS; use current as approximation */
 		mu->mu_hwm   = mu->mu_rss;
 		mu->mu_text  = 0;
