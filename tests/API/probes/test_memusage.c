@@ -29,11 +29,11 @@ static int test_no_unit()
 
 static int test_invalid_number()
 {
-	size_t size;
+	size_t size = 0;
 	char *strval = strdup("www kB\n");
 	int ret = read_common_sizet(&size, strval);
 	free(strval);
-	return (size == 0 && ret == 0);
+	return (ret == -1);
 }
 
 static int test_errno()
