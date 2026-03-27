@@ -21,6 +21,7 @@ assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R2"]/result[text()="pass"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="pass"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4"]/result[text()="notselected"]'
+grep "xccdf-1.2:" $tailoring
 
 # select additional rules R3, R4
 python3 $autotailor --id-namespace "com.example.www" --select R3 --select R4 $ds $original_profile > $tailoring
