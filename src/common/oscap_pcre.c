@@ -43,9 +43,9 @@ struct oscap_pcre {
 };
 
 
-static inline int _oscap_pcre_opts_to_pcre(oscap_pcre_options_t opts)
+static inline uint32_t _oscap_pcre_opts_to_pcre(oscap_pcre_options_t opts)
 {
-	int res = 0;
+	uint32_t res = 0;
 	if (opts & OSCAP_PCRE_OPTS_UTF8)
 		res |= PCRE2_UTF;
 	if (opts & OSCAP_PCRE_OPTS_MULTILINE)
@@ -131,7 +131,7 @@ void oscap_pcre_set_match_limit_recursion(oscap_pcre_t *opcre, unsigned long lim
 }
 
 int oscap_pcre_exec(const oscap_pcre_t *opcre, const char *subject,
-                    int length, int startoffset, oscap_pcre_options_t options,
+                    size_t length, size_t startoffset, oscap_pcre_options_t options,
                     int *ovector, int ovecsize)
 {
 	int rc = 0;
