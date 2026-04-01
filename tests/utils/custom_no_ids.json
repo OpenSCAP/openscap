@@ -1,0 +1,12 @@
+{
+  "profiles": [
+    {
+      "title": "JSON Tailored Profile P11",
+      "rules": {
+        "R3": {
+          "evaluate": true
+        }
+      }
+    }
+  ]
+}

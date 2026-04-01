@@ -40,6 +40,24 @@
           "evaluate": true
         }
       }
+    },
+    {
+      "id": "JSON_P12",
+      "title": "JSON Custom profile",
+      "rules": {
+        "R3": {
+          "evaluate": true
+        }
+      }
+    },
+    {
+      "title": "JSON Custom profile with no given id",
+      "base_profile_id": "P1",
+      "rules": {
+        "R3": {
+          "evaluate": true
+        }
+      }
     }
   ]
 }
