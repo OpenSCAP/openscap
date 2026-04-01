@@ -244,12 +244,30 @@ static int ds_sds_register_xmlDoc(struct ds_sds_session *session, xmlDoc* doc, x
 		return -1;
 	}
 
-	struct oscap_source *component_source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
+	xmlChar *xml_buf = NULL;
+	int buf_size = 0;
+	xmlDocDumpMemory(new_doc, &xml_buf, &buf_size);
+	xmlFreeDoc(new_doc);
+	if (xml_buf == NULL || buf_size <= 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to serialize extracted component '%s'", relative_filepath);
+		xmlFree(xml_buf);
+		return -1;
+	}
+
+	char *buf = malloc((size_t)buf_size);
+	if (buf == NULL) {
+		xmlFree(xml_buf);
+		return -1;
+	}
+	memcpy(buf, xml_buf, (size_t)buf_size);
+	xmlFree(xml_buf);
+
+	struct oscap_source *component_source = oscap_source_new_take_memory(buf, (size_t)buf_size, relative_filepath);
 
 	if (ds_sds_session_register_component_source(session, relative_filepath, component_source) != 0) {
 		oscap_source_free(component_source);
 	}
-	return 0; // TODO: Return value of ds_sds_session_register_component_source(). (commit message)
+	return 0;
 }
 
 static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc, xmlNodePtr component_inner_root, const char* component_id, const char* target_filename_dirname, const char* relative_filepath)

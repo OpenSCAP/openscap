@@ -25,6 +25,7 @@
 #endif
 
 #include <string.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #ifdef OS_WINDOWS
 #include <io.h>
@@ -163,6 +164,15 @@ void oscap_source_free_xmlDoc(struct oscap_source *source)
 	}
 }
 
+void oscap_source_free_memory(struct oscap_source *source)
+{
+	if (source != NULL) {
+		free(source->origin.memory);
+		source->origin.memory = NULL;
+		source->origin.memory_size = 0;
+	}
+}
+
 /**
  * Returns human readable description of oscap_source origin
  */
@@ -187,17 +197,80 @@ xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
 	return reader;
 }
 
+xmlTextReader *oscap_source_get_streaming_xmlTextReader(struct oscap_source *source)
+{
+	if (source->xml.doc != NULL) {
+		return oscap_source_get_xmlTextReader(source);
+	}
+
+	if (source->origin.memory != NULL) {
+		if (bz2_memory_is_bzip(source->origin.memory, source->origin.memory_size)) {
+			return oscap_source_get_xmlTextReader(source);
+		}
+		xmlTextReader *reader = xmlReaderForMemory(source->origin.memory,
+			source->origin.memory_size, NULL, NULL, 0);
+		if (reader == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Unable to create streaming xmlTextReader for %s",
+				oscap_source_readable_origin(source));
+			oscap_setxmlerr(xmlGetLastError());
+		}
+		return reader;
+	}
+
+	if (source->origin.filepath != NULL) {
+		int fd = open(source->origin.filepath, O_RDONLY);
+		if (fd == -1) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Unable to open file for streaming xmlTextReader: %s",
+				oscap_source_readable_origin(source));
+			return NULL;
+		}
+		if (bz2_fd_is_bzip(fd)) {
+			close(fd);
+			return oscap_source_get_xmlTextReader(source);
+		}
+		struct stat st;
+		if (fstat(fd, &st) != 0 || st.st_size <= 0) {
+			close(fd);
+			return oscap_source_get_xmlTextReader(source);
+		}
+		size_t file_size = (size_t)st.st_size;
+		source->origin.memory = malloc(file_size);
+		if (source->origin.memory == NULL) {
+			close(fd);
+			return oscap_source_get_xmlTextReader(source);
+		}
+		size_t total_read = 0;
+		while (total_read < file_size) {
+			ssize_t n = read(fd, source->origin.memory + total_read, file_size - total_read);
+			if (n <= 0) break;
+			total_read += (size_t)n;
+		}
+		close(fd);
+		source->origin.memory_size = total_read;
+		xmlTextReader *reader = xmlReaderForMemory(source->origin.memory,
+			source->origin.memory_size, source->origin.filepath, NULL, 0);
+		if (reader == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Unable to create streaming xmlTextReader for %s",
+				oscap_source_readable_origin(source));
+			oscap_setxmlerr(xmlGetLastError());
+		}
+		return reader;
+	}
+
+	oscap_seterr(OSCAP_EFAMILY_XML, "Unable to create streaming xmlTextReader for %s",
+		oscap_source_readable_origin(source));
+	return NULL;
+}
+
 oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 {
 	if (source->scap_type == OSCAP_DOCUMENT_UNKNOWN) {
-		xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
+		xmlTextReader *reader = oscap_source_get_streaming_xmlTextReader(source);
 		if (reader == NULL) {
-			// the oscap error is already set
 			return OSCAP_DOCUMENT_UNKNOWN;
 		}
 		if (oscap_determine_document_type_reader(reader, &(source->scap_type)) == -1) {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Unknown document type: '%s'", oscap_source_readable_origin(source));
-			// in case of error scap_type must remain UNKNOWN
 			assert(source->scap_type == OSCAP_DOCUMENT_UNKNOWN);
 		}
 		xmlFreeTextReader(reader);
@@ -385,7 +458,7 @@ int oscap_source_validate_schematron(struct oscap_source *source)
 const char *oscap_source_get_schema_version(struct oscap_source *source)
 {
 	if (source->origin.version == NULL) {
-		xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
+		xmlTextReader *reader = oscap_source_get_streaming_xmlTextReader(source);
 		if (reader == NULL) {
 			return NULL;
 		}
