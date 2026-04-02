@@ -49,6 +49,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <pwd.h>
 #include <paths.h>
 #if defined(OS_APPLE)
@@ -66,6 +67,79 @@
 #include <probe/probe.h>
 #include <probe/option.h>
 #include "password_probe.h"
+
+/*
+ * fgetpwent() is a GNU/glibc extension; provide a portable fallback.
+ * This parses a standard /etc/passwd-format file one entry at a time.
+ */
+#if defined(OS_APPLE) || defined(OS_FREEBSD)
+static int oscap_parse_passwd_id(const char *field, uintmax_t max_value,
+				 uintmax_t *parsed_value)
+{
+	char *endptr;
+	uintmax_t value;
+
+	errno = 0;
+	value = strtoumax(field, &endptr, 10);
+	if (errno != 0 || endptr == field || *endptr != '\0' || value > max_value)
+		return -1;
+
+	*parsed_value = value;
+	return 0;
+}
+
+static struct passwd *oscap_fgetpwent(FILE *fp)
+{
+	static char line[2048];
+	static struct passwd pw;
+	char *fields[7], *newline, *line_end, *p;
+	uintmax_t parsed_uid, parsed_gid;
+	int f;
+
+	while (fgets(line, sizeof(line), fp) != NULL) {
+		newline = memchr(line, '\n', sizeof(line) - 1);
+		line_end = memchr(line, '\0', sizeof(line));
+		if (newline != NULL)
+			*newline = '\0';
+		else if (line_end == &line[sizeof(line) - 1]) {
+			int ch;
+
+			/* Skip truncated records instead of parsing partial passwd entries. */
+			while ((ch = fgetc(fp)) != '\n' && ch != EOF)
+				;
+			continue;
+		}
+
+		if (line[0] == '#')
+			continue;
+		f = 0;
+		p = line;
+		while (f < 7) {
+			fields[f++] = p;
+			p = strchr(p, ':');
+			if (p)
+				*p++ = '\0';
+			else
+				break;
+		}
+		if (f < 7)
+			continue;
+		if (oscap_parse_passwd_id(fields[2], (uintmax_t)(uid_t)-1, &parsed_uid) != 0 ||
+		    oscap_parse_passwd_id(fields[3], (uintmax_t)(gid_t)-1, &parsed_gid) != 0)
+			continue;
+		pw.pw_name   = fields[0];
+		pw.pw_passwd = fields[1];
+		pw.pw_uid    = (uid_t)parsed_uid;
+		pw.pw_gid    = (gid_t)parsed_gid;
+		pw.pw_gecos  = fields[4];
+		pw.pw_dir    = fields[5];
+		pw.pw_shell  = fields[6];
+		return &pw;
+	}
+	return NULL;
+}
+#define fgetpwent oscap_fgetpwent
+#endif
 
 /* Convenience structure for the results being reported */
 struct result_info {

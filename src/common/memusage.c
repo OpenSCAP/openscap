@@ -27,16 +27,14 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stdint.h>
 
 #if defined(OS_FREEBSD)
-#include <fcntl.h>
-#include <kvm.h>
 #include <limits.h>
-#include <paths.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -50,41 +48,46 @@
 #define GET_VM_ACT_PAGE_COUNT   "vm.stats.vm.v_active_count"
 
 #define BYTES_TO_KIB(x) (x >> 10)
-#endif
+#endif /* OS_FREEBSD */
+
+#if defined(OS_APPLE)
+#include <mach/mach.h>
+#include <sys/sysctl.h>
+#define BYTES_TO_KIB(x) ((x) >> 10)
+#endif /* OS_APPLE */
 
 #include "debug_priv.h"
 #include "memusage.h"
 #include "bfind.h"
 
-#if defined(OS_LINUX) || defined(__FreeBSD__) || defined(OS_SOLARIS)
-static int read_common_sizet(void *szp, char *strval)
+#if defined(OS_LINUX) || defined(__FreeBSD__) || defined(OS_SOLARIS) || defined(OSCAP_TEST_READ_COMMON_SIZET)
+static int read_common_sizet(void *szp, const char *strval)
 {
 	char *end;
+	long long value;
 
 	if (szp == NULL || strval == NULL) {
 		return -1;
 	}
 
-	end = strchr(strval, ' ');
-
-	if (end == NULL)
-		return (-1);
-
-	*end = '\0';
-
 	errno = 0;
-	*(size_t *)szp = strtoll(strval, NULL, 10);
+	value = strtoll(strval, &end, 10);
 
-	if (errno == EINVAL ||
-	    errno == ERANGE)
-		return (-1);
+	if (end == strval || !isspace((unsigned char)*end) ||
+	    errno == EINVAL || errno == ERANGE || value < 0)
+		return -1;
 
-	return (0);
+	*(size_t *)szp = (size_t)value;
+	return 0;
 }
+
+#endif
+
+#if defined(OS_LINUX) || defined(__FreeBSD__) || defined(OS_SOLARIS)
 
 struct stat_parser {
 	char *keyword;
-	int (*storval)(void *, char *);
+	int (*storval)(void *, const char *);
 	ptrdiff_t offset;
 };
 
@@ -252,33 +255,39 @@ static int freebsd_sys_memusage(struct sys_memusage *mu)
 
 static int freebsd_proc_memusage(struct proc_memusage *mu)
 {
-	int count;
-	kvm_t *kd;
 	pid_t mypid;
-	char errbuf[LINE_MAX];
-	struct kinfo_proc *procinfo;
+	struct kinfo_proc procinfo;
+	size_t size;
+	size_t page_size;
+	int mib[4];
 
 	mypid = getpid();
-	kd = kvm_openfiles(NULL, _PATH_DEVNULL, NULL, O_RDONLY, errbuf);
+	size = sizeof(procinfo);
+	memset(&procinfo, 0, sizeof(procinfo));
+	mib[0] = CTL_KERN;
+	mib[1] = KERN_PROC;
+	mib[2] = KERN_PROC_PID;
+	mib[3] = mypid;
 
-	if (!kd)
+	if (sysctl(mib, 4, &procinfo, &size, NULL, 0) < 0)
 		return -1;
 
-	procinfo = kvm_getprocs(kd, KERN_PROC_PID, mypid, &count);
-
-	if (!procinfo)
+	if (size == 0) {
+		errno = ESRCH;
 		return -1;
+	}
 
-	mu->mu_rss = procinfo->ki_rssize;
-	mu->mu_text = procinfo->ki_tsize;
-	mu->mu_data = procinfo->ki_dsize;
-	mu->mu_stack = procinfo->ki_ssize;
+	page_size = (size_t)getpagesize();
+	mu->mu_rss = BYTES_TO_KIB((uint64_t)procinfo.ki_rssize * page_size);
+	mu->mu_text = BYTES_TO_KIB((uint64_t)procinfo.ki_tsize * page_size);
+	mu->mu_data = BYTES_TO_KIB((uint64_t)procinfo.ki_dsize * page_size);
+	mu->mu_stack = BYTES_TO_KIB((uint64_t)procinfo.ki_ssize * page_size);
 
 	/* ki_swrss is the resident set size before last swap, this
 	 * is the closest approximation to Linux's "VmHWM" which is the
 	 * peak resident set size of the process.
 	 */
-	mu->mu_hwm = procinfo->ki_swrss;
+	mu->mu_hwm = BYTES_TO_KIB((uint64_t)procinfo.ki_swrss * page_size);
 
 	/* Not exposed on FreeBSD */
 	mu->mu_lib = 0;
@@ -305,6 +314,32 @@ int oscap_sys_memusage(struct sys_memusage *mu)
 #elif defined(OS_FREEBSD)
 	if (freebsd_sys_memusage(mu))
 		return -1;
+#elif defined(OS_APPLE)
+	{
+		vm_statistics64_data_t vm_stat;
+		mach_msg_type_number_t count = HOST_VM_INFO64_COUNT;
+		vm_size_t page_size;
+		host_page_size(mach_host_self(), &page_size);
+		if (host_statistics64(mach_host_self(), HOST_VM_INFO64,
+		                      (host_info64_t)&vm_stat, &count) != KERN_SUCCESS) {
+			errno = EOPNOTSUPP;
+			return -1;
+		}
+		mu->mu_free     = BYTES_TO_KIB((uint64_t)vm_stat.free_count     * page_size);
+		mu->mu_active   = BYTES_TO_KIB((uint64_t)vm_stat.active_count   * page_size);
+		mu->mu_inactive = BYTES_TO_KIB((uint64_t)vm_stat.inactive_count * page_size);
+		mu->mu_buffers  = 0;
+		mu->mu_cached   = 0;
+		mu->mu_realfree = mu->mu_free + mu->mu_inactive;
+		/* Query total physical RAM via sysctl HW_MEMSIZE */
+		int mib[2] = { CTL_HW, HW_MEMSIZE };
+		uint64_t memsize = 0;
+		size_t len = sizeof(memsize);
+		if (sysctl(mib, 2, &memsize, &len, NULL, 0) == 0)
+			mu->mu_total = BYTES_TO_KIB(memsize);
+		else
+			mu->mu_total = 0;
+	}
 #else
 	errno = EOPNOTSUPP;
 	return -1;
@@ -326,6 +361,24 @@ int oscap_proc_memusage(struct proc_memusage *mu)
 #elif defined(OS_FREEBSD)
 	if (freebsd_proc_memusage(mu))
 		return -1;
+#elif defined(OS_APPLE)
+	{
+		struct task_basic_info info;
+		mach_msg_type_number_t count = TASK_BASIC_INFO_COUNT;
+		if (task_info(mach_task_self(), TASK_BASIC_INFO,
+		              (task_info_t)&info, &count) != KERN_SUCCESS) {
+			errno = EOPNOTSUPP;
+			return -1;
+		}
+		mu->mu_rss   = BYTES_TO_KIB(info.resident_size);
+		mu->mu_data  = BYTES_TO_KIB(info.virtual_size);
+		/* TASK_BASIC_INFO doesn't expose peak RSS; use current as approximation */
+		mu->mu_hwm   = mu->mu_rss;
+		mu->mu_text  = 0;
+		mu->mu_stack = 0;
+		mu->mu_lib   = 0;
+		mu->mu_lock  = 0;
+	}
 #else
 	errno = EOPNOTSUPP;
 	return -1;

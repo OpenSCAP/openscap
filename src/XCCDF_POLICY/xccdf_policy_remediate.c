@@ -412,6 +412,10 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 #if defined(unix) || defined(__unix__) || defined(__unix)
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
+#ifndef OS_WINDOWS
+	extern char **environ;
+#endif
+
 	if (rr == NULL) {
 		return 1;
 	}
@@ -2068,4 +2072,3 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 
 	return ret;
 }
-

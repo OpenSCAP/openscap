@@ -25,6 +25,23 @@ library and then install additional packages required for testing. See the
 *Building OpenSCAP on Linux* section in the link:../developer/developer.adoc[OpenSCAP Developer Manual]
 for more details.
 
+For platform-focused validation, prefer CTest labels over ad-hoc test lists.
+For example, after a successful non-Linux build you can run:
+
+----
+$ ctest -L macos
+$ ctest -L freebsd
+----
+
+For a containerized Linux full-suite run, make sure a local SMTP listener and a
+session D-Bus are available before invoking CTest, otherwise MITRE, `fwupd`,
+and `systemd` coverage may be skipped or fail for environmental reasons:
+
+----
+$ postfix start
+$ dbus-run-session -- ctest --output-on-failure
+----
+
 
 == Writing a new test
 In this guide we will use an example to describe the process of writing a test

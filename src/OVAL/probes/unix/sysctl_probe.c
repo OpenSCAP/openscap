@@ -36,14 +36,30 @@
 #include "sysctl_probe.h"
 
 #if defined(OS_FREEBSD)
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <sys/types.h>
 
 #include "common/debug_priv.h"
 
 #define SYSCTL_CMD "/sbin/sysctl -ae"
+#define SYSCTL_VALUE_MAX (64 * 1024)
+#elif defined(OS_APPLE)
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+#include <sys/types.h>
+
+#include "common/debug_priv.h"
+
+/* On macOS sysctl(8) lives under /usr/sbin */
+#define SYSCTL_CMD "/usr/sbin/sysctl -ae"
+#define SYSCTL_VALUE_MAX (64 * 1024)
 #endif
 
 #if defined(OS_LINUX)
@@ -305,7 +321,223 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
         return (0);
 }
 
-#elif defined(OS_FREEBSD)
+#elif defined(OS_FREEBSD) || defined(OS_APPLE)
+
+static int sysctl_name_char(int ch)
+{
+	return isalnum((unsigned char) ch) || ch == '.' || ch == '_' ||
+		ch == '%' || ch == '-';
+}
+
+static int sysctl_parse_line(char *line, char **mib, char **sysval)
+{
+	char *sep;
+	size_t i, mib_len;
+
+	sep = strchr(line, '=');
+	if (sep == NULL)
+		return 0;
+
+	mib_len = (size_t)(sep - line);
+	if (mib_len == 0 || !isalpha((unsigned char) line[0]))
+		return 0;
+
+	for (i = 0; i < mib_len; ++i) {
+		if (!sysctl_name_char(line[i]))
+			return 0;
+	}
+
+	*sep = '\0';
+	*mib = line;
+	*sysval = sep + 1;
+	return 1;
+}
+
+static int sysctl_append_value(char **value, size_t *value_len, const char *line, int *truncated)
+{
+	size_t line_len, append_len, new_len;
+	char *new_value;
+
+	if (*truncated)
+		return 0;
+
+	line_len = strlen(line);
+	if (*value_len >= SYSCTL_VALUE_MAX) {
+		*truncated = 1;
+		return 0;
+	}
+
+	append_len = line_len;
+	if (*value_len + append_len > SYSCTL_VALUE_MAX)
+		append_len = SYSCTL_VALUE_MAX - *value_len;
+
+	new_len = *value_len + append_len + (*value_len > 0 ? 1 : 0) + 1;
+	new_value = realloc(*value, new_len);
+	if (new_value == NULL)
+		return -1;
+
+	*value = new_value;
+	if (*value_len > 0)
+		new_value[(*value_len)++] = '\n';
+
+	memcpy(new_value + *value_len, line, append_len);
+	*value_len += append_len;
+	new_value[*value_len] = '\0';
+
+	if (append_len < line_len)
+		*truncated = 1;
+
+	return 0;
+}
+
+static char *sysctl_sanitize_single_value(const char *value)
+{
+	size_t i, in_len, out_len = 0;
+	char *sanitized;
+
+	in_len = strlen(value);
+	sanitized = malloc(in_len + 1);
+	if (sanitized == NULL)
+		return NULL;
+
+	for (i = 0; i < in_len; ++i) {
+		unsigned char ch = (unsigned char) value[i];
+
+		if (!isprint(ch) && !isspace(ch))
+			continue;
+
+		sanitized[out_len++] = value[i];
+	}
+
+	while (out_len > 0 && sanitized[out_len - 1] == '\n')
+		--out_len;
+
+	sanitized[out_len] = '\0';
+	return sanitized;
+}
+
+static int sysctl_sanitize_multi_value(const char *value, char **buffer_out, char ***values_out)
+{
+	size_t i, in_len, value_count = 0, value_index = 0;
+	int in_value = 0;
+	char *buffer;
+	char **values;
+
+	in_len = strlen(value);
+	buffer = malloc(in_len + 1);
+	if (buffer == NULL)
+		return -1;
+
+	memcpy(buffer, value, in_len + 1);
+
+	for (i = 0; i < in_len; ++i) {
+		unsigned char ch = (unsigned char) buffer[i];
+
+		if ((!isprint(ch) && !isspace(ch)) || buffer[i] == '\n')
+			buffer[i] = '\0';
+
+		if (buffer[i] == '\0') {
+			in_value = 0;
+			continue;
+		}
+
+		if (!in_value) {
+			++value_count;
+			in_value = 1;
+		}
+	}
+
+	if (value_count == 0)
+		value_count = 1;
+
+	values = calloc(value_count + 1, sizeof(char *));
+	if (values == NULL) {
+		free(buffer);
+		return -1;
+	}
+
+	if (buffer[0] == '\0' && value_count == 1) {
+		values[0] = buffer;
+		*buffer_out = buffer;
+		*values_out = values;
+		return 0;
+	}
+
+	in_value = 0;
+	for (i = 0; i < in_len; ++i) {
+		if (buffer[i] == '\0') {
+			in_value = 0;
+			continue;
+		}
+
+		if (!in_value) {
+			values[value_index++] = buffer + i;
+			in_value = 1;
+		}
+	}
+
+	*buffer_out = buffer;
+	*values_out = values;
+	return 0;
+}
+
+static int sysctl_collect_item(probe_ctx *ctx, SEXP_t *name_entity,
+			       const char *mib, const char *sysval, int over_cmp)
+{
+	SEXP_t *item, *se_mib;
+	char *sanitized_value = NULL;
+	char *sanitized_buffer = NULL;
+	char **sanitized_values = NULL;
+	int ret = 0;
+
+	se_mib = SEXP_string_new(mib, strlen(mib));
+	if (!se_mib) {
+		dE("Failed to allocate new SEXP_string for se_mib");
+		return PROBE_ENOENT;
+	}
+
+	if (probe_entobj_cmp(name_entity, se_mib) == OVAL_RESULT_TRUE) {
+		if (over_cmp >= 0) {
+			if (sysctl_sanitize_multi_value(sysval, &sanitized_buffer, &sanitized_values) != 0) {
+				dE("Failed to sanitize sysctl value list");
+				ret = PROBE_ENOENT;
+				goto cleanup;
+			}
+
+			item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
+						 "name", OVAL_DATATYPE_SEXP, se_mib,
+						 "value", OVAL_DATATYPE_STRING_M, sanitized_values,
+						 NULL);
+		} else {
+			sanitized_value = sysctl_sanitize_single_value(sysval);
+			if (sanitized_value == NULL) {
+				dE("Failed to sanitize sysctl value");
+				ret = PROBE_ENOENT;
+				goto cleanup;
+			}
+
+			item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
+						 "name", OVAL_DATATYPE_SEXP, se_mib,
+						 "value", OVAL_DATATYPE_STRING, sanitized_value,
+						 NULL);
+		}
+
+		if (!item) {
+			dE("probe_item_create() returned a null item");
+			ret = PROBE_ENOENT;
+			goto cleanup;
+		}
+
+		probe_item_collect(ctx, item);
+	}
+
+cleanup:
+	free(sanitized_value);
+	free(sanitized_buffer);
+	free(sanitized_values);
+	SEXP_free(se_mib);
+	return ret;
+}
 
 int sysctl_probe_offline_mode_supported(void)
 {
@@ -315,15 +547,22 @@ int sysctl_probe_offline_mode_supported(void)
 int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         FILE *fp;
-        char output[LINE_MAX];
-        const char* SEP = "=";
-        char* mib;
-        char* sysval;
-        SEXP_t *se_mib;
+	char *output = NULL;
+	size_t output_cap = 0;
+	ssize_t output_len;
         SEXP_t *name_entity, *probe_in;
+	oval_schema_version_t over;
+	int over_cmp;
+	int ret = 0;
+	char *current_mib = NULL;
+	char *current_value = NULL;
+	size_t current_value_len = 0;
+	int current_value_truncated = 0;
 
         probe_in    = probe_ctx_getobject(ctx);
         name_entity = probe_obj_getent(probe_in, "name", 1);
+	over        = probe_obj_get_platform_schema_version(probe_in);
+	over_cmp    = oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10));
 
         if (name_entity == NULL) {
                 dE("Missing \"name\" entity in the input object");
@@ -343,51 +582,72 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
                 return (PROBE_EFATAL);
         }
 
-        while (fgets(output, sizeof(output), fp)) {
-                char *strp;
-                mib = strtok_r(output, SEP, &strp);
-                sysval = strtok_r(NULL, SEP, &strp);
+        while ((output_len = getline(&output, &output_cap, fp)) != -1) {
+		char *mib, *sysval, *newline;
 
-                if (!mib)
-                        continue;
+		newline = strchr(output, '\n');
+		if (newline != NULL)
+			*newline = '\0';
 
-                if (!sysval)
-                        continue;
+		if (sysctl_parse_line(output, &mib, &sysval)) {
+			if (current_mib != NULL) {
+				ret = sysctl_collect_item(ctx, name_entity, current_mib,
+							  current_value != NULL ? current_value : "",
+							  over_cmp);
+				if (ret != 0)
+					goto cleanup;
+			}
 
-                se_mib = SEXP_string_new(mib, strlen(mib));
+			free(current_mib);
+			free(current_value);
+			current_mib = strdup(mib);
+			current_value = NULL;
+			current_value_len = 0;
+			current_value_truncated = 0;
+			if (current_mib == NULL) {
+				dE("Failed to allocate new sysctl name buffer");
+				ret = PROBE_ENOENT;
+				goto cleanup;
+			}
 
-                if (!se_mib) {
-                        dE("Failed to allocate new SEXP_string for se_mib");
-                        pclose(fp);
-                        return (PROBE_ENOENT);
-                }
+			if (sysctl_append_value(&current_value, &current_value_len, sysval,
+					       &current_value_truncated) != 0) {
+				dE("Failed to append sysctl value");
+				ret = PROBE_ENOENT;
+				goto cleanup;
+			}
 
-                /* Remove newline */
-                sysval[strlen(sysval)-1] = '\0';
+			if (current_value_truncated)
+				dD("Truncated sysctl value for %s to %d bytes", current_mib, SYSCTL_VALUE_MAX);
 
-                if (probe_entobj_cmp(name_entity, se_mib) == OVAL_RESULT_TRUE) {
-                        SEXP_t *item;
+			continue;
+		}
 
-                        item = probe_item_create(OVAL_UNIX_SYSCTL, NULL,
-                                                "name", OVAL_DATATYPE_SEXP, se_mib,
-                                                "value", OVAL_DATATYPE_STRING, sysval,
-                                                NULL);
+		if (current_mib == NULL)
+			continue;
 
-                        if (!item) {
-                                dE("probe_item_create() returned a null item");
-                                pclose(fp);
-                                SEXP_free(se_mib);
-                                return (PROBE_ENOENT);
-                        }
+		if (sysctl_append_value(&current_value, &current_value_len, output,
+				       &current_value_truncated) != 0) {
+			dE("Failed to append sysctl continuation value");
+			ret = PROBE_ENOENT;
+			goto cleanup;
+		}
 
-                        probe_item_collect(ctx, item);
-                }
-
-                SEXP_free(se_mib);
+		if (current_value_truncated)
+			dD("Truncated sysctl value for %s to %d bytes", current_mib, SYSCTL_VALUE_MAX);
         }
 
+	if (current_mib != NULL)
+		ret = sysctl_collect_item(ctx, name_entity, current_mib,
+					  current_value != NULL ? current_value : "",
+					  over_cmp);
+
+cleanup:
+	free(output);
+	free(current_mib);
+	free(current_value);
         pclose(fp);
-        return (0);
+        return ret;
 }
 
 #else

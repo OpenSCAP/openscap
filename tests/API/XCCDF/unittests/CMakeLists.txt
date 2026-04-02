@@ -17,6 +17,10 @@ add_oscap_test_executable(test_xccdf_shall_pass
 )
 target_link_libraries(test_xccdf_shall_pass openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE2_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
 
+add_oscap_test_executable(test_xccdf_result_sysinfo_platform
+	"test_xccdf_result_sysinfo_platform.c"
+)
+
 if(PYTHONINTERP_FOUND)
 	add_oscap_test("all_python.sh")
 endif()
@@ -109,6 +113,7 @@ add_oscap_test("test_fix_resultid_by_suffix.sh")
 add_oscap_test("test_generate_fix_ansible_vars.sh")
 add_oscap_test("test_xccdf_requires_conflicts.sh")
 add_oscap_test("test_results_hostname.sh")
+add_oscap_test("test_xccdf_result_sysinfo_platform.sh" LABELS macos freebsd)
 add_oscap_test("test_skip_rule.sh")
 add_oscap_test("test_no_newline_between_select_elements.sh")
 add_oscap_test("test_single_line_tailoring.sh")
