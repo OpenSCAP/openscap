@@ -120,3 +120,14 @@ def test_get_datastream_uri():
     uri = t._get_datastream_uri()
     assert uri.startswith("file://")
     assert "relative/path/to/ds.xml" in uri
+
+def test_no_id():
+    p = autotailor.Profile()
+    profile_dict = None
+    file_path = pathlib.Path(__file__).parent.joinpath("custom_no_ids.json")
+    with open(file_path) as fp:
+        json_data = json.load(fp)
+        profile_dict = json_data["profiles"][0]
+    with pytest.raises(ValueError) as e:
+        p.import_json_tailoring_profile(profile_dict)
+    assert str(e.value) == "You must define a base_profile_id or an id"
