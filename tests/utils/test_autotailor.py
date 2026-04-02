@@ -1,4 +1,7 @@
 import importlib
+import pathlib
+import json
+
 import pytest
 
 NS = "http://checklists.nist.gov/xccdf/1.2"
@@ -94,3 +97,14 @@ def test_refine_rule():
         "'high'.")
     assert t.rule_refinements(fav, "severity") == "high"
     assert t.rule_refinements(fav, "role") == "full"
+
+def test_no_id():
+    p = autotailor.Profile()
+    profile_dict = None
+    file_path = pathlib.Path(__file__).parent.joinpath("custom_no_ids.json")
+    with open(file_path) as fp:
+        json_data = json.load(fp)
+        profile_dict = json_data["profiles"][0]
+    with pytest.raises(ValueError) as e:
+        p.import_json_tailoring_profile(profile_dict)
+    assert str(e.value) == "You must define a base_profile_id or an id"

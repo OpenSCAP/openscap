@@ -83,7 +83,6 @@ assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4"]/result[text()="notchecked"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4" and @role="unchecked"]'
 
-
 # select additional rule R3; the customized profile will have a special profile ID
 customized_profile="xccdf_com.pink.elephant_profile_pineapple"
 python3 $autotailor --new-profile-id $customized_profile --id-namespace "com.example.www" --select R3 $ds $original_profile > $tailoring
