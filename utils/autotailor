@@ -29,6 +29,7 @@ import json
 
 
 NS = "http://checklists.nist.gov/xccdf/1.2"
+NS_PREFIX = "xccdf-1.2"
 DEFAULT_PROFILE_SUFFIX = "_customized"
 DEFAULT_REVERSE_DNS = "org.ssgproject.content"
 ROLES = ["full", "unscored", "unchecked"]
@@ -407,6 +408,8 @@ def get_parser():
 if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
+
+    ET.register_namespace(NS_PREFIX, NS)
 
     if not args.profile and not args.json_tailoring:
         parser.error("one of the following arguments has to be provided: "
