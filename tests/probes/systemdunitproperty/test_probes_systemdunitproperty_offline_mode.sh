@@ -17,7 +17,7 @@ function test_probes_systemdunitproperty_offline_mode {
 
     local ret_val=0;
     local DF="${srcdir}/test_probes_systemdunitproperty_offline_mode.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
     local stderr=$(mktemp $1.err.XXXXXX)
     echo "stderr file: $stderr"
 
