@@ -14,13 +14,13 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  * Authors:
@@ -165,7 +165,7 @@ bool cpe_item_is_applicable(struct cpe_item* item, cpe_check_fn cb, void* usr)
 	return ret;
 }
 
-const char * cpe_dict_model_supported(void) 
+const char * cpe_dict_model_supported(void)
 {
         return CPE_DICT_SUPPORTED;
 }
@@ -183,6 +183,10 @@ char *cpe_dict_detect_version_priv(xmlTextReader *reader)
 		return NULL;
 	}
 	const char* ns_uri = (const char *) xmlTextReaderConstNamespaceUri(reader);
+	if (ns_uri == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Expected namespace uri for cpe-list, found none.");
+		return NULL;
+	}
 
 	/* find generator */
 	while (xmlTextReaderRead(reader) == 1
