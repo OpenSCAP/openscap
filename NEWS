@@ -1,3 +1,18 @@
+openscap-1.4.4                                                  03-04-2026
+- New features
+  - List rules and variables in a profile by "oscap info"
+- Maintenance, bug fix
+  - Add null check for ns_uri in cpe_dict_detect_version_priv
+  - Fix autotailor json bugs
+  - Use stable _init_completion API in bash completion
+  - Add PanFS to the list of remote filesystems
+  - Move to localtime_r
+  - Fix Non-constant format string issues
+  - Fix schema ordering when adding tailoring to ARF files
+  - Fix null ptr deref in xccdf_benchmark_parse
+  - Fix name space nulls in OVAL
+  - Fix segfault in error handling for cpe_item_parse
+  - Always check the current lists before inserting on blueprints
 openscap-1.4.3                                                  23-11-2025
 - New features
   - Show rule details in output
@@ -1099,7 +1114,7 @@ openscap-0.6.3                                                  14-09-2010
 - optimizing memory consumption
 - proper result for unsupported OVAL objects
 - many improvements in XSLT transformations
-- supporting  OVAL incomplete objects 
+- supporting  OVAL incomplete objects
 - fixes in directories traversal (findfiles)
 - python API improvements
 - Fedora SCAP content improvements
@@ -1128,7 +1143,7 @@ openscap-0.6.0							14-07-2010
 openscap-0.5.12                                                 30-06-2010
 - OVAL high level API
 - OVAL split system querying and evaluation
-- OVAL variables rebind functionality 
+- OVAL variables rebind functionality
 - XCCDF_POLICY - OVAL integration
 - XCCDF_POLICY - scanner implementation
 - XCCDF - implementation resolve(),
@@ -1188,7 +1203,7 @@ openscap-0.5.8							24-03-2010
 openscap-0.5.7							21-02-2010
 - Debian dpkginfo probe is available now
 - RHEL5 support
-- new command line tool - OVAL scanner 
+- new command line tool - OVAL scanner
 - Fedora 12 OVAL content available
 - documentation is heavy updated (with class diagrams)
 - new tests in make check
@@ -1200,7 +1215,7 @@ openscap-0.5.6							04-01-2010
 - OVAL doxygen documentation is available
 - migration to new checking mechanism is completed
 - new logging and error propagating mechanism
-- many many bugfixes + defensive code 
+- many many bugfixes + defensive code
 
 openscap-0.5.5							12-11-2009
 - many fixes in OVAL
@@ -1213,26 +1228,26 @@ openscap-0.5.4							23-10-2009
 - new CPE model
 - evaluation of set objects and system characteristic output
 - bindings clean up
-- probes tune up, memory leaks fixes 
+- probes tune up, memory leaks fixes
 
 openscap-0.5.3							29-09-2009
 - OVAL results part is code complete
 - improved memory management of definition and system characteristic model (OVAL)
 - improved memory management of S-expressions
 - new probe API
-- refactoring 
+- refactoring
 
 openscap-0.5.2							19-08-2009
 - new family probe
 - simple objects in OVAL content can be processed
 - initial implementation of conversion of S-Expressions to System Characteristic
-- bugfixes 
+- bugfixes
 
 openscap-0.5.1							03-08-2009
 - all code except oval is after refactoring
 - populating of system-characteristics model from xml is available
 - implementation of probes: rpminfo, runlevel, textfilecontent54,xmlfilecontent is done
-- perl and python bindings are up2date 
+- perl and python bindings are up2date
 
 openscap-0.3.2							24-04-2009
 - perl bindings are available
