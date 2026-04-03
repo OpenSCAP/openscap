@@ -1,3 +1,9 @@
+openscap-1.3.14                                                 03-04-2026
+- Maintenance, bug fix
+  - Make autotailor use correct XML namespaces
+  - Fix null pointer and segfault bugs
+  - Always check the current lists before inserting on blueprints
+
 openscap-1.3.13                                                 13-11-2025
 - Maintenance, bug fix
   - Handle virtual packages in dpkginfo probe
