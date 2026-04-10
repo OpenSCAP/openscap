@@ -70,6 +70,7 @@ class Tailoring:
         self.groups_to_unselect = []
         self._rule_refinements = collections.defaultdict(dict)
         self._value_refinements = collections.defaultdict(dict)
+        self.use_local_path = False
 
     @property
     def profile_id(self):
@@ -244,8 +245,7 @@ class Tailoring:
         root.set("id", self.id)
 
         benchmark = ET.SubElement(root, "{%s}benchmark" % NS)
-        datastream_uri = pathlib.Path(
-            self.original_ds_filename).absolute().as_uri()
+        datastream_uri = self._get_datastream_uri()
         benchmark.set("href", datastream_uri)
 
         version = ET.SubElement(root, "{%s}version" % NS)
@@ -303,6 +303,26 @@ class Tailoring:
                 for attr in ATTRIBUTES:
                     if attr in props:
                         self.change_rule_attribute(rule_id, attr, props[attr])
+
+    def _get_datastream_uri(self):
+        """
+        Determine the datastream URI based on the use_local_path setting.
+
+        Returns:
+            str: The URI/path to use in the benchmark href attribute
+        """
+        if self.use_local_path:
+            # Preserve relative paths as-is, convert absolute paths to basename
+            ds_path = pathlib.Path(self.original_ds_filename)
+            if ds_path.is_absolute():
+                # Convert absolute path to basename for compatibility with layered products
+                return ds_path.name
+            else:
+                # Keep relative paths as provided by the user
+                return self.original_ds_filename
+        else:
+            # Use absolute URI (default behavior for backward compatibility)
+            return pathlib.Path(self.original_ds_filename).absolute().as_uri()
 
     def import_json_tailoring(self, json_tailoring):
         with open(json_tailoring, "r") as jf:
@@ -402,6 +422,10 @@ def get_parser():
         "-o", "--output", default="-",
         help="Where to save the tailoring file. If not supplied, write to "
         "standard output.")
+    parser.add_argument(
+        "--local-path", action="store_true",
+        help="Use local path for the benchmark href instead of absolute file:// URI. "
+        "Absolute paths are converted to basename, relative paths are preserved.")
     return parser
 
 
@@ -418,6 +442,7 @@ if __name__ == "__main__":
     t = Tailoring()
     t.original_ds_filename = args.datastream
     t.reverse_dns = args.id_namespace
+    t.use_local_path = args.local_path
 
     if args.json_tailoring:
         t.import_json_tailoring(args.json_tailoring)
