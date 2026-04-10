@@ -1097,7 +1097,10 @@ finish_section:
 			if (scur->protocol == NULL) {
 				struct servent *service = getservbyname(scur->name, NULL);
 				dD("protocol is empty, trying to guess from /etc/services for %s", scur->name);
-				if (service != NULL) {
+				if (service == NULL) {
+					return -1;
+				}
+				else {
 					scur->protocol = strdup(service->s_proto);
 					dD("service %s has default protocol=%s", scur->name, scur->protocol);
 				}
@@ -1107,7 +1110,10 @@ finish_section:
 		if (scur->port == 0) {
 			struct servent *service = getservbyname(scur->name, scur->protocol);
 			dD("port not set, trying to guess from /etc/services for %s", scur->name);
-			if (service != NULL) {
+			if (service == NULL) {
+					return -1;
+			}
+			else {
 				if (service->s_port > 0 && service->s_port < 65536) {
 					scur->port = ntohs((uint16_t)service->s_port);
 					dD("service %s has default port=%hu/%s",
