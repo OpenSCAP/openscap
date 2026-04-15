@@ -138,3 +138,21 @@ assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www
 python3 $autotailor --id-namespace "com.example.www" --json-tailoring $json_tailoring --tailored-profile-id=CMDL_P --select R3 $ds $original_profile > $tailoring
 $OSCAP xccdf eval --profile CMDL_P --progress --tailoring-file $tailoring --results $result $ds
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="pass"]'
+
+# test --local-path option with absolute path (should use basename)
+python3 $autotailor --id-namespace "com.example.www" --local-path --select R3 $ds $original_profile > $tailoring
+saved_result=$result
+result=$tailoring
+assert_exists 1 '/*[local-name()="Tailoring"]/*[local-name()="benchmark"][@href="data_stream.xml"]'
+result=$saved_result
+$OSCAP xccdf eval --profile P1_customized --progress --tailoring-file $tailoring --results $result $ds
+assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="pass"]'
+
+# test default behavior (should use file:// URI)
+python3 $autotailor --id-namespace "com.example.www" --select R3 $ds $original_profile > $tailoring
+saved_result=$result
+result=$tailoring
+assert_exists 1 '/*[local-name()="Tailoring"]/*[local-name()="benchmark"][starts-with(@href, "file://")]'
+result=$saved_result
+$OSCAP xccdf eval --profile P1_customized --progress --tailoring-file $tailoring --results $result $ds
+assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="pass"]'
