@@ -2068,8 +2068,10 @@ struct cvrf_reference *cvrf_reference_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_URL) == 0) {
+			free(ref->url);
 			ref->url = oscap_element_string_copy(reader);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
+			free(ref->description);
 			ref->description = oscap_element_string_copy(reader);
 		}
 		xmlTextReaderNextNode(reader);
