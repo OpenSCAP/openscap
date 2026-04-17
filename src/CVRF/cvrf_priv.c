@@ -2125,10 +2125,13 @@ struct cvrf_revision *cvrf_revision_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NUMBER) == 0) {
+			free(revision->number);
 			revision->number = oscap_element_string_copy(reader);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DATE) == 0) {
+			free(revision->date);
 			revision->date = oscap_element_string_copy(reader);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
+			free(revision->description);
 			revision->description = oscap_element_string_copy(reader);
 		}
 		xmlTextReaderNextNode(reader);
