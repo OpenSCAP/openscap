@@ -499,7 +499,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerabil
 	clone->ordinal = vuln->ordinal;
 	clone->title = oscap_strdup(vuln->title);
 	clone->system_id = oscap_strdup(vuln->system_id);
-	clone->system_id = oscap_strdup(vuln->system_name);
+	clone->system_name = oscap_strdup(vuln->system_name);
 	clone->discovery_date = oscap_strdup(vuln->discovery_date);
 	clone->release_date = oscap_strdup(vuln->release_date);
 	clone->cwes = oscap_list_clone(vuln->cwes, (oscap_clone_func) cvrf_vulnerability_cwe_clone);
