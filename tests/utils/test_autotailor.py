@@ -94,3 +94,29 @@ def test_refine_rule():
         "'high'.")
     assert t.rule_refinements(fav, "severity") == "high"
     assert t.rule_refinements(fav, "role") == "full"
+
+def test_get_datastream_uri():
+    t = autotailor.Tailoring()
+
+    # Test default behavior with absolute path (file:// URI)
+    t.original_ds_filename = "/nonexistent/path/test-ds.xml"
+    t.use_local_path = False
+    uri = t._get_datastream_uri()
+    assert uri.startswith("file://")
+    assert uri.endswith("/nonexistent/path/test-ds.xml")
+
+    # Test local path mode with absolute path (basename only)
+    t.use_local_path = True
+    uri = t._get_datastream_uri()
+    assert uri == "test-ds.xml"
+
+    # Test local path mode with relative path (preserved as-is)
+    t.original_ds_filename = "relative/path/to/ds.xml"
+    uri = t._get_datastream_uri()
+    assert uri == "relative/path/to/ds.xml"
+
+    # Test default behavior with relative path (file:// URI)
+    t.use_local_path = False
+    uri = t._get_datastream_uri()
+    assert uri.startswith("file://")
+    assert "relative/path/to/ds.xml" in uri
