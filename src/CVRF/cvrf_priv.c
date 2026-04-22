@@ -499,7 +499,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerabil
 	clone->ordinal = vuln->ordinal;
 	clone->title = oscap_strdup(vuln->title);
 	clone->system_id = oscap_strdup(vuln->system_id);
-	clone->system_id = oscap_strdup(vuln->system_name);
+	clone->system_name = oscap_strdup(vuln->system_name);
 	clone->discovery_date = oscap_strdup(vuln->discovery_date);
 	clone->release_date = oscap_strdup(vuln->release_date);
 	clone->cwes = oscap_list_clone(vuln->cwes, (oscap_clone_func) cvrf_vulnerability_cwe_clone);
@@ -2068,8 +2068,10 @@ struct cvrf_reference *cvrf_reference_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_URL) == 0) {
+			free(ref->url);
 			ref->url = oscap_element_string_copy(reader);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
+			free(ref->description);
 			ref->description = oscap_element_string_copy(reader);
 		}
 		xmlTextReaderNextNode(reader);
@@ -2125,10 +2127,13 @@ struct cvrf_revision *cvrf_revision_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NUMBER) == 0) {
+			free(revision->number);
 			revision->number = oscap_element_string_copy(reader);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DATE) == 0) {
+			free(revision->date);
 			revision->date = oscap_element_string_copy(reader);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
+			free(revision->description);
 			revision->description = oscap_element_string_copy(reader);
 		}
 		xmlTextReaderNextNode(reader);
