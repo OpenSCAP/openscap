@@ -31,8 +31,8 @@ function rpm_prepare_offline {
     cp /usr/lib/rpm/rpmrc ${RPMTEST}/usr/lib/rpm/rpmrc
     cp /usr/lib/rpm/macros ${RPMTEST}/usr/lib/rpm/macros
     rpm_build
-    rpm -i ${RPMBUILD}/RPMS/noarch/foobar-1.0-1.noarch.rpm --badreloc --relocate="/etc=${RPMTEST}/etc/" --dbpath="${RPMTEST}${RPMDB_PATH}"
-    rpm -i ${RPMBUILD}/RPMS/noarch/foo-1.0-1.noarch.rpm --badreloc --relocate="/etc=${RPMTEST}/etc/" --dbpath="${RPMTEST}${RPMDB_PATH}"
+    rpm -i --nosignature ${RPMBUILD}/RPMS/noarch/foobar-1.0-1.noarch.rpm --badreloc --relocate="/etc=${RPMTEST}/etc/" --dbpath="${RPMTEST}${RPMDB_PATH}"
+    rpm -i --nosignature ${RPMBUILD}/RPMS/noarch/foo-1.0-1.noarch.rpm --badreloc --relocate="/etc=${RPMTEST}/etc/" --dbpath="${RPMTEST}${RPMDB_PATH}"
 }
 
 function rpm_cleanup_offline {
