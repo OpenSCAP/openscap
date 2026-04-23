@@ -10,7 +10,7 @@ function test_probes_yamlfilecontent_offline_mode {
 
     local ret_val=0
     local DF="${srcdir}/test_probes_yamlfilecontent_offline_mode.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
     local YAML_FILE="openshift-logging.yaml"
 
     [ -f $RF ] && rm -f $RF
