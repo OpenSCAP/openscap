@@ -302,7 +302,7 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 struct oval_variable_model *oval_variable_model_import_source(struct oscap_source *source)
 {
 	int ret;
-	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
+	xmlTextReader *reader = oscap_source_get_streaming_xmlTextReader(source);
 	if (reader == NULL) {
                 return NULL;
 	}
