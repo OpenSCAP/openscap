@@ -245,7 +245,8 @@ class Tailoring:
         root.set("id", self.id)
 
         benchmark = ET.SubElement(root, "{%s}benchmark" % NS)
-        datastream_uri = self._get_datastream_uri()
+        datastream_uri = pathlib.Path(
+            self.original_ds_filename).absolute().as_uri()
         benchmark.set("href", datastream_uri)
 
         version = ET.SubElement(root, "{%s}version" % NS)
@@ -255,6 +256,8 @@ class Tailoring:
         profile = ET.SubElement(root, "{%s}Profile" % NS)
         profile.set("id", self._full_profile_id(self.profile_id))
         profile.set("extends", self._full_profile_id(self.extends))
+        if self.extends:
+            profile.set("extends", self._full_profile_id(self.extends))
 
         # Title has to be there due to the schema definition.
         title = ET.SubElement(profile, "{%s}title" % NS)
@@ -336,7 +339,8 @@ class Tailoring:
             raise ValueError("JSON Tailoring does not define any profiles.")
 
         self.extends = tailoring["base_profile_id"]
-
+        if not tailoring.get("base_profile_id") and not tailoring.get("id"):
+            raise ValueError("You must define a base_profile_id or an id")
         self.profile_id = tailoring.get("id", self.profile_id)
         self.profile_title = tailoring.get("title", self.profile_title)
 
