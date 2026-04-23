@@ -62,6 +62,11 @@
 #include "shadow_probe.h"
 
 #ifndef HAVE_SHADOW_H
+int shadow_probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_NONE;
+}
+
 int shadow_probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *item_sexp;

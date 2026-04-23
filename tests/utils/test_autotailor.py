@@ -109,6 +109,7 @@ def test_no_id():
         p.import_json_tailoring_profile(profile_dict)
     assert str(e.value) == "You must define a base_profile_id or an id"
 
+
 def test_get_datastream_uri():
     t = autotailor.Tailoring()
 

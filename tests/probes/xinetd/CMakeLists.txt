@@ -13,5 +13,5 @@ if(ENABLE_PROBES_UNIX)
 		"${CMAKE_SOURCE_DIR}/src/OVAL/probes/SEAP/generic/rbt"
 		"${CMAKE_SOURCE_DIR}/src/common"
 	)
-	add_oscap_test("test_xinetd_probe.sh")
+	add_oscap_test("test_xinetd_probe.sh" LABELS unix)
 endif()
