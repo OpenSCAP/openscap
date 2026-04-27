@@ -8,8 +8,8 @@ A tailoring file adds a new profile, which is supposed to extend a profile that 
 Tailoring can add, remove or refine rules, and it also can redefine contents of XCCDF variables.
 
 The tool requires data stream location and ID of the base profile as inputs.
-Note however, that the referenced data stream is not opened, and the validity of tailoring is not checked against it.
-The tool doesn't prevent you from extending non-existent profiles, selecting non-existent rules, and so on.
+By default, the tool parses the referenced data stream and validates provided IDs (profiles, rules, values, groups, and selectors) against it.
+Validation can be skipped using the \fB--no-validate\fR option, which significantly speeds up execution on large data streams at the cost of no longer catching invalid IDs.
 
 .SH SYNOPSIS
 autotailor [OPTION...] DATASTREAM_FILE [BASE_PROFILE_ID]
@@ -80,6 +80,11 @@ JSON tailoring can be accompanied with additional command-line options to either
 Use local path for the benchmark href instead of absolute file:// URI. This option is useful for compatibility with layered products like Red Hat Satellite that cannot resolve local filesystem paths.
 When this option is specified, absolute paths are converted to basename only, while relative paths are preserved as provided.
 By default, the tool uses absolute file:// URIs for backward compatibility.
+.RE
+.TP
+\fB--no-validate\fR
+.RS
+Skip validation of IDs against the data stream. This significantly speeds up execution on large data streams but may produce invalid tailoring files if incorrect IDs are provided. Use with caution.
 .RE
 
 .SH USAGE

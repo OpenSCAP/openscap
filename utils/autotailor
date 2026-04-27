@@ -38,6 +38,11 @@ ROLES = ["full", "unscored", "unchecked"]
 SEVERITIES = ["unknown", "info", "low", "medium", "high"]
 ATTRIBUTES = ["role", "severity"]
 
+DS_NAMESPACES = {
+    'ds': DS_NS,
+    'xccdf': NS
+}
+
 
 def quote(string):
     return "\"" + string + "\""
@@ -56,60 +61,62 @@ def is_valid_xccdf_id(string):
 
 
 class DataStreamValidator:
-    """Validates IDs against the SCAP datastream."""
+    """Validates IDs against the SCAP data stream."""
 
     def __init__(self, datastream_path):
         self.datastream_path = datastream_path
         self.profile_ids = set()
         self.value_ids = set()
+        self.value_selectors = {}
         self.rule_ids = set()
         self.group_ids = set()
         self._parse_datastream()
 
+    def _extract_profiles(self, benchmark):
+        for profile in benchmark.findall('.//xccdf:Profile', DS_NAMESPACES):
+            profile_id = profile.get('id')
+            if profile_id:
+                self.profile_ids.add(profile_id)
+
+    def _extract_values(self, benchmark):
+        for value in benchmark.findall('.//xccdf:Value', DS_NAMESPACES):
+            value_id = value.get('id')
+            if not value_id:
+                continue
+            self.value_ids.add(value_id)
+            selectors = set()
+            for val_elem in value.findall('xccdf:value', DS_NAMESPACES):
+                selector = val_elem.get('selector')
+                if selector:
+                    selectors.add(selector)
+            self.value_selectors[value_id] = selectors
+
+    def _extract_rules(self, benchmark):
+        for rule in benchmark.findall('.//xccdf:Rule', DS_NAMESPACES):
+            rule_id = rule.get('id')
+            if rule_id:
+                self.rule_ids.add(rule_id)
+
+    def _extract_groups(self, benchmark):
+        for group in benchmark.findall('.//xccdf:Group', DS_NAMESPACES):
+            group_id = group.get('id')
+            if group_id:
+                self.group_ids.add(group_id)
+
     def _parse_datastream(self):
-        """Parse the datastream to extract all valid IDs."""
         try:
             tree = ET.parse(self.datastream_path)
             root = tree.getroot()
-
-            # Register namespaces
-            namespaces = {
-                'ds': DS_NS,
-                'xccdf': NS
-            }
-
-            # Find all Benchmark elements (may be in data-stream-collection or standalone)
-            benchmarks = root.findall('.//xccdf:Benchmark', namespaces)
-
+            benchmarks = root.findall('.//xccdf:Benchmark', DS_NAMESPACES)
             for benchmark in benchmarks:
-                # Extract Profile IDs
-                for profile in benchmark.findall('.//xccdf:Profile', namespaces):
-                    profile_id = profile.get('id')
-                    if profile_id:
-                        self.profile_ids.add(profile_id)
-
-                # Extract Value IDs
-                for value in benchmark.findall('.//xccdf:Value', namespaces):
-                    value_id = value.get('id')
-                    if value_id:
-                        self.value_ids.add(value_id)
-
-                # Extract Rule IDs
-                for rule in benchmark.findall('.//xccdf:Rule', namespaces):
-                    rule_id = rule.get('id')
-                    if rule_id:
-                        self.rule_ids.add(rule_id)
-
-                # Extract Group IDs
-                for group in benchmark.findall('.//xccdf:Group', namespaces):
-                    group_id = group.get('id')
-                    if group_id:
-                        self.group_ids.add(group_id)
-
+                self._extract_profiles(benchmark)
+                self._extract_values(benchmark)
+                self._extract_rules(benchmark)
+                self._extract_groups(benchmark)
         except ET.ParseError as e:
-            raise ValueError(f"Failed to parse datastream '{self.datastream_path}': {e}")
+            raise ValueError(f"Failed to parse data stream '{self.datastream_path}': {e}")
         except FileNotFoundError:
-            raise ValueError(f"Datastream file not found: '{self.datastream_path}'")
+            raise ValueError(f"Data stream file not found: '{self.datastream_path}'")
 
     def _suggest_similar(self, invalid_id, valid_ids, n=3):
         """Suggest similar valid IDs using fuzzy matching."""
@@ -120,8 +127,7 @@ class DataStreamValidator:
         return matches
 
     def _create_validation_error(self, id_type, invalid_id, valid_ids):
-        """Create a detailed error message with suggestions."""
-        msg = f"{id_type} ID '{invalid_id}' does not exist in the datastream."
+        msg = f"{id_type} ID '{invalid_id}' does not exist in the data stream."
 
         suggestions = self._suggest_similar(invalid_id, valid_ids)
         if suggestions:
@@ -130,29 +136,40 @@ class DataStreamValidator:
                 msg += f"\n  - {suggestion}"
 
         if not valid_ids:
-            msg += f"\n\nNo {id_type.lower()}s found in the datastream."
+            msg += f"\n\nNo {id_type.lower()}s found in the data stream."
         else:
-            msg += f"\n\nAvailable {id_type.lower()}s can be listed by examining the datastream file."
+            msg += f"\n\nAvailable {id_type.lower()}s can be listed by examining the data stream file."
 
         return msg
 
     def validate_profile(self, profile_id):
-        """Validate a profile ID exists in the datastream."""
         if profile_id not in self.profile_ids:
             raise ValueError(self._create_validation_error("Profile", profile_id, self.profile_ids))
 
     def validate_value(self, value_id):
-        """Validate a value ID exists in the datastream."""
         if value_id not in self.value_ids:
             raise ValueError(self._create_validation_error("Value", value_id, self.value_ids))
 
+    def validate_selector(self, value_id, selector):
+        selectors = self.value_selectors.get(value_id, set())
+        if selector not in selectors:
+            msg = f"Selector '{selector}' does not exist for Value '{value_id}' in the data stream."
+            if selectors:
+                suggestions = self._suggest_similar(selector, selectors)
+                if suggestions:
+                    msg += "\n\nDid you mean one of these?"
+                    for suggestion in suggestions:
+                        msg += f"\n  - {suggestion}"
+                msg += f"\n\nAvailable selectors: {', '.join(sorted(selectors))}"
+            else:
+                msg += "\n\nNo selectors found for this value in the data stream."
+            raise ValueError(msg)
+
     def validate_rule(self, rule_id):
-        """Validate a rule ID exists in the datastream."""
         if rule_id not in self.rule_ids:
             raise ValueError(self._create_validation_error("Rule", rule_id, self.rule_ids))
 
     def validate_group(self, group_id):
-        """Validate a group ID exists in the datastream."""
         if group_id not in self.group_ids:
             raise ValueError(self._create_validation_error("Group", group_id, self.group_ids))
 
@@ -251,6 +268,8 @@ class Profile:
         Profile._validate_value_refinement_params(value_id, attribute, value)
         if self.validator:
             self.validator.validate_value(value_id)
+            if attribute == 'selector':
+                self.validator.validate_selector(value_id, value)
         self._prevent_duplicate_value_refinement(attribute, value_id, value)
         self._value_refinements[value_id][attribute] = value
 
@@ -610,8 +629,8 @@ def get_parser():
         "Absolute paths are converted to basename, relative paths are preserved.")
     parser.add_argument(
         "--no-validate", action="store_true",
-        help="Skip validation of IDs against the datastream. This significantly speeds up "
-        "execution on large datastreams but may produce invalid tailoring files if incorrect "
+        help="Skip validation of IDs against the data stream. This significantly speeds up "
+        "execution on large data streams but may produce invalid tailoring files if incorrect "
         "IDs are provided. Use with caution.")
     return parser
 
@@ -626,13 +645,12 @@ if __name__ == "__main__":
         parser.error("one of the following arguments has to be provided: "
                      "BASE_PROFILE_ID or --json-tailoring JSON_TAILORING_FILENAME")
 
-    # Create validator to check IDs against the datastream (unless --no-validate is specified)
     validator = None
     if not args.no_validate:
         try:
             validator = DataStreamValidator(args.datastream)
         except (ValueError, FileNotFoundError) as e:
-            print(f"Error loading datastream: {e}", file=sys.stderr)
+            print(f"Error loading data stream: {e}", file=sys.stderr)
             sys.exit(1)
 
     t = Tailoring(validator=validator)
