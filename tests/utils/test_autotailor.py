@@ -1,4 +1,5 @@
 import importlib
+import pathlib
 import pytest
 
 NS = "http://checklists.nist.gov/xccdf/1.2"
@@ -165,11 +166,11 @@ def test_datastream_validator():
 
 
 def test_profile_with_validator():
-    """Test that Profile uses validator to check IDs."""
+    """Test that Tailoring uses validator to check IDs."""
     ds_path = pathlib.Path(__file__).parent.joinpath("data_stream.xml")
     validator = autotailor.DataStreamValidator(str(ds_path))
 
-    p = autotailor.Profile(validator=validator)
+    p = autotailor.Tailoring(validator=validator)
     p.reverse_dns = "com.example.www"
 
     # Test valid variable change works
@@ -215,3 +216,51 @@ def test_validator_suggestions():
     error_msg = str(e.value)
     assert "Did you mean one of these?" in error_msg
     assert "xccdf_com.example.www_rule_R1" in error_msg
+
+
+def test_validate_selector():
+    """Test that validate_selector rejects selectors not present in the data stream."""
+    ds_path = pathlib.Path(__file__).parent.joinpath("data_stream.xml")
+    validator = autotailor.DataStreamValidator(str(ds_path))
+
+    # V1 has selector "thirty"; V2 has "some" and "other"
+    validator.validate_selector("xccdf_com.example.www_value_V1", "thirty")
+    validator.validate_selector("xccdf_com.example.www_value_V2", "some")
+    validator.validate_selector("xccdf_com.example.www_value_V2", "other")
+
+    # Invalid selector for V1
+    with pytest.raises(ValueError) as e:
+        validator.validate_selector("xccdf_com.example.www_value_V1", "invalid")
+    error_msg = str(e.value)
+    assert "Selector 'invalid' does not exist for Value 'xccdf_com.example.www_value_V1'" in error_msg
+    assert "thirty" in error_msg
+
+    # Invalid selector for V2 with a close-enough typo triggers a suggestion
+    with pytest.raises(ValueError) as e:
+        validator.validate_selector("xccdf_com.example.www_value_V2", "ther")
+    error_msg = str(e.value)
+    assert "Selector 'ther' does not exist for Value 'xccdf_com.example.www_value_V2'" in error_msg
+    assert "other" in error_msg
+
+
+def test_profile_selector_validation():
+    """Test that Tailoring validates selectors via -V/--var-select through refine_value."""
+    ds_path = pathlib.Path(__file__).parent.joinpath("data_stream.xml")
+    validator = autotailor.DataStreamValidator(str(ds_path))
+
+    p = autotailor.Tailoring(validator=validator)
+    p.reverse_dns = "com.example.www"
+
+    # Valid selector passes
+    p.change_selectors(["V1=thirty"])
+    p.change_selectors(["V2=some"])
+
+    # Invalid selector raises
+    with pytest.raises(ValueError) as e:
+        p.change_selectors(["V1=invalid"])
+    assert "Selector 'invalid' does not exist for Value 'xccdf_com.example.www_value_V1'" in str(e.value)
+
+    # Invalid value ID still raises before reaching selector check
+    with pytest.raises(ValueError) as e:
+        p.change_selectors(["NONEXISTENT=thirty"])
+    assert "Value ID 'xccdf_com.example.www_value_NONEXISTENT' does not exist" in str(e.value)
