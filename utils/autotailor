@@ -26,15 +26,22 @@ import pathlib
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 import json
+import difflib
 
 
 NS = "http://checklists.nist.gov/xccdf/1.2"
 NS_PREFIX = "xccdf-1.2"
+DS_NS = "http://scap.nist.gov/schema/scap/source/1.2"
 DEFAULT_PROFILE_SUFFIX = "_customized"
 DEFAULT_REVERSE_DNS = "org.ssgproject.content"
 ROLES = ["full", "unscored", "unchecked"]
 SEVERITIES = ["unknown", "info", "low", "medium", "high"]
 ATTRIBUTES = ["role", "severity"]
+
+DS_NAMESPACES = {
+    'ds': DS_NS,
+    'xccdf': NS
+}
 
 
 def quote(string):
@@ -53,12 +60,127 @@ def is_valid_xccdf_id(string):
         string) is not None
 
 
+class DataStreamValidator:
+    """Validates IDs against the SCAP data stream."""
+
+    def __init__(self, datastream_path):
+        self.datastream_path = datastream_path
+        self.profile_ids = set()
+        self.value_ids = set()
+        self.value_selectors = {}
+        self.rule_ids = set()
+        self.group_ids = set()
+        self._parse_datastream()
+
+    def _extract_profiles(self, benchmark):
+        for profile in benchmark.findall('.//xccdf:Profile', DS_NAMESPACES):
+            profile_id = profile.get('id')
+            if profile_id:
+                self.profile_ids.add(profile_id)
+
+    def _extract_values(self, benchmark):
+        for value in benchmark.findall('.//xccdf:Value', DS_NAMESPACES):
+            value_id = value.get('id')
+            if not value_id:
+                continue
+            self.value_ids.add(value_id)
+            selectors = set()
+            for val_elem in value.findall('xccdf:value', DS_NAMESPACES):
+                selector = val_elem.get('selector')
+                if selector:
+                    selectors.add(selector)
+            self.value_selectors[value_id] = selectors
+
+    def _extract_rules(self, benchmark):
+        for rule in benchmark.findall('.//xccdf:Rule', DS_NAMESPACES):
+            rule_id = rule.get('id')
+            if rule_id:
+                self.rule_ids.add(rule_id)
+
+    def _extract_groups(self, benchmark):
+        for group in benchmark.findall('.//xccdf:Group', DS_NAMESPACES):
+            group_id = group.get('id')
+            if group_id:
+                self.group_ids.add(group_id)
+
+    def _parse_datastream(self):
+        try:
+            tree = ET.parse(self.datastream_path)
+            root = tree.getroot()
+            benchmarks = root.findall('.//xccdf:Benchmark', DS_NAMESPACES)
+            for benchmark in benchmarks:
+                self._extract_profiles(benchmark)
+                self._extract_values(benchmark)
+                self._extract_rules(benchmark)
+                self._extract_groups(benchmark)
+        except ET.ParseError as e:
+            raise ValueError(f"Failed to parse data stream '{self.datastream_path}': {e}")
+        except FileNotFoundError:
+            raise ValueError(f"Data stream file not found: '{self.datastream_path}'")
+
+    def _suggest_similar(self, invalid_id, valid_ids, n=3):
+        """Suggest similar valid IDs using fuzzy matching."""
+        if not valid_ids:
+            return []
+        # Get close matches
+        matches = difflib.get_close_matches(invalid_id, valid_ids, n=n, cutoff=0.6)
+        return matches
+
+    def _create_validation_error(self, id_type, invalid_id, valid_ids):
+        msg = f"{id_type} ID '{invalid_id}' does not exist in the data stream."
+
+        suggestions = self._suggest_similar(invalid_id, valid_ids)
+        if suggestions:
+            msg += "\n\nDid you mean one of these?"
+            for suggestion in suggestions:
+                msg += f"\n  - {suggestion}"
+
+        if not valid_ids:
+            msg += f"\n\nNo {id_type.lower()}s found in the data stream."
+        else:
+            msg += f"\n\nAvailable {id_type.lower()}s can be listed by examining the data stream file."
+
+        return msg
+
+    def validate_profile(self, profile_id):
+        if profile_id not in self.profile_ids:
+            raise ValueError(self._create_validation_error("Profile", profile_id, self.profile_ids))
+
+    def validate_value(self, value_id):
+        if value_id not in self.value_ids:
+            raise ValueError(self._create_validation_error("Value", value_id, self.value_ids))
+
+    def validate_selector(self, value_id, selector):
+        selectors = self.value_selectors.get(value_id, set())
+        if selector not in selectors:
+            msg = f"Selector '{selector}' does not exist for Value '{value_id}' in the data stream."
+            if selectors:
+                suggestions = self._suggest_similar(selector, selectors)
+                if suggestions:
+                    msg += "\n\nDid you mean one of these?"
+                    for suggestion in suggestions:
+                        msg += f"\n  - {suggestion}"
+                msg += f"\n\nAvailable selectors: {', '.join(sorted(selectors))}"
+            else:
+                msg += "\n\nNo selectors found for this value in the data stream."
+            raise ValueError(msg)
+
+    def validate_rule(self, rule_id):
+        if rule_id not in self.rule_ids:
+            raise ValueError(self._create_validation_error("Rule", rule_id, self.rule_ids))
+
+    def validate_group(self, group_id):
+        if group_id not in self.group_ids:
+            raise ValueError(self._create_validation_error("Group", group_id, self.group_ids))
+
+
 class Profile:
-    def __init__(self):
+    def __init__(self, validator=None):
         self.reverse_dns = DEFAULT_REVERSE_DNS
         self._profile_id = None
         self.extends = ""
         self.profile_title = ""
+        self.validator = validator
 
         self.value_changes = set()
         self.rules_to_select = set()
@@ -137,15 +259,24 @@ class Profile:
 
     def refine_rule(self, rule_id, attribute, value):
         Profile._validate_rule_refinement_params(rule_id, attribute, value)
+        if self.validator:
+            self.validator.validate_rule(rule_id)
         self._prevent_duplicate_rule_refinement(attribute, rule_id, value)
         self._rule_refinements[rule_id][attribute] = value
 
     def refine_value(self, value_id, attribute, value):
         Profile._validate_value_refinement_params(value_id, attribute, value)
+        if self.validator:
+            self.validator.validate_value(value_id)
+            if attribute == 'selector':
+                self.validator.validate_selector(value_id, value)
         self._prevent_duplicate_value_refinement(attribute, value_id, value)
         self._value_refinements[value_id][attribute] = value
 
     def add_value_change(self, varname, value):
+        full_var_id = self._full_var_id(varname)
+        if self.validator:
+            self.validator.validate_value(full_var_id)
         self.value_changes.add((varname, value))
 
     def change_rule_attribute(self, rule_id, attribute, value):
@@ -176,6 +307,41 @@ class Profile:
         for change in assignments:
             varname, selector = assignment_to_tuple(change)
             self.change_value_attribute(varname, "selector", selector)
+
+    def select_rule(self, rule_id):
+        """Select a rule with validation."""
+        full_rule_id = self._full_rule_id(rule_id)
+        if self.validator:
+            self.validator.validate_rule(full_rule_id)
+        self.rules_to_select.add(rule_id)
+
+    def unselect_rule(self, rule_id):
+        """Unselect a rule with validation."""
+        full_rule_id = self._full_rule_id(rule_id)
+        if self.validator:
+            self.validator.validate_rule(full_rule_id)
+        self.rules_to_unselect.add(rule_id)
+
+    def select_group(self, group_id):
+        """Select a group with validation."""
+        full_group_id = self._full_group_id(group_id)
+        if self.validator:
+            self.validator.validate_group(full_group_id)
+        self.groups_to_select.add(group_id)
+
+    def unselect_group(self, group_id):
+        """Unselect a group with validation."""
+        full_group_id = self._full_group_id(group_id)
+        if self.validator:
+            self.validator.validate_group(full_group_id)
+        self.groups_to_unselect.add(group_id)
+
+    def validate_base_profile(self, profile_id):
+        """Validate the base profile ID."""
+        if not profile_id or not self.validator:
+            return
+        full_profile_id = self._full_profile_id(profile_id)
+        self.validator.validate_profile(full_profile_id)
 
     def _full_id(self, string, el_type):
         if is_valid_xccdf_id(string):
@@ -241,9 +407,9 @@ class Profile:
             for group_id, props in tailoring["groups"].items():
                 if "evaluate" in props:
                     if props["evaluate"]:
-                        self.groups_to_select.add(group_id)
+                        self.select_group(group_id)
                     else:
-                        self.groups_to_unselect.add(group_id)
+                        self.unselect_group(group_id)
 
     def _import_variables_from_tailoring(self, tailoring):
         if "variables" in tailoring:
@@ -258,9 +424,9 @@ class Profile:
             for rule_id, props in tailoring["rules"].items():
                 if "evaluate" in props:
                     if props["evaluate"]:
-                        self.rules_to_select.add(rule_id)
+                        self.select_rule(rule_id)
                     else:
-                        self.rules_to_unselect.add(rule_id)
+                        self.unselect_rule(rule_id)
                 for attr in ATTRIBUTES:
                     if attr in props:
                         self.change_rule_attribute(rule_id, attr, props[attr])
@@ -298,12 +464,13 @@ class Profile:
 
 
 class Tailoring:
-    def __init__(self):
+    def __init__(self, validator=None):
         self.reverse_dns = DEFAULT_REVERSE_DNS
         self.id = "xccdf_auto_tailoring_default"
         self.version = 1
         self.original_ds_filename = ""
         self.use_local_path = False
+        self.validator = validator
 
         self.profiles = []
 
@@ -312,7 +479,7 @@ class Tailoring:
             for profile in self.profiles:
                 if profile.profile_id == profile_id:
                     return profile
-        profile = Profile()
+        profile = Profile(validator=self.validator)
         if profile_id is not None:
             profile.profile_id = profile_id
         profile.reverse_dns = self.reverse_dns
@@ -367,7 +534,7 @@ class Tailoring:
 
         if 'profiles' in tailoring_dict and tailoring_dict['profiles']:
             for profile_dict in tailoring_dict['profiles']:
-                profile = Profile()
+                profile = Profile(validator=self.validator)
                 profile.reverse_dns = self.reverse_dns
                 profile.import_json_tailoring_profile(profile_dict)
                 self.profiles.append(profile)
@@ -460,6 +627,11 @@ def get_parser():
         "--local-path", action="store_true",
         help="Use local path for the benchmark href instead of absolute file:// URI. "
         "Absolute paths are converted to basename, relative paths are preserved.")
+    parser.add_argument(
+        "--no-validate", action="store_true",
+        help="Skip validation of IDs against the data stream. This significantly speeds up "
+        "execution on large data streams but may produce invalid tailoring files if incorrect "
+        "IDs are provided. Use with caution.")
     return parser
 
 
@@ -473,27 +645,54 @@ if __name__ == "__main__":
         parser.error("one of the following arguments has to be provided: "
                      "BASE_PROFILE_ID or --json-tailoring JSON_TAILORING_FILENAME")
 
-    t = Tailoring()
+    validator = None
+    if not args.no_validate:
+        try:
+            validator = DataStreamValidator(args.datastream)
+        except (ValueError, FileNotFoundError) as e:
+            print(f"Error loading data stream: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    t = Tailoring(validator=validator)
     t.original_ds_filename = args.datastream
     t.reverse_dns = args.id_namespace
     t.use_local_path = args.local_path
 
     if args.json_tailoring:
-        t.import_json_tailoring(args.json_tailoring)
+        try:
+            t.import_json_tailoring(args.json_tailoring)
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
 
     if args.profile or (args.json_tailoring and args.tailored_profile_id):
         p = t.get_or_create_tailored_profile_with_id(args.tailored_profile_id)
         p.extends = args.profile
+
+        # Validate base profile
+        try:
+            p.validate_base_profile(args.profile)
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
         if args.title:
             p.profile_title = args.title
 
-        p.rules_to_select.update(args.select)
-        p.rules_to_unselect.update(args.unselect)
-        p.rules_to_select.difference_update(p.rules_to_unselect)
+        # Select/unselect rules with validation
+        try:
+            for rule_id in args.select:
+                p.select_rule(rule_id)
+            for rule_id in args.unselect:
+                p.unselect_rule(rule_id)
+            p.rules_to_select.difference_update(p.rules_to_unselect)
 
-        p.change_values(args.var_value)
-        p.change_selectors(args.var_select)
-        p.change_roles(args.rule_role)
-        p.change_severities(args.rule_severity)
+            p.change_values(args.var_value)
+            p.change_selectors(args.var_select)
+            p.change_roles(args.rule_role)
+            p.change_severities(args.rule_severity)
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
 
     t.as_xml_string(args.output)

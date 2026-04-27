@@ -112,6 +112,17 @@ assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="notselected"]'
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R4"]/result[text()="notselected"]'
 
+# invalid selector for V1 should fail with a descriptive error
+! python3 $autotailor --id-namespace "com.example.www" --var-select V1=invalid $ds $original_profile 2>$stdout
+grep "Selector 'invalid' does not exist" $stdout
+
+# invalid selector for V2 should fail with available selectors listed
+! python3 $autotailor --id-namespace "com.example.www" --var-select V2=invalid $ds $original_profile 2>$stdout
+grep "Available selectors" $stdout
+
+# --no-validate bypasses selector validation
+python3 $autotailor --id-namespace "com.example.www" --no-validate --var-select V1=invalid $ds $original_profile > $tailoring
+
 # use JSON tailoring (P1)
 python3 $autotailor $ds --id-namespace "com.example.www" --json-tailoring $json_tailoring > $tailoring
 $OSCAP xccdf eval --profile JSON_P1 --progress --tailoring-file $tailoring --results $result $ds
