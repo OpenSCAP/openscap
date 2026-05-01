@@ -21,7 +21,7 @@ function test_probes_interface {
 
     local ret_val=0;
     local DF="test_probes_interface.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RF ] && rm -f $RF
 
