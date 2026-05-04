@@ -59,7 +59,7 @@
 #define FILE_SEPARATOR '/'
 
 static void split_level(const char *level, char **sensitivity, char **category) {
-	char *level_split;
+	const char *level_split;
 
 	level_split = strchr(level, ':');
 	if (level_split == NULL) {
