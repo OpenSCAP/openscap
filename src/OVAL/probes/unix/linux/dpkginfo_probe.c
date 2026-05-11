@@ -58,6 +58,7 @@
 #include "public/oval_schema_version.h"
 
 #include <probe/probe.h>
+#include "probe/entcmp.h"
 
 #include "dpkginfo-helper.h"
 
@@ -71,8 +72,10 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
 {
 	SEXP_t *val, *item, *ent, *obj;
         char *request_st = NULL;
-        struct dpkginfo_reply_t *dpkginfo_reply = NULL;
+        struct dpkginfo_reply_t *dpkginfo_replies = NULL;
+	size_t dpkginfo_reply_count = 0;
         int errflag;
+	oval_operation_t operation;
 
 	obj = probe_ctx_getobject(ctx);
 	ent = probe_obj_getent(obj, "name", 1);
@@ -110,10 +113,29 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
                 }
         }
 
-        /* get info from debian apt cache */
-        dpkginfo_reply = dpkginfo_get_by_name(request_st, &errflag);
+	val = probe_ent_getattrval(ent, "operation");
+	if (val == NULL) {
+		operation = OVAL_OPERATION_EQUALS;
+	} else {
+		operation = (oval_operation_t) SEXP_number_geti_32(val);
+		SEXP_free(val);
+	}
 
-        if (dpkginfo_reply == NULL) {
+	switch (operation) {
+	case OVAL_OPERATION_EQUALS:
+	case OVAL_OPERATION_NOT_EQUAL:
+	case OVAL_OPERATION_PATTERN_MATCH:
+		break;
+	default:
+		SEXP_free(ent);
+		free(request_st);
+		return PROBE_EOPNOTSUPP;
+	}
+
+        /* get info from Debian package status */
+        dpkginfo_replies = dpkginfo_get_all(&dpkginfo_reply_count, &errflag);
+
+        if (dpkginfo_replies == NULL) {
                 switch (errflag) {
 		case 0: /* Not found */
 		{
@@ -122,7 +144,7 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
 		}
 		case -1: /* Error */
 		{
-			dD("dpkginfo_get_by_name failed.");
+			dD("dpkginfo_get_all failed.");
 			item = probe_item_create(OVAL_LINUX_DPKG_INFO, NULL,
 					"name", OVAL_DATATYPE_STRING, request_st,
 					NULL);
@@ -130,10 +152,8 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
 			probe_item_collect(ctx, item);
 			break;
 		}
-                }
+		}
         } else { /* Ok */
-                int i;
-                int num_items = 1; /* FIXME */
 		oval_datatype_t evr_string_type;
 		oval_schema_version_t oval_version = probe_obj_get_platform_schema_version(obj);
 		if (oval_schema_version_cmp(oval_version, OVAL_SCHEMA_VERSION(5.11.1)) >= 0) {
@@ -142,10 +162,18 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
 			evr_string_type = OVAL_DATATYPE_EVR_STRING;
 		}
 
-                for (i = 0; i < num_items; ++i) {
+                for (size_t i = 0; i < dpkginfo_reply_count; ++i) {
+			SEXP_t *name = SEXP_string_newf("%s", dpkginfo_replies[i].name);
+
+			if (probe_entobj_cmp(ent, name) != OVAL_RESULT_TRUE) {
+				SEXP_free(name);
+				continue;
+			}
+
+			struct dpkginfo_reply_t *dpkginfo_reply = dpkginfo_replies + i;
                         dD("%s: element found version %s", dpkginfo_reply->name, dpkginfo_reply->evr);
                         item = probe_item_create (OVAL_LINUX_DPKG_INFO, NULL,
-                                        "name", OVAL_DATATYPE_STRING, dpkginfo_reply->name,
+                                        "name", OVAL_DATATYPE_SEXP, name,
                                         "arch", OVAL_DATATYPE_STRING, dpkginfo_reply->arch,
                                         "epoch", OVAL_DATATYPE_STRING, dpkginfo_reply->epoch,
                                         "release", OVAL_DATATYPE_STRING, dpkginfo_reply->release,
@@ -154,9 +182,8 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
                                         NULL);
 
 			probe_item_collect(ctx, item);
-
-                        dpkginfo_free_reply(dpkginfo_reply);
                 }
+		dpkginfo_free_replies(dpkginfo_replies, dpkginfo_reply_count);
         }
 
 	SEXP_free(ent);
