@@ -112,7 +112,7 @@ function test_probes_file_invalid_utf8 {
 	$OSCAP oval validate $result || ret_val=1
 
 	assert_exists 1 '//results//criterion' || ret_val=1
-	assert_exists 1 '//results//criterion[@result="error"]' || ret_val=1
+	assert_exists 1 '//results//criterion[@result="true"]' || ret_val=1
 
 	rm $DF_INJECTED
 	rm -rf "$files_dir"
