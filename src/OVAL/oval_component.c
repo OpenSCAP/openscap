@@ -1999,12 +1999,12 @@ static bool _match(const char *pattern, const char *string)
 static long unsigned int _parse_fmt_cim(char *dt)
 {
 	const char *pattern1 = "^[0-9]{14}\\.[0-9]{6}[+-][0-9]{3}$"; // yyyymmddHHMMSS.mmmmmmsUUU
-	const char *fmt_str1 = "%4u%2u%2u%2u%2u%2u.%*6u%*[+-]%*3u";
+	const char *fmt_str1 = "%4d%2d%2d%2d%2d%2d.%*6d%*[+-]%*3d";
 	const char *pattern2 = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{3}$"; // yyyy-mm-dd HH:MM:SS:mmm
 	const char *fmt_str2 = "%4d-%2d-%2d %2d:%2d:%2d:%*3d";
 	const char *pattern3 = "^[0-9]{2}-[0-9]{2}-[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{3}$"; // mm-dd-yyyy hh:mm:ss:mmm
 	const char *fmt_str3 = "%2d-%2d-%4d %2d:%2d:%2d:%*3d";
-	int year, month, day, hour, minute, second, r = 0;
+	int year = 0, month = 0, day = 0, hour = 0, minute = 0, second = 0, r = 0;
 	const int number_of_items = 6;
 	if (_match(pattern1, dt)) {
 		r = sscanf(dt, fmt_str1, &year, &month, &day, &hour, &minute, &second);
