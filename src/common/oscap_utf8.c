@@ -95,6 +95,10 @@ char *oscap_sanitize_utf8(const char *input, size_t input_len, size_t *output_le
 		int clen = _utf8_char_len(in + i, input_len - i);
 		if (clen < 0) {
 			if (o + 3 > alloc) {
+				if (alloc > SIZE_MAX / 2) {
+					free(out);
+					return NULL;
+				}
 				alloc = alloc * 2;
 				uint8_t *tmp = realloc(out, alloc + 1);
 				if (tmp == NULL) {
@@ -109,6 +113,10 @@ char *oscap_sanitize_utf8(const char *input, size_t input_len, size_t *output_le
 			i++;
 		} else {
 			if (o + clen > alloc) {
+				if (alloc > SIZE_MAX / 2) {
+					free(out);
+					return NULL;
+				}
 				alloc = alloc * 2;
 				uint8_t *tmp = realloc(out, alloc + 1);
 				if (tmp == NULL) {
