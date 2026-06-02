@@ -209,14 +209,13 @@ SEXP_t *SEXP_string_new_r  (SEXP_t *sexp_mem, const void *string, size_t length)
 {
         SEXP_val_t v_dsc;
         size_t sanitized_len = 0;
-        char *sanitized = oscap_sanitize_utf8(string, length, &sanitized_len);
 
         if (sexp_mem == NULL) {
-                free(sanitized);
                 errno = EFAULT;
                 return (NULL);
         }
 
+        char *sanitized = oscap_sanitize_utf8(string, length, &sanitized_len);
         if (sanitized != NULL) {
                 dW("Replaced invalid UTF-8 byte sequence(s) with the replacement character (U+FFFD) in '%s'.", sanitized);
                 string = sanitized;
