@@ -27,6 +27,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#ifdef OSCAP_THREAD_SAFE
+#include <pthread.h>
+#endif
 
 #include <libxml/tree.h>
 #include <libxml/xmlmemory.h>
@@ -45,6 +48,47 @@
 #include "oscap_source.h"
 #include "oscap_source_priv.h"
 #include "signature_priv.h"
+
+#ifdef OSCAP_THREAD_SAFE
+static pthread_once_t xmlsec_init_once = PTHREAD_ONCE_INIT;
+#else
+static bool xmlsec_init_done = false;
+#endif
+static int xmlsec_init_result = -1;
+
+static void _xmlsec_init(void)
+{
+	if (xmlSecInit() < 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Xmlsec initialization failed.");
+		return;
+	}
+	if (xmlSecCheckVersion() != 1) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Loaded xmlsec library version is not compatible.");
+		return;
+	}
+	if (xmlSecCryptoAppInit(NULL) < 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Crypto initialization failed.");
+		return;
+	}
+	if (xmlSecCryptoInit() < 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Xmlsec-crypto initialization failed.");
+		return;
+	}
+	xmlsec_init_result = 0;
+}
+
+static int _xmlsec_ensure_init(void)
+{
+#ifdef OSCAP_THREAD_SAFE
+	pthread_once(&xmlsec_init_once, _xmlsec_init);
+#else
+	if (!xmlsec_init_done) {
+		xmlsec_init_done = true;
+		_xmlsec_init();
+	}
+#endif
+	return xmlsec_init_result;
+}
 
 struct oscap_signature_ctx {
 	const char *pubkey_pem; // path to the public key file in PEM format
@@ -131,28 +175,20 @@ static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t sc
 	xsltSetSecurityPrefs(xsltSecPrefs, XSLT_SECPREF_WRITE_NETWORK, xsltSecurityForbid);
 	xsltSetDefaultSecurityPrefs(xsltSecPrefs);
 
-	/* Init xmlsec library */
-	if (xmlSecInit() < 0) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Xmlsec initialization failed.");
-		return(-1);
-	}
-
-	/* Check loaded library version */
-	if (xmlSecCheckVersion() != 1) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Loaded xmlsec library version is not compatible.");
-		return(-1);
-	}
-
-	/* Init crypto library */
-	if (xmlSecCryptoAppInit(NULL) < 0) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Crypto initialization failed.");
-		return(-1);
-	}
-
-	/* Init xmlsec-crypto library */
-	if (xmlSecCryptoInit() < 0) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Xmlsec-crypto initialization failed.");
-		return(-1);
+	/* Initialize xmlsec and crypto libraries once per process.
+	 *
+	 * xmlSecCryptoAppShutdown() calls OPENSSL_cleanup() which is
+	 * irreversible and destroys all process-global OpenSSL state
+	 * including threading locks. Other libraries in the same process
+	 * (e.g. librpm) continue to use OpenSSL after signature validation
+	 * completes. Calling OPENSSL_cleanup() while they are active causes
+	 * a segfault in CRYPTO_THREAD_write_lock.
+	 *
+	 * The xmlsec/OpenSSL libraries are designed to be initialized once
+	 * and remain active for the process lifetime. Treat them as such.
+	 */
+	if (_xmlsec_ensure_init() < 0) {
+		goto cleanup;
 	}
 
 	/* find Signature node */
@@ -261,22 +297,18 @@ static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t sc
 	}
 
 cleanup:
-	/* cleanup */
+	/* cleanup per-validation resources only */
 	if (dsigCtx != NULL)
 		xmlSecDSigCtxDestroy(dsigCtx);
 
-	/* destroy keys manager */
 	if (mngr != NULL)
 		xmlSecKeysMngrDestroy(mngr);
 
-	/* Shutdown xmlsec-crypto library */
-	xmlSecCryptoShutdown();
-
-	/* Shutdown crypto library */
-	xmlSecCryptoAppShutdown();
-
-	/* Shutdown xmlsec library */
-	xmlSecShutdown();
+	/* Do NOT call xmlSecCryptoShutdown(), xmlSecCryptoAppShutdown(),
+	 * or xmlSecShutdown() here. These destroy process-global state
+	 * (including OPENSSL_cleanup()) that other libraries rely on.
+	 * The resources are cleaned up at process exit.
+	 */
 
 	/* Shutdown libxslt/libxml */
 	xsltFreeSecurityPrefs(xsltSecPrefs);
