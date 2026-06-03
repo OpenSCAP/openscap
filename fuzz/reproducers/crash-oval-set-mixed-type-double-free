@@ -1,0 +1,1 @@
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"><objects><ind-def:xmlfilecontent_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" id="o:1" version="1"><set><set/><object_reference>o:1</object_reference></set></ind-def:xmlfilecontent_object></objects></oval_definitions>
