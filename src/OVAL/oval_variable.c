@@ -1129,7 +1129,9 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 	oval_variable_set_deprecated(variable, deprecated);
 
 	version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	oval_variable_set_version(variable, atoi(version));
+	if (version != NULL) {
+		oval_variable_set_version(variable, atoi(version));
+	}
 
 	oval_datatype_t datatype = oval_datatype_parse(reader, "datatype", OVAL_DATATYPE_UNKNOWN);
 	oval_variable_set_datatype(variable, datatype);

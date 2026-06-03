@@ -315,7 +315,9 @@ int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);
 	oval_state_set_deprecated(state, deprecated);
 	char *version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	oval_state_set_version(state, atoi(version));
+	if (version != NULL) {
+		oval_state_set_version(state, atoi(version));
+	}
 	free(version);
 	oval_operator_t operator = oval_operator_parse(reader, "operator", OVAL_OPERATOR_AND);
 	oval_state_set_operator(state, operator);
