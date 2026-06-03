@@ -89,6 +89,7 @@ bool xccdf_benchmark_resolve(struct xccdf_benchmark *benchmark)
 
 // prototypes
 static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_list *parent_list, xccdf_textresolve_func more);
+static void xccdf_resolve_warninglist(struct oscap_list *child_list, struct oscap_list *parent_list);
 static void xccdf_resolve_appendlist(struct oscap_list **child_list, struct oscap_list *parent_list, oscap_cmp_func item_compare, oscap_clone_func cloner, bool prepend);
 static void xccdf_resolve_value_instance(struct xccdf_value_instance *child, struct xccdf_value_instance *parent);
 static void xccdf_resolve_profile(struct xccdf_item *child, struct xccdf_item *parent);
@@ -96,10 +97,6 @@ static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *par
 static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *parent);
 static void xccdf_resolve_value(struct xccdf_item *child, struct xccdf_item *parent);
 
-static void xccdf_resolve_warning(void *w1, void *w2) {
-	if (xccdf_warning_get_category(w1) == 0)
-		xccdf_warning_set_category(w1, xccdf_warning_get_category(w2));
-}
 
 static struct xccdf_profile *_xccdf_tailoring_profile_get_real_parent(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile)
 {
@@ -177,7 +174,7 @@ static void xccdf_resolve_item(struct xccdf_item *item, struct xccdf_tailoring *
 	xccdf_resolve_textlist(item->item.description, parent->item.description, NULL);
 	xccdf_resolve_textlist(item->item.question,    parent->item.question,    NULL);
 	xccdf_resolve_textlist(item->item.rationale,   parent->item.rationale,   NULL);
-	xccdf_resolve_textlist(item->item.warnings,    parent->item.warnings,    xccdf_resolve_warning);
+	xccdf_resolve_warninglist(item->item.warnings, parent->item.warnings);
 	xccdf_resolve_textlist(item->item.references,  parent->item.references,  NULL);
 
 	// resolve platforms
@@ -213,6 +210,32 @@ static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_l
 			}
 		}
 		oscap_text_iterator_free(parent_iter);
+	}
+}
+
+// Resolve a list of <warning> elements. A xccdf_warning is NOT an oscap_text
+// (its translatable text is in warning->text), so it must not be run through
+// xccdf_resolve_textlist -- doing so reads past the smaller warning struct.
+static void xccdf_resolve_warninglist(struct oscap_list *child_list, struct oscap_list *parent_list)
+{
+	OSCAP_FOR(xccdf_warning, child, oscap_iterator_new(child_list)) {
+		struct oscap_text *child_text = xccdf_warning_get_text(child);
+		if (child_text == NULL || oscap_text_get_overrides(child_text))
+			continue;
+
+		OSCAP_FOR(xccdf_warning, parent, oscap_iterator_new(parent_list)) {
+			struct oscap_text *parent_text = xccdf_warning_get_text(parent);
+			if (parent_text != NULL &&
+			    oscap_streq(oscap_text_get_lang(child_text), oscap_text_get_lang(parent_text))) {
+				char *text = oscap_sprintf("%s%s", oscap_text_get_text(parent_text), oscap_text_get_text(child_text));
+				oscap_text_set_text(child_text, text);
+				free(text);
+				if (xccdf_warning_get_category(child) == 0)
+					xccdf_warning_set_category(child, xccdf_warning_get_category(parent));
+				break;
+			}
+		}
+		xccdf_warning_iterator_free(parent_iter);
 	}
 }
 
