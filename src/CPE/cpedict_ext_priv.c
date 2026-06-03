@@ -179,7 +179,7 @@ static struct cpe_ext_deprecation *cpe_ext_deprecation_parse(xmlTextReaderPtr re
 	deprecation->date = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_DATE_STR);
 	if (xmlTextReaderIsEmptyElement(reader) == 0) { // the element contains child nodes
 		xmlTextReaderNextNode(reader);
-		while (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST TAG_CPE_EXT_DEPRECATION_STR) != 0) {
+		while (xmlTextReaderConstLocalName(reader) != NULL && xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST TAG_CPE_EXT_DEPRECATION_STR) != 0) {
 			if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
 				xmlTextReaderNextNode(reader);
 				continue;
@@ -245,7 +245,7 @@ struct cpe23_item *cpe23_item_parse(xmlTextReaderPtr reader)
 	item->name = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_NAME_STR);
 	if (xmlTextReaderIsEmptyElement(reader) == 0) { // the element contains child nodes
 		xmlTextReaderNextNode(reader);
-		while (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST TAG_CPE23_ITEM_STR) != 0) {
+		while (xmlTextReaderConstLocalName(reader) != NULL && xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST TAG_CPE23_ITEM_STR) != 0) {
 			if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
 				xmlTextReaderNextNode(reader);
 				continue;

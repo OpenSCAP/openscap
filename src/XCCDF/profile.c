@@ -223,9 +223,14 @@ const struct oscap_string_map XCCDF_ROLE_MAP[] = {
 
 static void xccdf_parse_remarks(xmlTextReaderPtr reader, struct oscap_list* list, int depth)
 {
-	while (oscap_to_start_element(reader, depth))
+	while (oscap_to_start_element(reader, depth)) {
 		if (xccdf_element_get(reader) == XCCDFE_REMARK)
 			oscap_list_add(list, oscap_text_new_parse(XCCDF_TEXT_PLAIN, reader));
+		else
+			// A non-<remark> child here would otherwise never be consumed,
+			// spinning oscap_to_start_element() forever; skip it to progress.
+			xmlTextReaderRead(reader);
+	}
 }
 
 struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_item *bench)
@@ -241,6 +246,10 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 	int depth = oscap_element_depth(reader) + 1;
 
 	while (oscap_to_start_element(reader, depth)) {
+		// Guard against a child element that no case below consumes (which
+		// would spin oscap_to_start_element() on the same node forever): if an
+		// iteration leaves the reader on the same node, force it to advance.
+		xmlNodePtr _node_before = xmlTextReaderCurrentNode(reader);
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_SELECT:{
 				struct xccdf_select *sel = xccdf_select_new();
@@ -296,6 +305,8 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 				   xmlTextReaderConstLocalName(reader));
 			xmlTextReaderRead(reader);
 		}
+		if (xmlTextReaderCurrentNode(reader) == _node_before)
+			xmlTextReaderRead(reader);
 	}
 
 	return prof;
