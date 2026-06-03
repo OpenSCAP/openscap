@@ -451,6 +451,10 @@ XCCDF_ITEM_ADDER_REG(benchmark, profile, profiles)
 
 bool xccdf_benchmark_add_result(struct xccdf_benchmark *benchmark, struct xccdf_result *item)
 {
+	if (item == NULL) {
+		// xccdf_result_new_parse() returns NULL on a malformed TestResult.
+		return false;
+	}
 	const char *id = xccdf_result_get_id(item);
 	if (id != NULL) {
 		// Resolve possible conflicts of the IDs in the list of TestResults.

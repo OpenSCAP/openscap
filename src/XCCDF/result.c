@@ -1453,7 +1453,8 @@ static struct xccdf_score *xccdf_score_new_parse(xmlTextReaderPtr reader)
 	if (xccdf_attribute_has(reader, XCCDFA_MAXIMUM))
 		score->maximum = xccdf_attribute_get_float(reader, XCCDFA_MAXIMUM);
 	else score->maximum = XCCDF_SCORE_MAX_DAFAULT;
-	score->score = atof(oscap_element_string_get(reader));
+	const char *score_str = oscap_element_string_get(reader);
+	score->score = score_str ? atof(score_str) : 0.0;
 	return score;
 }
 

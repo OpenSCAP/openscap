@@ -438,7 +438,9 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_contex
 	id = NULL;
 
 	char *version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	oval_definition_set_version(definition, atoi(version));
+	if (version != NULL) {
+		oval_definition_set_version(definition, atoi(version));
+	}
 	free(version);
 	version = NULL;
 

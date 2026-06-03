@@ -106,6 +106,11 @@ int ds_rds_session_set_target_dir(struct ds_rds_session *session, const char *ta
 
 int ds_rds_session_register_component_source(struct ds_rds_session *session, const char *content_id, struct oscap_source *component)
 {
+	if (content_id == NULL) {
+		// A report/asset with no id cannot be used as a hash-table key.
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot register a Result DataStream component without an id.");
+		return -1;
+	}
 	if (!oscap_htable_add(session->component_sources, content_id, component)) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Content '%s' has already been register with Result DataStream session: %s",
 				content_id, oscap_source_readable_origin(session->source));

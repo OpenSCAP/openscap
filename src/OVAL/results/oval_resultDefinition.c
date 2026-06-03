@@ -257,7 +257,7 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 	struct oval_result_definition *definition;
 	xmlChar *definition_id = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_id");
 	xmlChar *definition_version = xmlTextReaderGetAttribute(reader, BAD_CAST "version");
-	int resvsn = atoi((char *)definition_version);
+	int resvsn = (definition_version != NULL) ? atoi((char *)definition_version) : 0;
 
 	oval_result_t result = oval_result_parse(reader, "result", OVAL_ENUMERATION_INVALID);
 

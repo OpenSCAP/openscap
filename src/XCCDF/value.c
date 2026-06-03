@@ -144,13 +144,15 @@ struct xccdf_item *xccdf_value_parse(xmlTextReaderPtr reader, struct xccdf_item 
 		case XCCDFE_LOWER_BOUND:
 			if (type == XCCDF_TYPE_NUMBER) {
 				val = _xccdf_value_find_or_create_instance(XVALUE(value), selector, type);
-				val->lower_bound = atof(oscap_element_string_get(reader));
+				const char *lb = oscap_element_string_get(reader);
+				val->lower_bound = lb ? atof(lb) : 0.0;
 			}
 			break;
 		case XCCDFE_UPPER_BOUND:
 			if (type == XCCDF_TYPE_NUMBER) {
 				val = _xccdf_value_find_or_create_instance(XVALUE(value), selector, type);
-				val->upper_bound = atof(oscap_element_string_get(reader));
+				const char *ub = oscap_element_string_get(reader);
+				val->upper_bound = ub ? atof(ub) : 0.0;
 			}
 			break;
 		case XCCDFE_CHOICES:

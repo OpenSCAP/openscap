@@ -246,7 +246,7 @@ struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* sds, const 
 	while (ds_stream_index_iterator_has_more(streams))
 	{
 		struct ds_stream_index* stream = ds_stream_index_iterator_next(streams);
-		if (strcmp(ds_stream_index_get_id(stream), stream_id) == 0)
+		if (oscap_strcmp(ds_stream_index_get_id(stream), stream_id) == 0)
 		{
 			ret = stream;
 			break;
@@ -419,20 +419,23 @@ int ds_sds_index_select_checklist(struct ds_sds_index* s,
 
 	int ret = 1;
 
+	if (s == NULL)
+		return ret;
+
 	struct ds_stream_index_iterator* streams_it = ds_sds_index_get_streams(s);
 	while (ds_stream_index_iterator_has_more(streams_it))
 	{
 		struct ds_stream_index* stream_idx = ds_stream_index_iterator_next(streams_it);
 		const char* stream_id = ds_stream_index_get_id(stream_idx);
 
-		if (!*datastream_id || strcmp(stream_id, *datastream_id) == 0)
+		if (!*datastream_id || oscap_strcmp(stream_id, *datastream_id) == 0)
 		{
 			struct oscap_string_iterator* checklists_it = ds_stream_index_get_checklists(stream_idx);
 			while (oscap_string_iterator_has_more(checklists_it))
 			{
 				const char* checklist_id = oscap_string_iterator_next(checklists_it);
 
-				if (!*component_id || strcmp(checklist_id, *component_id) == 0)
+				if (!*component_id || oscap_strcmp(checklist_id, *component_id) == 0)
 				{
 					*component_id = checklist_id;
 					*datastream_id = ds_stream_index_get_id(stream_idx);
@@ -459,13 +462,16 @@ int ds_sds_index_select_checklist_by_benchmark_id(struct ds_sds_index* s,
 
 	int ret = 1;
 
+	if (s == NULL)
+		return ret;
+
 	struct ds_stream_index_iterator* streams_it = ds_sds_index_get_streams(s);
 	while (ds_stream_index_iterator_has_more(streams_it))
 	{
 		struct ds_stream_index *stream_idx = ds_stream_index_iterator_next(streams_it);
 		const char *stream_id = ds_stream_index_get_id(stream_idx);
 
-		if (!*datastream_id || strcmp(stream_id, *datastream_id) == 0)
+		if (!*datastream_id || oscap_strcmp(stream_id, *datastream_id) == 0)
 		{
 			const char *candidate_component_ref_id = (const char*)oscap_htable_get(stream_idx->component_id_to_component_ref_id, mapped_component_id);
 			if (candidate_component_ref_id) {

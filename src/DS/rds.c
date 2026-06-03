@@ -245,7 +245,7 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 		char* id_candidate = oscap_sprintf("asset%i", suffix);
 		xmlChar* id = xmlGetProp(child_asset, BAD_CAST "id");
 
-		if (strcmp(id_candidate, (const char*)id) == 0)
+		if (oscap_strcmp(id_candidate, (const char*)id) == 0)
 		{
 			suffix++;
 		}
@@ -392,8 +392,8 @@ static int ds_rds_report_inject_ai_target_id_ref(xmlDocPtr doc, xmlNodePtr test_
 				xmlChar* system_attr = xmlGetProp(duplicate_candidate, BAD_CAST "system");
 				xmlChar* name_attr = xmlGetProp(duplicate_candidate, BAD_CAST "name");
 
-				if (strcmp((const char*)system_attr, ai_ns_uri) == 0 &&
-					strcmp((const char*)name_attr, asset_id) == 0) {
+				if (oscap_strcmp((const char*)system_attr, ai_ns_uri) == 0 &&
+					oscap_strcmp((const char*)name_attr, asset_id) == 0) {
 
 					xmlFree(system_attr);
 					xmlFree(name_attr);
