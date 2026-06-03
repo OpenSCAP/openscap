@@ -149,6 +149,8 @@ xmlNodePtr lookup_component_in_collection(xmlNodePtr root, const char *component
 			continue;
 
 		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
+		if (candidate_id == NULL)
+			continue;
 		if (strcmp(candidate_id, component_id) == 0)
 		{
 			component = candidate;
@@ -489,8 +491,18 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 	return 0;
 }
 
-int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
+// Bound on the catalog component-ref recursion depth. Catalog references nest
+// only a level or two in real content; this guard stops a cyclic catalog
+// (component A's catalog references B whose catalog references A) from recursing
+// until the process runs out of memory.
+#define DS_SDS_MAX_COMPONENT_REF_DEPTH 30
+
+static int _ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath, int depth)
 {
+	if (depth > DS_SDS_MAX_COMPONENT_REF_DEPTH) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Catalog component-ref nesting too deep or cyclic; aborting.");
+		return -1;
+	}
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
 	{
@@ -512,15 +524,21 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 		free(xlink_href_copy);
 	}
 
-	xmlFree(xlink_href);
 	xmlFree(cref_id);
+
+	// NB: component_id may point into the xlink_href buffer (see
+	// ds_sds_dump_component_by_href), so xlink_href must stay allocated until
+	// the last use of component_id below, hence it is freed on every exit path
+	// instead of here.
 
 	if (ret == -2) {
 		// A remote component was not dumped
 		// It should be ok to continue without it
+		xmlFree(xlink_href);
 		free(target_filename_dirname);
 		return 0;
 	} else if (ret != 0) {
+		xmlFree(xlink_href);
 		free(target_filename_dirname);
 		return -1;
 	}
@@ -543,6 +561,7 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 			if (!name)
 			{
 				oscap_seterr(OSCAP_EFAMILY_XML, "No 'name' attribute for a component referenced in the catalog of component '%s'.", component_id);
+				xmlFree(xlink_href);
 				free(target_filename_dirname);
 				return -1;
 			}
@@ -554,6 +573,7 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 				oscap_seterr(OSCAP_EFAMILY_XML, "No or invalid 'uri' attribute for a component referenced in the catalog of component '%s'.", component_id);
 				xmlFree(str_uri);
 				xmlFree(name);
+				xmlFree(xlink_href);
 				free(target_filename_dirname);
 				return -1;
 			}
@@ -567,14 +587,16 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 				oscap_seterr(OSCAP_EFAMILY_XML, "component-ref with given id '%s' wasn't found in the document! We are looking for it because it's in the catalog of component '%s'.", str_uri + 1 * sizeof(char), component_id);
 				xmlFree(str_uri);
 				xmlFree(name);
+				xmlFree(xlink_href);
 				free(target_filename_dirname);
 				return -1;
 			}
 			xmlFree(str_uri);
 
-			if (ds_sds_dump_component_ref_as(cat_component_ref, session, target_filename_dirname, name) != 0)
+			if (_ds_sds_dump_component_ref_as(cat_component_ref, session, target_filename_dirname, name, depth + 1) != 0)
 			{
 				xmlFree(name);
+				xmlFree(xlink_href);
 				free(target_filename_dirname);
 				return -1; // no need to call oscap_seterr here, it's already set
 			}
@@ -583,10 +605,16 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 		}
 	}
 
+	xmlFree(xlink_href);
 	free(target_filename_dirname);
 
 
 	return 0;
+}
+
+int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
+{
+	return _ds_sds_dump_component_ref_as(component_ref, session, sub_dir, relative_filepath, 0);
 }
 
 int ds_sds_dump_component_ref(const xmlNodePtr component_ref, struct ds_sds_session *session)

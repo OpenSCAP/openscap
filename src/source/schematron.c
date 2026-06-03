@@ -107,7 +107,8 @@ struct oscap_schema_table_entry OSCAP_SCHEMATRON_TABLE[] = {
 	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,        "5.11.2",       "oval/5.11.2/oval-directives-schematron.xsl"},
 	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,        "5.11.3",       "oval/5.11.3/oval-directives-schematron.xsl"},
 	{OSCAP_DOCUMENT_XCCDF,                  "1.2",          "xccdf/1.2/xccdf_1.2-schematron.xsl"},
-	{OSCAP_DOCUMENT_SDS,                    "1.3",          "sds/1.3/source-data-stream-1.3.xsl"}
+	{OSCAP_DOCUMENT_SDS,                    "1.3",          "sds/1.3/source-data-stream-1.3.xsl"},
+	{0, NULL, NULL }	// sentinel terminator: the lookup loop below relies on a zeroed doc_type to stop
 };
 
 static int _validate_sds_components(struct oscap_source *source)
@@ -142,6 +143,10 @@ static int _validate_sds_components(struct oscap_source *source)
 
 static char *_xcf_resolve_in_catalog(xmlNodePtr resolver_node, const char *uri, xmlXPathContextPtr context)
 {
+	if (uri == NULL) {
+		// a check-content-ref without an @href reaches here with a NULL uri
+		return NULL;
+	}
 	if (*uri == '#') {
 		return oscap_strdup(uri);
 	}
@@ -176,6 +181,10 @@ static char *_xcf_resolve_in_catalog(xmlNodePtr resolver_node, const char *uri, 
 
 static xmlNodePtr _xcf_get_component_ref(xmlNodePtr catalog, const char *uri, xmlXPathContextPtr context)
 {
+	if (catalog == NULL || catalog->children == NULL) {
+		// no <catalog> or an empty one: nothing to resolve against
+		return NULL;
+	}
 	char *component_ref_uri = _xcf_resolve_in_catalog(catalog->children->next, uri, context);
 	if (component_ref_uri == NULL) {
 		dD("Can't get component_ref URI using check-content-ref href='%s'", uri);
@@ -201,6 +210,10 @@ static xmlNodePtr _xcf_get_component_ref(xmlNodePtr catalog, const char *uri, xm
 static xmlNodePtr _xcf_get_component(xmlNodePtr component_ref_node, xmlXPathContextPtr context)
 {
 	char *xlink_href = (char *) xmlGetNsProp(component_ref_node, BAD_CAST "href", BAD_CAST "http://www.w3.org/1999/xlink");
+	if (xlink_href == NULL) {
+		// component-ref without an xlink:href cannot be resolved
+		return NULL;
+	}
 	char *xpath = oscap_sprintf("ancestor::ds:data-stream-collection//ds:component[@id='%s']", xlink_href + 1);
 	free(xlink_href);
 	xmlXPathObjectPtr components = xmlXPathNodeEval(component_ref_node, BAD_CAST xpath, context);
@@ -420,6 +433,10 @@ static bool _req_src_236_2(xmlXPathContextPtr context)
 	bool res = true;
 	/* The parent rule element in the schematron matches all scap:data-stream elements */
 	xmlXPathObjectPtr data_streams = xmlXPathEval(BAD_CAST "//scap:data-stream", context);
+	if (data_streams == NULL || data_streams->nodesetval == NULL) {
+		xmlXPathFreeObject(data_streams);
+		return res;
+	}
 	for (int i = 0; i < data_streams->nodesetval->nodeNr; i++) {
 		xmlNodePtr data_stream_node = data_streams->nodesetval->nodeTab[i];
 		/* The assert applies only to configuration use cases */
@@ -586,6 +603,10 @@ static bool _req_src_346_1(xmlXPathContextPtr context)
 	bool res = true;
 	/* The parent rule element in the schematron matches all scap:data-stream elements */
 	xmlXPathObjectPtr data_streams = xmlXPathEval(BAD_CAST "//scap:data-stream", context);
+	if (data_streams == NULL || data_streams->nodesetval == NULL) {
+		xmlXPathFreeObject(data_streams);
+		return res;
+	}
 	for (int i = 0; i < data_streams->nodesetval->nodeNr; i++) {
 		xmlNodePtr data_stream_node = data_streams->nodesetval->nodeTab[i];
 		if (!_req_src_346_1_sub1(data_stream_node, context)) {
