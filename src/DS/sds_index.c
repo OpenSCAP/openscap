@@ -454,6 +454,9 @@ int ds_sds_index_select_checklist(struct ds_sds_index* s,
 int ds_sds_index_select_checklist_by_benchmark_id(struct ds_sds_index* s,
 		const char *benchmark_id, const char **datastream_id, const char **component_ref_id)
 {
+	if (s == NULL)
+		return 1;
+
 	const char *mapped_component_id = (const char*)oscap_htable_get(s->benchmark_id_to_component_id, benchmark_id);
 	if (!mapped_component_id) {
 		oscap_seterr(OSCAP_EFAMILY_XML, "Can't map benchmark ID '%s' to any component ID.", benchmark_id);
@@ -461,9 +464,6 @@ int ds_sds_index_select_checklist_by_benchmark_id(struct ds_sds_index* s,
 	}
 
 	int ret = 1;
-
-	if (s == NULL)
-		return ret;
 
 	struct ds_stream_index_iterator* streams_it = ds_sds_index_get_streams(s);
 	while (ds_stream_index_iterator_has_more(streams_it))
