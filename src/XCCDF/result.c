@@ -1856,8 +1856,10 @@ static inline const char *_get_timestamp(void)
 	}
 #else
 	/* Fallback for platforms without tm_gmtoff (e.g. the MSVC runtime).
-	 * timezone is a global variable set by localtime(3) holding the offset
-	 * of standard time; add an hour when daylight saving time is in effect. */
+	 * timezone is a global variable set by localtime(3) holding the number
+	 * of seconds west of UTC of standard time. Daylight saving time moves
+	 * the local time one hour east, i.e. closer to UTC, so subtract 3600
+	 * seconds from the westward offset when DST is in effect. */
 	long std_diff = timezone;
 	if (lt->tm_isdst > 0)
 		std_diff -= 3600;
