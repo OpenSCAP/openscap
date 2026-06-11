@@ -213,6 +213,12 @@ check_function_exists(fts_open HAVE_FTS_OPEN)
 check_function_exists(strsep HAVE_STRSEP)
 check_function_exists(strptime HAVE_STRPTIME)
 
+# struct tm.tm_gmtoff is a BSD/GNU extension (present on glibc, musl, the BSDs
+# and macOS, absent on the MSVC runtime). When available it carries the UTC
+# offset including daylight saving time, unlike the global timezone variable.
+include(CheckStructHasMember)
+check_struct_has_member("struct tm" tm_gmtoff time.h HAVE_STRUCT_TM_TM_GMTOFF)
+
 check_include_file(syslog.h HAVE_SYSLOG_H)
 check_include_file(stdio_ext.h HAVE_STDIO_EXT_H)
 check_include_file(shadow.h HAVE_SHADOW_H)

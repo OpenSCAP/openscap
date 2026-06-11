@@ -1842,7 +1842,10 @@ static inline const char *_get_timestamp(void)
 	if (!lt)
 		return NULL;
 
-#if defined(OS_FREEBSD)
+#if defined(HAVE_STRUCT_TM_TM_GMTOFF)
+	/* tm_gmtoff is the offset east of UTC in seconds and already accounts
+	 * for daylight saving time, so it reflects the actual offset in effect
+	 * at the represented local time. */
 	tz_diff = lt->tm_gmtoff;
 
 	if (tz_diff < 0) {
@@ -1851,20 +1854,21 @@ static inline const char *_get_timestamp(void)
 	} else {
 		tz_sign = '+';
 	}
-
-        /*  glibc's timezone offset does not account for daylight savings time.
-         *  So we match that behavior here by adding 3600 seconds
-         */
-        if (lt->tm_isdst)
-		tz_diff += 3600;
 #else
-	/* timezone is a global variable set by localtime(3) */
-	if (timezone <= 0) {
+	/* Fallback for platforms without tm_gmtoff (e.g. the MSVC runtime).
+	 * timezone is a global variable set by localtime(3) holding the number
+	 * of seconds west of UTC of standard time. Daylight saving time moves
+	 * the local time one hour east, i.e. closer to UTC, so subtract 3600
+	 * seconds from the westward offset when DST is in effect. */
+	long std_diff = timezone;
+	if (lt->tm_isdst > 0)
+		std_diff -= 3600;
+	if (std_diff <= 0) {
 		tz_sign = '+';
-		tz_diff = -timezone;
+		tz_diff = -std_diff;
 	} else {
 		tz_sign = '-';
-		tz_diff = timezone;
+		tz_diff = std_diff;
 	}
 #endif
 	tz_diff /= 60;
