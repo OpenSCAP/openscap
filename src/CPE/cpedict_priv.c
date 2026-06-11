@@ -617,7 +617,7 @@ struct cpe_generator *cpe_generator_parse(struct cpe_parser_ctx *ctx)
 		// skip nodes until new element
 		xmlTextReaderNextElement(reader);
 
-		while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR) != 0) {
+		while (xmlTextReaderConstLocalName(reader) != NULL && xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_STR) != 0) {
 
 			if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 				       TAG_PRODUCT_NAME_STR) == 0) &&
@@ -644,9 +644,11 @@ struct cpe_generator *cpe_generator_parse(struct cpe_parser_ctx *ctx)
 						"Unknown XML element in CPE dictionary generator, local name is '%s'.",
 						xmlTextReaderConstLocalName(reader));
 			}
-			// element saved. Let's jump on the very next one node (not element, because we need to 
+			// element saved. Let's jump on the very next one node (not element, because we need to
 			// find XML_READER_TYPE_END_ELEMENT node, see "while" condition and the condition below "while"
-			xmlTextReaderNextNode(reader);
+			// Stop at end-of-document so a missing </generator> can't spin this loop.
+			if (xmlTextReaderNextNode(reader) != 1)
+				break;
 
 		}
 	}
@@ -712,10 +714,13 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 		xmlTextReaderNextElementWE(reader, TAG_CPE_ITEM_STR);
 		// Now it's time to go deaply to cpe-item element and parse it's children
 		// Do while there is another cpe-item element. Then return.
-		while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) != 0) {
+		while (xmlTextReaderConstLocalName(reader) != NULL && xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CPE_ITEM_STR) != 0) {
 
 			if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
-				xmlTextReaderNextNode(reader);
+				// Break on end-of-document/error; xmlTextReaderRead() returns 0
+				// at EOF without moving, which would otherwise spin this loop.
+				if (xmlTextReaderNextNode(reader) != 1)
+					break;
 				continue;
 			}
 
@@ -836,7 +841,7 @@ static struct cpe_notes *cpe_notes_parse(xmlTextReaderPtr reader)
 	notes->lang = (char *) xmlTextReaderXmlLang(reader);
 	if (xmlTextReaderIsEmptyElement(reader) == 0) { // element contains child nodes
 		xmlTextReaderNextNode(reader);
-		while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTES_STR) != 0) {
+		while (xmlTextReaderConstLocalName(reader) != NULL && xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTES_STR) != 0) {
 			if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
 				xmlTextReaderNextNode(reader);
 				continue;
@@ -882,7 +887,7 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader)
 	// jump to next element (which should be product)
 	xmlTextReaderNextElement(reader);
 
-	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VENDOR_STR) != 0) {
+	while (xmlTextReaderConstLocalName(reader) != NULL && xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VENDOR_STR) != 0) {
 
 		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
 			xmlTextReaderNextNode(reader);
@@ -922,22 +927,36 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader)
 			// initialization
 			version = cpe_version_new();
 			version->value = (char *)xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
-			oscap_list_add(product->versions, version);
+			// child elements may appear out of order / without their parent;
+			// skip an orphan rather than dereferencing a NULL parent.
+			if (product != NULL)
+				oscap_list_add(product->versions, version);
+			else
+				cpe_version_free(version);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_UPDATE_STR) == 0) {
 			// initialization
 			update = cpe_update_new();
 			update->value = (char *)xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
-			oscap_list_add(version->updates, update);
+			if (version != NULL)
+				oscap_list_add(version->updates, update);
+			else
+				cpe_update_free(update);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_EDITION_STR) == 0) {
 			// initialization
 			edition = cpe_edition_new();
 			edition->value = (char *)xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
-			oscap_list_add(update->editions, edition);
+			if (update != NULL)
+				oscap_list_add(update->editions, edition);
+			else
+				cpe_edition_free(edition);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LANGUAGE_STR) == 0) {
 			// initialization
 			language = cpe_language_new();
 			language->value = (char *)xmlTextReaderGetAttribute(reader, ATTR_VALUE_STR);
-			oscap_list_add(edition->languages, language);
+			if (edition != NULL)
+				oscap_list_add(edition->languages, language);
+			else
+				cpe_language_free(language);
 		} else {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element withinin CPE vendor element, local name is '%s'.",
 				xmlTextReaderConstLocalName(reader));

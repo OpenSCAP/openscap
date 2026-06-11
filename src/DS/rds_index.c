@@ -101,7 +101,8 @@ struct rds_report_request_index* rds_index_get_report_request(struct rds_index* 
 	while (rds_report_request_index_iterator_has_more(it))
 	{
 		struct rds_report_request_index* rr_index = rds_report_request_index_iterator_next(it);
-		if (strcmp(rds_report_request_index_get_id(rr_index), id) == 0) {
+		// ids may be missing (NULL) on malformed input; oscap_strcmp is NULL-safe.
+		if (oscap_strcmp(rds_report_request_index_get_id(rr_index), id) == 0) {
 			ret = rr_index;
 			break;
 		}
@@ -123,7 +124,7 @@ struct rds_asset_index* rds_index_get_asset(struct rds_index *rds, const char *i
 	while (rds_asset_index_iterator_has_more(it))
 	{
 		struct rds_asset_index *a_index = rds_asset_index_iterator_next(it);
-		if (strcmp(rds_asset_index_get_id(a_index), id) == 0) {
+		if (oscap_strcmp(rds_asset_index_get_id(a_index), id) == 0) {
 			ret = a_index;
 			break;
 		}
@@ -142,7 +143,7 @@ struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char 
 	while (rds_report_index_iterator_has_more(it))
 	{
 		struct rds_report_index *r_index = rds_report_index_iterator_next(it);
-		if (strcmp(rds_report_index_get_id(r_index), id) == 0) {
+		if (oscap_strcmp(rds_report_index_get_id(r_index), id) == 0) {
 			ret = r_index;
 			break;
 		}
@@ -200,20 +201,25 @@ static inline void _parse_relationships_node(struct rds_index *ret, xmlNodePtr r
 		xmlChar *inner_ref = relationship_get_inner_ref(relationship_node);
 
 		// We now only use arfvocab: but arfrel: is kept here for compatibility
-		if (oscap_str_startswith((const char *) type_attr, "arfvocab:")
-				|| oscap_str_startswith((const char *) type_attr, "arfrel:")) {
+		if (type_attr != NULL
+				&& (oscap_str_startswith((const char *) type_attr, "arfvocab:")
+				|| oscap_str_startswith((const char *) type_attr, "arfrel:"))) {
 			if (oscap_str_endswith((const char*)type_attr, ":isAbout")) {
 				struct rds_asset_index* asset = rds_index_get_asset(ret, (const char*)inner_ref);
 				struct rds_report_index* report = rds_index_get_report(ret, (const char*)subject_attr);
 
-				rds_asset_index_add_report_ref(asset, report);
+				// A relationship may reference ids that don't resolve to an asset/
+				// report in this collection; skip it rather than dereferencing NULL.
+				if (asset != NULL && report != NULL)
+					rds_asset_index_add_report_ref(asset, report);
 			} else if (oscap_str_endswith((const char*)type_attr, ":createdFor")) {
 				struct rds_report_request_index *request = rds_index_get_report_request(ret, (const char*)inner_ref);
 				struct rds_report_index *report = rds_index_get_report(ret, (const char*)subject_attr);
 
 				// This is based on the assumption that every report has at most 1 request
 				// it was "created for".
-				rds_report_index_set_request(report, request);
+				if (report != NULL)
+					rds_report_index_set_request(report, request);
 			} else {
 				dW("Unsupported core:relationship/@type='%s'", (const char *) type_attr);
 			}
@@ -268,6 +274,9 @@ struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 			{
 				if (strcmp((const char*)xmlTextReaderConstLocalName(reader), "report-request") != 0) {
 					// TODO: warning?
+					// Must advance the reader, otherwise oscap_to_start_element()
+					// keeps returning this same node and the loop spins forever.
+					xmlTextReaderRead(reader);
 					continue;
 				}
 
@@ -289,6 +298,9 @@ struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 			{
 				if (strcmp((const char*)xmlTextReaderConstLocalName(reader), "asset") != 0) {
 					// TODO: warning?
+					// Must advance the reader, otherwise oscap_to_start_element()
+					// keeps returning this same node and the loop spins forever.
+					xmlTextReaderRead(reader);
 					continue;
 				}
 
@@ -310,6 +322,9 @@ struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 			{
 				if (strcmp((const char*)xmlTextReaderConstLocalName(reader), "report") != 0) {
 					// TODO: warning?
+					// Must advance the reader, otherwise oscap_to_start_element()
+					// keeps returning this same node and the loop spins forever.
+					xmlTextReaderRead(reader);
 					continue;
 				}
 
@@ -355,13 +370,16 @@ int rds_index_select_report(struct rds_index *s, const char **report_id)
 {
 	int ret = 1;
 
+	if (s == NULL)
+		return ret;
+
 	struct rds_report_index_iterator *reports_it = rds_index_get_reports(s);
 	while (rds_report_index_iterator_has_more(reports_it))
 	{
 		struct rds_report_index* report_idx = rds_report_index_iterator_next(reports_it);
 		const char *report_idx_id = rds_report_index_get_id(report_idx);
 
-		if (!*report_id || strcmp(report_idx_id, *report_id) == 0) {
+		if (!*report_id || oscap_strcmp(report_idx_id, *report_id) == 0) {
 			*report_id = report_idx_id;
 			ret = 0;
 			break;
