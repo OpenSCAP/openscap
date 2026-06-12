@@ -413,5 +413,23 @@ clean_dbus_mock() {
 
 export -f assert_exists
 
+# Run $OSCAP with the given args and fail if the process crashed.
+# Handles both ASan builds (exit 1 + "AddressSanitizer" / "runtime error:" in
+# stderr) and plain builds (exit >= 128 from SIGSEGV/SIGABRT).
+assert_no_crash() {
+	local desc="$1"
+	local stderr_file
+	stderr_file=$(mktemp)
+	trap 'rm -f "$stderr_file"' RETURN
+	local ret=0
+	$OSCAP "${@:2}" > /dev/null 2>"$stderr_file" || ret=$?
+	if [ "$ret" -ge 128 ] || grep -q "AddressSanitizer:DEADLYSIGNAL\|ERROR: AddressSanitizer:\|runtime error:" "$stderr_file"; then
+		echo "CRASH detected in: $desc (exit $ret)"
+		return 1
+	fi
+}
+
+export -f assert_no_crash
+
 export OPENSCAP_ENABLE_MD5="@OPENSCAP_ENABLE_MD5@"
 export OPENSCAP_ENABLE_SHA1="@OPENSCAP_ENABLE_SHA1@"

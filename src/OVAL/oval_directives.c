@@ -364,7 +364,7 @@ int oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 	if ( (int) type != OVAL_ENUMERATION_INVALID) {
 		/*reported */
 		xmlChar *boolstr = xmlTextReaderGetAttribute(reader, BAD_CAST "reported");
-		bool reported = (strcmp((const char *)boolstr, "1") == 0) || (strcmp((const char *)boolstr, "true") == 0);
+		bool reported = oscap_streq((const char *)boolstr, "1") || oscap_streq((const char *)boolstr, "true");
 		free(boolstr);
 		oval_result_directives_set_reported(directives, type, reported);
 

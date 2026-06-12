@@ -760,6 +760,11 @@ bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr rea
 void xccdf_item_add_applicable_platform(struct xccdf_item *item, xmlTextReaderPtr reader)
 {
 	char *platform_idref = xccdf_attribute_copy(reader, XCCDFA_IDREF);
+	if (platform_idref == NULL) {
+		// A <platform> with no @idref has nothing to reference; ignore it
+		// rather than passing NULL to the regex/strlen below.
+		return;
+	}
 
 	/* Official Windows 7 CPE according to National Vulnerability Database
 	 * CPE Dictionary as of 2018-08-29 is 'cpe:/o:microsoft:windows_7'.

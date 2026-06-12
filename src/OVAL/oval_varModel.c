@@ -194,8 +194,12 @@ static int _oval_variable_model_parse_variable_values
 
 		return_code = xmlTextReaderRead(reader);
 		char *value = (char *)xmlTextReaderValue(reader);
-		ov = oval_value_new(frame->datatype, value);
-		oval_collection_add(frame->values, ov);
+		// frame is NULL when this variable's id duplicated an earlier one
+		// (see _oval_variable_model_parse_variable); ignore its values.
+		if (frame != NULL) {
+			ov = oval_value_new(frame->datatype, value);
+			oval_collection_add(frame->values, ov);
+		}
 		free(value);
 	} else {
 		dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
