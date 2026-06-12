@@ -229,10 +229,15 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 
 		if (substr_cnt > 0) {
 			int k;
+			SEXP_t *item;
 			instance_count++;
 
-			SEXP_list_add(items, create_item(path, file, pfd->pattern,
-				instance_count, substrs, substr_cnt, over));
+			item = create_item(path, file, pfd->pattern,
+				instance_count, substrs, substr_cnt, over);
+			/* SEXP_list_add() takes its own reference, so release ours
+			 * to avoid leaking every created item. */
+			SEXP_list_add(items, item);
+			SEXP_free(item);
 
 			for (k = 0; k < substr_cnt; ++k)
 				free(substrs[k]);
@@ -278,6 +283,10 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	if (whole_path != NULL)
 		free(whole_path);
 	free(whole_path_with_prefix);
+	/* Free the accumulator list. Collected items are owned by the probe
+	 * result object; this releases the list's own references (and frees any
+	 * items that were created but not collected). */
+	SEXP_free(items);
 
 	/* coverity[leaked_storage] - substrs is not leaked */
 	return ret;
