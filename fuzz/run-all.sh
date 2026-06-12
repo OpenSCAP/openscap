@@ -46,12 +46,23 @@ OUT="${FUZZ_DIR}/findings"
 LOGS="${FUZZ_DIR}/logs"
 
 # harness   corpus-dir
+#
+# The probe-content harnesses (*_probe_fuzzer) only exist when the build was
+# configured with -DENABLE_PROBES=ON; they are skipped automatically below if
+# the binary is absent (e.g. the XML-config build uses -DENABLE_PROBES=OFF).
 HARNESSES=(
 	"scap_parse_fuzzer:corpus"
 	"xccdf_policy_fuzzer:corpus_xccdf"
 	"validate_fuzzer:corpus"
 	"arf_fuzzer:corpus_arf"
 	"xccdf_tailoring_fuzzer:corpus_tailoring"
+	"xinetd_probe_fuzzer:corpus_probe_xinetd"
+	"routingtable_probe_fuzzer:corpus_probe_routingtable"
+	"shadow_probe_fuzzer:corpus_probe_shadow"
+	"textfilecontent54_probe_fuzzer:corpus_probe_textfilecontent54"
+	"textfilecontent_probe_fuzzer:corpus_probe_textfilecontent"
+	"inetlisteningservers_probe_fuzzer:corpus_probe_inetlisteningservers"
+	"iflisteners_probe_fuzzer:corpus_probe_iflisteners"
 )
 
 # Sanitizer runtime options shared by every harness:
