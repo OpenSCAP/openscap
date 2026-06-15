@@ -74,7 +74,7 @@ export ASAN_OPTIONS="detect_leaks=0:abort_on_error=1:${ASAN_OPTIONS:-}"
 export UBSAN_OPTIONS="halt_on_error=0:print_stacktrace=1:${UBSAN_OPTIONS:-}"
 
 PIDS=()
-cleanup() { echo; echo "[run-all] stopping…"; kill "${PIDS[@]}" 2>/dev/null; }
+cleanup() { echo; echo "[run-all] stopping…"; kill "${PIDS[@]}" 2>/dev/null; return 0; }
 trap cleanup INT TERM
 
 echo "[run-all] duration=${DURATION}s fork/harness=${FORK} build=${BUILD}"
