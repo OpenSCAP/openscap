@@ -529,6 +529,9 @@ class Tailoring:
             f.write(pretty_xml)
 
     def import_json_tailoring(self, json_tailoring):
+        json_tailoring_path = pathlib.Path(json_tailoring).absolute()
+        if not json_tailoring_path.is_file():
+            raise ValueError(f'JSON tailoring file "{json_tailoring}" does not exist or is not a file.')
         with open(json_tailoring, "r") as jf:
             tailoring_dict = json.load(jf)
 
