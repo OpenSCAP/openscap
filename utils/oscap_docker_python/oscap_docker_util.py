@@ -126,7 +126,7 @@ class OscapDockerScan(object):
             self.mountpoint = tempfile.mkdtemp()
             self.extracted_container = True
             with tarfile.open(fileobj=tar) as tf:
-                tf.extractall(path=self.mountpoint)
+                tf.extractall(path=self.mountpoint, filter="fully_trusted")
             Path(os.path.join(self.mountpoint, '.dockerenv')).touch()
 
 
