@@ -400,17 +400,6 @@ char *oscap_vsprintf(const char *fmt, va_list ap);
  */
 char *oscap_generate_random_string(size_t len, char *charset);
 
-/**
- * Join 2 paths in an intelligent way.
- * Both paths are allowed to be NULL.
- * Caller is responsible for freeing the returned pointer.
- * @param path1 first path
- * @param path2 second path
- * @return Join of path1 and path2. The first path is separated by the second
- * path by exactly 1 slash separator.
- */
-char *oscap_path_join(const char *path1, const char *path2);
-
 /// In a list of key-value pairs (odd indicies are keys, even values), find a value for given key
 const char *oscap_strlist_find_value(char ** const kvalues, const char *key);
 /// Right trim @a ch characters (modifies its first argument!)
