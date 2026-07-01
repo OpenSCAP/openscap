@@ -84,6 +84,23 @@ static char *strdup_nullable(const char *str)
 	return str == NULL ? NULL : strdup(str);
 }
 
+static bool is_reply_copy_complete(const struct dpkginfo_reply_t *dst, const struct dpkginfo_reply_t *src)
+{
+	if (dst->name == NULL)
+		return false;
+	if (src->arch != NULL && dst->arch == NULL)
+		return false;
+	if (src->epoch != NULL && dst->epoch == NULL)
+		return false;
+	if (src->release != NULL && dst->release == NULL)
+		return false;
+	if (src->version != NULL && dst->version == NULL)
+		return false;
+	if (src->evr != NULL && dst->evr == NULL)
+		return false;
+	return true;
+}
+
 static int dpkginfo_copy_reply(struct dpkginfo_reply_t *dst, const struct dpkginfo_reply_t *src, const char *name)
 {
 	memset(dst, 0, sizeof(*dst));
@@ -94,11 +111,7 @@ static int dpkginfo_copy_reply(struct dpkginfo_reply_t *dst, const struct dpkgin
 	dst->version = strdup_nullable(src->version);
 	dst->evr = strdup_nullable(src->evr);
 
-	if (dst->name == NULL || (src->arch != NULL && dst->arch == NULL) ||
-			(src->epoch != NULL && dst->epoch == NULL) ||
-			(src->release != NULL && dst->release == NULL) ||
-			(src->version != NULL && dst->version == NULL) ||
-			(src->evr != NULL && dst->evr == NULL)) {
+	if (!is_reply_copy_complete(dst, src)) {
 		dpkginfo_clear_reply(dst);
 		return -1;
 	}

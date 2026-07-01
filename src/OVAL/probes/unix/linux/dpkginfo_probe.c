@@ -178,8 +178,9 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
                                         "epoch", OVAL_DATATYPE_STRING, dpkginfo_reply->epoch,
                                         "release", OVAL_DATATYPE_STRING, dpkginfo_reply->release,
                                         "version", OVAL_DATATYPE_STRING, dpkginfo_reply->version,
-					"evr", evr_string_type, dpkginfo_reply->evr,
+                                        "evr", evr_string_type, dpkginfo_reply->evr,
                                         NULL);
+			SEXP_free(name);
 
 			probe_item_collect(ctx, item);
                 }
