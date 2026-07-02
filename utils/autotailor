@@ -670,7 +670,8 @@ if __name__ == "__main__":
 
     if args.profile or (args.json_tailoring and args.tailored_profile_id):
         p = t.get_or_create_tailored_profile_with_id(args.tailored_profile_id)
-        p.extends = args.profile
+        if args.profile:
+            p.extends = args.profile
 
         # Validate base profile
         try:
