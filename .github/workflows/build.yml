@@ -26,7 +26,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
       with:
         submodules: recursive
 
@@ -59,7 +59,7 @@ jobs:
     - name: Install Deps
       run: dnf install -y cmake git dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre2-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace python3-pytest
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
       with:
         submodules: recursive
     - name: Build
@@ -80,10 +80,10 @@ jobs:
       VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
 
     - name: Checkout vcpkg
-      uses: actions/checkout@v3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
       with:
         path: ${{ github.workspace }}/vcpkg
         repository: microsoft/vcpkg
@@ -94,7 +94,7 @@ jobs:
       run: "${{ github.workspace }}\\vcpkg\\scripts\\bootstrap.ps1 -disableMetrics"
 
     - name: Export GitHub Actions cache environment variables
-      uses: actions/github-script@v7
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
       with:
         script: |
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
@@ -115,7 +115,7 @@ jobs:
       working-directory: build
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
       with:
         name: openscap-win64
         path: |-
