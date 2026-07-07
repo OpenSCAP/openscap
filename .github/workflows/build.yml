@@ -91,7 +91,8 @@ jobs:
 
     - name: Bootstrap vcpkg
       shell: pwsh
-      run: "${{ github.workspace }}\\vcpkg\\scripts\\bootstrap.ps1 -disableMetrics"
+      run: |
+        & "$env:GITHUB_WORKSPACE\vcpkg\scripts\bootstrap.ps1" -disableMetrics
 
     - name: Export GitHub Actions cache environment variables
       uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
@@ -100,11 +101,12 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
     - name: Install Deps
-      run: "${{ github.workspace }}\\vcpkg\\vcpkg.exe install curl libxml2 libxslt bzip2 pcre pthreads zlib getopt-win32 xmlsec --triplet x64-windows"
+      run: |
+        & "$env:GITHUB_WORKSPACE\vcpkg\vcpkg.exe" install curl libxml2 libxslt bzip2 pcre pthreads zlib getopt-win32 xmlsec --triplet x64-windows
 
     - name: Configure
       working-directory: ./build
-      run: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_PYTHON3=FALSE -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+      run: cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_PYTHON3=FALSE "-DCMAKE_TOOLCHAIN_FILE=$env:GITHUB_WORKSPACE/vcpkg/scripts/buildsystems/vcpkg.cmake" ..
 
     - name: Build
       run: cmake --build . --config Release
