@@ -10,6 +10,8 @@ on:
   pull_request:
     branches: [ maint-1.3 ]
 
+permissions:
+  contents: read
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
