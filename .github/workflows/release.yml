@@ -24,10 +24,9 @@ jobs:
         submodules: recursive
     - name: Build source tarball
       run: |
-        mkdir -p build
-        cd build
         cmake ../
         make package_source
+      working-directory: ./build
     - name: Attest build provenance
       uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4
       with:
