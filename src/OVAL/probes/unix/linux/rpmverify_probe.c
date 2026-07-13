@@ -222,8 +222,7 @@ ret:
 
 int rpmverify_probe_offline_mode_supported()
 {
-	// TODO: Switch this to OFFLINE_MODE_OWN once rpmtsSetRootDir is fully supported by librpm
-	return PROBE_OFFLINE_CHROOT;
+	return PROBE_OFFLINE_OWN;
 }
 
 void *rpmverify_probe_init(void)

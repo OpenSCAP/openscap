@@ -35,9 +35,28 @@ function rpm_prepare_offline {
     rpm -i --nosignature ${RPMBUILD}/RPMS/noarch/foo-1.0-1.noarch.rpm --badreloc --relocate="/etc=${RPMTEST}/etc/" --dbpath="${RPMTEST}${RPMDB_PATH}"
 }
 
+# Variant for probes using PROBE_OFFLINE_OWN (rpmtsSetRootDir) that
+# do not require chroot capability.
+function rpm_prepare_offline_own {
+    set_offline_chroot_dir "$RPMTEST"
+    require "rpm" || return 255
+    rm -rf ${RPMTEST}
+    mkdir -p ${RPMTEST}/usr/lib/rpm
+    cp /usr/lib/rpm/rpmrc ${RPMTEST}/usr/lib/rpm/rpmrc
+    cp /usr/lib/rpm/macros ${RPMTEST}/usr/lib/rpm/macros
+    rpm_build
+    rpm -i ${RPMBUILD}/RPMS/noarch/foobar-1.0-1.noarch.rpm --badreloc --relocate="/etc=${RPMTEST}/etc/" --dbpath="${RPMTEST}${RPMDB_PATH}"
+    rpm -i ${RPMBUILD}/RPMS/noarch/foo-1.0-1.noarch.rpm --badreloc --relocate="/etc=${RPMTEST}/etc/" --dbpath="${RPMTEST}${RPMDB_PATH}"
+}
+
 function rpm_cleanup_offline {
     rm -rf ${RPMTEST}
     unset_chroot_offline_test_mode
+}
+
+function rpm_cleanup_offline_own {
+    rm -rf ${RPMTEST}
+    set_offline_chroot_dir ""
 }
 
 function rpm_query {
