@@ -1864,15 +1864,35 @@ xccdf_policy_add_select(struct xccdf_policy *policy, struct xccdf_select *sel)
 	return _xccdf_policy_add_selector_internal(policy, benchmark, sel, true);
 }
 
+// Upper bound on the Profile @extends chain length. Real content nests at most
+// a handful deep; this only exists to stop a cyclic @extends chain from
+// recursing until the stack overflows.
+#define XCCDF_POLICY_MAX_EXTENDS_DEPTH 64
+
+// Nesting counter for profile @extends resolution. It is a file-static (rather
+// than a recursion argument) because the chain can recurse indirectly through
+// policy creation -- _add_profile_selectors -> xccdf_policy_model_get_policy_by_id
+// -> xccdf_policy_new -> _add_profile_selectors -- which would reset a per-call
+// argument and let a cyclic @extends overflow the stack.
+static unsigned _xccdf_extends_recursion_depth = 0;
+
 static void _xccdf_policy_add_profile_selectors(struct xccdf_policy* policy, struct xccdf_benchmark *benchmark, struct xccdf_profile *profile) {
 	if (!profile)
 		return;
+
+	if (_xccdf_extends_recursion_depth >= XCCDF_POLICY_MAX_EXTENDS_DEPTH) {
+		const char *profile_id = xccdf_profile_get_id(profile) ? xccdf_profile_get_id(profile) : "(unknown)";
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Profile @extends chain is too deep or cyclic; aborting selector resolution for '%s'.",
+				profile_id);
+		return;
+	}
+	_xccdf_extends_recursion_depth++;
 
 	const char *parent_profile_id = xccdf_profile_get_extends(profile);
 	struct xccdf_profile *parent_profile = NULL;
 
 	if (parent_profile_id != NULL) {
-		if (strcmp(parent_profile_id, xccdf_profile_get_id(profile)) == 0) {
+		if (oscap_strcmp(parent_profile_id, xccdf_profile_get_id(profile)) == 0) {
 			// We are shadowing a profile, we need to get the original profile from
 			// benchmark directly to avoid an endless loop.
 			parent_profile = xccdf_benchmark_get_profile_by_id(benchmark, parent_profile_id);
@@ -1902,6 +1922,8 @@ static void _xccdf_policy_add_profile_selectors(struct xccdf_policy* policy, str
 		_xccdf_policy_add_selector_internal(policy, benchmark, clone, false);
 	}
 	xccdf_select_iterator_free(sel_it);
+
+	_xccdf_extends_recursion_depth--;
 }
 
 /**
