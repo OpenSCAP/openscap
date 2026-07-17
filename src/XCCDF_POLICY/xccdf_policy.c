@@ -1880,9 +1880,10 @@ static void _xccdf_policy_add_profile_selectors(struct xccdf_policy* policy, str
 	if (!profile)
 		return;
 
-	if (_xccdf_extends_recursion_depth > XCCDF_POLICY_MAX_EXTENDS_DEPTH) {
+	if (_xccdf_extends_recursion_depth >= XCCDF_POLICY_MAX_EXTENDS_DEPTH) {
+		const char *profile_id = xccdf_profile_get_id(profile) ? xccdf_profile_get_id(profile) : "(unknown)";
 		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Profile @extends chain is too deep or cyclic; aborting selector resolution for '%s'.",
-				xccdf_profile_get_id(profile));
+				profile_id);
 		return;
 	}
 	_xccdf_extends_recursion_depth++;
