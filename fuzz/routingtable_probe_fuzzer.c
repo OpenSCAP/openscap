@@ -40,7 +40,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	 * holds only fixed-size buffers and static-string flag pointers, so
 	 * nothing it fills needs to be freed. */
 	char *save = NULL;
-	for (char *line = strtok_r(buf, "\n", &save); line != NULL;
+	for (const char *line = strtok_r(buf, "\n", &save); line != NULL;
 	     line = strtok_r(NULL, "\n", &save)) {
 		struct route_info rt;
 

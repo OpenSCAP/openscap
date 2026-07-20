@@ -9,7 +9,8 @@
  *     "LLVM_PROFILE_FILE=build-cov/profiles/{}.profraw \
  *      ASAN_OPTIONS=detect_leaks=0 \
  *      build-cov/scap_parse_cov fuzz/corpus/{} 2>/dev/null || true"
- *   llvm-profdata merge -sparse build-cov/profiles/*.profraw -o combined.profdata
+ *   find build-cov/profiles -name '*.profraw' -print0 \
+ *     | xargs -0 llvm-profdata merge -sparse -o combined.profdata
  */
 #include <stdio.h>
 #include <stdlib.h>

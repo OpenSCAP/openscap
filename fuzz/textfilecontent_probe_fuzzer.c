@@ -26,7 +26,7 @@
 #undef textfilecontent_probe_main
 #undef textfilecontent_probe_offline_mode_supported
 
-static const char *const FUZZ_PATTERN = ".*";
+#define FUZZ_PATTERN ".*"
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
@@ -48,9 +48,10 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	ctx.max_mem_ratio = OSCAP_PROBE_MEMORY_USAGE_RATIO_DEFAULT;
 	ctx.max_collected_items = OSCAP_PROBE_COLLECT_UNLIMITED;
 
+	char pattern[] = FUZZ_PATTERN;      /* mutable copy; process_file compiles it itself */
 	struct pfdata pfd;
 	memset(&pfd, 0, sizeof(pfd));
-	pfd.pattern = (char *)FUZZ_PATTERN; /* process_file compiles it itself */
+	pfd.pattern = pattern;
 	pfd.filename_ent = NULL;            /* unused by process_file */
 	pfd.ctx = &ctx;
 

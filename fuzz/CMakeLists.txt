@@ -128,7 +128,14 @@ if(ENABLE_PROBES)
 		# Link the external deps openscap pulls in (libxml2, pcre2, ...), but NOT
 		# the openscap shared object itself: linking the .so on top of the same
 		# object files would define every global twice (an ASan ODR violation).
-		target_link_libraries(${name} $<TARGET_PROPERTY:openscap,LINK_LIBRARIES>)
+		#
+		# popt is an exception: it is not on the openscap target (the .so leaves
+		# poptAliasOptions undefined and resolves it at runtime transitively via
+		# librpm's DT_NEEDED). Linking the probe *objects* directly into an
+		# executable needs it on the command line explicitly, or rpmverifypackage
+		# fails with "DSO missing from command line". POPT_LIBRARIES is empty when
+		# popt was not found, so this is a no-op on builds without it.
+		target_link_libraries(${name} $<TARGET_PROPERTY:openscap,LINK_LIBRARIES> ${POPT_LIBRARIES})
 		target_compile_options(${name} PRIVATE -fsanitize=fuzzer)
 		target_link_options(${name} PRIVATE -fsanitize=fuzzer)
 	endfunction()

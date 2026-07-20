@@ -42,7 +42,7 @@
 
 /* Fixed pattern: match everything, so the regex loop and item-building code
  * run on whatever bytes the fuzzer produced. */
-static const char *const FUZZ_PATTERN = ".*";
+#define FUZZ_PATTERN ".*"
 
 static SEXP_t       *g_instance_ent;
 static oscap_pcre_t *g_regex;
@@ -102,9 +102,10 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	ctx.max_collected_items = OSCAP_PROBE_COLLECT_UNLIMITED;
 	ctx.blocked_paths = NULL;
 
+	char pattern[] = FUZZ_PATTERN;        /* mutable copy; read-only inside process_file */
 	struct pfdata pfd;
 	memset(&pfd, 0, sizeof(pfd));
-	pfd.pattern = (char *)FUZZ_PATTERN;   /* read-only inside process_file */
+	pfd.pattern = pattern;
 	pfd.re_opts = OSCAP_PCRE_OPTS_UTF8;
 	pfd.instance_ent = g_instance_ent;
 	pfd.ctx = &ctx;
