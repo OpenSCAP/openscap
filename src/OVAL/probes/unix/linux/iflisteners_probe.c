@@ -375,7 +375,7 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 	return 0;
 }
 
-static int read_packet(llist *l, probe_ctx *ctx, oval_schema_version_t over, SEXP_t *interface_name_ent)
+static int read_packet(const char *proc, llist *l, probe_ctx *ctx, oval_schema_version_t over, SEXP_t *interface_name_ent)
 {
 	int line = 0;
 	FILE *f;
@@ -388,7 +388,7 @@ static int read_packet(llist *l, probe_ctx *ctx, oval_schema_version_t over, SEX
 	struct interface_t interface;
 
 
-	f = fopen("/proc/net/packet", "rt");
+	f = fopen(proc, "rt");
 	if (f == NULL) {
 		if (errno != ENOENT)
 			return 1;
@@ -459,7 +459,7 @@ int iflisteners_probe_main(probe_ctx *ctx, void *arg)
 		goto cleanup;
 	}
 
-	read_packet(&ll, ctx, over, interface_name_ent);
+	read_packet("/proc/net/packet", &ll, ctx, over, interface_name_ent);
 
 	list_clear(&ll);
 

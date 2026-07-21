@@ -250,6 +250,23 @@ else()
 	option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that lets you use executables instead of OVAL for checks" ON)
 endif()
 
+# ---------- FUZZING
+option(ENABLE_FUZZING "build libFuzzer harnesses (fuzz/) and instrument the library with libFuzzer + ASan/UBSan. Requires a Clang toolchain." OFF)
+if(ENABLE_FUZZING)
+	if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang")
+		message(FATAL_ERROR "ENABLE_FUZZING requires Clang (libFuzzer). Re-run cmake with CC=clang CXX=clang++.")
+	endif()
+	# Instrument the whole library (and everything else) for libFuzzer coverage
+	# and catch memory/UB errors at runtime. fuzzer-no-link adds the coverage
+	# instrumentation without pulling libFuzzer's main() into every object;
+	# the harness target adds -fsanitize=fuzzer to get the driver.
+	set(OSCAP_FUZZING_FLAGS "-fsanitize=fuzzer-no-link,address,undefined -fno-omit-frame-pointer -g")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OSCAP_FUZZING_FLAGS}")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OSCAP_FUZZING_FLAGS}")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address,undefined")
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address,undefined")
+endif()
+
 # ---------- OVAL FEATURE SWITCHES
 
 option(ENABLE_PROBES "build OVAL probes - each probe implements an OVAL test" TRUE)
@@ -641,6 +658,9 @@ endif()
 
 add_subdirectory("compat")
 add_subdirectory("src")
+if(ENABLE_FUZZING)
+	add_subdirectory("fuzz")
+endif()
 add_subdirectory("utils")
 add_subdirectory("docs")
 add_subdirectory("dist")
