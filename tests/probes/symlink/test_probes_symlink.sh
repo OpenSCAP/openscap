@@ -13,7 +13,7 @@ function test_probes_symlink {
     probecheck "symlink" || return 255
 
     DF="test_probes_symlink.xml"
-    RF="results.xml"
+    RF="$(mktemp results.XXXXXXX.xml)"
 
     rm -f $RF
 

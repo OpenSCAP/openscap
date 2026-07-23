@@ -23,7 +23,7 @@ function test_probes_filemd5 {
 
     local ret_val=0;
     local DEFFILE="test_probes_filemd5.xml"
-    local RESFILE="results.xml"
+    local RESFILE="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RESFILE ] && rm -f $RESFILE
 

@@ -11,7 +11,7 @@ function perform_test {
     rpm -qf /root || return 255
 
     DF="$srcdir/test_probes_rpmverify_not_equals_operation.xml"
-    RF="results.xml"
+    RF="$(mktemp results.XXXXXXX.xml)"
 
     rm -f $RF
 
