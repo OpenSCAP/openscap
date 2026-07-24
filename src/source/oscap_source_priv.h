@@ -60,12 +60,29 @@ struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filep
 
 /**
  * Get an xmlTextReader assigned with this resource. The reader needs to be
- * disposed by caller.
+ * disposed by caller. This variant walks over the in-memory DOM (loading
+ * it first if necessary).
  * @memberof oscap_source
  * @param source Resource to read the content
  * @returns xmlTextReader structure to read the content
  */
 xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source);
+
+/**
+ * Get a streaming xmlTextReader that does NOT require loading the full DOM
+ * into memory. For file-based sources, this reads directly from the file.
+ * For memory-based sources, it parses from the memory buffer. For sources
+ * that already have a cached DOM, it walks the DOM (same as get_xmlTextReader).
+ *
+ * This should be preferred over oscap_source_get_xmlTextReader() when the
+ * caller only needs sequential read access and does not need the DOM to
+ * persist after reading.
+ *
+ * @memberof oscap_source
+ * @param source Resource to read the content
+ * @returns xmlTextReader structure to read the content
+ */
+xmlTextReader *oscap_source_get_streaming_xmlTextReader(struct oscap_source *source);
 
 /**
  * Get a DOM representation of this resource. The document ins still owned
@@ -84,5 +101,14 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source);
  * @returns xmlDoc structure to read the content
  */
 xmlDoc *oscap_source_pop_xmlDoc(struct oscap_source *source);
+
+/**
+ * Release the memory buffer held by this source. After this call, the
+ * source can no longer be parsed from its raw memory. This is useful
+ * to reduce memory after the source has been fully consumed.
+ * @memberof oscap_source
+ * @param source Resource to release memory buffer from
+ */
+void oscap_source_free_memory(struct oscap_source *source);
 
 #endif
