@@ -183,15 +183,21 @@ check_library_exists(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
 check_library_exists(pthread pthread_getname_np "" HAVE_PTHREAD_GETNAME_NP)
 
 # WITH_CRYPTO
-set(WITH_CRYPTO "gcrypt" CACHE STRING "gcrypt|nss")
+set(WITH_CRYPTO "gcrypt" CACHE STRING "gcrypt|nss|openssl")
+set_property(CACHE WITH_CRYPTO PROPERTY STRINGS "gcrypt" "nss" "openssl")
 if(${WITH_CRYPTO} STREQUAL "nss")
 	message("-- Using NSS")
 	find_package(NSS)
+elseif(${WITH_CRYPTO} STREQUAL "openssl")
+	message("-- Using OpenSSL for crypto backend")
+	# OpenSSL is already a required dependency (see find_package(OpenSSL REQUIRED) above);
+	# this flag tells the crapi layer to use it as the digest backend.
+	set(OPENSCAP_CRYPTO_OPENSSL TRUE)
 else()
 	message("-- Using GCrypt")
 	find_package(GCrypt)
 endif()
-if(GCRYPT_FOUND OR NSS_FOUND)
+if(GCRYPT_FOUND OR NSS_FOUND OR OPENSCAP_CRYPTO_OPENSSL)
 	set(CRYPTO_FOUND TRUE)
 endif()
 
