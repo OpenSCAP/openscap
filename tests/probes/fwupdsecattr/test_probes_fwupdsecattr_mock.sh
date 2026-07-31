@@ -10,9 +10,9 @@ function test_probes_fwupdsecattr {
 
     local ret_val=0
     local DF="${srcdir}/test_probes_fwupdsecattr_mock.xml"
-    local RF="$(mktemp results.XXXXXXX.xml)"
+    local RF="$(make_temp_file /tmp results.xml)"
     local DBUS_MOCK_NAME="org.freedesktop.fwupd"
-    local stderr=$(mktemp test_probes_fwupdsecattr_mock.err.XXXXXX)
+    local stderr=$(make_temp_file /tmp test_probes_fwupdsecattr_mock.err)
     echo "stderr file: $stderr"
 
     [ -f $RF ] && rm -f $RF
