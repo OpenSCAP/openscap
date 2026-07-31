@@ -122,19 +122,19 @@ add_oscap_test("test_remediation_bootc.sh")
 add_oscap_test("openscap_2289_regression.sh")
 add_oscap_test("test_null_ptr_regression.sh")
 
- set_tests_properties(
-      "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval2.sh"
-      "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval_multicheck.sh"
-      "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval.sh"
-      "API/XCCDF/unittests/test_fix_arf.sh"
-      "API/XCCDF/unittests/test_multiple_oval_files_with_same_basename.sh"
-      "API/XCCDF/unittests/test_xccdf_check_multi_check2.sh"
-      "API/XCCDF/unittests/test_xccdf_check_processing_complex_priority.sh"
-      "API/XCCDF/unittests/test_xccdf_check_processing_selector_bad.sh"
-      "API/XCCDF/unittests/test_xccdf_selectors_cluster2.sh"
-      "API/XCCDF/unittests/test_xccdf_selectors_cluster3.sh"
-      PROPERTIES RESOURCE_LOCK not_executable_file
-)
+set_tests_properties(
+     "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval2.sh"
+     "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval_multicheck.sh"
+     "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval.sh"
+     "API/XCCDF/unittests/test_fix_arf.sh"
+     "API/XCCDF/unittests/test_multiple_oval_files_with_same_basename.sh"
+     "API/XCCDF/unittests/test_xccdf_check_multi_check2.sh"
+     "API/XCCDF/unittests/test_xccdf_check_processing_complex_priority.sh"
+     "API/XCCDF/unittests/test_xccdf_check_processing_selector_bad.sh"
+     "API/XCCDF/unittests/test_xccdf_selectors_cluster2.sh"
+     "API/XCCDF/unittests/test_xccdf_selectors_cluster3.sh"
+     PROPERTIES RESOURCE_LOCK not_executable_file
+     )
 
 set_tests_properties(
      "API/XCCDF/unittests/test_fix_instance.sh"
