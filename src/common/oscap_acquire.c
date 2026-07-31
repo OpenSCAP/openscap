@@ -55,7 +55,8 @@
 #define OSCAP_TEMP_DIR "/tmp"
 #endif
 
-#define TEMP_DIR_TEMPLATE OSCAP_TEMP_DIR "/oscap.XXXXXX"
+#define OSCAP_TEMP_DIR_TEMPLATE "/oscap.XXXXXX"
+#define TEMP_DIR_TEMPLATE OSCAP_TEMP_DIR OSCAP_TEMP_DIR_TEMPLATE
 #define TEMP_URL_TEMPLATE "downloaded.XXXXXX"
 
 #ifdef OS_WINDOWS
@@ -115,10 +116,22 @@ char *oscap_acquire_temp_dir()
 #else
 char *oscap_acquire_temp_dir()
 {
-	char *temp_dir = oscap_strdup(TEMP_DIR_TEMPLATE);
+	char *temp_dir;
+	const char *tmpdir = getenv("TMPDIR");
+	if (tmpdir != NULL && tmpdir[0] != '\0') {
+		const size_t len = strlen(tmpdir) + strlen(OSCAP_TEMP_DIR_TEMPLATE) + 1;
+		temp_dir = malloc(len);
+		if (temp_dir == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Could not allocate memory for temp directory path.");
+			return NULL;
+		}
+		snprintf(temp_dir, len, "%s%s", tmpdir, OSCAP_TEMP_DIR_TEMPLATE);
+	} else {
+		temp_dir = oscap_strdup(TEMP_DIR_TEMPLATE);
+	}
 	if (mkdtemp(temp_dir) == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Could not create temp directory %s. %s", temp_dir, strerror(errno));
 		free(temp_dir);
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Could not create temp directory " TEMP_DIR_TEMPLATE ". %s", strerror(errno));
 		return NULL;
 	}
 	return temp_dir;
