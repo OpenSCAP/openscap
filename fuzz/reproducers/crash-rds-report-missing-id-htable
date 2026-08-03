@@ -1,0 +1,3 @@
+<arf:asset-report-collection xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1" xmlns:core="http://scap.nist.gov/schema/reporting-core/1.1">
+<arf:reports><arf:report><arf:content><x/></arf:content></arf:report></arf:reports>
+</arf:asset-report-collection>
