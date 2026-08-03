@@ -15,7 +15,7 @@ function test_probes_systemdunitproperty_mount_wants {
     systemctl show -- -.mount | grep -Eq "Wants=\S+" || return 255
 
     local DF="${srcdir}/test_probes_systemdunitproperty_mount_wants.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RF ] && rm -f $RF
 

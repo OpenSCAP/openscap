@@ -22,7 +22,7 @@ function test_probes_file {
 
     local ret_val=0;
     local DF="$srcdir/test_probes_file.xml"
-    local RF="results.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $RF ] && rm -f $RF
 
@@ -50,7 +50,7 @@ function test_probes_file_filenames {
 
 	local ret_val=0
 	local DF="$srcdir/test_probes_file_filename.xml"
-	result="results.xml"
+	result="$(mktemp results.XXXXXXX.xml)"
 	files_dir=$(mktemp -d)
 	DF_INJECTED=$(mktemp)
 
@@ -95,7 +95,7 @@ function test_probes_file_invalid_utf8 {
 
 	local ret_val=0
 	local DF="$srcdir/test_probes_file_filename.xml"
-	result="results.xml"
+	result="$(mktemp results.XXXXXXX.xml)"
 	files_dir=$(mktemp -d)
 	DF_INJECTED=$(mktemp)
 

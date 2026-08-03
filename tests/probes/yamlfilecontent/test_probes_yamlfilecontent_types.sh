@@ -10,7 +10,7 @@ function test_probes_yamlfilecontent_types {
 
     local ret_val=0
     local oval_file="${srcdir}/test_probes_yamlfilecontent_types.xml"
-    local result="results.xml"
+    local result="$(mktemp results.XXXXXXX.xml)"
 
     [ -f $result ] && rm -f $result
 
