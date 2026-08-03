@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+                  xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:product_name>dpkginfo</oval:product_name>
+    <oval:product_version>1.0</oval:product_version>
+    <oval:schema_version>5.11.1</oval:schema_version>
+    <oval:timestamp>2026-05-11T00:00:00+00:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="compliance" version="1" id="oval:1:def:1"> <!-- comment="true" -->
+      <metadata>
+        <title>dpkginfo equals</title>
+        <description>Collect one exact package.</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:1" comment="true"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:1:def:2"> <!-- comment="true" -->
+      <metadata>
+        <title>dpkginfo pattern match</title>
+        <description>Collect installed packages matching a name pattern.</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:2" comment="true"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:1:def:3"> <!-- comment="true" -->
+      <metadata>
+        <title>dpkginfo not equal</title>
+        <description>Collect installed packages not matching one package name.</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:3" comment="true"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:1:def:4"> <!-- comment="true" -->
+      <metadata>
+        <title>dpkginfo virtual package</title>
+        <description>Collect an installed package through a provided virtual package name.</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:4" comment="true"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <lin-def:dpkginfo_test id="oval:1:tst:1" version="1" check_existence="at_least_one_exists" check="all" comment="true">
+      <lin-def:object object_ref="oval:1:obj:1"/>
+      <lin-def:state state_ref="oval:1:ste:1"/>
+    </lin-def:dpkginfo_test>
+    <lin-def:dpkginfo_test id="oval:1:tst:2" version="1" check_existence="at_least_one_exists" check="all" comment="true">
+      <lin-def:object object_ref="oval:1:obj:2"/>
+      <lin-def:state state_ref="oval:1:ste:2"/>
+    </lin-def:dpkginfo_test>
+    <lin-def:dpkginfo_test id="oval:1:tst:3" version="1" check_existence="at_least_one_exists" check="all" comment="true">
+      <lin-def:object object_ref="oval:1:obj:3"/>
+      <lin-def:state state_ref="oval:1:ste:3"/>
+    </lin-def:dpkginfo_test>
+    <lin-def:dpkginfo_test id="oval:1:tst:4" version="1" check_existence="at_least_one_exists" check="all" comment="true">
+      <lin-def:object object_ref="oval:1:obj:4"/>
+      <lin-def:state state_ref="oval:1:ste:4"/>
+    </lin-def:dpkginfo_test>
+  </tests>
+  <objects>
+    <lin-def:dpkginfo_object id="oval:1:obj:1" version="1">
+      <lin-def:name>alpha-tool</lin-def:name>
+    </lin-def:dpkginfo_object>
+    <lin-def:dpkginfo_object id="oval:1:obj:2" version="1">
+      <lin-def:name operation="pattern match">^alpha-.*</lin-def:name>
+    </lin-def:dpkginfo_object>
+    <lin-def:dpkginfo_object id="oval:1:obj:3" version="1">
+      <lin-def:name operation="not equal">alpha-tool</lin-def:name>
+    </lin-def:dpkginfo_object>
+    <lin-def:dpkginfo_object id="oval:1:obj:4" version="1">
+      <lin-def:name>system-logger</lin-def:name>
+    </lin-def:dpkginfo_object>
+  </objects>
+  <states>
+    <lin-def:dpkginfo_state id="oval:1:ste:1" version="1">
+      <lin-def:name>alpha-tool</lin-def:name>
+    </lin-def:dpkginfo_state>
+    <lin-def:dpkginfo_state id="oval:1:ste:2" version="1">
+      <lin-def:name operation="pattern match">^alpha-.*</lin-def:name>
+    </lin-def:dpkginfo_state>
+    <lin-def:dpkginfo_state id="oval:1:ste:3" version="1">
+      <lin-def:name operation="not equal">alpha-tool</lin-def:name>
+    </lin-def:dpkginfo_state>
+    <lin-def:dpkginfo_state id="oval:1:ste:4" version="1">
+      <lin-def:name>system-logger</lin-def:name>
+    </lin-def:dpkginfo_state>
+  </states>
+</oval_definitions>
