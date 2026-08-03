@@ -48,8 +48,8 @@
 {
     if (PyLong_Check($input))
         $1 = (time_t) PyLong_AsLong($input);
-    else if (PyInt_Check($input))
-        $1 = (time_t) PyInt_AsLong($input);
+    else if (PyLong_Check($input))
+        $1 = (time_t) PyLong_AsLong($input);
     else if (PyFloat_Check($input))
         $1 = (time_t) PyFloat_AsDouble($input);
     else {
@@ -80,8 +80,8 @@
     $1 = (char **) malloc((size+1)*sizeof(char *));
     for (i = 0; i < size; i++) {
       PyObject *o = PyList_GetItem($input,i);
-      /*if (PyString_Check(o))*/
-        $1[i] = PyString_AsString(PyList_GetItem($input,i));
+      /*if (PyBytes_Check(o))*/
+        $1[i] = PyBytes_AsString(PyList_GetItem($input,i));
       /*else {
         PyErr_SetString(PyExc_TypeError,"list must contain strings");
         free($1);
@@ -329,7 +329,7 @@ int rule_result_output_callback_wrapper(struct xccdf_rule_result* rule_result, v
         return -1;
     }
     Py_DECREF(arglist);
-    dres = PyInt_AsLong(result);
+    dres = PyLong_AsLong(result);
     Py_XDECREF(result);
     PyGILState_Release(state);
     return dres;
@@ -366,7 +366,7 @@ int rule_start_callback_wrapper(struct xccdf_rule* rule, void *arg)
         return -1;
     }
     Py_DECREF(arglist);
-    dres = PyInt_AsLong(result);
+    dres = PyLong_AsLong(result);
     Py_XDECREF(result);
     PyGILState_Release(state);
     return dres;
@@ -403,7 +403,7 @@ int agent_reporter_callback_wrapper(const struct oval_result_definition* res_def
         return -1;
     }
     Py_DECREF(arglist);
-    dres = PyInt_AsLong(result);
+    dres = PyLong_AsLong(result);
     Py_XDECREF(result);
     PyGILState_Release(state);
     return dres;
@@ -438,7 +438,7 @@ int validate_callback_wrapper(const char* file, int line, const char* msg, void 
         return -1;
     }
     Py_DECREF(arglist);
-    dres = PyInt_AsLong(result);
+    dres = PyLong_AsLong(result);
     Py_XDECREF(result);
     PyGILState_Release(state);
     return dres;
@@ -474,7 +474,7 @@ char * sub_callback_wrapper(xccdf_subst_type_t type, const char *id, void *arg)
         return NULL;
     }
     Py_DECREF(arglist);
-    dres = PyString_AsString(result);
+    dres = PyBytes_AsString(result);
     if (dres == NULL) {
         if (PyErr_Occurred() != NULL)
             PyErr_PrintEx(0);
