@@ -32,8 +32,8 @@ function perform_test {
 }
 
 
-rpm_prepare_offline
+rpm_prepare_offline_own
 
 test_run "rpmverify probe test not equals operation (offline)" perform_test
 
-rpm_cleanup_offline
+rpm_cleanup_offline_own
