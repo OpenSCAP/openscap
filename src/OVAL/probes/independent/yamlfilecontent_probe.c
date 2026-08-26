@@ -26,6 +26,10 @@
 
 #include <math.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <yaml.h>
 #include <yaml-path.h>
 
@@ -390,7 +394,8 @@ cleanup:
 
 static int process_yaml_file(const char *prefix, const char *path, const char *filename, const char *yamlpath, probe_ctx *ctx)
 {
-	int ret = 0;
+	int ret = 0, tmp_fd = -1;
+	FILE *yaml_file = NULL;
 
 	char *filepath = oscap_path_join(path, filename);
 	if (probe_path_is_blocked(filepath, ctx->blocked_paths)) {
@@ -402,12 +407,25 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 	yaml_parser_initialize(&parser);
 
 	char *filepath_with_prefix = oscap_path_join(prefix, filepath);
+	struct stat st;
 
-	FILE *yaml_file = fopen(filepath_with_prefix, "r");
+	tmp_fd = open(filepath_with_prefix, O_RDONLY | O_NONBLOCK);
+	if (tmp_fd == -1) {
+		if (errno != ENOENT && errno != EACCES && errno != ENOTDIR
+		    && errno != ENAMETOOLONG && errno != ELOOP)
+			result_error("Unable to open file '%s': %s", filepath_with_prefix, strerror(errno));
+		goto cleanup;
+	}
+	if (fstat(tmp_fd, &st) == -1
+	    || !S_ISREG(st.st_mode)
+	    || probe_fd_path_is_blocked(tmp_fd, ctx->blocked_paths))
+		goto cleanup;
+	yaml_file = fdopen(tmp_fd, "r");
 	if (yaml_file == NULL) {
 		result_error("Unable to open file '%s': %s", filepath_with_prefix, strerror(errno));
 		goto cleanup;
 	}
+	tmp_fd = -1;
 
 	yaml_parser_set_input_file(&parser, yaml_file);
 
@@ -429,6 +447,8 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 	}
 
 cleanup:
+	if (tmp_fd != -1)
+		close(tmp_fd);
 	if (yaml_file != NULL)
 		fclose(yaml_file);
 	yaml_parser_delete(&parser);

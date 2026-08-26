@@ -546,4 +546,12 @@ OSCAP_API SEXP_t *probe_obj_getmask(SEXP_t *obj);
  */
 OSCAP_API bool probe_path_is_blocked(const char *path, struct oscap_list *blocked_paths);
 
+/**
+ * Check if the real path of an open file descriptor matches any blocked path.
+ * Resolves the fd target via /proc/self/fd on Linux; returns false on other platforms.
+ * @param fd open file descriptor
+ * @param blocked_paths list of blocked paths
+ */
+OSCAP_API bool probe_fd_path_is_blocked(int fd, struct oscap_list *blocked_paths);
+
 /// @}

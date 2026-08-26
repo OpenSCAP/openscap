@@ -151,23 +151,13 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	if (probe_path_is_blocked(whole_path, blocked_paths)) {
 		goto cleanup;
 	}
-	/*
-	 * If stat() fails, don't report an error and just skip the file.
-	 * This is an expected situation, because the fts_*() functions
-	 * are called with the 'FTS_PHYSICAL' option. Normally, stumbling
-	 * upon a symlink without a target would cause fts_read() to return
-	 * the 'FTS_SLNONE' flag, but the 'FTS_PHYSICAL' option causes it
-	 * to return 'FTS_SL' and the presence of a valid target has to
-	 * be determined with stat().
-	 */
 	whole_path_with_prefix = oscap_path_join(prefix, whole_path);
-	if (stat(whole_path_with_prefix, &st) == -1)
-		goto cleanup;
-	if (!S_ISREG(st.st_mode))
-		goto cleanup;
-
-	fd = open(whole_path_with_prefix, O_RDONLY);
+	fd = open(whole_path_with_prefix, O_RDONLY | O_NONBLOCK);
 	if (fd == -1) {
+		if (errno == ENOENT || errno == EACCES || errno == ENOTDIR
+		    || errno == ENAMETOOLONG || errno == ELOOP)
+			goto cleanup;
+
 		SEXP_t *msg;
 
 		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "open(): '%s' %s.", whole_path, strerror(errno));
@@ -177,6 +167,19 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 		ret = -1;
 		goto cleanup;
 	}
+	/*
+	 * If fstat() fails, don't report an error and just skip the file.
+	 * This is an expected situation, because the fts_*() functions
+	 * are called with the 'FTS_PHYSICAL' option. Normally, stumbling
+	 * upon a symlink without a target would cause fts_read() to return
+	 * the 'FTS_SLNONE' flag, but the 'FTS_PHYSICAL' option causes it
+	 * to return 'FTS_SL' and the presence of a valid target has to
+	 * be determined with fstat().
+	 */
+	if (fstat(fd, &st) == -1
+	    || !S_ISREG(st.st_mode)
+	    || probe_fd_path_is_blocked(fd, blocked_paths))
+		goto cleanup;
 
 	do {
 		buf_size += buf_inc;

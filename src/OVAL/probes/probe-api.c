@@ -45,6 +45,8 @@
 #include <arpa/inet.h> /* inet_pton() in probe_ent_from_cstr() */
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <unistd.h>
+#include <limits.h>
 #endif
 
 #include "debug_priv.h"
@@ -1808,6 +1810,24 @@ bool probe_path_is_blocked(const char *path, struct oscap_list *blocked_paths)
 	}
 	oscap_iterator_free(it);
 	return res;
+}
+
+bool probe_fd_path_is_blocked(int fd, struct oscap_list *blocked_paths)
+{
+#if defined(__linux__)
+	char proc_path[64];
+	char resolved[PATH_MAX];
+	snprintf(proc_path, sizeof(proc_path), "/proc/self/fd/%d", fd);
+	ssize_t len = readlink(proc_path, resolved, sizeof(resolved) - 1);
+	if (len == -1)
+		return false;
+	resolved[len] = '\0';
+	return probe_path_is_blocked(resolved, blocked_paths);
+#else
+	(void)fd;
+	(void)blocked_paths;
+	return false;
+#endif
 }
 
 /// @}

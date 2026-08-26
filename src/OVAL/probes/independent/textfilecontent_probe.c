@@ -58,9 +58,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <limits.h>
 
 #include "_seap.h"
@@ -139,7 +141,7 @@ struct pfdata {
 static int process_file(const char *prefix, const char *path, const char *filename, void *arg, oval_schema_version_t over, struct oscap_list *blocked_paths)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
-	int ret = 0, path_len, filename_len;
+	int ret = 0, path_len, filename_len, tmp_fd = -1;
 	char *whole_path = NULL, *whole_path_with_prefix = NULL;
 	FILE *fp = NULL;
 	struct stat st;
@@ -173,27 +175,24 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	if (probe_path_is_blocked(whole_path, blocked_paths)) {
 		goto cleanup;
 	}
-
-	/*
-	 * If stat() fails, don't report an error and just skip the file.
-	 * This is an expected situation, because the fts_*() functions
-	 * are called with the 'FTS_PHYSICAL' option. Normally, stumbling
-	 * upon a symlink without a target would cause fts_read() to return
-	 * the 'FTS_SLNONE' flag, but the 'FTS_PHYSICAL' option causes it
-	 * to return 'FTS_SL' and the presence of a valid target has to
-	 * be determined with stat().
-	 */
 	whole_path_with_prefix = oscap_path_join(prefix, whole_path);
-	if (stat(whole_path_with_prefix, &st) == -1)
+	tmp_fd = open(whole_path_with_prefix, O_RDONLY | O_NONBLOCK);
+	if (tmp_fd == -1) {
+		if (errno != ENOENT && errno != EACCES && errno != ENOTDIR
+		    && errno != ENAMETOOLONG && errno != ELOOP)
+			ret = -2;
 		goto cleanup;
-	if (!S_ISREG(st.st_mode))
+	}
+	if (fstat(tmp_fd, &st) == -1
+	    || !S_ISREG(st.st_mode)
+	    || probe_fd_path_is_blocked(tmp_fd, blocked_paths))
 		goto cleanup;
-
-	fp = fopen(whole_path_with_prefix, "rb");
+	fp = fdopen(tmp_fd, "rb");
 	if (fp == NULL) {
 		ret = -2;
 		goto cleanup;
 	}
+	tmp_fd = -1;
 
 	int cur_inst = 0;
 	char line[4096];
@@ -218,6 +217,8 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	}
 
  cleanup:
+	if (tmp_fd != -1)
+		close(tmp_fd);
 	if (fp != NULL)
 		fclose(fp);
 	if (whole_path != NULL)
