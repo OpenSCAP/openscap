@@ -178,7 +178,7 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	 */
 	if (fstat(fd, &st) == -1
 	    || !S_ISREG(st.st_mode)
-	    || probe_fd_path_is_blocked(fd, blocked_paths))
+	    || probe_fd_path_is_blocked(fd, prefix, blocked_paths))
 		goto cleanup;
 
 	do {

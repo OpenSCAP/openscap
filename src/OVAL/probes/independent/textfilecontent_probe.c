@@ -185,7 +185,7 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	}
 	if (fstat(tmp_fd, &st) == -1
 	    || !S_ISREG(st.st_mode)
-	    || probe_fd_path_is_blocked(tmp_fd, blocked_paths))
+	    || probe_fd_path_is_blocked(tmp_fd, prefix, blocked_paths))
 		goto cleanup;
 	fp = fdopen(tmp_fd, "rb");
 	if (fp == NULL) {

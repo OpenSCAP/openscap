@@ -550,8 +550,9 @@ OSCAP_API bool probe_path_is_blocked(const char *path, struct oscap_list *blocke
  * Check if the real path of an open file descriptor matches any blocked path.
  * Resolves the fd target via /proc/self/fd on Linux; returns false on other platforms.
  * @param fd open file descriptor
+ * @param prefix OSCAP_PROBE_ROOT prefix to strip from resolved path, or NULL
  * @param blocked_paths list of blocked paths
  */
-OSCAP_API bool probe_fd_path_is_blocked(int fd, struct oscap_list *blocked_paths);
+OSCAP_API bool probe_fd_path_is_blocked(int fd, const char *prefix, struct oscap_list *blocked_paths);
 
 /// @}

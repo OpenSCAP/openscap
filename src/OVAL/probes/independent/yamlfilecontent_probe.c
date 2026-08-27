@@ -418,7 +418,7 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 	}
 	if (fstat(tmp_fd, &st) == -1
 	    || !S_ISREG(st.st_mode)
-	    || probe_fd_path_is_blocked(tmp_fd, ctx->blocked_paths))
+	    || probe_fd_path_is_blocked(tmp_fd, prefix, ctx->blocked_paths))
 		goto cleanup;
 	yaml_file = fdopen(tmp_fd, "r");
 	if (yaml_file == NULL) {
