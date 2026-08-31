@@ -19,6 +19,7 @@
                 <criterion test_ref="oval:x:tst:2"/>
                 <criterion test_ref="oval:x:tst:3"/>
                 <criterion test_ref="oval:x:tst:4"/>
+                <criterion test_ref="oval:x:tst:5"/>
             </criteria>
         </definition>
     </definitions>
@@ -35,6 +36,9 @@
         </textfilecontent54_test>
         <textfilecontent54_test id="oval:x:tst:4" check="all" comment="x" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
             <object object_ref="oval:x:obj:4"/>
+        </textfilecontent54_test>
+        <textfilecontent54_test id="oval:x:tst:5" check="all" comment="x" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+            <object object_ref="oval:x:obj:5"/>
         </textfilecontent54_test>
     </tests>
 
@@ -60,6 +64,13 @@
         <textfilecontent54_object id="oval:x:obj:4" version="1" comment="x" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
             <path datatype="string" operation="equals">/etc</path>
             <filename datatype="string" operation="equals">hosts</filename>
+            <pattern datatype="string" operation="pattern match">.*</pattern>
+            <instance datatype="int" operation="equals">1</instance>
+        </textfilecontent54_object>
+        <!-- Symlink to a file under a blocked path -->
+        <textfilecontent54_object id="oval:x:obj:5" version="1" comment="x" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+            <path datatype="string" operation="equals">%PATH%</path>
+            <filename datatype="string" operation="equals">sl4</filename>
             <pattern datatype="string" operation="pattern match">.*</pattern>
             <instance datatype="int" operation="equals">1</instance>
         </textfilecontent54_object>
