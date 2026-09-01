@@ -257,7 +257,6 @@ int oscap_xml_save_fd(int fd, xmlDocPtr doc)
 
 	buff = xmlOutputBufferCreateFd(fd, NULL);
 	if (buff == NULL) {
-		close(fd);
 		oscap_setxmlerr(xmlGetLastError());
 		dW("xmlOutputBufferCreateFile() failed.");
 		return -1;
