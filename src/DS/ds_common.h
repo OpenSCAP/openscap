@@ -28,6 +28,11 @@
 #include <libxml/tree.h>
 
 
+bool ds_path_has_upward_component(const char *path);
+bool ds_path_is_null(const char *path);
+bool ds_path_is_valid_filename(const char *path);
+int ds_write_file(const char *target_dir, const char *relative_path, int mode,
+		int (*write_contents)(int fd, void *data), void *data);
 int ds_dump_component_sources(struct oscap_htable *component_sources, const char *target_dir);
 xmlDoc *ds_doc_from_foreign_node(xmlNode *node, xmlDoc *parent);
 
