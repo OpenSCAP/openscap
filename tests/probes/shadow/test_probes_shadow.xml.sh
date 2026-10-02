@@ -16,16 +16,16 @@ function getField {
 		*)
 		    local lock=""
 		    local rest="$pwd"
-		    while [ "${rest:0:1}" = "!" ]; do
+		    while [[ "${rest:0:1}" = "!" ]]; do
 			    lock="${lock}!"
 			    rest="${rest:1}"
 		    done
-		    if [ "${rest:0:1}" = '$' ]; then
+		    if [[ "${rest:0:1}" = '$' ]]; then
 			    local id_end=$(echo "$rest" | cut -d '$' -f1-2)
 			    echo "${lock}${id_end}\$"
-		    elif [ "${rest:0:1}" = '_' ]; then
+		    elif [[ "${rest:0:1}" = '_' ]]; then
 			    echo "${lock}_"
-		    elif [ -n "$lock" ]; then
+		    elif [[ -n "$lock" ]]; then
 			    echo "$lock"
 		    else
 			    echo "*"

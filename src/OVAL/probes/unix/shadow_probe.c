@@ -185,10 +185,14 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
 static char *strip_hash(const char *raw)
 {
 	const char *p;
-	size_t prefix_len, keep_len;
+	size_t prefix_len;
+	size_t keep_len;
 	char *buf;
 
-	if (raw == NULL || *raw == '\0' ||
+	if (raw == NULL)
+		return strdup("*");
+
+	if (*raw == '\0' ||
 		strcmp(raw, "!") == 0 || strcmp(raw, "!!") == 0 ||
 	    strcmp(raw, "!*") == 0 || strcmp(raw, "*") == 0 ||
 		strcmp(raw, "*LK*") == 0 || strcmp(raw, "x") == 0)

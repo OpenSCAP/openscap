@@ -9,10 +9,10 @@ function test_probes_shadow_stripped {
     probecheck "shadow" || return 255
 
     local ret_val=0
-    local DF="${srcdir}/test_probes_shadow_stripped.xml"
-    local RF="$(mktemp results.XXXXXXX.xml)"
+    local df="${srcdir}/test_probes_shadow_stripped.xml"
+    local rf="$(mktemp results.XXXXXXX.xml)"
 
-    [ -f $RF ] && rm -f $RF
+    [[ -f $rf ]] && rm -f $rf
 
     tmpdir=$(make_temp_dir /tmp "test_probes_shadow_stripped")
     mkdir -p "${tmpdir}/etc"
@@ -31,23 +31,23 @@ SHADOW
 
     export OSCAP_PROBE_ROOT="${tmpdir}"
 
-    $OSCAP oval eval --results $RF $DF
+    $OSCAP oval eval --results $rf $df
 
     unset OSCAP_PROBE_ROOT
     rm -rf "${tmpdir}"
 
-    if [ -f $RF ]; then
-	verify_results "def" $DF $RF 10 && verify_results "tst" $DF $RF 10
+    if [[ -f $rf ]]; then
+	verify_results "def" $df $rf 10 && verify_results "tst" $df $rf 10
 	ret_val=$?
     else
 	ret_val=1
     fi
 
-    if grep -q 'longhashvaluethatneedstoberedacted\|anotherlonghashvalue\|saltsalt\|anothersalt\|bsdihashvalueredact1\|bsdihashvalueredact2\|saltvalueredact\|hashvalueredacted\|aZ4ZloVToj1nA' $RF; then
+    if grep -q 'longhashvaluethatneedstoberedacted\|anotherlonghashvalue\|saltsalt\|anothersalt\|bsdihashvalueredact1\|bsdihashvalueredact2\|saltvalueredact\|hashvalueredacted\|aZ4ZloVToj1nA' $rf; then
         ret_val=1
     fi
 
-    rm -f $RF
+    rm -f $rf
     return $ret_val
 }
 
