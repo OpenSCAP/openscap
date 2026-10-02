@@ -22,6 +22,11 @@ lockedhash:!!$6$anothersalt$anotherlonghashvalue:19000:0:99999:7:::
 lockednohash:!:19000:0:99999:7:::
 disabled:*:19000:0:99999:7:::
 neverset:!!:19000:0:99999:7:::
+bsdiuser:_bsdihashvalueredact1:19000:0:99999:7:::
+bsdilocked:!_bsdihashvalueredact2:19000:0:99999:7:::
+sunmd5user:$md5,rounds=4294963199$saltvalueredact$$hashvalueredacted:19000:0:99999:7:::
+descryptuser:aZ4ZloVToj1nA:19000:0:99999:7:::
+descryptlocked:!aZ4ZloVToj1nA:19000:0:99999:7:::
 SHADOW
 
     export OSCAP_PROBE_ROOT="${tmpdir}"
@@ -32,13 +37,13 @@ SHADOW
     rm -rf "${tmpdir}"
 
     if [ -f $RF ]; then
-	verify_results "def" $DF $RF 5 && verify_results "tst" $DF $RF 5
+	verify_results "def" $DF $RF 10 && verify_results "tst" $DF $RF 10
 	ret_val=$?
     else
 	ret_val=1
     fi
 
-    if grep -q 'longhashvaluethatneedstoberedacted\|anotherlonghashvalue\|saltsalt\|anothersalt' $RF; then
+    if grep -q 'longhashvaluethatneedstoberedacted\|anotherlonghashvalue\|saltsalt\|anothersalt\|bsdihashvalueredact1\|bsdihashvalueredact2\|saltvalueredact\|hashvalueredacted\|aZ4ZloVToj1nA' $RF; then
         ret_val=1
     fi
 

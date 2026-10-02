@@ -58,6 +58,56 @@
         <criterion test_ref="oval:1:tst:5"/>
       </criteria>
     </definition>
+
+    <definition class="compliance" version="1" id="oval:1:def:6"> <!-- comment="true" -->
+      <metadata>
+        <title>BSDi extended DES hash is stripped</title>
+        <description>Non-$-delimited bsdicrypt hash should be reduced to its '_' marker</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:6"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:1:def:7"> <!-- comment="true" -->
+      <metadata>
+        <title>Locked BSDi extended DES hash is stripped</title>
+        <description>Locked account should keep lock prefix and '_' marker</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:7"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:1:def:8"> <!-- comment="true" -->
+      <metadata>
+        <title>SunMD5 hash with rounds parameter is stripped</title>
+        <description>Long id component (with embedded rounds) should be preserved in full, salt/hash dropped</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:8"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:1:def:9"> <!-- comment="true" -->
+      <metadata>
+        <title>Traditional DES hash is stripped</title>
+        <description>Hash with no delimiter and no lock marker has no id to preserve, reduced to '*'</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:9"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:1:def:10"> <!-- comment="true" -->
+      <metadata>
+        <title>Locked traditional DES hash is stripped</title>
+        <description>Locked account with non-crypt hash should keep lock prefix only</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:10"/>
+      </criteria>
+    </definition>
   </definitions>
 
   <tests>
@@ -85,6 +135,31 @@
       <object object_ref="oval:1:obj:5"/>
       <state state_ref="oval:1:ste:5"/>
     </shadow_test>
+
+    <shadow_test version="1" id="oval:1:tst:6" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:1:obj:6"/>
+      <state state_ref="oval:1:ste:6"/>
+    </shadow_test>
+
+    <shadow_test version="1" id="oval:1:tst:7" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:1:obj:7"/>
+      <state state_ref="oval:1:ste:7"/>
+    </shadow_test>
+
+    <shadow_test version="1" id="oval:1:tst:8" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:1:obj:8"/>
+      <state state_ref="oval:1:ste:8"/>
+    </shadow_test>
+
+    <shadow_test version="1" id="oval:1:tst:9" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:1:obj:9"/>
+      <state state_ref="oval:1:ste:9"/>
+    </shadow_test>
+
+    <shadow_test version="1" id="oval:1:tst:10" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:1:obj:10"/>
+      <state state_ref="oval:1:ste:10"/>
+    </shadow_test>
   </tests>
 
   <objects>
@@ -106,6 +181,26 @@
 
     <shadow_object version="1" id="oval:1:obj:5" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <username>neverset</username>
+    </shadow_object>
+
+    <shadow_object version="1" id="oval:1:obj:6" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>bsdiuser</username>
+    </shadow_object>
+
+    <shadow_object version="1" id="oval:1:obj:7" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>bsdilocked</username>
+    </shadow_object>
+
+    <shadow_object version="1" id="oval:1:obj:8" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>sunmd5user</username>
+    </shadow_object>
+
+    <shadow_object version="1" id="oval:1:obj:9" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>descryptuser</username>
+    </shadow_object>
+
+    <shadow_object version="1" id="oval:1:obj:10" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>descryptlocked</username>
     </shadow_object>
   </objects>
 
@@ -133,6 +228,31 @@
     <shadow_state version="1" id="oval:1:ste:5" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
       <username>neverset</username>
       <password>!!</password>
+    </shadow_state>
+
+    <shadow_state version="1" id="oval:1:ste:6" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>bsdiuser</username>
+      <password>_</password>
+    </shadow_state>
+
+    <shadow_state version="1" id="oval:1:ste:7" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>bsdilocked</username>
+      <password>!_</password>
+    </shadow_state>
+
+    <shadow_state version="1" id="oval:1:ste:8" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>sunmd5user</username>
+      <password>$md5,rounds=4294963199$</password>
+    </shadow_state>
+
+    <shadow_state version="1" id="oval:1:ste:9" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>descryptuser</username>
+      <password>*</password>
+    </shadow_state>
+
+    <shadow_state version="1" id="oval:1:ste:10" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>descryptlocked</username>
+      <password>!</password>
     </shadow_state>
   </states>
 

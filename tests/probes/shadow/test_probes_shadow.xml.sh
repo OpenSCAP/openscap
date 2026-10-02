@@ -23,6 +23,8 @@ function getField {
 		    if [ "${rest:0:1}" = '$' ]; then
 			    local id_end=$(echo "$rest" | cut -d '$' -f1-2)
 			    echo "${lock}${id_end}\$"
+		    elif [ "${rest:0:1}" = '_' ]; then
+			    echo "${lock}_"
 		    elif [ -n "$lock" ]; then
 			    echo "$lock"
 		    else
