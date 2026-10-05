@@ -154,3 +154,10 @@ assert_exists 1 '/*[local-name()="Tailoring"]/*[local-name()="benchmark"][starts
 result=$saved_result
 $OSCAP xccdf eval --profile P1_customized --progress --tailoring-file $tailoring --results $result $ds
 assert_exists 1 '/Benchmark/TestResult/rule-result[@idref="xccdf_com.example.www_rule_R3"]/result[text()="pass"]'
+
+# JSON tailoring with base_profile_id must set 'extends' attribute
+python3 $autotailor $ds --id-namespace "com.example.www" --json-tailoring $json_tailoring > $tailoring
+saved_result=$result
+result=$tailoring
+assert_exists 1 '/*[local-name()="Tailoring"]/*[local-name()="Profile"][@id="xccdf_com.example.www_profile_JSON_P1"][@extends="xccdf_com.example.www_profile_P1"]'
+result=$saved_result
