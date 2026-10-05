@@ -303,8 +303,10 @@ struct cpe_platform *cpe_platform_parse(xmlTextReaderPtr reader)
 			ret->expr = cpe_testexpr_parse(reader);
 		} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in platform");
-		// get the next node
-		xmlTextReaderNextNode(reader);
+		// get the next node; stop at end of document so a <platform> that is
+		// never closed cannot spin this loop forever.
+		if (xmlTextReaderNextNode(reader) != 1)
+			break;
 	}
 	return ret;
 }
@@ -388,7 +390,12 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 		// .. and the next node is logical-test element, we need recursive call
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LOGICAL_TEST_STR) &&
 		    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+			xmlNodePtr before = xmlTextReaderCurrentNode(reader);
 			oscap_list_add(ret->meta.expr, cpe_testexpr_parse(reader));
+			// A nested logical-test with e.g. an invalid operator returns
+			// without consuming its node; force progress so this loop can't spin.
+			if (xmlTextReaderCurrentNode(reader) == before)
+				xmlTextReaderNextNode(reader);
                         if (xmlTextReaderDepth(reader) < depth) {
                                 return ret;
                         } else if (xmlTextReaderDepth(reader) == depth) continue;
