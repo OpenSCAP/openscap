@@ -159,10 +159,22 @@ increment_on_breaking_change()
 # $3: The concerned file
 apply_triplets_to_file()
 {
-    local _previous=( $1 ) _replacement=( $2 ) _file="$3" _varnames=(LT_CURRENT LT_REVISION LT_AGE)
+
+    local _previous
+    local _replacement
+    local _file="$3"
+    local _varnames=(LT_CURRENT LT_REVISION LT_AGE)
+
+    _previous=( $1 )
+    _replacement=( $2 )
+
     for i in 0 1 2
     do
-        substitute_variable_assignment_value_in_file "${_varnames[$i]}" "${_previous[$i]}" "${_replacement[$i]}" "$_file"
+        substitute_variable_assignment_value_in_file \
+            "${_varnames[$i]}" \
+            "${_previous[$i]}" \
+            "${_replacement[$i]}" \
+            "$_file"
     done
 }
 
@@ -174,7 +186,15 @@ increment_ltversions()
     local _cmake_file="$OSCAP_REPO_ROOT/CMakeLists.txt" _old_versions _new_versions _new_soname _old_soname
     # check_for_clean_repo
     _old_versions="$(get_lt_triplet_from_file "$_cmake_file")" || die "Unable to get current LT versions"
-    _new_versions="$(increment_on_$1 "$_old_versions")" || die  "Unable to get calculate refreshed LT version with strategy '$1'"
+    case "$1" in
+      backwards_compatible|bugfix|breaking_change)
+      _new_versions="$(increment_on_$1 "$_old_versions")"
+    ;;
+    *)
+      die "Invalid strategy: $1"
+    ;;
+    esac
+
     _old_soname="$(get_soname_from_triplet "$_old_versions")"
     _new_soname="$(get_soname_from_triplet "$_new_versions")"
 
@@ -316,7 +336,7 @@ bump_release_in_cmake()
 # $1: The next version
 bump_release()
 {
-    test $# -lt 2 || die "Provide the version number as an argument"
+    test $# -eq 1 || die "Provide the version number as an argument"
     check_that_bump_is_appropriate
     bump_release_in_cmake "$1"
     bump_release_in_release_script "$FILE_WITH_VERSIONS" "$1"
