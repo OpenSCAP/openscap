@@ -364,16 +364,16 @@ static int get_exec_shield_status(int pid) {
 	long unsigned low, high, inode;
 	long long unsigned offset;
 	int dev_min, dev_maj;
-	char perm[3], trim;
+	char perm[8], trim;
 	int ret = -1, read_items;
 
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
 	snprintf(buf, sizeof(buf), "%s/proc/%d/maps", prefix ? prefix : "", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
-		while (fgets(buf, 500, sf)) {
+		while (fgets(buf, sizeof(buf), sf)) {
 			read_items = sscanf(
-				buf, "%lx-%lx rw%s %llx %x:%x %lu %c\n",
+				buf, "%lx-%lx rw%7s %llx %x:%x %lu %c\n",
 				&low, &high, perm, &offset, &dev_min,
 				&dev_maj, &inode, &trim
 			);
