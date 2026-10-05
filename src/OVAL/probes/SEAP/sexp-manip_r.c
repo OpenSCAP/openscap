@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
@@ -29,6 +30,7 @@
 #include "_sexp-rawptr.h"
 #include "public/sexp-manip_r.h"
 #include "debug_priv.h"
+#include "oscap_utf8.h"
 
 SEXP_t *SEXP_init(SEXP_t *sexp_mem)
 {
@@ -206,20 +208,30 @@ SEXP_t *SEXP_number_newb_r(SEXP_t *sexp_mem, bool n)
 SEXP_t *SEXP_string_new_r  (SEXP_t *sexp_mem, const void *string, size_t length)
 {
         SEXP_val_t v_dsc;
+        size_t sanitized_len = 0;
 
         if (sexp_mem == NULL) {
                 errno = EFAULT;
                 return (NULL);
         }
 
+        char *sanitized = oscap_sanitize_utf8(string, length, &sanitized_len);
+        if (sanitized != NULL) {
+                dW("Replaced invalid UTF-8 byte sequence(s) with the replacement character (U+FFFD) in '%s'.", sanitized);
+                string = sanitized;
+                length = sanitized_len;
+        }
+
         if (SEXP_val_new (&v_dsc, sizeof (char) * length,
                           SEXP_VALTYPE_STRING) != 0)
         {
+                free(sanitized);
                 /* TODO: handle this */
                 return (NULL);
         }
 
         memcpy (v_dsc.mem, string, sizeof (char) * length);
+        free(sanitized);
 
         SEXP_init(sexp_mem);
         sexp_mem->s_type = NULL;
@@ -266,9 +278,19 @@ SEXP_t *SEXP_string_newf_rv(SEXP_t *sexp_mem, const char *format, va_list ap)
 		return NULL;
 	}
 
+	size_t sanitized_len = 0;
+	char *sanitized = oscap_sanitize_utf8(v_string, v_strlen, &sanitized_len);
+	if (sanitized != NULL) {
+		dW("Replaced invalid UTF-8 byte sequence(s) with the replacement character (U+FFFD) in '%s'.", sanitized);
+		free(v_string);
+		v_string = sanitized;
+		v_strlen = sanitized_len;
+	}
+
         if (SEXP_val_new (&v_dsc, sizeof (char) * v_strlen,
                           SEXP_VALTYPE_STRING) != 0)
         {
+                free(v_string);
                 /* TODO: handle this */
                 return (NULL);
         }
