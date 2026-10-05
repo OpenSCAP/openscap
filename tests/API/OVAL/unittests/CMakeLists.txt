@@ -1,4 +1,5 @@
 add_oscap_test("test_anyxml.sh")
+add_oscap_test("test_null_ptr_regression.sh")
 add_oscap_test("test_applicability_check.sh")
 add_oscap_test("test_cim_datetime.sh")
 add_oscap_test("test_circular_extend_def.sh")

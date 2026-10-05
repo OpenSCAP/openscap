@@ -81,6 +81,10 @@ void xccdf_tailoring_free(struct xccdf_tailoring *tailoring)
 
 bool xccdf_tailoring_add_profile(struct xccdf_tailoring *tailoring, struct xccdf_profile *profile)
 {
+	if (profile == NULL) {
+		// xccdf_profile_parse() returns NULL on a malformed <Profile>.
+		return false;
+	}
 	xccdf_profile_set_tailoring(profile, true);
 	return oscap_list_add(tailoring->profiles, XITEM(profile));
 }

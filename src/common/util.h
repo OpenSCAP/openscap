@@ -343,13 +343,17 @@ static inline bool oscap_streq(const char *s1, const char *s2) {
 	return oscap_strcmp(s1, s2) == 0;
 }
 
-/// Check whether str starts with "prefix"
+/// Check whether str starts with "prefix" (a NULL str never matches)
 static inline bool oscap_str_startswith(const char *str, const char *prefix) {
+	if (str == NULL || prefix == NULL)
+		return false;
 	return strncmp(str, prefix, strlen(prefix)) == 0;
 }
 
-/// Check whether str ends with "suffix"
+/// Check whether str ends with "suffix" (a NULL str never matches)
 static inline bool oscap_str_endswith(const char *str, const char *suffix) {
+	if (str == NULL || suffix == NULL)
+		return false;
 	const size_t str_len = strlen(str);
 	const size_t suffix_len = strlen(suffix);
 	if (suffix_len > str_len)
