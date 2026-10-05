@@ -1027,8 +1027,13 @@ void xccdf_status_dump(struct xccdf_status *status, int depth)
 	time_t date = xccdf_status_get_date(status);
 	char datebuf[26];
 	const char *datestr = "   date not specified   ";
-	if (date && ctime_r(&date, datebuf) != NULL)
+	#ifndef OS_WINDOWS
+	if (date && ctime_r(&date, datebuf) != NULL) {
+	#else
+	if (date && ctime_s(datebuf, sizeof(datebuf), &date) == 0) {
+	#endif
 		datestr = datebuf;
+	}
 	printf("%-10s (%24.24s)\n",
 	       oscap_enum_to_string(XCCDF_STATUS_MAP, xccdf_status_get_status(status)),
 	       datestr);
