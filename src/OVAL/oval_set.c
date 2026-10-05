@@ -307,12 +307,28 @@ static int _oval_set_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 		if (set->type == OVAL_SET_UNKNOWN) {
 			oval_setobject_set_type(set, OVAL_SET_AGGREGATE);
 		}
-		return_code = oval_set_parse_tag(reader, context, &oval_set_consume, set);
+		if (set->type != OVAL_SET_AGGREGATE) {
+			// A <set> mixing nested <set> with object_reference/filter children
+			// is invalid: the extension union is already a COLLECTIVE, so adding
+			// a subset here would corrupt it. Skip the mismatched child.
+			dW("Ignoring <set> child in a non-aggregate set, line: %d.",
+					xmlTextReaderGetParserLineNumber(reader));
+			return_code = oval_parser_skip_tag(reader, context);
+		} else {
+			return_code = oval_set_parse_tag(reader, context, &oval_set_consume, set);
+		}
 	} else {
 		if (set->type == OVAL_SET_UNKNOWN) {
 			oval_setobject_set_type(set, OVAL_SET_COLLECTIVE);
 		}
-		if (strcmp(tagname, "object_reference") == 0) {
+		if (set->type != OVAL_SET_COLLECTIVE) {
+			// Mismatched child in an aggregate set (see above): writing an
+			// object/filter into the AGGREGATE subsets union would later cause
+			// oval_setobject_free() to free a model-owned object (double free).
+			dW("Ignoring <%s> child in an aggregate set, line: %d.", tagname,
+					xmlTextReaderGetParserLineNumber(reader));
+			return_code = oval_parser_skip_tag(reader, context);
+		} else if (strcmp(tagname, "object_reference") == 0) {
 			return_code = oscap_parser_text_value(reader, &oval_consume_object_ref, &ctx);
 		} else if (strcmp(tagname, "filter") == 0) {
 			return_code = oval_filter_parse_tag(reader, context, &oval_set_consume_filter, set);
