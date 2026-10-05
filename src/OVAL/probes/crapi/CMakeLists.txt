@@ -1,4 +1,9 @@
-file(GLOB_RECURSE CRAPI_SOURCES "*.c")
+if (CRYPTO_FOUND)
+	file(GLOB_RECURSE CRAPI_SOURCES "*.c")
+else()
+	# crapi_init has a no-op implementation for builds without a digest backend.
+	set(CRAPI_SOURCES "crapi.c")
+endif()
 file(GLOB_RECURSE CRAPI_HEADERS "*.h")
 
 add_library(crapi_object OBJECT ${CRAPI_SOURCES} ${CRAPI_HEADERS})
