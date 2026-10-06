@@ -102,6 +102,17 @@ static SEXP_t *parse_enc_mth(const char *pwd)
 {
 	char *mth_str;
 
+	if (pwd == NULL)
+		goto fail;
+
+	while (*pwd == '!')
+		pwd++;
+
+	if (*pwd == '\0' ||
+		*pwd == '*'  ||
+		strcmp(pwd, "x") == 0)
+		goto fail;
+
 	switch (*pwd) {
 	case '_':
 		return SEXP_string_newf("BSDi");
@@ -124,6 +135,13 @@ static SEXP_t *parse_enc_mth(const char *pwd)
 			break;
 		case '6':
 			mth_str = "SHA-512";
+			pwd++;
+			break;
+		case 'y':
+			if (oval_schema_version_cmp(over,
+				OVAL_SCHEMA_VERSION(5.11)) < 0)
+				goto fail;
+			mth_str = "yescrypt";
 			pwd++;
 			break;
 		default:
