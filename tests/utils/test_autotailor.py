@@ -123,6 +123,19 @@ def test_get_datastream_uri():
     assert "relative/path/to/ds.xml" in uri
 
 
+def test_profile_without_base_profile(tmpdir):
+    t = autotailor.Tailoring()
+    t.profile_id = "JSON_P12"
+    t.original_ds_filename = "test-ds.xml"
+    output = tmpdir.join("tailoring.xml")
+
+    t.to_xml(str(output))
+
+    tailoring = output.read()
+    assert 'id="xccdf_org.ssgproject.content_profile_JSON_P12"' in tailoring
+    assert "extends=" not in tailoring
+
+
 def test_datastream_validator():
     """Test that DataStreamValidator properly validates IDs."""
     ds_path = pathlib.Path(__file__).parent.joinpath("data_stream.xml")

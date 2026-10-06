@@ -414,7 +414,8 @@ class Tailoring:
 
         profile = ET.SubElement(root, "{%s}Profile" % NS)
         profile.set("id", self._full_profile_id(self.profile_id))
-        profile.set("extends", self._full_profile_id(self.extends))
+        if self.extends:
+            profile.set("extends", self._full_profile_id(self.extends))
 
         # Title has to be there due to the schema definition.
         title = ET.SubElement(profile, "{%s}title" % NS)
