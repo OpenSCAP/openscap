@@ -25,6 +25,7 @@ version = "1.0"
 
 [customizations]
 partitioning_mode = "raw"
+fips=1
 
 [customizations.openscap]
 profile_id = "xccdf_moc.elpmaxe.www_profile_common"
@@ -53,4 +54,3 @@ append = "foo=bar audit=1"
 enabled = ["sshd","usbguard"]
 disabled = ["kdump"]
 masked = ["evil"]
-
