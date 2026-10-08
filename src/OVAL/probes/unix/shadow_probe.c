@@ -52,6 +52,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include "_seap.h"
 #include "probe-api.h"
@@ -101,6 +102,7 @@ struct result_info {
 static SEXP_t *parse_enc_mth(const char *pwd)
 {
 	char *mth_str;
+	bool yescrypt_mth = false;
 
 	if (pwd == NULL)
 		goto fail;
@@ -137,11 +139,28 @@ static SEXP_t *parse_enc_mth(const char *pwd)
 			mth_str = "SHA-512";
 			pwd++;
 			break;
-		case 'y':
-			if (oval_schema_version_cmp(over,
-				OVAL_SCHEMA_VERSION(5.11)) < 0)
+		case '7':
+			mth_str = "scrypt";
+			yescrypt_mth = true;
+			pwd++;
+			break;
+		case 'g':
+			if (strncmp(pwd, "gy", 2))
 				goto fail;
+			mth_str = "gost-yescrypt";
+			yescrypt_mth = true;
+			pwd += 2;
+			break;
+		case 's':
+			if (strncmp(pwd, "sm3y", 4))
+				goto fail;
+			mth_str = "sm3-yescrypt";
+			yescrypt_mth = true;
+			pwd += 4;
+			break;
+		case 'y':
 			mth_str = "yescrypt";
+			yescrypt_mth = true;
 			pwd++;
 			break;
 		default:
@@ -152,6 +171,10 @@ static SEXP_t *parse_enc_mth(const char *pwd)
 		}
 
 		if (*pwd != '$')
+			goto fail;
+
+		if (yescrypt_mth && oval_schema_version_cmp(over,
+			OVAL_SCHEMA_VERSION(5.11)) < 0)
 			goto fail;
 
 		return SEXP_string_newf("%s", mth_str);
