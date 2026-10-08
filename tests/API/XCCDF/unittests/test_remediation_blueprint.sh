@@ -24,4 +24,8 @@ $OSCAP xccdf generate fix --fix-type blueprint --profile 'common' "$input_xml" |
 
 diff $valid_toml $result
 
+# The default profile has no ID; blueprint generation must still succeed.
+$OSCAP xccdf generate fix --fix-type blueprint "$input_xml" > "$result"
+grep -Fxq 'profile_id = ""' "$result"
+
 rm "$result"
