@@ -3066,6 +3066,26 @@ ACTIVE_DEAD_GATEWAY_DETECTION                                   
                                     <xsd:documentation>The SHA-512 method corresponds to the $6$ prefix.</xsd:documentation>
                               </xsd:annotation>
                         </xsd:enumeration>
+                        <xsd:enumeration value="yescrypt">
+                              <xsd:annotation>
+                                    <xsd:documentation>The yescrypt method corresponds to the $y$ prefix.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="gost-yescrypt">
+                              <xsd:annotation>
+                                    <xsd:documentation>The gost-yescrypt method corresponds to the $gy$ prefix.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="sm3-yescrypt">
+                              <xsd:annotation>
+                                    <xsd:documentation>The sm3-yescrypt method corresponds to the $sm3y$ prefix.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="scrypt">
+                              <xsd:annotation>
+                                    <xsd:documentation>The scrypt method corresponds to the $7$ prefix.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
                         <xsd:enumeration value="">
                               <xsd:annotation>
                                     <xsd:documentation>The empty string value is permitted here to allow for empty elements associated with variable references.</xsd:documentation>
