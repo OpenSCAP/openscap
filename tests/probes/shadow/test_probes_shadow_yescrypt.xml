@@ -12,7 +12,7 @@
     <definition id="oval:1:def:1" version="1" class="compliance"> <!-- comment="true" -->
       <metadata>
         <title>Shadow password hashing methods are detected correctly</title>
-        <description>Recognize yescrypt, including locked hashes and stripped markers, while preserving existing methods and rejecting invalid identifiers.</description>
+        <description>Recognize yescrypt, GOST-yescrypt, SM3-yescrypt, and scrypt, including locked hashes and stripped markers, while preserving existing methods and rejecting invalid identifiers.</description>
       </metadata>
       <criteria>
         <criterion test_ref="oval:1:tst:1"/>
@@ -20,6 +20,9 @@
         <criterion test_ref="oval:1:tst:3"/>
         <criterion test_ref="oval:1:tst:4"/>
         <criterion test_ref="oval:1:tst:5"/>
+        <criterion test_ref="oval:1:tst:6"/>
+        <criterion test_ref="oval:1:tst:7"/>
+        <criterion test_ref="oval:1:tst:8"/>
       </criteria>
     </definition>
   </definitions>
@@ -44,6 +47,18 @@
       <unix-def:object object_ref="oval:1:obj:5"/>
       <unix-def:state state_ref="oval:1:ste:5"/>
     </unix-def:shadow_test>
+    <unix-def:shadow_test id="oval:1:tst:6" version="1" check="all" comment="true">
+      <unix-def:object object_ref="oval:1:obj:6"/>
+      <unix-def:state state_ref="oval:1:ste:6"/>
+    </unix-def:shadow_test>
+    <unix-def:shadow_test id="oval:1:tst:7" version="1" check="all" comment="true">
+      <unix-def:object object_ref="oval:1:obj:7"/>
+      <unix-def:state state_ref="oval:1:ste:7"/>
+    </unix-def:shadow_test>
+    <unix-def:shadow_test id="oval:1:tst:8" version="1" check="all" comment="true">
+      <unix-def:object object_ref="oval:1:obj:8"/>
+      <unix-def:state state_ref="oval:1:ste:8"/>
+    </unix-def:shadow_test>
   </tests>
   <objects>
     <unix-def:shadow_object id="oval:1:obj:1" version="1">
@@ -61,11 +76,20 @@
     <unix-def:shadow_object id="oval:1:obj:5" version="1">
       <unix-def:username operation="pattern match">^des_</unix-def:username>
     </unix-def:shadow_object>
+    <unix-def:shadow_object id="oval:1:obj:6" version="1">
+      <unix-def:username operation="pattern match">^gost-yescrypt_</unix-def:username>
+    </unix-def:shadow_object>
+    <unix-def:shadow_object id="oval:1:obj:7" version="1">
+      <unix-def:username operation="pattern match">^sm3-yescrypt_</unix-def:username>
+    </unix-def:shadow_object>
+    <unix-def:shadow_object id="oval:1:obj:8" version="1">
+      <unix-def:username operation="pattern match">^scrypt_</unix-def:username>
+    </unix-def:shadow_object>
   </objects>
   <states>
     <unix-def:shadow_state id="oval:1:ste:1" version="1">
       <unix-def:username operation="pattern match">^yescrypt_</unix-def:username>
-      <unix-def:encrypt_method>yescrypt</unix-def:encrypt_method>
+      <unix-def:encrypt_method>yescrypt</unix-def:encrypt_method> <!-- OVAL_5_11_ENCRYPT_METHOD -->
     </unix-def:shadow_state>
     <unix-def:shadow_state id="oval:1:ste:2" version="1">
       <unix-def:username>sha512</unix-def:username>
@@ -80,6 +104,18 @@
     <unix-def:shadow_state id="oval:1:ste:5" version="1">
       <unix-def:username operation="pattern match">^des_</unix-def:username>
       <unix-def:encrypt_method>DES</unix-def:encrypt_method>
+    </unix-def:shadow_state>
+    <unix-def:shadow_state id="oval:1:ste:6" version="1">
+      <unix-def:username operation="pattern match">^gost-yescrypt_</unix-def:username>
+      <unix-def:encrypt_method>gost-yescrypt</unix-def:encrypt_method> <!-- OVAL_5_11_ENCRYPT_METHOD -->
+    </unix-def:shadow_state>
+    <unix-def:shadow_state id="oval:1:ste:7" version="1">
+      <unix-def:username operation="pattern match">^sm3-yescrypt_</unix-def:username>
+      <unix-def:encrypt_method>sm3-yescrypt</unix-def:encrypt_method> <!-- OVAL_5_11_ENCRYPT_METHOD -->
+    </unix-def:shadow_state>
+    <unix-def:shadow_state id="oval:1:ste:8" version="1">
+      <unix-def:username operation="pattern match">^scrypt_</unix-def:username>
+      <unix-def:encrypt_method>scrypt</unix-def:encrypt_method> <!-- OVAL_5_11_ENCRYPT_METHOD -->
     </unix-def:shadow_state>
   </states>
 </oval_definitions>
