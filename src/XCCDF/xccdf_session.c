@@ -33,6 +33,7 @@
 
 #include <oscap.h>
 #include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 #include <cpe_lang.h>
 #include <OVAL/public/oval_agent_api.h>
 #include <OVAL/public/oval_agent_xccdf_api.h>
@@ -792,6 +793,7 @@ static inline int _xccdf_session_load_xccdf_benchmark(struct xccdf_session *sess
 	if (benchmark == NULL) {
 		return 1;
 	}
+	oscap_source_free_xmlDoc(session->xccdf.source);
 
 	/* create the policy model */
 	session->xccdf.policy_model = xccdf_policy_model_new(benchmark);
@@ -1216,6 +1218,7 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 				oscap_source_readable_origin(contents[idx]->source));
 			return 1;
 		}
+		oscap_source_free_xmlDoc(contents[idx]->source);
 
 		/* def_model -> session */
 		struct oval_agent_session *tmp_sess = oval_agent_new_session(tmp_def_model, contents[idx]->href);
