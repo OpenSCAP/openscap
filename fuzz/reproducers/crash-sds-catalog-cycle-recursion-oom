@@ -1,0 +1,10 @@
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="c">
+<ds:data-stream id="ds1" scap-version="1.3" use-case="OTHER">
+<ds:checklists>
+<ds:component-ref id="cref-a" xlink:href="#comp-a">
+  <cat:catalog><cat:uri name="x.xml" uri="#cref-a"/></cat:catalog>
+</ds:component-ref>
+</ds:checklists>
+</ds:data-stream>
+<ds:component id="comp-a"><x/></ds:component>
+</ds:data-stream-collection>
