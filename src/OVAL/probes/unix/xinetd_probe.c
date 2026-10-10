@@ -51,6 +51,7 @@
 #include <fnmatch.h>
 #include <bfind.h>
 #include <common/debug_priv.h>
+#include <common/public/oscap_helpers.h>
 #include <netdb.h>
 
 #if defined(OS_FREEBSD)
@@ -184,6 +185,85 @@ typedef struct {
 	int             flags; /**< flags; see bellow */
 	unsigned int    depth; /**< include depth */
 } xiconf_file_t;
+
+static bool xiconf_path_has_prefix(const char *path, const char *prefix)
+{
+	size_t plen;
+
+	if (path == NULL || prefix == NULL)
+		return false;
+
+	plen = strnlen(prefix, PATH_MAX);
+	if (plen == PATH_MAX)
+		return false;
+	if (plen == 0)
+		return false;
+
+	if (strncmp(path, prefix, plen) != 0)
+		return false;
+
+	return (path[plen] == '\0' || path[plen] == PATH_SEPARATOR);
+}
+
+static char *xiconf_make_absolute_include_path(const xiconf_file_t *xifile, const char *inclarg)
+{
+	char *cpath_copy = NULL;
+	char *base_dir = NULL;
+	char *abs_path = NULL;
+
+	if (inclarg == NULL || *inclarg == '\0')
+		return NULL;
+
+	if (inclarg[0] == PATH_SEPARATOR)
+		return strdup(inclarg);
+
+	if (xifile == NULL || xifile->cpath == NULL || *xifile->cpath == '\0')
+		return strdup(inclarg);
+
+	cpath_copy = strdup(xifile->cpath);
+	if (cpath_copy == NULL)
+		return NULL;
+
+	base_dir = oscap_dirname(cpath_copy);
+	if (base_dir == NULL) {
+		free(cpath_copy);
+		return strdup(inclarg);
+	}
+
+	abs_path = oscap_path_join(base_dir, inclarg);
+	free(base_dir);
+	free(cpath_copy);
+
+	return abs_path;
+}
+
+static bool xiconf_validate_regular_file_path(const char *path)
+{
+	struct stat st;
+
+	if (path == NULL)
+		return false;
+	if (stat(path, &st) != 0)
+		return false;
+	if (!S_ISREG(st.st_mode))
+		return false;
+
+	return true;
+}
+
+static bool xiconf_validate_dir_path(const char *path)
+{
+	struct stat st;
+
+	if (path == NULL)
+		return false;
+	if (stat(path, &st) != 0)
+		return false;
+	if (!S_ISDIR(st.st_mode))
+		return false;
+
+	return true;
+}
 
 #define XICONF_FILE_MMAPED  0x00000001 /**< try to mmap the file */
 #define XICONF_FILE_PERSIST 0x00000002 /**< keep the file open/mmaped */
@@ -705,10 +785,6 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 #define XICONF_INCTYPE_DIR  1
 				int            inctype = -1;
 				char          *inclarg;
-				char           pathbuf[PATH_MAX+1];
-				size_t         incllen;
-
-				incllen = strlen (buffer + bufidx);
 
 				if (strncmp("nclude", buffer + bufidx + 1, 6) != 0)
 					break;
@@ -729,7 +805,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 				/*
 				 * Get the include(dir) argument
 				 */
-				bufidx += strlen("includedir");
+				bufidx += (inctype == XICONF_INCTYPE_DIR) ? (sizeof("includedir") - 1) : (sizeof("include") - 1);
 				while(isspace(buffer[bufidx])) ++bufidx;
 				inclarg = buffer + bufidx + 1;
 				buffer[l_size] = '\0';
@@ -746,42 +822,77 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 				switch (inctype) {
 				case XICONF_INCTYPE_FILE:
-					strncpy (pathbuf, inclarg, sizeof(pathbuf)-1);
+				{
+					char resolved_path[PATH_MAX + 1];
+					char *abs_path = NULL;
+					const char *canon_path = NULL;
 
-					dD("includefile: %s", pathbuf);
+					abs_path = xiconf_make_absolute_include_path(xifile, inclarg);
+					if (abs_path == NULL) {
+						dW("includefile: failed to resolve path");
+						tmpbuf_free(buffer);
+						continue;
+					}
 
-					if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0) {
+					canon_path = oscap_realpath(abs_path, resolved_path);
+					free(abs_path);
+					abs_path = NULL;
+
+					if (canon_path == NULL) {
+						dW("includefile: invalid path: %s", inclarg);
+						tmpbuf_free(buffer);
+						continue;
+					}
+
+					if (!xiconf_validate_regular_file_path(resolved_path)) {
+						dW("includefile: not a regular file: %s", resolved_path);
+						tmpbuf_free(buffer);
+						continue;
+					}
+
+					dD("includefile: %s", resolved_path);
+
+					if (xiconf_add_cfile (xiconf, resolved_path, xifile->depth + 1) != 0) {
 						tmpbuf_free(buffer);
 						continue;
 					}
 					else
 						break;
+				}
 				case XICONF_INCTYPE_DIR:
 				{
 					DIR           *dirfp;
 					struct dirent *dent = NULL;
+					char resolved_dir[PATH_MAX + 1];
+					char *abs_dir = NULL;
+					const char *canon_dir = NULL;
 
-					dD("includedir open: %s", inclarg);
-					dirfp = opendir (inclarg);
-
-					if (dirfp == NULL) {
-						dW("Can't open includedir: %s; %d, %s.", inclarg, errno, strerror (errno));
+					abs_dir = xiconf_make_absolute_include_path(xifile, inclarg);
+					if (abs_dir == NULL) {
+						dW("includedir: failed to resolve path");
 						break;
 					}
 
-					strcpy (pathbuf, inclarg);
-					incllen = strlen(inclarg);
+					canon_dir = oscap_realpath(abs_dir, resolved_dir);
+					free(abs_dir);
+					abs_dir = NULL;
 
-					if (pathbuf[incllen - 1] != PATH_SEPARATOR) {
-						if (incllen < PATH_MAX) {
-							pathbuf[incllen++] =  '/';
-							pathbuf[incllen  ] = '\0';
-						} else {
-							dE("Length of the includedir argument is out of range: len=%zu, max=%zu",
-							   incllen, PATH_MAX);
-							closedir(dirfp);
-							break;
-						}
+					if (canon_dir == NULL) {
+						dW("includedir: invalid path: %s", inclarg);
+						break;
+					}
+
+					if (!xiconf_validate_dir_path(resolved_dir)) {
+						dW("includedir: not a directory: %s", resolved_dir);
+						break;
+					}
+
+					dD("includedir open: %s", resolved_dir);
+					dirfp = opendir (resolved_dir);
+
+					if (dirfp == NULL) {
+						dW("Can't open includedir: %s; %d, %s.", resolved_dir, errno, strerror (errno));
+						break;
 					}
 
 					for (;;) {
@@ -800,13 +911,50 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 							continue;
 						}
 
-						strcpy(pathbuf + incllen, dent->d_name);
+						if (strcmp(dent->d_name, ".") == 0 || strcmp(dent->d_name, "..") == 0) {
+							dD("Skipping: %s", dent->d_name);
+							continue;
+						}
 
-						if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0)
+						if (strchr(dent->d_name, PATH_SEPARATOR) != NULL) {
+							dW("Skipping suspicious includedir entry: %s", dent->d_name);
+							continue;
+						}
+
+						char *entry_path = oscap_path_join(resolved_dir, dent->d_name);
+						char resolved_entry[PATH_MAX + 1];
+						const char *canon_entry = NULL;
+
+						if (entry_path == NULL) {
+							dW("Can't build path for includedir entry: %s/%s",
+							    resolved_dir, dent->d_name);
+							continue;
+						}
+
+						canon_entry = oscap_realpath(entry_path, resolved_entry);
+						free(entry_path);
+						entry_path = NULL;
+
+						if (canon_entry == NULL) {
+							dW("Skipping includedir entry with invalid path: %s", dent->d_name);
+							continue;
+						}
+
+						if (!xiconf_path_has_prefix(resolved_entry, resolved_dir)) {
+							dW("Skipping includedir entry escaping base dir: %s", resolved_entry);
+							continue;
+						}
+
+						if (!xiconf_validate_regular_file_path(resolved_entry)) {
+							dD("Skipping non-regular includedir entry: %s", resolved_entry);
+							continue;
+						}
+
+						if (xiconf_add_cfile (xiconf, resolved_entry, xifile->depth + 1) != 0)
 							continue;
 					}
 
-					dD("includedir close: %s", inclarg);
+					dD("includedir close: %s", resolved_dir);
 					closedir(dirfp);
 					break;
 				}}
@@ -959,7 +1107,7 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 
 			goto finish_section;
 		default:
-			op  = key + strlen(key) + 1;
+			op  = key + keyidx + 1;
 
 			while(isspace(*op)) ++op;
 
@@ -1139,10 +1287,23 @@ finish_section:
 		 * Add entry to the ttree for (name, protocol) -> (id) translation
 		 * (in case it's not already there)
 		 */
-		st = NULL;
-		strcpy(st_key, scur->name);
-		strcat(st_key, scur->protocol);
+		{
+			const char *st_name = scur->name != NULL ? scur->name : "";
+			const char *st_prot = scur->protocol != NULL ? scur->protocol : "";
+			size_t st_name_len = strnlen(st_name, XICFG_STRANS_MAXKEYLEN + 1);
+			size_t st_prot_len = strnlen(st_prot, XICFG_STRANS_MAXKEYLEN + 1);
 
+			if (st_name_len > XICFG_STRANS_MAXKEYLEN ||
+			    st_prot_len > XICFG_STRANS_MAXKEYLEN ||
+			    st_name_len + st_prot_len > XICFG_STRANS_MAXKEYLEN) {
+				dE("service name+protocol too long for strans key (max %u)",
+				    XICFG_STRANS_MAXKEYLEN);
+				return (-1);
+			}
+			snprintf(st_key, sizeof(st_key), "%s%s", st_name, st_prot);
+		}
+
+		st = NULL;
 		rbt_str_get(xiconf->ttree, st_key, (void *)&st);
 
 		if (st == NULL) {
@@ -1211,6 +1372,8 @@ xiconf_strans_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot)
 {
 	char             strans_key[XICFG_STRANS_MAXKEYLEN+1];
 	xiconf_strans_t *strans = NULL;
+	size_t           name_len;
+	size_t           prot_len;
 
 	if (xiconf == NULL) {
 		return NULL;
@@ -1219,11 +1382,16 @@ xiconf_strans_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot)
 	if (name == NULL || prot == NULL)
 		return (NULL);
 
-	if (strlen(name) + strlen(prot) > XICFG_STRANS_MAXKEYLEN)
+	name_len = strnlen(name, XICFG_STRANS_MAXKEYLEN + 1);
+	prot_len = strnlen(prot, XICFG_STRANS_MAXKEYLEN + 1);
+	if (name_len > XICFG_STRANS_MAXKEYLEN ||
+	    prot_len > XICFG_STRANS_MAXKEYLEN ||
+	    name_len + prot_len > XICFG_STRANS_MAXKEYLEN)
 		return (NULL);
 
-	strcpy(strans_key, name);
-	strcat(strans_key, prot);
+	memcpy(strans_key, name, name_len);
+	memcpy(strans_key + name_len, prot, prot_len);
+	strans_key[name_len + prot_len] = '\0';
 
 	rbt_str_get(xiconf->ttree, strans_key, (void *)&strans);
 
