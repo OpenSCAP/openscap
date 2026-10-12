@@ -1,3 +1,30 @@
+openscap-1.3.15                                                 2026-10-12
+- New features
+  - Add yescrypt support to encrypt_method in shadow probe
+  - autotailor: Add validation for variable names, rule IDs, and profile IDs 
+- Maintenance, bug fix
+  - Ensure that there is only one customizations in blueprint remedations
+  - Add test ensuring $TMPDIR is honored by OpenSCAP
+  - Add missing fix systems to guides
+  - Fix groff warning for nested "tagged paragraph"
+  - Prevent denial of service in filehash and filehash58 probes
+  - Fix TOCTOU race condition in file content probes
+  - Do not use gcrypt cmake variables if gcrypt is not found
+  - Replace removed Python 2 C API macros for SWIG 4.5.0 compatibility
+  - Fix build without crypto support
+  - Fix autotailor overwriting `extends` attribute from JSON tailoring
+  - Gracefully provide an error if JSON tailoring doesn't exist
+  - textfilecontent54 probe: fix memory leaks in process_file
+  - fix: account for DST in XCCDF result timestamp offset
+  - OVAL/XCCDF/DS/source: fix memory-corruption bugs on malformed input
+  - CPE/XCCDF/DS: fix infinite loops in parsers on malformed input
+  - Sanitize strings to prevent UTF errors
+  - Update the Ubuntu/Debian dev install command
+  - Generate raw partitioning mode in Image Builder blueprints
+  - XCCDF: replace ctime with ctime_r in status dump
+  - Skip verifying RPM signatures in tests
+  - Fix critical safety and correctness issues in release.sh
+
 openscap-1.3.14                                                 03-04-2026
 - Maintenance, bug fix
   - Make autotailor use correct XML namespaces
