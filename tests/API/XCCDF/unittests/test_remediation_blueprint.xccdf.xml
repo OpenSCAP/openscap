@@ -119,4 +119,15 @@ enabled = ["sshd"]
       <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
     </check>
   </Rule>
+ <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_12">
+    <title>Enable fips mode</title>
+    <fix system="urn:redhat:osbuild:blueprint">
+[customizations]
+fips=1
+</fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+
 </Benchmark>

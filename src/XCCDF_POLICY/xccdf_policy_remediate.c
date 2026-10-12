@@ -43,6 +43,7 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
+#include "common/oscap_buffer.h"
 #include "common/oscap_pcre.h"
 #include "xccdf_policy_priv.h"
 #include "xccdf_policy_model_priv.h"
@@ -670,17 +671,79 @@ struct blueprint_entries {
 
 struct blueprint_customizations {
 	struct oscap_list *generic;
+	struct oscap_list *root;
 	struct oscap_list *services_enable;
 	struct oscap_list *services_disable;
 	struct oscap_list *services_mask;
 	struct oscap_list *kernel_append;
 };
 
+static bool _blueprint_line_is_table_header(const char *line, size_t line_len)
+{
+	while (line_len > 0 && isspace((unsigned char)line[0])) {
+		line++;
+		line_len--;
+	}
+	while (line_len > 0 && isspace((unsigned char)line[line_len - 1]))
+		line_len--;
+
+	return line_len >= 2 && line[0] == '[' && line[line_len - 1] == ']';
+}
+
+static bool _blueprint_line_is_root_customizations(const char *line, size_t line_len)
+{
+	while (line_len > 0 && isspace((unsigned char)line[0])) {
+		line++;
+		line_len--;
+	}
+	while (line_len > 0 && isspace((unsigned char)line[line_len - 1]))
+		line_len--;
+
+	return line_len == strlen("[customizations]") && strncmp(line, "[customizations]", line_len) == 0;
+}
+
+static char *_extract_blueprint_root_customizations(const char *fix_text, struct oscap_list *root)
+{
+	struct oscap_buffer *filtered = oscap_buffer_new();
+	const char *line = fix_text;
+	bool in_root = false;
+
+	while (*line != '\0') {
+		const char *line_end = strchr(line, '\n');
+		size_t line_len = line_end == NULL ? strlen(line) : (size_t)(line_end - line + 1);
+		size_t content_len = line_len;
+		if (content_len > 0 && line[content_len - 1] == '\n')
+			content_len--;
+		if (content_len > 0 && line[content_len - 1] == '\r')
+			content_len--;
+
+		if (_blueprint_line_is_root_customizations(line, content_len)) {
+			in_root = true;
+		} else if (in_root && _blueprint_line_is_table_header(line, content_len)) {
+			in_root = false;
+			oscap_buffer_append_binary_data(filtered, line, line_len);
+		} else if (in_root) {
+			char *root_line = malloc(line_len + 1);
+			memcpy(root_line, line, line_len);
+			root_line[line_len] = '\0';
+			oscap_list_add(root, root_line);
+		} else {
+			oscap_buffer_append_binary_data(filtered, line, line_len);
+		}
+
+		line += line_len;
+	}
+
+	return oscap_buffer_bequeath(filtered);
+}
+
 static inline int _parse_blueprint_fix(const char *fix_text, struct blueprint_customizations *customizations)
 {
 	char *err;
 	int errofs;
 	int ret = 0;
+	char *filtered_fix_text = _extract_blueprint_root_customizations(fix_text, customizations->root);
+	fix_text = filtered_fix_text;
 
 	struct blueprint_entries tab[] = {
 		{"\\[customizations\\.services\\]\\s+enabled[=\\s]+\\[([^\\]]+)\\]\\s+", customizations->services_enable, NULL},
@@ -734,13 +797,14 @@ static inline int _parse_blueprint_fix(const char *fix_text, struct blueprint_cu
 		}
 	}
 
-	if (start_offset < fix_text_len-1) {
+	if (fix_text_len > 0 && start_offset < fix_text_len - 1) {
 		oscap_list_add(customizations->generic, strdup(fix_text + start_offset));
 	}
 
 exit:
 	for (int i = 0; tab[i].pattern != NULL; i++)
 		oscap_pcre_free(tab[i].re);
+	free(filtered_fix_text);
 
 	return ret;
 }
@@ -1155,15 +1219,8 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"%s"
 			"name = \"hardened_%s\"\n"
 			"description = \"%s\"\n"
-			"version = \"%s\"\n\n"
-			"[customizations]\n"
-			"partitioning_mode = \"raw\"\n\n"
-			"[customizations.openscap]\n"
-			"profile_id = \"%s\"\n"
-			"# If your hardening data stream is not part of the 'scap-security-guide' package\n"
-			"# provide the absolute path to it (from the root of the image filesystem).\n"
-			"# datastream = \"/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml\"\n\n",
-			fix_header, profile_id, profile_title, benchmark_version_info, profile_id);
+			"version = \"%s\"\n\n",
+			fix_header, profile_id, profile_title, benchmark_version_info);
 		free(fix_header);
 		free(profile_title);
 		return _write_text_to_fd_and_free(output_fd, blueprint_fix_header);
@@ -1190,6 +1247,7 @@ static int _xccdf_policy_generate_fix_blueprint(struct oscap_list *rules_to_fix,
 	int ret = 0;
 	struct blueprint_customizations customizations = {
 		.generic = oscap_list_new(),
+		.root = oscap_list_new(),
 		.services_enable = oscap_list_new(),
 		.services_disable = oscap_list_new(),
 		.services_mask = oscap_list_new(),
@@ -1204,6 +1262,25 @@ static int _xccdf_policy_generate_fix_blueprint(struct oscap_list *rules_to_fix,
 			break;
 	}
 	oscap_iterator_free(rules_to_fix_it);
+
+	_write_text_to_fd(output_fd, "[customizations]\npartitioning_mode = \"raw\"\n");
+	struct oscap_iterator *root_it = oscap_iterator_new(customizations.root);
+	while (oscap_iterator_has_more(root_it)) {
+		char *root_line = (char *)oscap_iterator_next(root_it);
+		_write_text_to_fd(output_fd, root_line);
+	}
+	_write_text_to_fd(output_fd, "\n");
+	oscap_iterator_free(root_it);
+
+	const char *profile_id = xccdf_profile_get_id(xccdf_policy_get_profile(policy));
+	_write_text_to_fd(output_fd, "[customizations.openscap]\nprofile_id = \"");
+	_write_text_to_fd(output_fd, profile_id ? profile_id : "");
+	_write_text_to_fd(output_fd, "\"\n");
+	_write_text_to_fd(output_fd,
+		"# If your hardening data stream is not part of the 'scap-security-guide' package\n"
+		"# provide the absolute path to it (from the root of the image filesystem).\n"
+		"# datastream = \"/usr/share/xml/scap/ssg/content/ssg-xxxxx-ds.xml\"\n");
+	_write_text_to_fd(output_fd, "\n");
 
 	struct oscap_iterator *generic_it = oscap_iterator_new(customizations.generic);
 	while(oscap_iterator_has_more(generic_it)) {
@@ -1228,13 +1305,14 @@ static int _xccdf_policy_generate_fix_blueprint(struct oscap_list *rules_to_fix,
 
 	_write_text_to_fd(output_fd, "masked = [");
 	_format_and_write_list_into_blueprint_fd(customizations.services_mask, ",", output_fd);
-	_write_text_to_fd(output_fd, "]\n\n");
+	_write_text_to_fd(output_fd, "]\n");
 
 	oscap_list_free(customizations.services_mask, free);
 	oscap_list_free(customizations.services_disable, free);
 	oscap_list_free(customizations.kernel_append, free);
 	oscap_list_free(customizations.services_enable, free);
 	oscap_list_free(customizations.generic, free);
+	oscap_list_free(customizations.root, free);
 
 	return ret;
 }
