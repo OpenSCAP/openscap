@@ -85,10 +85,10 @@ function test_probes_rpmverifyfile {
 
 test_init
 
-rpm_prepare_offline
+rpm_prepare_offline_own
 
 test_run "rpmverifyfile probe test with OVAL 5.11.1 (offline)" test_probes_rpmverifyfile
 
-rpm_cleanup_offline
+rpm_cleanup_offline_own
 
 test_exit
