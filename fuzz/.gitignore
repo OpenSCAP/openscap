@@ -1,0 +1,23 @@
+# libFuzzer run artifacts (these patterns match anywhere; the curated
+# regression inputs under reproducers/ are re-included below)
+crash-*
+oom-*
+leak-*
+timeout-*
+*.profraw
+
+# Always keep the curated regression corpus, even though some are named crash-*
+!reproducers/
+!reproducers/**
+
+# run-all.sh outputs
+findings/
+logs/
+*.work/
+
+# Fuzzing corpora are large (seeded from tests/, then grown by libFuzzer) and
+# regenerable; they are not committed. Regression inputs live in reproducers/.
+corpus/
+corpus_xccdf/
+corpus_arf/
+corpus_tailoring/
