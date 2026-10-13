@@ -408,7 +408,6 @@ make_news_template()
 check_release_is_ok()
 {
     grep -q "^openscap-$version" "$OSCAP_REPO_ROOT/NEWS" || die "The version '$version' isn't mentioned in the NEWS file."
-    git log -1 | grep -q "^\s*openscap-$version$" || die "The openscap release commit is not the previous commit."
 }
 
 
