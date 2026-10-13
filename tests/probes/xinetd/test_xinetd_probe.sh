@@ -20,42 +20,42 @@ function test_probe_xinetd_parser {
     local ret_val=0;
 
     ./test_probe_xinetd ${srcdir}/xinetd_A.conf foo tcp 
-    if [ $? -ne 3 ]; then
+    if [[ $? -ne 3 ]]; then
 	ret_val=$[$ret_val + 1]
     fi
 
     ./test_probe_xinetd ${srcdir}/xinetd_B.conf foo tcp 
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
 	ret_val=$[$ret_val + 1]
     fi
 
     ./test_probe_xinetd ${srcdir}/xinetd_C.conf a tcp 
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
 	ret_val=$[$ret_val + 1]
     fi
 
     ./test_probe_xinetd ${srcdir}/xinetd_D.conf f udp 
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
 	ret_val=$[$ret_val + 1]
     fi
 
     ./test_probe_xinetd ${srcdir}/xinetd_E.conf foo udp 
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
 	ret_val=$[$ret_val + 1]
     fi
 
     ./test_probe_xinetd ${srcdir}/xinetd_E.conf foo tcp 
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
 	ret_val=$[$ret_val + 1]
     fi
 
     ./test_probe_xinetd ${srcdir}/xinetd_F.conf foo udp 
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
 	ret_val=$[$ret_val + 1]
     fi
 
     ./test_probe_xinetd ${srcdir}/xinetd_F.conf foo tcp 
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
 	ret_val=$[$ret_val + 1]
     fi
 
@@ -65,7 +65,7 @@ function test_probe_xinetd_parser {
 function test_probe_xinetd_regression_stringlist {
     output=$(./test_probe_xinetd "${srcdir}/xinetd_G.conf" rsync tcp | sed -n 's|.*only_from:[[:space:]]*\(only_this_is_allowed\)[[:space:]]*$|\1|p')
 
-    if [ "$output" = "only_this_is_allowed" ]; then
+    if [[ "$output" = "only_this_is_allowed" ]]; then
 	return 0
     fi
     return 1
@@ -74,20 +74,46 @@ function test_probe_xinetd_regression_stringlist {
 function test_probe_xinetd_duplicates {
     output=$(./test_probe_xinetd "${srcdir}/xinetd_H.conf" telnet tcp | grep 'xiconf_service_t(telnet)' | wc -l | xargs)
 
-    if [ "$output" = "3" ]; then
+    if [[ "$output" = "3" ]]; then
 	return 0
     fi
     return 1
+}
+
+# Name + protocol must fit XICFG_STRANS_MAXKEYLEN (parser rejects oversize keys).
+function test_probe_xinetd_strans_key_too_long {
+    local ret_val=0
+    local tmpconf
+    local longname
+
+    tmpconf=$(mktemp)
+    longname=$(printf '%260s' | tr ' ' 'a')
+    {
+	printf 'service %s\n' "$longname"
+	printf '{\n'
+	printf 'protocol = tcp\n'
+	printf 'socket_type = stream\n'
+	printf '}\n'
+    } >"$tmpconf"
+
+    ./test_probe_xinetd "$tmpconf" ignored tcp
+    if [[ $? -ne 2 ]]; then
+	ret_val=1
+    fi
+
+    rm -f "$tmpconf"
+    return $ret_val
 }
 
 # Testing.
 
 test_init
 
-if [ -z ${CUSTOM_OSCAP+x} ] ; then
+if [[ -z ${CUSTOM_OSCAP+x} ]]; then
     test_run "test_probe_xinetd_parser" test_probe_xinetd_parser
     test_run "xinetd parser regression test: string list" test_probe_xinetd_regression_stringlist
     test_run "test_probe_xinetd_duplicates" test_probe_xinetd_duplicates
+    test_run "test_probe_xinetd_strans_key_too_long" test_probe_xinetd_strans_key_too_long
 fi
 
 test_exit
