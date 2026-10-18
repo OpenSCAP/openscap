@@ -20,7 +20,7 @@
  *      Peter Vrabec  <pvrabec@redhat.com>
  */
 
-#ifdef HAVE_CONFIG_H
+ #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
@@ -72,7 +72,8 @@ struct oscap_module OSCAP_INFO_MODULE = {
 		"   --references                  - Show references available in the input benchmark\n"
 		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
 		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
-		"   --verbose-log-file <file>     - Write verbose information into file.\n",
+		"   --verbose-log-file <file>     - Write verbose information into file.\n"
+		"   --rule <rule_id>              - Print rule details",
     .opt_parser = getopt_info,
     .func = app_info
 };
@@ -423,7 +424,7 @@ static void _print_vars_for_profile(struct xccdf_policy_model *policy_model, con
 	if (policy == NULL) {
 		return;
 	}
-	const struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
+	const struct xccdf_profile *profile = xccdf_policy_get_profile(policy);	
 	if (profile == NULL) {
 		return;
 	}
@@ -748,6 +749,39 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	return OSCAP_OK;
 }
 
+static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_item *item) {
+
+	char *title = xccdf_policy_get_readable_item_title(policy, item, NULL);
+	if (strlen(title) > 0) {
+		printf("Title\r\t\033[1m%s\033[0;0m\n", title);
+		free((char *)title);
+	}
+	char *description = xccdf_policy_get_readable_item_description(policy, item, NULL);
+	if (strlen(description) > 0) {
+		char *indented_description = oscap_indent(description, 8);
+		printf("Description\n%s\n", indented_description);
+		free(indented_description);
+		}
+	free(description);
+	char *rationale = xccdf_policy_get_readable_item_rationale(policy, item, NULL);
+	if (strlen(rationale) > 0) {
+		char *indented_rationale = oscap_indent(rationale, 8);
+		printf("Rationale\n%s\n", indented_rationale);
+		free(indented_rationale);
+	}
+	free(rationale);
+	struct oscap_stringlist *warnings = xccdf_rule_get_warnings_strings((struct xccdf_rule *) item);
+	struct oscap_string_iterator *warnings_it = oscap_stringlist_get_strings(warnings);
+	while (oscap_string_iterator_has_more(warnings_it)) {
+		const char *warning = oscap_string_iterator_next(warnings_it);
+		char *indented_warning = oscap_indent(warning, 8);
+		printf("Warning\n%s\n", indented_warning);
+		free(indented_warning);
+	}
+	oscap_string_iterator_free(warnings_it);
+	oscap_stringlist_free(warnings);
+}
+
 static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
 {
 	if (action->show_profiles_only) {
@@ -771,6 +805,17 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 		} else {
 			xccdf_benchmark_free(bench);
 		}
+	
+	} else if (action->rule_id) {
+		
+		struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench); //create policy model
+		char str[] = "(all)";
+		char *all_id = str; // this is the policy id needed to select all rules and create a policy with all rules
+		struct xccdf_policy *policy = xccdf_policy_model_get_policy_by_id(policy_model, all_id); // create a policy with all rules
+		const struct xccdf_item *rule_i_want = xccdf_benchmark_get_item(bench, action->rule_id);
+		_my_print_rule_details(policy, (struct xccdf_item *) rule_i_want);
+		xccdf_benchmark_free(bench);
+
 	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		print_time(action->file);
@@ -1066,6 +1111,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 		OSCAP_INFO_OPT_REFERENCES,
 		OSCAP_INFO_OPT_VERBOSE,
 		OSCAP_INFO_OPT_VERBOSE_LOG_FILE,
+		OSCAP_INFO_OPT_PRINT_RULE
 	};
 	/* Command-options */
 	const struct option long_options[] = {
@@ -1078,6 +1124,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 		{"references", no_argument, 0, OSCAP_INFO_OPT_REFERENCES},
 		{"verbose", required_argument, NULL, OSCAP_INFO_OPT_VERBOSE},
 		{"verbose-log-file", required_argument, NULL, OSCAP_INFO_OPT_VERBOSE_LOG_FILE},
+		{"rule", required_argument, NULL, OSCAP_INFO_OPT_PRINT_RULE},
 		// end
 		{0, 0, 0, 0}
 	};
@@ -1113,6 +1160,9 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 			case OSCAP_INFO_OPT_VERBOSE_LOG_FILE:
 				action->f_verbose_log = optarg;
 				break;
+			case OSCAP_INFO_OPT_PRINT_RULE:
+				action->rule_id = optarg;
+				break;	
 			default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}

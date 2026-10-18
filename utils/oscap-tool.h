@@ -120,6 +120,7 @@ struct oscap_action {
         char *f_report;
 	char *f_variables;
 	char *f_verbose_log;
+	char *rule_id;
 	/* others */
         char *profile;
 	struct oscap_stringlist *rules;
