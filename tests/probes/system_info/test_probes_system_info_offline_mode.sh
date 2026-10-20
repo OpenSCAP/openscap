@@ -13,12 +13,19 @@
 set -e -o pipefail
 
 function test_offline_mode_system_info_offline {
-	# This test is dependent on /etc/os-release being present, so skip this test if it doesn't exist.
-	[ -f "/etc/os-release" ] || return 255
+	os_name="Offline Linux"
+	os_version="1.0 (Offline)"
+	host_name="offline.example.com"
 
+	# A root of its own, as a probe root is: its /etc/os-release links to
+	# /usr/lib/os-release, as on most systems, and the link resolves in the
+	# root.
 	temp_dir="$(mktemp -d)"
-
-	ln -s /etc $temp_dir
+	mkdir -p "$temp_dir/etc" "$temp_dir/usr/lib"
+	printf 'NAME="%s"\nVERSION="%s"\n' "$os_name" "$os_version" > "$temp_dir/usr/lib/os-release"
+	ln -s /usr/lib/os-release "$temp_dir/etc/os-release"
+	echo "$host_name" > "$temp_dir/etc/hostname"
+	echo "hostname=\"$host_name\"" > "$temp_dir/etc/rc.conf"
 
 	result="$(mktemp)"
 
@@ -30,22 +37,11 @@ function test_offline_mode_system_info_offline {
 
 	[ -s "$result" ]
 
-	. /etc/os-release
-
-	case $(uname) in
-		FreeBSD)
-			HOSTNAME=`grep hostname= /etc/rc.conf | cut -d '"' -f 2`
-			;;
-		*)
-			HOSTNAME=`cat /etc/hostname`
-			;;
-	esac
-
 	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_info'
-	assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_info/os_name[text()=\"${NAME}\"]"
-	assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_info/os_version[text()=\"${VERSION}\"]"
+	assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_info/os_name[text()=\"${os_name}\"]"
+	assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_info/os_version[text()=\"${os_version}\"]"
 	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_info/architecture[text()="Unknown"]'
-	assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_info/primary_host_name[text()=\"${HOSTNAME}\"]"
+	assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_info/primary_host_name[text()=\"${host_name}\"]"
 
 	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_info/interfaces'
 	# Getting network interfaces information from the guest is not implemented,
