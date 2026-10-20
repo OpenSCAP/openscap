@@ -48,6 +48,7 @@ int main (int argc, char *argv[])
 
 	if (xres == NULL) {
 		fprintf(stderr, "Not found.\n");
+		xiconf_free(xcfg);
 		return (3);
 	} else {
 		register unsigned int l;
@@ -89,5 +90,6 @@ int main (int argc, char *argv[])
 		}
 	}
 
+	xiconf_free(xcfg);
 	return (0);
 }
