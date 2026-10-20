@@ -1,0 +1,8 @@
+---
+- hosts: all
+  vars:
+  tasks:
+    - name: ensure everything passes
+        shell: /bin/true
+    - name: correct the failing case
+        shell: /bin/false

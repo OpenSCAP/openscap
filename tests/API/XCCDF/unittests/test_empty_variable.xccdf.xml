@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="0" xml:lang="en-US">
+  <status date="2011-10-12">draft</status>
+  <title xml:lang="en-US">Example of SCAP Security Guidance</title>
+  <description xml:lang="en-US">This example security guidance has been created to demonstrate SCAP functionality
+on Linux.</description>
+  <version>0.2</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <model system="urn:xccdf:scoring:flat"/>
+  <Profile id="RHEL6-Default">
+    <title xml:lang="en-US">Default install settings</title>
+    <description xml:lang="en-US">This profile is an example policy that simply checks if some of RHEL6 default
+install settings have been modified. It is not comprehensive nor checks security hardening. It is just for testing
+purposes.</description>
+    <select idref="rule-1077" selected="true"/>
+  </Profile>
+        <Value id="var-1077" operator="equals" type="string">
+          <title xml:lang="en-US">login banner verbiage</title>
+          <description xml:lang="en-US">Enter an appropriate login banner for your
+					organization</description>
+	  <value/>
+        </Value>
+        <Group id="gr-accounts-banners.1" hidden="false">
+          <title xml:lang="en-US">Modify the System Login Banner</title>
+          <description xml:lang="en-US"> The contents of the file /etc/issue are displayed
+						on the screen just above the login prompt for users logging directly into a
+						terminal. Remote login programs such as SSH or FTP can be configured to
+						display /etc/issue as well.<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> By default, the system will display the version of the OS, the
+						kernel version, and the host name. <xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/>
+						<xhtml:br xmlns:xhtml="http://www.w3.org/1999/xhtml"/> Edit /etc/issue. Replace the default text with a message
+						compliant with the local site policy or a legal disclaimer.</description>
+          <Rule id="rule-1077" selected="false" weight="10.000000" severity="medium">
+            <status date="2010-07-01">accepted</status>
+            <title xml:lang="en-US">Modify the System Login Banner</title>
+            <description xml:lang="en-US">The system login banner text should be: <sub xmlns="http://checklists.nist.gov/xccdf/1.1" idref="var-1077"/>
+						</description>
+            <ident system="http://cce.mitre.org">CCE-4060-0</ident>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-export export-name="oval:org.open-scap.rhel6:var:1077" value-id="var-1077"/>
+              <check-content-ref name="oval:org.open-scap.rhel6:def:1077" href="test_empty_variable.oval.xml"/>
+            </check>
+          </Rule>
+        </Group>
+</Benchmark>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/windows-definitions-schema.xsd
+	http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/independent-definitions-schema.xsd
+	http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/oval-definitions-schema.xsd
+	http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/oval-common-schema.xsd
+	http://oval.mitre.org/XMLSchema/oval-definitions-5#linux http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/linux-definitions-schema.xsd
+	http://oval.mitre.org/XMLSchema/oval-definitions-5#unix http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/unix-definitions-schema.xsd">
+	<generator>
+		<oval:product_name>National Institute of Standards and Technology</oval:product_name>
+		<oval:schema_version>5.8</oval:schema_version>
+		<oval:timestamp>2012-06-28T09:49:40.000-05:00</oval:timestamp>
+	</generator>
+	<definitions>
+		<!--====================================================================================================-->
+		<!--=====================================  EXTENDED DEFINITIONS  =========================================-->
+		<!--====================================================================================================-->
+		<definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:100" version="2">
+			<metadata>
+				<title>Red Hat Enterprise Linux 3, 4, 5, 6, or 7</title>
+				<affected family="unix">
+					<platform>Red Hat Enterprise Linux</platform>
+				</affected>
+				<reference ref_id="cpe:/o:redhat:enterprise_linux" source="CPE"/>
+				<description>The operating system installed on the system is Red Hat Enterprise Linux 3, 4, 5, 6, or 7</description>
+			</metadata>
+			<criteria>
+				<criterion comment="Installed operating system is part of the unix family" test_ref="oval:gov.nist.validation.cpe.oval:tst:100"/>
+				<criterion comment="Red Hat Enterprise Linux 3, 4, 5, 6, or 7 is installed" test_ref="oval:gov.nist.validation.cpe.oval:tst:101"/>
+			</criteria>
+		</definition>
+		<definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:101" version="4">
+			<metadata>
+				<title>Microsoft Windows is installed</title>
+				<affected family="windows">
+					<platform>Microsoft Windows XP</platform>
+					<platform>Microsoft Windows Vista</platform>
+					<platform>Microsoft Windows 7</platform>
+					<platform>Microsoft Windows 8</platform>
+					<platform>Microsoft Windows 8.1</platform>
+					<platform>Microsoft Windows 10</platform>
+					<platform>Microsoft Windows Server 2012</platform>
+					<platform>Microsoft Windows Server 2012 R2</platform>
+				</affected>
+				<reference ref_id="cpe:/o:microsoft:windows" source="CPE"/>
+				<description>The operating system installed on the system is Microsoft Windows</description>
+			</metadata>
+			<criteria>
+				<criterion comment="the installed operating system is part of the Microsoft Windows family" test_ref="oval:org.mitre.oval:tst:99"/>
+			</criteria>
+		</definition>
+	</definitions>
+	<!-- ==================================================================================================== -->
+	<!-- ============================================  TESTS  =============================================== -->
+	<!-- ==================================================================================================== -->
+	<tests>
+		<family_test check_existence="at_least_one_exists" id="oval:gov.nist.validation.cpe.oval:tst:100" version="1" check="only one" comment="installed operating system is part of the Unix family" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+			<object object_ref="oval:gov.nist.validation.cpe.oval:obj:100"/>
+			<state state_ref="oval:gov.nist.validation.cpe.oval:ste:100"/>
+		</family_test>
+		<rpminfo_test check_existence="at_least_one_exists" id="oval:gov.nist.validation.cpe.oval:tst:101" version="2" check="at least one" comment="redhat-release is version 3, 4, 5, 6, or 7" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+			<object object_ref="oval:gov.nist.validation.cpe.oval:obj:101"/>
+			<state state_ref="oval:gov.nist.validation.cpe.oval:ste:101"/>
+		</rpminfo_test>
+		<family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="the installed operating system is part of the Microsoft Windows family" id="oval:org.mitre.oval:tst:99" version="1">
+			<object object_ref="oval:org.mitre.oval:obj:99"/>
+			<state state_ref="oval:org.mitre.oval:ste:99"/>
+		</family_test>
+	</tests>
+	<!-- ==================================================================================================== -->
+	<!-- ============================================  OBJECTS  ============================================= -->
+	<!-- ==================================================================================================== -->
+	<objects>
+		<family_object id="oval:gov.nist.validation.cpe.oval:obj:100" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
+		<family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="This is the default family object. Only one family object should exist." id="oval:org.mitre.oval:obj:99" version="1"/>
+		<rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="the redhat-release rpm" id="oval:gov.nist.validation.cpe.oval:obj:101" version="2">
+			<name operation="pattern match">^redhat-release.*$</name>
+		</rpminfo_object>
+	</objects>
+	<!-- ==================================================================================================== -->
+	<!-- =============================================  STATES  ============================================= -->
+	<!-- ==================================================================================================== -->
+	<states>
+		<family_state id="oval:gov.nist.validation.cpe.oval:ste:100" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+			<family>unix</family>
+		</family_state>
+		<rpminfo_state id="oval:gov.nist.validation.cpe.oval:ste:101" version="2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+			<version operation="pattern match">^[3-7]\D</version>
+		</rpminfo_state>
+		<family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="Microsoft Windows family" id="oval:org.mitre.oval:ste:99" version="2">
+			<family operation="equals">windows</family>
+		</family_state>
+	</states>
+	<!-- ==================================================================================================== -->
+	<!-- ==================================================================================================== -->
+	<!-- ==================================================================================================== -->
+</oval_definitions>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cdf-11-tailoring:Tailoring xmlns:cdf-11-tailoring="http://open-scap.org/page/Xccdf-1.1-tailoring" xmlns:xccdf="http://checklists.nist.gov/xccdf/1.1" id="xccdf_org.open-scap_tailoring_example">
+  <cdf-11-tailoring:status>incomplete</cdf-11-tailoring:status>
+  <cdf-11-tailoring:version time="2013-01-15T16:00:00.000+02:00">1.0</cdf-11-tailoring:version>
+  <xccdf:Profile id="xccdf_org.open-scap_profile_default">
+    <xccdf:title>Default</xccdf:title>
+  </xccdf:Profile>
+</cdf-11-tailoring:Tailoring>

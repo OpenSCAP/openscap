@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+            xmlns:apache-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#apache"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#apache"
+            elementFormDefault="qualified" version="5.11">
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation>The following is a description of the elements, types, and attributes that compose the Apache specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+            <xsd:documentation>The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>Apache Definition</schema>
+                  <version>5.11.1:1.1</version>
+                  <date>11/30/2016 09:00:00 AM</date>
+                  <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                  <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+                  <sch:ns prefix="apache-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#apache"/>
+                  <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+            </xsd:appinfo>
+      </xsd:annotation>
+      <!-- =============================================================================== -->
+      <!-- =================================  HTTPD TEST  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="httpd_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The httpd test is used to check the version of an installed httpd binary. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references an httpd_test and the optional state element specifies the data to check.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>httpd_test</oval:test>
+                              <oval:object>httpd_object</oval:object>
+                              <oval:state>httpd_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apache">httpd_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.8</oval:version>
+                              <oval:reason>The httpd_test does not specify how to detect instances of httpd and cannot be reasonably specified to allow for products to detect all instances of httpd across platforms, packaging systems, and typical user compiled and configured installations. Without a proper definition of how to identify instances of httpd products will not reliably produce consistent assessment results because they will naturally utilize different approaches to locating instances of httpd which will lead to differences in the set of collected instances of https.</oval:reason>
+                              <oval:comment>This test has been deprecated and may be removed in a future version of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="apache-def_httpd_test_dep">
+                              <sch:rule context="apache-def:httpd_test">
+                                    <sch:report test="true()">DEPRECATED TEST: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern> 
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="apache-def_httpdtst">
+                              <sch:rule context="apache-def:httpd_test/apache-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/apache-def:httpd_object/@id"><sch:value-of select="../@id"/> - the object child element of a httpd_test must reference a httpd_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="apache-def:httpd_test/apache-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/apache-def:httpd_state/@id"><sch:value-of select="../@id"/> - the state child element of a httpd_test must reference a httpd_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="httpd_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The httpd_object element is used by a httpd test to define the different httpd binary installed on a system. There is actually only one object relating to this and it is the collection of all httpd binaries. Therefore, there are no child entities defined. Any OVAL Test written to check version will reference the same httpd_object which is basically an empty object element. A tool that implements the httpd_test and collects the httpd_object must know how to find all the httpd binaries on the system and verify that they are in fact httpd binaries.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.8</oval:version>
+                              <oval:reason>The httpd_object does not specify how to detect instances of httpd and cannot be reasonably specified to allow for products to detect all instances of httpd across platforms, packaging systems, and typical user compiled and configured installations. Without a proper definition of how to identify instances of httpd products will not reliably produce consistent assessment results because they will naturally utilize different approaches to locating instances of httpd which will lead to differences in the set of collected instances of https.</oval:reason>
+                              <oval:comment>This object has been deprecated and may be removed in a future version of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="apache-def_httpd_object_dep">
+                              <sch:rule context="apache-def:httpd_object">
+                                    <sch:report test="true()">DEPRECATED OBJECT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern> 
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType"/>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="httpd_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The httpd_state element defines information associated with a specific httpd binary.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.8</oval:version>
+                              <oval:reason>The httpd_state does not specify how to detect instances of httpd and cannot be reasonably specified to allow for products to detect all instances of httpd across platforms, packaging systems, and typical user compiled and configured installations. Without a proper definition of how to identify instances of httpd products will not reliably produce consistent assessment results because they will naturally utilize different approaches to locating instances of httpd which will lead to differences in the set of collected instances of https.</oval:reason>
+                              <oval:comment>This state has been deprecated and may be removed in a future version of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="apache-def_httpd_state_dep">
+                              <sch:rule context="apache-def:httpd_state">
+                                    <sch:report test="true()">DEPRECATED STATE: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern> 
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="path" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The path element specifies the directory component of the absolute path to a httpd binary on the system.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="binary_name" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1" nillable="true">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The binary_name element specifies the name of the file. If the xsi:nil attribute is set to true, then the object being specified is the higher level path. In this case, the binary_name element should not be collected or used in analysis. Setting xsi:nil equal to true is different than using a .* pattern match, says to collect every file under a given path.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="version" type="oval-def:EntityStateVersionType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The version entity is used to check the version of the httpd binary. The datatype for the version entity is 'version' which means the value should be a delimited set of numbers. It is obtained by running 'httpd -v'.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+</xsd:schema>

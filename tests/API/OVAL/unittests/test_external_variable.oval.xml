@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.11</oval:schema_version>
+    <oval:timestamp>2009-05-21T11:46:00-04:00</oval:timestamp>
+    <terms_of_use>Copyright (c) 2002-2012, The MITRE Corporation. All rights reserved. The contents of this file are subject to the license described in terms.txt.</terms_of_use>
+  </generator>
+  <definitions>
+    <definition id="oval:x:def:562" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the oval-def:external_variable construct is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the oval-def:external_variable construct.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the external_variable construct is supported for a single possible_restriction." test_ref="oval:x:tst:1"/>
+        <criterion comment="Test that the external_variable construct is supported for multiple possible_restrictions." test_ref="oval:x:tst:2"/>
+        <criterion comment="Test that the external_variable construct is supported for a single possible_value." test_ref="oval:x:tst:3"/>
+        <criterion comment="Test that the external_variable construct is supported for multiple possible_values." test_ref="oval:x:tst:4"/>
+        <criterion comment="Test that the external_variable construct is supported for a single possible_restriction." test_ref="oval:x:tst:5"/>
+        <criterion comment="Test that the external_variable construct is supported for a single possible_restriction." test_ref="oval:x:tst:6"/>
+        <criterion comment="Test that the external_variable construct is supported for a single possible_restriction." test_ref="oval:x:tst:7"/>
+        <criterion comment="Test that the external_variable construct is supported for a single possible_restriction." test_ref="oval:x:tst:8"/>
+        <criterion comment="Test that the external_variable construct is supported for a single possible_restriction." test_ref="oval:x:tst:9"/>
+        <criterion comment="Test that the external_variable construct is supported for a single possible_restriction." test_ref="oval:x:tst:10"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:x:tst:1" version="1" comment="Test that the external_variable construct is supported for a single possible_restriction." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:1"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:2" version="1" comment="Test that the external_variable construct is supported for multiple possible_restrictions." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:2"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:3" version="1" comment="Test that the external_variable construct is supported for a single possible_value." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:3"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:4" version="1" comment="Test that the external_variable construct is supported for multiple possible_values." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:4"/>
+    </variable_test> 
+    <variable_test id="oval:x:tst:5" version="1" comment="Test that the external_variable construct is supported for a single possible_restriction." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:5"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:6" version="1" comment="Test that the external_variable construct is supported for a single possible_restriction." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:6"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:7" version="1" comment="Test that the external_variable construct is supported for a single possible_restriction." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:7"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:8" version="1" comment="Test that the external_variable construct is supported for a single possible_restriction." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:8"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:9" version="1" comment="Test that the external_variable construct is supported for a single possible_restriction." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:9"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:10" version="1" comment="Test that the external_variable construct is supported for a single possible_restriction." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:10"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:x:obj:1" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must match the regular expression '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:1</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:2" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must match the regular expression '^[0-9]{3}-[0-9]{3}-[0-9]{4}$' or '^1-[0-9]{3}-[0-9]{3}-[0-9]{4}$'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:2</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:3" version="1" comment="This variable_object references an external_variable that restricts the variable's value to '0'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:3</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:4" version="1" comment="This variable_object references an external_variable that restricts the variable's value to '0' or '1'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:4</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:5" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must be greater than 10 and less than 20" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:5</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:6" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must be greater than 10 and less than 20" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:6</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:7" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must be equal to 100 or equal to 200 or equal to 300" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:7</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:8" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must be equal to 100 or equal to 200 or equal to 300" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:8</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:9" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must not equal to 0" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:9</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:10" version="1" comment="This variable_object references an external_variable that restricts the variable's values such that they must not equal to 0" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:10</var_ref>
+    </variable_object>
+  </objects>
+
+  <variables>
+    <external_variable id="oval:x:var:1" version="1" comment="This external_variable references the string value '123-456-7890' from external-variables.xml and restricts the value such that it must match the regular expression '^[0-9]{3}-[0-9]{3}-[0-9]{4}$'." datatype="string">
+      <possible_restriction hint="hint">
+        <restriction operation="pattern match">^[0-9]{3}-[0-9]{3}-[0-9]{4}$</restriction>
+      </possible_restriction>
+    </external_variable>
+    <external_variable id="oval:x:var:2" version="1" comment="This external_variable references the string value '1-123-456-7890' from external-variables.xml and restricts the value such that it must match the regular expression '^[0-9]{3}-[0-9]{3}-[0-9]{4}$' or '^1-[0-9]{3}-[0-9]{3}-[0-9]{4}$'." datatype="string">
+      <possible_restriction hint="This restricts the variable value(s) to the 10 digit telephone number format xxx-xxx-xxxx">
+        <restriction operation="pattern match">^[0-9]{3}-[0-9]{3}-[0-9]{4}$</restriction>
+      </possible_restriction>
+      <possible_restriction hint="This restricts the variable value(s) to the 1 plus 10 digit telephone number format x-xxx-xxx-xxxx">
+        <restriction operation="pattern match">^1-[0-9]{3}-[0-9]{3}-[0-9]{4}$</restriction>
+      </possible_restriction>
+    </external_variable>
+    <external_variable id="oval:x:var:3" version="1" comment="This external_variable references the integer value '0' from external-variables.xml and restricts the value such that it must be equal to '0'." datatype="int">
+      <possible_value hint="This restricts the variable value(s) to 0.">0</possible_value>
+    </external_variable>
+    <external_variable id="oval:x:var:4" version="1" comment="This external_variable references the integer value '1' from external-variables.xml and restricts the value such that it must be equal to '0' or '1'." datatype="int">
+      <possible_value hint="This restricts the variable value(s) to 0.">0</possible_value>
+      <possible_value hint="This restricts the variable value(s) to 1.">1</possible_value>
+    </external_variable>
+    <external_variable id="oval:x:var:5" version="1" comment="This external_variable references the integer value '13' from external-variables.xml" datatype="int">
+      <possible_restriction hint="greater than 10 and less than 20">
+        <restriction operation="greater than">10</restriction>
+        <restriction operation="less than">20</restriction>
+      </possible_restriction>
+    </external_variable>
+    <external_variable id="oval:x:var:6" version="1" comment="This external_variable references the integer value '42' from external-variables.xml" datatype="int">
+      <possible_restriction operator="AND" hint="greater than 10 and less than 20">
+        <restriction operation="greater than">10</restriction>
+        <restriction operation="less than">20</restriction>
+      </possible_restriction>
+    </external_variable>
+    <external_variable id="oval:x:var:7" version="1" comment="This external_variable references the integer value '300' from external-variables.xml" datatype="int">
+      <possible_restriction operator="OR" hint="equal to 100 or equal to 200 or equal to 300">
+        <restriction operation="equals">100</restriction>
+        <restriction operation="equals">200</restriction>
+        <restriction operation="equals">300</restriction>
+      </possible_restriction>
+    </external_variable>
+    <external_variable id="oval:x:var:8" version="1" comment="This external_variable references the integer value '666' from external-variables.xml" datatype="int">
+      <possible_restriction operator="OR" hint="equal to 100 or equal to 200 or equal to 300">
+        <restriction operation="equals">100</restriction>
+        <restriction operation="equals">200</restriction>
+        <restriction operation="equals">300</restriction>
+      </possible_restriction>
+    </external_variable>
+    <external_variable id="oval:x:var:9" version="1" comment="This external_variable references the integer value '0' from external-variables.xml" datatype="int">
+      <possible_restriction operator="ONE" hint="everything except 0">
+        <restriction operation="greater than or equal">0</restriction>
+        <restriction operation="less than or equal">0</restriction>
+      </possible_restriction>
+    </external_variable>
+    <external_variable id="oval:x:var:10" version="1" comment="This external_variable references the integer value '17' from external-variables.xml" datatype="int">
+      <possible_restriction operator="ONE" hint="everything except 0">
+        <restriction operation="greater than or equal">0</restriction>
+        <restriction operation="less than or equal">0</restriction>
+      </possible_restriction>
+    </external_variable>
+  </variables>
+</oval_definitions>

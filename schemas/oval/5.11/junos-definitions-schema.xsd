@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:junos-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#junos" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#junos" elementFormDefault="qualified" version="5.11">
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+    <xsd:annotation>
+        <xsd:documentation>The following is a description of the elements, types, and attributes that compose the Junos-specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+        <xsd:documentation>This schema was originally developed by David Solin at jOVAL.org. The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+        <xsd:appinfo>
+            <schema>Junos Definition</schema>
+            <version>5.11:5.11</version>
+            <date>12/18/2014 09:00:00 AM</date>
+            <terms_of_use>Copyright (c) 2002-2014, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+            <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+            <sch:ns prefix="junos-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#junos"/>
+            <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <!-- ============================================================================ -->
+    <!-- =============================  XML CONFIG TEST  ============================ -->
+    <!-- ============================================================================ -->
+    <xsd:element name="xml_config_test" substitutionGroup="oval-def:test">
+        <xsd:complexType>
+            <xsd:annotation>
+                <xsd:documentation>The XML config test is used to perform XPATH queries against the JunOS XML configuration file. The JunOS XML configuration file can be retrieved using the command "show configuration | display xml". It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a xml_config_object and the optional state element specifies the data to check.</xsd:documentation>
+                <xsd:appinfo>
+                    <oval:element_mapping>
+                        <oval:test>xml_config_test</oval:test>
+                        <oval:object>xml_config_object</oval:object>
+                        <oval:state>xml_config_state</oval:state>
+                        <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#junos">xml_config_item</oval:item>
+                    </oval:element_mapping>
+                </xsd:appinfo>
+                <xsd:appinfo>
+                    <sch:pattern id="junos-def_xmlconfigtst">
+                        <sch:rule context="junos-def:xml_config_test/junos-def:object">
+                            <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/junos-def:xml_config_object/@id"><sch:value-of select="../@id"/> - the object child element of a xml_config_test must reference a xml_config_object</sch:assert>
+                        </sch:rule>
+                        <sch:rule context="junos-def:xml_config_test/junos-def:state">
+                            <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/junos-def:xml_config_state/@id"><sch:value-of select="../@id"/> - the state child element of a xml_config_test must reference a xml_config_state</sch:assert>
+                        </sch:rule>
+                    </sch:pattern>
+                </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType"/>
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="xml_config_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The xml_config_object element is used by an XML config test to define the object to be evaluated. For the most part this object checks for existence and is used without a state comparision. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+            <xsd:appinfo>
+                <sch:pattern id="junos-def_xml_config_object_verify_filter_state">
+                    <sch:rule context="junos-def:xml_config_object//oval-def:filter">
+                        <sch:let name="parent_object" value="ancestor::junos-def:xml_config_object"/>
+                        <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                        <sch:let name="state_ref" value="."/>
+                        <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                        <sch:let name="state_name" value="local-name($reffed_state)"/>
+                        <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                        <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#junos') and ($state_name='config_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType">
+                    <xsd:sequence>
+                        <xsd:choice>
+                            <xsd:element ref="oval-def:set"/>
+                            <xsd:sequence>
+                                <xsd:element name="xpath" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>An XPATH 1.0 expression that should be evaluated against the XML configuration file. Any valid XPATH 1.0 statement is usable with one exception, at most one field may be identified in the XPATH. This is because the value_of element in the data section is only designed to work against a single field. The only valid operator for xpath is equals since there is an infinite number of possible xpaths and determinining all those that do not equal a given xpath would be impossible.</xsd:documentation>
+                                        <xsd:appinfo>
+                                            <sch:pattern id="junos-def_xmlconfigobjxpath">
+                                                <sch:rule context="junos-def:xml_config_object/junos-def:xpath">
+                                                    <sch:assert test="not(@operation) or @operation='equals'"><sch:value-of select="../@id"/> - operation attribute for the xpath entity of a xml_config_object should be 'equals', note that this overrules the general operation attribute validation (i.e. follow this one)</sch:assert>
+                                                </sch:rule>
+                                            </sch:pattern>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="xml_config_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The xml_config_state element defines the different information that can be used to evaluate the result of an XPATH query against the XML configuration file. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="xpath" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>An XPATH 1.0 expression that was evaluated against the XML config file.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="value_of" type="oval-def:EntityStateAnySimpleType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The result of the evaluation of the XPATH expression against the XML config file.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- ============================================================================ -->
+    <!-- ===============================  SHOW TEST  ================================ -->
+    <!-- ============================================================================ -->
+    <xsd:element name="show_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The show test is used to check the properties of specific output lines from a SHOW command, such as "show configuration". It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a show_object and the optional state element specifies the data to check.</xsd:documentation>
+            <xsd:appinfo>
+                <oval:element_mapping>
+                    <oval:test>show_test</oval:test>
+                    <oval:object>show_object</oval:object>
+                    <oval:state>show_state</oval:state>
+                    <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#junos">show_item</oval:item>
+                </oval:element_mapping>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType"/>
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="show_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The show_object element is used by a show test to define the object to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+            <xsd:appinfo>
+                <sch:pattern id="junos-def_show_object_verify_filter_state">
+                    <sch:rule context="junos-def:show_object//oval-def:filter">
+                        <sch:let name="parent_object" value="ancestor::junos-def:show_object"/>
+                        <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                        <sch:let name="state_ref" value="."/>
+                        <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                        <sch:let name="state_name" value="local-name($reffed_state)"/>
+                        <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                        <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#junos') and ($state_name='show_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType">
+                    <xsd:sequence>
+                        <xsd:choice>
+                            <xsd:element ref="oval-def:set"/>
+                            <xsd:sequence>
+                                <xsd:element name="subcommand" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>The name of a SHOW sub-command to be tested.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="show_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The show_state element defines the different information that can be used to evaluate the result of a specific SHOW sub-command. This includes the name of the sub-command and the corresponding config output. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="subcommand" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The name of the SHOW sub-command.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="value" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The value returned from by the specified SHOW sub-command. This may consist of multiple lines of information, whose raw form will be captured by the item.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- ============================================================================= -->
+    <!-- ==============================  VERSION TEST  =============================== -->
+    <!-- ============================================================================= -->
+    <xsd:element name="version_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The version_test is used to check the version of components of the JunOS operating system. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a version_object and the optional state element specifies the data to check.</xsd:documentation>
+            <xsd:appinfo>
+                <oval:element_mapping>
+                    <oval:test>version_test</oval:test>
+                    <oval:object>version_object</oval:object>
+                    <oval:state>version_state</oval:state>
+                    <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#junos">version_item</oval:item>
+                </oval:element_mapping>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType"/>
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="version_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The version_object element is used by a version_test to define the different version information associated with a JunOS system.</xsd:documentation>
+            <xsd:appinfo>
+                <sch:pattern id="junos-def_version_object_verify_filter_state">
+                    <sch:rule context="junos-def:version_object//oval-def:filter">
+                        <sch:let name="parent_object" value="ancestor::junos-def:version_object"/>
+                        <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                        <sch:let name="state_ref" value="."/>
+                        <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                        <sch:let name="state_name" value="local-name($reffed_state)"/>
+                        <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                        <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#junos') and ($state_name='version_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType">
+                    <xsd:sequence>
+                        <xsd:choice>
+                            <xsd:element ref="oval-def:set"/>
+                            <xsd:sequence>
+                                <xsd:element name="component" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>The name of the JunOS component whose version should be retrieved.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="version_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The version_state element defines the version information held by a JunOS component.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="component" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The name of the JunOS component whose version should be retrieved.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="raw_release" type="oval-def:EntityStateStringType" minOccurs="1" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The raw release version string for the component.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="major_version" type="oval-def:EntityStateVersionType" minOccurs="1" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The part of the release version of the component corresponding to the [year].[quarter] in which the release occurred. For example, the major_version for 12.2R6.1 would be 12.2.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="release_type" type="junos-def:EntityStateJunosReleaseTypeType" minOccurs="1" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The release type embedded in the version of the component.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="revision" type="oval-def:EntityStateVersionType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The revision and build number (AKA spin number) information of the component's version. For example, the revision for 12.2R6.1 would be 6.1.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="builder" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The string identifying the builder of the component.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="build_date" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The build date of the component, specified in milliseconds since the Epoch (midnight, January 1, 1970 GMT).</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- ============================================================================= -->
+    <!-- ============================== XML SHOW TEST  =============================== -->
+    <!-- ============================================================================= -->
+    <xsd:element name="xml_show_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The XML show test is used to check the properties of specific output from an XML SHOW command, such as "show configuration | display xml". It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a xml_show_object and the optional state element specifies the data to check.</xsd:documentation>
+            <xsd:appinfo>
+                <oval:element_mapping>
+                    <oval:test>xml_show_test</oval:test>
+                    <oval:object>xml_show_object</oval:object>
+                    <oval:state>xml_show_state</oval:state>
+                    <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#junos">xml_show_item</oval:item>
+                </oval:element_mapping>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType"/>
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="xml_show_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The xml_show_object element is used by an XML show test to define the object to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+            <xsd:appinfo>
+                <sch:pattern id="junos-def_xml_show_object_verify_filter_state">
+                    <sch:rule context="junos-def:xml_show_object//oval-def:filter">
+                        <sch:let name="parent_object" value="ancestor::junos-def:xml_show_object"/>
+                        <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                        <sch:let name="state_ref" value="."/>
+                        <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                        <sch:let name="state_name" value="local-name($reffed_state)"/>
+                        <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                        <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#junos') and ($state_name='xml_show_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType">
+                    <xsd:sequence>
+                        <xsd:choice>
+                            <xsd:element ref="oval-def:set"/>
+                            <xsd:sequence>
+                                <xsd:element name="subcommand" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>The name of a SHOW sub-command to be tested.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element name="xpath" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>An XPATH 1.0 expression that should be evaluated against the XML data resulting from the XML show subcommand. Any valid XPATH 1.0 statement is usable with one exception, at most one field may be identified in the XPATH. This is because the value_of element in the data section is only designed to work against a single field. The only valid operator for xpath is equals since there is an infinite number of possible xpaths and determinining all those that do not equal a given xpath would be impossible.</xsd:documentation>
+                                        <xsd:appinfo>
+                                            <sch:pattern id="junos-def_xml_showobjxpath">
+                                                <sch:rule context="junos-def:xml_show_object/junos-def:xpath">
+                                                    <sch:assert test="not(@operation) or @operation='equals'"><sch:value-of select="../@id"/> - operation attribute for the xpath entity of a xml_show_object should be 'equals', note that this overrules the general operation attribute validation (i.e. follow this one)</sch:assert>
+                                                </sch:rule>
+                                            </sch:pattern>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="xml_show_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The xml_show_state element defines the different information that can be used to evaluate the result of a specific XML SHOW sub-command. This includes the name of the sub-command, the XPATH and the corresponding XPATH query result. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="subcommand" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The name of a SHOW sub-command to be tested.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="xpath" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>An XPATH 1.0 expression that should be evaluated against the XML data resulting from the XML show subcommand.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="value_of" type="oval-def:EntityStateAnySimpleType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The result of the evaluation of the XPATH expression against the XML data returned from the XML show subcommand.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- =============================================================================== -->
+    <!-- =============================================================================== -->
+    <!-- =============================================================================== -->
+    <xsd:complexType name="EntityStateJunosReleaseTypeType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityStateJunosReleaseTypeType complex type defines the different values that are valid for the release_type entity of a system_metric state. These values describe the release type specified in the raw version string.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-def:EntityStateStringType">
+                <xsd:enumeration value="R">
+                    <xsd:annotation>
+                        <xsd:documentation>Indicates a normal release.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:enumeration>
+                <xsd:enumeration value="S">
+                    <xsd:annotation>
+                        <xsd:documentation>Indicates a service release.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:enumeration>
+                <xsd:enumeration value="B">
+                    <xsd:annotation>
+                        <xsd:documentation>Indicates a beta release.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:enumeration>
+                <xsd:enumeration value="X">
+                    <xsd:annotation>
+                        <xsd:documentation>Indicates a release of the SRX branch.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:enumeration>
+                <xsd:enumeration value="">
+                    <xsd:annotation>
+                        <xsd:documentation>The empty string value is permitted here to allow for empty elements associated with variable references.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:enumeration>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+</xsd:schema>

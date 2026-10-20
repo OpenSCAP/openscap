@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_test_remediate_fix_processing.xccdf.xml" schematron-version="1.2"><ds:data-stream id="scap_org.open-scap_datastream_from_xccdf_test_remediate_fix_processing.xccdf.xml" scap-version="1.2" use-case="OTHER"><ds:checklists><ds:component-ref id="scap_org.open-scap_cref_test_remediate_fix_processing.xccdf.xml" xlink:href="#scap_org.open-scap_comp_test_remediate_fix_processing.xccdf.xml"><cat:catalog><cat:uri name="../unittests/test_remediation_simple.oval.xml" uri="#scap_org.open-scap_cref_..--unittests--test_remediation_simple.oval.xml"/></cat:catalog></ds:component-ref></ds:checklists><ds:checks><ds:component-ref id="scap_org.open-scap_cref_..--unittests--test_remediation_simple.oval.xml" xlink:href="#scap_org.open-scap_comp_..--unittests--test_remediation_simple.oval.xml"/></ds:checks></ds:data-stream><ds:component id="scap_org.open-scap_comp_..--unittests--test_remediation_simple.oval.xml" timestamp="2023-11-03T13:47:12"><oval_definitions xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+	<generator>
+		<oval:product_name>Text Editors</oval:product_name>
+		<oval:schema_version>5.8</oval:schema_version>
+		<oval:timestamp>2010-06-08T12:00:00-04:00</oval:timestamp>
+	</generator>
+	<definitions>
+		<definition class="compliance" id="oval:moc.elpmaxe.www:def:1" version="1">
+			<metadata><title>PASS</title><description>Ensure that test_file is not executable</description></metadata>
+			<criteria><criterion test_ref="oval:moc.elpmaxe.www:tst:1" comment="Is not executable"/></criteria>
+		</definition>
+	</definitions>
+	<tests>
+		<unix-def:file_test check_existence="all_exist" id="oval:moc.elpmaxe.www:tst:1" version="1" check="all" comment="Testing permissions on ./test_file">
+			<unix-def:object object_ref="oval:moc.elpmaxe.www:obj:1"/>
+			<unix-def:state state_ref="oval:moc.elpmaxe.www:ste:1"/>
+		</unix-def:file_test>
+	</tests>
+	<objects>
+		<unix-def:file_object id="oval:moc.elpmaxe.www:obj:1" version="1" comment="not_executable">
+			<unix-def:path>./</unix-def:path>
+			<unix-def:filename>test_file</unix-def:filename>
+		</unix-def:file_object>
+	</objects>
+	<states>
+		<unix-def:file_state id="oval:moc.elpmaxe.www:ste:1" version="1">
+			<unix-def:oexec datatype="boolean">false</unix-def:oexec>
+		</unix-def:file_state>
+	</states>
+</oval_definitions></ds:component><ds:component id="scap_org.open-scap_comp_test_remediate_fix_processing.xccdf.xml" timestamp="2023-11-03T13:47:12"><Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_moc.elpmaxe.www_benchmark_test" resolved="1">
+  <status>accepted</status>
+  <version>1.0</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_1" selected="true">
+    <title>Ensure that file exists and it is not executable</title>
+    <fix system="urn:xccdf:fix:unknown">
+        <!-- This fix has unsupported platform thus it shall not be executed -->
+	touch wrong_test_file
+    </fix>
+    <fix system="urn:xccdf:fix:script:sh" platform="cpe:/o:example:not-applicable:5">
+        <!-- This fix is not applicable and thus it shall not be executed -->
+	touch wrong_test_file
+    </fix>
+    <fix system="urn:xccdf:fix:script:sh" platform="cpe:/o:example:applicable:5">
+        <!-- This could be executed, but the least disruptive one shall be preferred -->
+	touch test_file
+    </fix>
+    <fix system="urn:xccdf:fix:script:sh" reboot="true">
+        <!-- This could be executed when CPE are not available. It is the only one which matches.
+             On the other hand when CPE is available, this one shall be omitted as it requires reboot. -->
+	touch test_file_cpe_na
+    </fix>
+    <fix system="urn:xccdf:fix:script:sh" platform="cpe:/o:example:applicable:5" disruption="low">
+        <!-- This should be executed, this is the least disruptive onw -->
+	touch test_file
+    </fix>
+    <fix system="urn:xccdf:fix:script:sh" platform="cpe:/o:example:unknown:42">
+        <!-- This could be executed -->
+	touch wrong_test_file
+    </fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref name="oval:moc.elpmaxe.www:def:1" href="../unittests/test_remediation_simple.oval.xml"/>
+    </check>
+  </Rule>
+  <TestResult id="xccdf_org.open-scap_testresult_default-profile" start-time="2013-02-27T14:54:43" end-time="2013-02-27T14:54:44">
+    <title>OSCAP Scan Result</title>
+    <target>x.x.example.com</target>
+    <target-address>127.0.0.1</target-address>
+    <target-address>0:0:0:0:0:0:0:1</target-address>
+    <target-facts>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+    </target-facts>
+    <rule-result idref="xccdf_moc.elpmaxe.www_rule_1" time="2013-02-27T14:54:44" weight="1.000000">
+      <result>fail</result>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:moc.elpmaxe.www:def:1" href="../unittests/test_remediation_simple.oval.xml"/>
+      </check>
+    </rule-result>
+    <score system="urn:xccdf:scoring:default" maximum="100.000000">0.000000</score>
+  </TestResult>
+</Benchmark></ds:component></ds:data-stream-collection>

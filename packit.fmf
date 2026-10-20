@@ -1,0 +1,8 @@
+summary: Run tests from Fedora tests git
+discover:
+    how: fmf
+    url: https://src.fedoraproject.org/tests/openscap
+    ref: main
+    filter: 'tier: 1'
+execute:
+    how: tmt

@@ -1,0 +1,20 @@
+add_subdirectory("SEAP")
+add_subdirectory("probe")
+
+if (HAVE_MMAN_H)
+	add_subdirectory("crapi")
+endif()
+
+include_directories("." "public")
+
+if (ENABLE_PROBES)
+	if(ENABLE_PROBES_INDEPENDENT)
+		add_subdirectory("independent")
+	endif()
+	if(ENABLE_PROBES_UNIX)
+		add_subdirectory("unix")
+	endif()
+	if(ENABLE_PROBES_WINDOWS)
+		add_subdirectory("windows")
+	endif()
+endif()

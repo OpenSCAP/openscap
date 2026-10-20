@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_test">
+  <status>accepted</status>
+  <title>Testing XCCDF</title>
+  <description>X</description>
+  <plain-text id="empty"></plain-text>
+  <version>1.0</version>
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:title>Testing XCCDF Benchmark</dc:title>
+    <dc:creator>Šimon Lukašík</dc:creator>
+    <dc:publisher>Red Hat, Inc.</dc:publisher>
+  </metadata>
+  <Profile id="xccdf_moc.elpmaxe.www_profile_1">
+    <title>The First Profile</title>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_1" selector="profile1"/>
+  </Profile>
+  <Profile id="xccdf_moc.elpmaxe.www_profile_2">
+    <title>The Second Profile</title>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_1" selector="profile2"/>
+  </Profile>
+  <Value id="xccdf_moc.elpmaxe.www_value_1">
+    <title>Testing value</title>
+    <description>X</description>
+    <value>No profile</value>
+    <value selector="profile1">The First Profile</value>
+    <value selector="profile2">The Second Profile</value>
+  </Value>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
+    <title>This title is variable: <sub idref="xccdf_moc.elpmaxe.www_value_1"/></title>
+    <description>This description is substituted according to the selected policy: <sub idref="xccdf_moc.elpmaxe.www_value_1"/></description>
+    <fix system="urn:xccdf:fix:script:sh">
+      <sub idref="empty"/>touch<sub idref="empty"/> test_file
+      chmod a-x test_file
+    </fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_default_selector.oval.xml" name="oval:x:def:1"/>
+    </check>
+  </Rule>
+</Benchmark>

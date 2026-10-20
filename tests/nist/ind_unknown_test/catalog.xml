@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.ind_unknown_test"
+				  bundleVersion="1"
+				  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				  xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>Ind: Unknown Test</bundleName>
+	<bundleGuiName>Ind: Unknown Test</bundleGuiName>
+	<testSuite version="1" suiteId="g12.unknown.configuration1">
+		<suiteName>Configuration 1</suiteName>
+		<guiName>Configuration 1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>ind_unknown_test-datastream.xml</datastreamFile>
+		<cpeOvalFilename>ind_unknown_test_content-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>ind_unknown_test_content-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>ind_unknown_test_content-oval.xml</ovalFilename>
+		<xccdfFilename>ind_unknown_test_content-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist_profile_unknown_test-validation</xccdfProfile>
+		<expectedResults reportType="xccdf">
+			<result expectedResult="unknown" definition="xccdf_gov.nist_rule_unknown_test_rule-1"/>
+		</expectedResults>
+		<expectedResults reportType="arf">
+			<result expectedResult="unknown" definition="xccdf_gov.nist_rule_unknown_test_rule-1"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ds:data-stream-collection xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" 
+  xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog"
+  xmlns:xlink="http://www.w3.org/1999/xlink" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" 
+  id="scap_gov.nist_collection_r3005-datastream_03" 
+  schematron-version="1.2" 
+  xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2.xsd
+  http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd">
+
+  <!-- Data Stream with XCCDF:Tailoring -->
+  <ds:data-stream id="scap_gov.nist_datastream_r3005-tailoring_03" use-case="CONFIGURATION" scap-version="1.2" timestamp="2016-05-25T14:00:00">
+    <ds:dictionaries>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-cpe-dictionary_tailoring_03" xlink:href="#scap_gov.nist_comp_r3005-cpe-dictionary_03">
+        <cat:catalog>
+          <cat:uri name="r3005-cpe-oval-03" uri="#scap_gov.nist_cref_r3005-cpe-oval_tailoring_03"/>
+        </cat:catalog>
+      </ds:component-ref>
+    </ds:dictionaries>
+    <ds:checklists>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-xccdf_tailoring_03" xlink:href="#scap_gov.nist_comp_r3005-xccdf_tailoring_03"/>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-xccdf_01-source" xlink:href="file:r3005-datastream-01.xml#scap_gov.nist_comp_r3005-xccdf_01">
+        <cat:catalog>
+          <cat:uri name="r3005-oval-01" uri="#scap_gov.nist_cref_r3005-oval-source-01"/>
+        </cat:catalog>
+      </ds:component-ref>
+      
+    </ds:checklists>
+    <ds:checks>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-cpe-oval_tailoring_03" xlink:href="#scap_gov.nist_comp_r3005-cpe-oval_03"/>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-oval-source-01" xlink:href="file:r3005-datastream-01.xml#scap_gov.nist_comp_r3005-oval-01"/>
+    </ds:checks>
+  </ds:data-stream>
+  <ds:component id="scap_gov.nist_comp_r3005-cpe-oval_03" timestamp="2016-05-25T14:00:00">
+    <oval_definitions 
+      xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" 
+      xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" 
+      xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" 
+      xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" 
+      xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+      xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/windows-definitions-schema.xsd  
+      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/independent-definitions-schema.xsd 
+      http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-definitions-schema.xsd 
+      http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-common-schema.xsd  
+      http://oval.mitre.org/XMLSchema/oval-definitions-5#linux http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/linux-definitions-schema.xsd">
+      <generator>
+        <oval:product_name>National Institute of Standards and Technology</oval:product_name>
+        <oval:schema_version>5.10.1</oval:schema_version>
+        <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+      </generator>
+      <!-- ==================================================================================================== -->
+      <!-- ==========================================  DEFINITIONS  =========================================== -->
+      <!-- ==================================================================================================== -->
+      <definitions>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:1" version="4">
+          <metadata>
+            <title>Microsoft Windows is installed</title>
+            <affected family="windows">
+              <platform>Microsoft Windows XP</platform>
+              <platform>Microsoft Windows Vista</platform>
+              <platform>Microsoft Windows 7</platform>
+              <platform>Microsoft Windows 8</platform>
+              <platform>Microsoft Windows 8.1</platform>
+              <platform>Microsoft Windows 10</platform>
+              <platform>Microsoft Windows Server 2012</platform>
+              <platform>Microsoft Windows Server 2012 R2</platform>
+            </affected>
+            <reference ref_id="cpe:/o:microsoft:windows" source="CPE"/>
+            <description>The operating system installed on the system is Microsoft Windows</description>
+          </metadata>
+          <criteria>
+            <criterion comment="the installed operating system is part of the Microsoft Windows family" test_ref="oval:org.mitre.oval:tst:99"/>
+          </criteria>
+        </definition>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:100" version="2">
+          <metadata>
+            <title>Red Hat Enterprise Linux 3, 4, 5, 6, or 7</title>
+            <affected family="unix">
+              <platform>Red Hat Enterprise Linux</platform>
+            </affected>
+            <reference ref_id="cpe:/o:redhat:enterprise_linux" source="CPE"/>
+            <description>The operating system installed on the system is Red Hat Enterprise Linux 3, 4, 5, 6, or 7</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Installed operating system is part of the unix family" test_ref="oval:gov.nist.validation.cpe.oval:tst:100"/>
+            <criterion comment="Red Hat Enterprise Linux 3, 4, 5, 6, or 7 is installed" test_ref="oval:gov.nist.validation.cpe.oval:tst:101"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <!-- ==================================================================================================== -->
+      <!-- ============================================  TESTS  =============================================== -->
+      <!-- ==================================================================================================== -->
+      <tests>
+        <family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="the installed operating system is part of the Microsoft Windows family" id="oval:org.mitre.oval:tst:99" version="1">
+          <object object_ref="oval:org.mitre.oval:obj:99"/>
+          <state state_ref="oval:org.mitre.oval:ste:99"/>
+        </family_test>
+        <family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="installed operating system is part of the Unix family" id="oval:gov.nist.validation.cpe.oval:tst:100" version="1">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:100"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:100"/>
+        </family_test>
+        <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="at least one" check_existence="at_least_one_exists" comment="redhat-release is version 3, 4, 5, 6, or 7" id="oval:gov.nist.validation.cpe.oval:tst:101" version="2">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:101"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:101"/>
+        </rpminfo_test>
+      </tests>
+      <!-- ==================================================================================================== -->
+      <!-- ============================================  OBJECTS  ============================================= -->
+      <!-- ==================================================================================================== -->
+      <objects>
+        <family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="This is the default family object. Only one family object should exist." id="oval:org.mitre.oval:obj:99" version="1"/>
+        <family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:gov.nist.validation.cpe.oval:obj:100" version="1"/>
+        <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="the redhat-release rpm" id="oval:gov.nist.validation.cpe.oval:obj:101" version="2">
+          <name operation="pattern match">^redhat-release.*$</name>
+        </rpminfo_object>
+      </objects>
+      <!-- ==================================================================================================== -->
+      <!-- =============================================  STATES  ============================================= -->
+      <!-- ==================================================================================================== -->
+      <states>
+        <family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="Microsoft Windows family" id="oval:org.mitre.oval:ste:99" version="2">
+          <family operation="equals">windows</family>
+        </family_state>
+        <family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:gov.nist.validation.cpe.oval:ste:100" version="1">
+          <family>unix</family>
+        </family_state>
+        <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:gov.nist.validation.cpe.oval:ste:101" version="2">
+          <version operation="pattern match">^[3-7]\D</version>
+        </rpminfo_state>
+      </states>
+      <!-- ==================================================================================================== -->
+      <!-- ==================================================================================================== -->
+      <!-- ==================================================================================================== -->
+    </oval_definitions>
+  </ds:component>
+  <ds:component id="scap_gov.nist_comp_r3005-cpe-dictionary_03" timestamp="2016-05-25T14:00:00">
+    <cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+      <cpe-item name="cpe:/o:microsoft:windows">
+        <title xml:lang="en-US">Microsoft Windows</title>
+        <notes xml:lang="en-US">
+          <note>This CPE Name represents the Windows OS</note>
+        </notes>
+        <check href="r3005-cpe-oval-03" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.validation.cpe.oval:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux">
+        <title xml:lang="en-us">Red Hat Enterprise Linux</title>
+        <notes xml:lang="en-us">
+          <note>This CPE Name represents Red Hat Enterprise Linux OS</note>
+        </notes>
+        <check href="r3005-cpe-oval-03" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.validation.cpe.oval:def:100</check>
+      </cpe-item>
+    </cpe-list>
+  </ds:component>
+  <!-- XCCDF tailoring component -->
+  <ds:component id="scap_gov.nist_comp_r3005-xccdf_tailoring_03" timestamp="2016-05-25T14:00:00">
+    <xccdf:Tailoring xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" 
+      id="xccdf_gov.nist_tailoring_r3005_03" 
+      xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd
+      http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+
+      <xccdf:benchmark href="file:r3005-datastream-01.xml#scap_gov.nist_cref_r3005-xccdf_01" id="xccdf_gov.nist_benchmark_r3005_id_01" version="1-2.1.1.0"/>
+      
+      <xccdf:status date="2016-05-25">draft</xccdf:status>
+      <xccdf:version time="2016-05-25T14:00:00">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">NIST</dc:contributor>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">NIST</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">NIST</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+
+      <xccdf:Profile id="xccdf_gov.nist.validation_profile_r3005_tailoring_03" abstract="false" prohibitChanges="true">
+        <xccdf:title>Tailoring Component Profile Title 03</xccdf:title>
+        <xccdf:description>Tailoring Component Profile Description 03</xccdf:description>
+        <xccdf:platform idref="cpe:/o:microsoft:windows"/>
+        <xccdf:platform idref="cpe:/o:redhat:enterprise_linux"/>
+
+        <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 1: identified selector -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_1" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_1" selector="sel1" weight="10" role="full" severity="medium">
+          <xccdf:remark override="false">Remarks go here ...</xccdf:remark>
+        </xccdf:refine-rule>
+
+        <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 2: empty selector -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_2" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_2" selector="" weight="4.9" role="full" severity="medium"/>
+
+        <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 2: absent selector -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_3" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_3" selector="check_selector_3"></xccdf:refine-rule>
+
+        <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 3: no valid candidate checks. Expected result 'notchecked' -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_4" selected="false"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_4" selector="check_selector_155" weight="5.5" role="full" severity="low">
+          <xccdf:remark override="false">Remarks go here ...</xccdf:remark>
+        </xccdf:refine-rule>
+        
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_5" selected="true"/>
+
+        <!-- it uses other value than default -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_6" selected="true"/>
+        <xccdf:refine-value idref="xccdf_gov.nist_value_validation.r3005_for_rule_6" selector="value_test0"/>
+
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_7" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_7" selector="check_selector_1" weight="0.0" role="unscored" severity="info">
+          <xccdf:remark override="false">Remarks go here ...</xccdf:remark>
+        </xccdf:refine-rule>
+        <xccdf:refine-value idref="xccdf_gov.nist_value_validation.r3005_for_rule_7" selector="value_test2" operator="not equal"/>
+
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_8" selected="true"/>
+
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_9" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_9" selector="check_selector_1"/>
+
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_10" selected="true"/>
+
+      </xccdf:Profile>
+      
+    </xccdf:Tailoring>
+  </ds:component>
+</ds:data-stream-collection>

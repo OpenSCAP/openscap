@@ -1,0 +1,1324 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:unix-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix" elementFormDefault="qualified" version="5.4">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>The following is a description of the elements, types, and attributes that compose the UNIX specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard item element defined in the Core System Characteristic Schema. Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items. Each item is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+          <xsd:documentation>The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>Unix System Characteristics</schema>
+               <version>5.4</version>
+               <date>4/1/2008 10:41:46 AM</date>
+                <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                <sch:title>schematron validation of the UNIX portion of an OVAL System Characteristics file</sch:title>
+               <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+               <sch:ns prefix="unix-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- =================================  FILE ITEM   ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="file_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The file item holds information about the individual files found on a system. Each file item contains path and filename information as well as its type, associated user and group ids, relevant dates, and the privialeges granted. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The path entity specifies the absolute path (excluding the filename) to a file on the machine.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitempath">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:path">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the path entity of a file_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1" nillable="true">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name of the file. If the nillable attribute is set to true, then the item being represented is the higher directory represented by the path entity.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemfilename">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:filename">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the filename entity of a file_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="type" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the file's type: regular file (regular), directory, named pipe (fifo), symbolic link, socket or block special.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemtype">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:type">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the type entity of a file_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="group_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the group owner of the file, by group number.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemgroup_id">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:group_id">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the group_id entity of a file_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="user_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The numeric user id, or uid, is the third column of each user's entry in /etc/passwd. This element represents the owner of the file.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemuser_id">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:user_id">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the user_id entity of a file_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="a_time" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the time of the last access, in seconds since the last epoch.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitema_time">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:a_time">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the a_time entity of a file_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="c_time" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the time of the last change to the file's inode, which stores all.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemc_time">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:c_time">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the c_time entity of a file_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="m_time" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the time of the last change to the file's contents.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemm_time">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:m_time">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the m_time entity of a file_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="size" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the size of the file in bytes.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemsize">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:size">
+                                                       <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the size entity of a file_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="suid" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Does the program run with the uid (thus privileges) of the file's owner, rather than the calling user?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemsuid">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:suid">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the suid entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="sgid" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Does the program run with the gid (thus privileges) of the file's group owner, rather than the calling user's group?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemsgid">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:sgid">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the sgid entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="sticky" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can users delete each other's files in this directory, when said directory is writable by those users?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemsticky">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:sticky">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the sticky entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="uread" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can the owner (user owner) of the file read this file or, if a directory, read the directory contents?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemuread">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:uread">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the uread entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="uwrite" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can the owner (user owner) of the file read this file or, if a directory, read the directory contents?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemuwrite">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:uwrite">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the uwrite entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="uexec" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can the owner (user owner) of the file execute it or, if a directory, change into the directory?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemuexec">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:uexec">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the uexec entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="gread" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can the group owner of the file read this file or, if a directory, read the directory contents?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemgread">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:gread">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the gread entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="gwrite" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can the group owner of the file write to this file or directory?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemgwrite">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:gwrite">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the gwrite entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="gexec" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can the group owner of the file execute it or, if a directory, change into the directory?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemgexec">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:gexec">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the gexec entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="oread" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can all other users read this file or, if a directory, read the directory contents?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemoread">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:oread">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the oread entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="owrite" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can the other users write to this file or directory?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemowrite">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:owrite">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the owrite entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="oexec" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Can the other users execute this file or, if a directory, change into the directory?</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixfileitemoexec">
+                                                  <sch:rule context="unix-sc:file_item/unix-sc:oexec">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the oexec entity of a file_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ================================  INETD ITEM  ================================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="inetd_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The inetd item holds information associated with different Internet services. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="protocol" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>A recognized protocol listed in the file /etc/inet/protocols.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="inetditemprotocol">
+                                                  <sch:rule context="unix-sc:inetd_item/unix-sc:protocol">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the protocol entity of an inetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="service_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name of a valid service listed in the services file. For RPC services, the value of the service-name field consists of the RPC service name or program number, followed by a '/' (slash) and either a version number or a range of version numbers (for example, rstatd/2-4).</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="inetditemservice_name">
+                                                  <sch:rule context="unix-sc:inetd_item/unix-sc:service_name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the service_name entity of an inetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="server_program" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Either the pathname of a server program to be invoked by inetd to perform the requested service, or the value internal if inetd itself provides the service.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="inetditemserver_program">
+                                                  <sch:rule context="unix-sc:inetd_item/unix-sc:server_program">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the server_program entity of an inetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="server_arguments" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="inetditemserver_arguments">
+                                                  <sch:rule context="unix-sc:inetd_item/unix-sc:server_arguments">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the server_arguments entity of an inetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="endpoint_type" type="unix-sc:EntityEndpointType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="inetditemendpoint_type">
+                                                  <sch:rule context="unix-sc:inetd_item/unix-sc:endpoint_type">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the endpoint_type entity of an inetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="exec_as_user" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="inetditemexec_as_user">
+                                                  <sch:rule context="unix-sc:inetd_item/unix-sc:exec_as_user">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the exec_as_user entity of an inetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="wait_status" type="unix-sc:EntityWaitStatusType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This field has values wait or nowait. This entry specifies whether the server that is invoked by inetd will take over the listening socket associated with the service, and whether once launched, inetd will wait for that server to exit, if ever, before it resumes listening for new service requests.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="inetditemwait_status">
+                                                  <sch:rule context="unix-sc:inetd_item/unix-sc:wait_status">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the wait_status entity of an inetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ==============================  INTERFACE ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="interface_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The interface item holds information about the interfaces on a system. Each interface item contains name and address information as well as any associated flags. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name entity is the actual name of the specific interface. Examples might be eth0, eth1, fwo, etc.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixinterfaceitemname">
+                                                  <sch:rule context="unix-sc:interface_item/unix-sc:name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the name entity of an interface_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="hardware_addr" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The hardware_addr entity is the hardware or MAC address of the physical network card.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixinterfaceitemhardware_addr">
+                                                  <sch:rule context="unix-sc:interface_item/unix-sc:hardware_addr">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the hardware_addr entity of an interface_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="inet_addr" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The inet_addr entity is the IP address of the specific interface.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixinterfaceiteminet_addr">
+                                                  <sch:rule context="unix-sc:interface_item/unix-sc:inet_addr">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the inet_addr entity of an interface_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="broadcast_addr" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The broadcast_addr entity is the broadcast IP address for this interface's network. For example 192.168.255.255.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixinterfaceitembroadcast_addr">
+                                                  <sch:rule context="unix-sc:interface_item/unix-sc:broadcast_addr">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the broadcast_addr entity of an interface_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="netmask" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the bitmask used to calculate the inteface's IP network. The network number is calculated by bitwise-ANDing this with the IP address. The host number on that network is calculated by bitwise-XORing this with the IP address.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixinterfaceitemnetmask">
+                                                  <sch:rule context="unix-sc:interface_item/unix-sc:netmask">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the netmask entity of an interface_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="flag" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the interface flag line, which generally contains flags like "UP" to denote an active interface, "PROMISC" to note that the interface is listening for Ethernet frames not specifically addressed to it, and others.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixinterfaceitemflag">
+                                                  <sch:rule context="unix-sc:interface_item/unix-sc:flag">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the flag entity of an interface_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===============================  PASSWORD ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="password_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>/etc/passwd. See passwd(4).</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="username" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the name of the user for which data was gathered.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="passworditemusername">
+                                                  <sch:rule context="unix-sc:password_item/unix-sc:username">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the username entity of a password_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="password" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the encrypted version of the user's password.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="passworditempassword">
+                                                  <sch:rule context="unix-sc:password_item/unix-sc:password">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the password entity of a password_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="user_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The numeric user id, or uid, is the third column of each user's entry in /etc/passwd. This element represents the owner of the file.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="passworditemuser_id">
+                                                  <sch:rule context="unix-sc:password_item/unix-sc:user_id">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the user_id entity of a password_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="group_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the group owner of the file, by group number.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="passworditemgroup_id">
+                                                  <sch:rule context="unix-sc:password_item/unix-sc:group_id">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the group_id entity of a password_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="gcos" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="passworditemgcos">
+                                                  <sch:rule context="unix-sc:password_item/unix-sc:gcos">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the gcos entity of a password_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="home_dir" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="passworditemhome_dir">
+                                                  <sch:rule context="unix-sc:password_item/unix-sc:home_dir">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the home_dir entity of a password_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="login_shell" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="passworditemlogin_shell">
+                                                  <sch:rule context="unix-sc:password_item/unix-sc:login_shell">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the login_shell entity of a password_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===============================  PROCESS ITEM  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="process_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Output of /usr/bin/ps. See ps(1).</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="command" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This specifies the command/program name about which data has has been collected.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixprocessitemcommand">
+                                                  <sch:rule context="unix-sc:process_item/unix-sc:command">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the command entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="exec_time" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>This is the cumulative CPU time, formatted in [DD-]HH:MM:SS where DD is the number of days when execution time is 24 hours or more.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixprocessitemexec_time">
+                                                  <sch:rule context="unix-sc:process_item/unix-sc:exec_time">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the exec_time entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="pid" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the process ID of the process.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixprocessitempid">
+                                                  <sch:rule context="unix-sc:process_item/unix-sc:pid">
+                                                       <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the pid entity of a process_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="ppid" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the process ID of the process's parent process.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixprocessitemppid">
+                                                  <sch:rule context="unix-sc:process_item/unix-sc:ppid">
+                                                       <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the ppid entity of a process_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="priority" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the scheduling priority with which the process runs. This can be adjusted with the nice command or nice() system call.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixprocessitempriority">
+                                                  <sch:rule context="unix-sc:process_item/unix-sc:priority">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the priority entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="scheduling_class" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>A platform specific characteristic maintained by the scheduler: RT (real-time), TS (timeshare), FF (fifo), SYS (system), etc.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixprocessitemscheduling_class">
+                                                  <sch:rule context="unix-sc:process_item/unix-sc:scheduling_class">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the scheduling_class entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="start_time" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>This is the time of day the process started formatted in HH:MM:SS if the same day the process started or formatted as MMM_DD (Ex.: Feb_5) if process started the previous day or further in the past.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixprocessitemstart_time">
+                                                  <sch:rule context="unix-sc:process_item/unix-sc:start_time">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the start_time entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="tty" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the TTY on which the process was started, if applicable.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixprocessitemtty">
+                                                  <sch:rule context="unix-sc:process_item/unix-sc:tty">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the tty entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="user_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The numeric user id, or uid, is the third column of each user's entry in /etc/passwd. It represents the owner, and thus privilege level, of the specified program.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixprocessitemuser_id">
+                                                  <sch:rule context="unix-sc:process_item/unix-sc:user_id">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the user_id entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===============================  RUNLEVEL ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="runlevel_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The runlevel item holds information about the start or kill state of a specified service at a given runlevel. Each runlevel item contains service_name and runlevel information as well as start and kill information. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="service_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The service_name entity is the actual name of the specific service.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixrlitemservice_name">
+                                                  <sch:rule context="unix-sc:runlevel_item/unix-sc:service_name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the service_name entity of a runlevel_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="runlevel" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The runlevel entity specifies is the runlevel the system is currently at.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixrlitemrunlevel">
+                                                  <sch:rule context="unix-sc:runlevel_item/unix-sc:runlevel">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the runlevel entity of a runlevel_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="start" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The start entity specifies whether the service is scheduled to start at the current runlevel.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixrlitemstart">
+                                                  <sch:rule context="unix-sc:runlevel_item/unix-sc:start">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the start entity of a runlevel_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="kill" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The kill entity specifies whether the service is scheduled to be killed at the current runlevel.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unixrlitemkill">
+                                                  <sch:rule context="unix-sc:runlevel_item/unix-sc:kill">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the kill entity of a runlevel_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =================================  SCCS ITEM  ================================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="sccs_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation/>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sccsitempath">
+                                                  <sch:rule context="unix-sc:sccs_item/unix-sc:path">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the path entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sccsitemfilename">
+                                                  <sch:rule context="unix-sc:sccs_item/unix-sc:filename">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the filename entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="module_name" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sccsitemmodule_name">
+                                                  <sch:rule context="unix-sc:sccs_item/unix-sc:module_name">
+                                                       <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the module_name entity of a process_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="module_type" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sccsitemmodule_type">
+                                                  <sch:rule context="unix-sc:sccs_item/unix-sc:module_type">
+                                                       <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the module_type entity of a process_item should be 'int'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="release" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sccsitemrelease">
+                                                  <sch:rule context="unix-sc:sccs_item/unix-sc:release">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the release entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="level" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sccsitemlevel">
+                                                  <sch:rule context="unix-sc:sccs_item/unix-sc:level">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the level entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="branch" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sccsitembranch">
+                                                  <sch:rule context="unix-sc:sccs_item/unix-sc:branch">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the branch entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="sequence" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sccsitemsequence">
+                                                  <sch:rule context="unix-sc:sccs_item/unix-sc:sequence">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the sequence entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="what_string" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sccsitemwhat_string">
+                                                  <sch:rule context="unix-sc:sccs_item/unix-sc:what_string">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the what_string entity of a process_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================  SHADOW ITEM  =================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="shadow_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>/etc/shadow. See shadow(4).</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="username" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the name of the user for which data was gathered.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="shadowitemusername">
+                                                  <sch:rule context="unix-sc:shadow_item/unix-sc:username">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the username entity of a shadow_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="password" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the encrypted version of the user's password.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="shadowitempassword">
+                                                  <sch:rule context="unix-sc:shadow_item/unix-sc:password">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the password entity of a shadow_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="chg_lst" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is the date of the last password change in days since 1/1/1970.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="shadowitemchg_lst">
+                                                  <sch:rule context="unix-sc:shadow_item/unix-sc:chg_lst">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the chg_lst entity of a shadow_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="chg_allow" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This specifies how often in days a user may change their password. It can also be thought of as the minimum age of a password.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="shadowitemchg_allow">
+                                                  <sch:rule context="unix-sc:shadow_item/unix-sc:chg_allow">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the chg_allow entity of a shadow_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="chg_req" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This describes how long a user can keep a password before the system forces her to change it.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="shadowitemchg_req">
+                                                  <sch:rule context="unix-sc:shadow_item/unix-sc:chg_req">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the chg_req entity of a shadow_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="exp_warn" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This describes how long before password expiration the system begins warning the user. The system will warn the user at each login.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="shadowitemexp_warn">
+                                                  <sch:rule context="unix-sc:shadow_item/unix-sc:exp_warn">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the exp_warn entity of a shadow_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="exp_inact" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This describes how many days of account inactivity the system will wait after a password expires before locking the account? This window, usually only set to a few days, gives users who are logging in very seldomly a bit of extra time to receive the password expiration warning and change their password.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="shadowitemexp_inact">
+                                                  <sch:rule context="unix-sc:shadow_item/unix-sc:exp_inact">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the exp_inact entity of a shadow_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="exp_date" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This speicifies when will the account's password expire, in days since 1/1/1970.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="shadowitemexp_date">
+                                                  <sch:rule context="unix-sc:shadow_item/unix-sc:exp_date">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the exp_date entity of a shadow_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="flag" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This is a reserved field that the shadow file may use in the future.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="shadowitemflag">
+                                                  <sch:rule context="unix-sc:shadow_item/unix-sc:flag">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the flag entity of a shadow_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================  UNAME ITEM  ==================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="uname_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Information about the hardware the machine is running on. This information is the parsed equivalent of uname -a.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="machine_class" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This entity specifies the machine hardware name.  This corresponds to the command uname -m.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unameitemmachine_class">
+                                                  <sch:rule context="unix-sc:uname_item/unix-sc:machine_class">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the machine_class entity of a uname_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="node_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>This entity specifies the host name.  This corresponds to the command uname -n.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unameitemnode_name">
+                                                  <sch:rule context="unix-sc:uname_item/unix-sc:node_name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the node_name entity of a uname_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="os_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>This entity specifies the operating system name.  This corresponds to the command uname -s.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unameitemos_name">
+                                                  <sch:rule context="unix-sc:uname_item/unix-sc:os_name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the os_name entity of a uname_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="os_release" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>This entity specifies the build version.  This corresponds to the command uname -r.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unameitemos_release">
+                                                  <sch:rule context="unix-sc:uname_item/unix-sc:os_release">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the os_release entity of a uname_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="os_version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>This entity specifies the operating system version.  This corresponds to the command uname -v.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unameitemos_version">
+                                                  <sch:rule context="unix-sc:uname_item/unix-sc:os_version">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the os_version entity of a uname_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="processor_type" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>This entity specifies the processor type.  This corresponds to the command uname -p.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="unameitemprocessor_type">
+                                                  <sch:rule context="unix-sc:uname_item/unix-sc:processor_type">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the processor_type entity of a uname_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ================================  XINETD ITEM  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="xinetd_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The xinetd item holds information associated with different Internet services. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="protocol" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The protocol entity describes the protocol related to the service item.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemprotocol">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:protocol">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the protocol entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="service_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The service_name entity describes the name of the service.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemservice_name">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:service_name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the service_name entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="flags" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The flags entity describes miscellaneous settings like TCP keepalives or libwrap deactivation.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemflags">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:flags">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the flags entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="no_access" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemnoaccess">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:no_access">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the no_access entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="only_from" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The only_from entity describes specifies an exclusive set of IP addresses that may connect to this service</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemonlyfrom">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:only_from">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the only_from entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="port" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemport">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:port">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the port entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="server" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>what program listens on this port</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemserver">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:server">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the server entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="server_arguments" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemserver_arguments">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:server_arguments">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the server_arguments entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="socket_type" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemsockettype">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:socket_type">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the socket_type entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="type" type="unix-sc:EntityXinetdTypeStatusType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemtype">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:type">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the type entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="user" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The user entity describes user that xinetd should run the service as.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemuser">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:user">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the user entity of an xinetd_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="wait" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The wait entity describes whether the service allows only one connection at a time.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemwait">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:wait">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the wait entity of an xinetd_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="disabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The disabled entity describes whether this service is on or not.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xinetditemdisabled">
+                                                  <sch:rule context="unix-sc:xinetd_item/unix-sc:disabled">
+                                                       <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the disabled entity of an xinetd_item should be 'boolean'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <xsd:complexType name="EntityEndpointType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityEndpointType complex type restricts a string value to a specific set of values that describe endpoint types associated with an Internet service. The empty string is also allowed to support empty emlement associated with error conditions.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="stream"/>
+                    <xsd:enumeration value="dgram"/>
+                    <xsd:enumeration value="raw"/>
+                    <xsd:enumeration value="seqpacket"/>
+                    <xsd:enumeration value="tli"/>
+                    <xsd:enumeration value=""/>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <xsd:complexType name="EntityXinetdTypeStatusType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityXinetdTypeStatusType complex type restricts a string value to three values, either RPC, INTERNAL, or UNLISTED that specify the type of service registered in xinetd. The empty string is also allowed to support empty emlement associated with error conditions.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="INTERNAL">
+                         <xsd:annotation>
+                              <xsd:documentation>The INTERNAL type is used to describe services like echo, chargen, and others whose functionality is supplied by xinetd itself.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="RPC">
+                         <xsd:annotation>
+                              <xsd:documentation>The RPC type is used to describe services that use remote procedure call ala NFS.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="UNLISTED">
+                         <xsd:annotation>
+                              <xsd:documentation>The UNLISTED type is used to describe services that aren't listed in /etc/protocols or /etc/rpc.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value=""/>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <xsd:complexType name="EntityWaitStatusType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityWaitStatusType complex type restricts a string value to two values, either wait or nowait, that specify whether the server that is invoked by inetd will take over the listening socket associated with the service, and whether once launched, inetd will wait for that server to exit, if ever, before it resumes listening for new service requests. The empty string is also allowed to support empty emlement associated with error conditions.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="wait"/>
+                    <xsd:enumeration value="nowait"/>
+                    <xsd:enumeration value=""/>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+</xsd:schema>

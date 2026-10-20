@@ -1,0 +1,2 @@
+file(GLOB XSL_FILES "*.xsl" "*.xml")
+install(FILES ${XSL_FILES} DESTINATION ${OSCAP_DEFAULT_XSLT_PATH})

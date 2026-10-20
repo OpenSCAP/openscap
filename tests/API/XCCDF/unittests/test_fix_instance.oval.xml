@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:schema_version>5.10.1</oval:schema_version>
+    <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+    <definition class="compliance" version="1" id="oval:x:def:1">
+      <metadata>
+        <title>x</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria comment="x">
+        <criterion test_ref="oval:x:tst:1" comment="x"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+    <ind:textfilecontent54_test id="oval:x:tst:1" version="1" comment="File test_file should contain 'Hello'" check_existence="all_exist" check="all">
+      <ind:object object_ref="oval:x:obj:1"/>
+      <ind:state state_ref="oval:x:ste:1"/>
+    </ind:textfilecontent54_test>
+  </tests>
+
+  <objects>
+    <ind:textfilecontent54_object id="oval:x:obj:1" version="1" comment="Object representing file">
+      <ind:filepath>./test_file</ind:filepath>
+      <ind:pattern operation="pattern match">Hello</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
+  </objects>
+
+  <states>
+    <ind:textfilecontent54_state id="oval:x:ste:1" version="1" comment="state">
+      <ind:filepath>./test_file</ind:filepath>
+      <ind:text>Hello</ind:text>
+    </ind:textfilecontent54_state>
+  </states>
+
+</oval_definitions>

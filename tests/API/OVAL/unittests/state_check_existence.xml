@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:schema_version>5.11.1</oval:schema_version>
+    <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+    <definition class="compliance" version="1" id="oval:x:def:1">
+      <metadata>
+        <title>x</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:2">
+      <metadata>
+        <title>x</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:2" comment="always fail"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:3">
+      <metadata>
+        <title>x</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:3" comment="always fail"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:4">
+      <metadata>
+        <title>x</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:4" comment="always pass"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+    <ind:textfilecontent54_test id="oval:x:tst:1" version="1" comment="File /tmp/foo.txt must contain at least one 'Hello'"  check="all">
+      <ind:object object_ref="oval:x:obj:1"/>
+      <ind:state state_ref="oval:x:ste:1"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test id="oval:x:tst:2" version="1" comment="File /tmp/foo.txt must contain only one 'Hello'"  check="all">
+      <ind:object object_ref="oval:x:obj:1"/>
+      <ind:state state_ref="oval:x:ste:2"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test id="oval:x:tst:3" version="1" comment="File /tmp/foo.txt needn't contain 'Hello'"  check="all">
+      <ind:object object_ref="oval:x:obj:1"/>
+      <ind:state state_ref="oval:x:ste:3"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test id="oval:x:tst:4" version="1" comment="File /tmp/foo.txt must contain only 'Hello'"  check="all">
+      <ind:object object_ref="oval:x:obj:1"/>
+      <ind:state state_ref="oval:x:ste:4"/>
+    </ind:textfilecontent54_test>
+  </tests>
+
+  <objects>
+    <ind:textfilecontent54_object id="oval:x:obj:1" version="1" comment="Object representing file">
+        <ind:filepath>/tmp/foo.txt</ind:filepath>
+      <ind:pattern operation="pattern match">^.*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+  </objects>
+
+  <states>
+    <ind:textfilecontent54_state id="oval:x:ste:1" version="1" comment="state">
+      <ind:filepath>/tmp/foo.txt</ind:filepath>
+      <ind:text check_existence="at_least_one_exists">Hello</ind:text>
+    </ind:textfilecontent54_state>
+    <ind:textfilecontent54_state id="oval:x:ste:2" version="1" comment="state">
+      <ind:filepath>/tmp/foo.txt</ind:filepath>
+      <ind:text check_existence="only_one_exists">Hello</ind:text>
+    </ind:textfilecontent54_state>
+    <ind:textfilecontent54_state id="oval:x:ste:3" version="1" comment="state">
+      <ind:filepath>/tmp/foo.txt</ind:filepath>
+      <ind:text check_existence="none_exist">Hello</ind:text>
+    </ind:textfilecontent54_state>
+    <ind:textfilecontent54_state id="oval:x:ste:4" version="1" comment="state">
+      <ind:filepath>/tmp/foo.txt</ind:filepath>
+      <ind:text check_existence="all_exist">Hello</ind:text>
+    </ind:textfilecontent54_state>
+  </states>
+</oval_definitions>

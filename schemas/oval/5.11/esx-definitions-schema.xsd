@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:esx-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#esx" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#esx" elementFormDefault="qualified" version="5.11">
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation>The following is a description of the elements, types, and attributes that compose the VMware ESX server specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+            <xsd:documentation>This schema was originally developed by Yuzheng Zhou and Todd Dolinsky at Hewlett-Packard. The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>VMware ESX server Definition</schema>
+                  <version>5.11:5.11</version>
+                  <date>12/18/2014 09:00:00 AM</date>
+                  <terms_of_use>Copyright (c) 2002-2014, The MITRE Corporation. All rights reserved. The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema. When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                  <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+                  <sch:ns prefix="esx-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#esx"/>
+                  <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+            </xsd:appinfo>
+      </xsd:annotation>
+      <!-- =============================================================================== -->
+      <!-- ==============================  PATCH TEST (56)  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="patch56_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The patch56_test reveals the installation status of a specific patch or patches in VMware ESX Server. This information can be retrieved by the "esxupdate query" command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a patch56_object and the optional state element referencing a patch56_state specifies the metadata to check.</xsd:documentation>
+                  <xsd:documentation>Note that different from previous versions, ESX Server 3.0.3 and ESX Server 3.5 use the following patch naming convention: {ProductName}{VersionNumber}-{BundleID}-{Classification}{SupportLevel}. Please refer to http://www.vmware.com/pdf/vi3_35/esx_3/r35/vi3_35_25_esxupdate.pdf for more detailed information.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>patch56_test</oval:test>
+                              <oval:object>patch56_object</oval:object>
+                              <oval:state>patch56_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#esx">patch_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="esx-def_patch56tst">
+                              <sch:rule context="esx-def:patch56_test/esx-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/esx-def:patch56_object/@id"><sch:value-of select="../@id"/> - the object child element of a patch56_test must reference a patch56_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="esx-def:patch56_test/esx-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/esx-def:patch56_state/@id"><sch:value-of select="../@id"/> - the state child element of a patch56_test must reference a patch56_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType"/>
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="patch56_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The patch56_object element is used by a patch56_test to define those objects to be evaluated against a specified state. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+                  <xsd:documentation>A patch56_object consists of a single patch_name entity that identifies the patch to be checked.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="esx-def_patch56_object_verify_filter_state">
+                              <sch:rule context="esx-def:patch56_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::esx-def:patch56_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#esx') and ($state_name='patch56_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="behaviors" type="esx-def:Patch56Behaviors" minOccurs="0"/>
+                                                <xsd:element name="patch_name" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The patch name entity indetifies a specific patch or set of patches to be checked on the system.  For example: ESX-200603 or ESX350-200904401-BG.  The value of this entity should correspond to the values returned under the "name" column of the "esxupdate query" command.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="patch56_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The patch56_state element defines the different information that can be used to evaluate the specified VMware ESX Serer patch. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="patch_name" type="oval-def:EntityStateStringType" minOccurs="0">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The patch_name entity indetifies the name of a patch to test for.  For example: ESX-200603 or ESX350-200904401-BG.  The value of this entity should correspond to the values returned under the "name" column of the "esxupdate query" command.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="knowledge_base_id" type="oval-def:EntityStateIntType" minOccurs="0">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The knowledge_base_id entity specifies a given knowledge base article identifier number.  This entity is valid for ESX versions 3.0.2 and earlier.  It is comprised of the numerical string at the end of the patch name. For example, the patch ESX-200603 would have a knowledge base identifier of 200603.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="bundle_id" type="oval-def:EntityStateIntType" minOccurs="0">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The bundle_id entity specifies a unique ID for the patch.  This entity is valid for ESX version 3.0.3 and version 3.5 and is comprised of the year and month the bundle was released and a 3-digit unique ID. It is in the format YYYYMM###. For example, the first patch released in January 2008 might have a BundleID of 200801001.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="classification" type="esx-def:EntityStateClassificationType" minOccurs="0">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The classification entity specifies the type of patch.  It can be one of: B - bug, U - update, S - security, or R - roll-up.  This entity is valid for ESX version 3.0.3 and later.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="support_level" type="esx-def:EntityStateSupportLevelType" minOccurs="0">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The support_level entity specifies a support level to test for.  If can be one of: G - GA patch, H - hot patch, D - debugging patch, or C - custom patch.  This entity is valid for ESX version 3.0.3 and later.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="status" type="oval-def:EntityStateBoolType" minOccurs="0">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The status entity specifies an installation status of a patch to test for.  A value of 'true' is used to signify that a given patch is intalled.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="Patch56Behaviors">
+            <xsd:annotation>
+                  <xsd:documentation>The Patch56Behaviors complex type defines a number of behaviors that allow a more detailed definition of the patch56_object being specified. Note that using these behaviors may result in some unique results. For example, a double negative type condition might be created where an object entity says include everything except a specific item, but a behavior is used that might then add that item back in.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:attribute name="supersedence" use="optional" default="false">
+                  <xsd:annotation>
+                        <xsd:documentation>'supersedence' specifies that the object should also match any superseding patches to the one being specified. In other words, if set to True the resulting object set would be the original patch specified plus any superseding patches. The default value is 'false' meaning the object should only match the specified patch.</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                        <xsd:restriction base="xsd:boolean"/>
+                  </xsd:simpleType>
+            </xsd:attribute>
+      </xsd:complexType>
+      <!-- =============================================================================== -->
+      <!-- ============================  PATCH TEST (deprecated)  ======================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="patch_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The patch test reveals the installation status of a specific patch in the VMware ESX server. This information can be retrieved by the "esxupdate query | grep ESX-xxxxxxx" command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a patch_object and the optional state element specifies the metadata to check.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>patch_test</oval:test>
+                              <oval:object>patch_object</oval:object>
+                              <oval:state>patch_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#esx">patch_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.6</oval:version>
+                              <oval:reason>Replaced by the patch56_test. The deprecated patch_test has a bug where the patch name entity is defined as a string in the object yet is defined as an int in the state.  Additional state entities have also been added to the new patch56_test.</oval:reason>
+                              <oval:comment>This test has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="esx-def_patchtst_dep">
+                              <sch:rule context="esx-def:patch_test">
+                                    <sch:report test="true()">DEPRECATED TEST: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="esx-def_patchtst">
+                              <sch:rule context="esx-def:patch_test/esx-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/esx-def:patch_object/@id"><sch:value-of select="../@id"/> - the object child element of a patch_test must reference a patch_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="esx-def:patch_test/esx-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/esx-def:patch_state/@id"><sch:value-of select="../@id"/> - the state child element of a patch_test must reference a patch_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="patch_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The patch_object element is used by a patch test to define those objects to be evaluated based on a specified state. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+                  <xsd:documentation>A patch_object consists of a single patch_number entity that identifies the patch to be checked.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.6</oval:version>
+                              <oval:reason>Replaced by the patch56_object. The deprecated patch_test has a bug where the patch name entity is defined as a string in the object yet is defined as an int in the state.  Additional state entities have also been added to the new patch56_test.</oval:reason>
+                              <oval:comment>This object has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="esx-def_patchobj_dep">
+                              <sch:rule context="esx-def:patch_object">
+                                    <sch:report test="true()">DEPRECATED OBJECT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="behaviors" type="esx-def:PatchBehaviors" minOccurs="0" maxOccurs="1"/>
+                                                <xsd:element name="patch_number" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The patch_number entity identifies the patch to be checked. Many of the security bulletins for VMWARE ESX Server contain non-numerical characters in the patch number, therefore this entity has a datatype of string.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="patch_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The patch_state element defines the information about a specific patch. The patch_number element identifies this patch, and the status element reveals the installation status of this patch in the VMware ESX server. For instance, after the "esxupdate query | grep ESX-2559638" command is run, the result is either a string similar to "ESX-2559638 15:27:17 04/05/07 Update info rpm for ESX 3.0.1." or empty.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.6</oval:version>
+                              <oval:reason>Replaced by the patch56_state. The deprecated patch_test has a bug where the patch name entity is defined as a string in the object yet is defined as an int in the state.  Additional state entities have also been added to the new patch56_test.</oval:reason>
+                              <oval:comment>This object has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="esx-def_patchste_dep">
+                              <sch:rule context="esx-def:patch_state">
+                                    <sch:report test="true()">DEPRECATED STATE: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="patch_number" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the patch number of a specific patch which will be checked in current VMware ESX server. Many of the security bulletins for VMWARE ESX Server contain non-numerical characters in the patch nubmer, therefore this entity has a datatype of string.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="status" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the installation status of a specific patch in current VMware ESX server.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="PatchBehaviors">
+            <xsd:annotation>
+                  <xsd:documentation>The PatchBehaviors complex type defines a number of behaviors that allow a more detailed definition of the patch_object being specified. Note that using these behaviors may result in some unique results. For example, a double negative type condition might be created where an object entity says include everything except a specific item, but a behavior is used that might then add that item back in.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.6</oval:version>
+                              <oval:reason>Replaced by Patch56Behaviors. The deprecated patch_test has a bug where the patch name entity is defined as a string in the object yet is defined as an int in the state.  Additional state entities have also been added to the new patch56_test.</oval:reason>
+                              <oval:comment>These behaviors have been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                        </oval:deprecated_info>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:attribute name="supersedence" use="optional" default="false">
+                  <xsd:annotation>
+                        <xsd:documentation>'supersedence' specifies that the object should also match any superseding patches to the one being specified. In other words, if set to True the resulting object set would be the original patch specified plus any superseding patches. The default value is 'false' meaning the object should only match the specified patch.</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                        <xsd:restriction base="xsd:boolean"/>
+                  </xsd:simpleType>
+            </xsd:attribute>
+      </xsd:complexType>
+      <!-- =============================================================================== -->
+      <!-- ===============================  VERSION TEST  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="version_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The version test reveals information about the release and build version of the VMware ESX server. This information can be retrieved by the "vmware -v" command or by checking the /proc/vmware/version file. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a version_object and the optional state element specifies the metadata to check.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>version_test</oval:test>
+                              <oval:object>version_object</oval:object>
+                              <oval:state>version_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#esx">version_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="esx-def_versiontst">
+                              <sch:rule context="esx-def:version_test/esx-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/esx-def:version_object/@id"><sch:value-of select="../@id"/> - the object child element of a version_test must reference a version_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="esx-def:version_test/esx-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/esx-def:version_state/@id"><sch:value-of select="../@id"/> - the state child element of a version_test must reference a version_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="version_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The version_object element is used by a version test to define those objects to be evaluated based on a specified state. There is actually only one object relating to version and this is the ESX server as a whole. Therefore, there are no child entities defined. Any OVAL Test written to check version will reference the same version_object which is basically an empty object element.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType"/>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="version_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The version_state element defines the information about the release and build version. The release and build elements specify the release and build information of the VMware ESX server respectively. For instance, if the output of "vmware -v" command is "VMware ESX Server 3.0.1 build-39823", then release is equal to "3.0.1" and build is equal to "39823".</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="release" type="oval-def:EntityStateVersionType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the release version of current VMware ESX server.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="build" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the build version of current VMware ESX server.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =========================  VI SDK MANAGED OBJECT TEST  ======================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="visdkmanagedobject_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The visdkmanagedobject_test is used to check information about Managed Objects in the VMware Infrastructure.  This test extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a visdkmanagedobject _object and the optional state element specifies the metadata to check.</xsd:documentation>
+                  <xsd:documentation>This test has been introduced to enable standardized automated assessments of configuration settings in cloud computing components.  All aspects of the VMware cloud can be considered in this test due to the VMware Infrastructure.  Whether it is a Virutal Machine, a Host System, or even a Data Center, properties are defined in ways that can be enumerated in a common methodology. The VI SDK Programming Guide located at http://www.vmware.com/support/developer/vc-sdk/visdk400pubs/sdk40programmingguide.pdf serves as a great resource.  Chapter 3 discusses the Managed Entities enumerated in the behaviors.</xsd:documentation>
+                  <xsd:documentation>There are several Managed Entities in the VMware Infrastructure which have been enumerated in ViSdkManagedEntityBehaviors to enable interpreters to execute efficient interrogations.  This test is designed for an interpreter to access Managed Entity properties (settings) via the VI SDK webservice.  An example use case is to interrogate all virtual machines to ensure that a particular security setting is enabled.  Some properties serve to configure the Virtual Machine, while others can be used to identify.  For example, sets and filters can be used to create a set of all Virtual Machines where bridged networking is employed, and then perform an OVAL state evaluation against each of those Virtual Machines.  This concept applies to all properties across all Managed Entities.  Use the ViSdkManagedEntityBehaviors to avoid enumerating all Managed Objects when only one type should be considered.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>visdkmanagedobject_test</oval:test>
+                              <oval:object>visdkmanagedobject_object</oval:object>
+                              <oval:state>visdkmanagedobject_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#esx">visdkmanagedobject_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="esx-def_visdkmanagedobjecttst">
+                              <sch:rule context="esx-def:visdkmanagedobject_test/esx-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/esx-def:visdkmanagedobject_object/@id"><sch:value-of select="../@id"/> - the object child element of a visdkmanagedobject_test must reference a visdkmanagedobject_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="esx-def:visdkmanagedobject_test/esx-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/esx-def:visdkmanagedobject_state/@id"><sch:value-of select="../@id"/> - the state child element of a visdkmanagedobject_test must reference a visdkmanagedobject_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType"/>
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="visdkmanagedobject_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The visdkmanagedobject_object element is used by the visdkmanagedobject_test to define those objects to be evaluated based on a specified state.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="esx-def_visdkmanagedobject_object_verify_filter_state">
+                              <sch:rule context="esx-def:visdkmanagedobject_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::esx-def:visdkmanagedobject_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#esx') and ($state_name='visdkmanagedobject_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="behaviors" type="esx-def:ViSdkManagedEntityBehaviors" minOccurs="0"/>
+                                                <xsd:element name="property" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The property entity holds a string that represents the object path path and name of a particular setting for the Managed Entity.  In the VMware Infrastructure SDK, property names are case-sensitive and thus case must be correct relative to the properties in the SDK.  For example, a Virtual Machine might have ethernet0.connectionType of 'bridged'.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="visdkmanagedobject_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The visdkmanagedobject_state elements enumerates the different properties a Managed Entity might have.  Managed Entities have the same object structure.  However, fields within that object structure will be blank (null) if they do not apply to that Managed Entity.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="property" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The property entity holds a string that represents the object path and name of a particular setting for the Managed Entity.  In the VMware Infrastructure SDK, property names are case-sensitive and thus case must be correct relative to the properties in the SDK.  For example, a Virtual Machine might have ethernet0.connectionType of 'bridged'.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="value" type="oval-def:EntityStateAnySimpleType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The value entity holds a string that represents a value that's associated with the specified setting for the Managed Entity.  Some properties will return an array of values.  In such cases consider each value individually and then make final evaluation based on the entity_check attribute.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="ViSdkManagedEntityBehaviors">
+            <xsd:annotation>
+                  <xsd:documentation>The ViSdkManagedEntityBehaviors complex type defines a number of behaviors that allow a more detailed definition of the visdkmanagedobject_object being specified.  Note that using these behaviors is *highly* encouraged because enumerating all Managed Objects in an inventory hierarchy could cause performance problems.  Interpreters should enumerate only the entities specified by the behavior prior to set/filter logic and evaluation.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:attribute name="managed_entity_type" use="optional" default="VirtualMachine">
+                  <xsd:annotation>
+                        <xsd:documentation>The 'managed_entity_type' defines the type of managed object from which the property and value should be collected.</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                              <xsd:enumeration value="ClusterComputerResource"/>
+                              <xsd:enumeration value="ComputeResource"/>
+                              <xsd:enumeration value="Datacenter"/>
+                              <xsd:enumeration value="Datastore"/>
+                              <xsd:enumeration value="DistributedVirtualPortgroup"/>
+                              <xsd:enumeration value="DistributedVirtualSwitch"/>
+                              <xsd:enumeration value="Folder"/>
+                              <xsd:enumeration value="HostSystem"/>
+                              <xsd:enumeration value="Network"/>
+                              <xsd:enumeration value="ResourcePool"/>
+                              <xsd:enumeration value="VirtualApp"/>
+                              <xsd:enumeration value="VirtualMachine"/>
+                        </xsd:restriction>
+                  </xsd:simpleType>
+            </xsd:attribute>
+      </xsd:complexType>
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <xsd:complexType name="EntityStateClassificationType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityStateClassificationType complex type restricts a string value to a specific set of values that describe the classification of a given ESX Server patch. The empty string is also allowed to support an empty element associated with variable references. Note that when using pattern matches and variables care must be taken to ensure that the regular expression and variable values align with the enumerated values.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-def:EntityStateStringType">
+                        <xsd:enumeration value="B">
+                              <xsd:annotation>
+                                    <xsd:documentation>Bug patches fix minor flaws that affect product functionality or behavior. Bug patches are optional. Before they are applied, one should determine whether they are necessary for your environment.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="R">
+                              <xsd:annotation>
+                                    <xsd:documentation>Roll‐up patches contain any number of bundles for ESX Server 3.0.3 or ESX Server 3.5 hosts. They can contain bug patches, update patches, and security patches. They do not contain upgrade bundles for minor releases or update bundles for maintenance releases.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="S">
+                              <xsd:annotation>
+                                    <xsd:documentation>Security patches fix one or more potential security vulnerabilities in the product. They should be implemented immediately to prevent the vulnerabilities from being exploited.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="U">
+                              <xsd:annotation>
+                                    <xsd:documentation>Update patches can contain new driver updates and small non‐intrusive enhancements. Before they are applied, one should determine whether they are necessary for your environment.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string is also allowed to support an empty element associated with variable references.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      <xsd:complexType name="EntityStateSupportLevelType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityStateSupportLevelType complex type restricts a string value to a specific set of values that describe the support level of a given ESX Server patch. The empty string is also allowed to support an empty element associated with variable references. Note that when using pattern matches and variables care must be taken to ensure that the regular expression and variable values align with the enumerated values.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-def:EntityStateStringType">
+                        <xsd:enumeration value="C">
+                              <xsd:annotation>
+                                    <xsd:documentation>Custom patches are special fixes provided to a customer. They are usually specific to customer's environment, and are most likely not required by  customers not reporting the issue. Custom patches have been tested in the customer's environment.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="D">
+                              <xsd:annotation>
+                                    <xsd:documentation>Debugging patches are released to all customers and are used by VMware to troubleshoot complex product issues. They can contain debug messages and code, and drivers. Debugging patches usually require VMware assistance to install.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="G">
+                              <xsd:annotation>
+                                    <xsd:documentation>GA patches are released to all customers and have been thoroughly tested. They contain fixes for ESX Server 3 software issues.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="H">
+                              <xsd:annotation>
+                                    <xsd:documentation>Hot patches are released to specific customers for solving critical problems specific to their environment. They contain fixes for security issues or problems that can potentially cause data loss or severe service disruptions. Hot patches should be implemented immediately.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string is also allowed to support an empty element associated with variable references.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+</xsd:schema>

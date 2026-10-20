@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_directives
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+  xmlns:oval-res="http://oval.mitre.org/XMLSchema/oval-results-5"
+  xmlns="http://oval.mitre.org/XMLSchema/oval-directives-5"
+  xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-results-5 oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd http://oval.mitre.org/XMLSchema/oval-directives-5 oval-directives-schema.xsd">
+
+  <generator>
+    <oval:product_name>vim</oval:product_name>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2015-08-04T09:51:32</oval:timestamp>
+  </generator>
+
+  <directives include_source_definitions="false">
+    <oval-res:definition_true reported="true" content="full"/>
+    <oval-res:definition_false reported="true" content="full"/>
+    <oval-res:definition_unknown reported="true" content="full"/>
+    <oval-res:definition_error reported="true" content="full"/>
+    <oval-res:definition_not_evaluated reported="true" content="full"/>
+    <oval-res:definition_not_applicable reported="true" content="full"/>
+  </directives>
+
+</oval_directives>

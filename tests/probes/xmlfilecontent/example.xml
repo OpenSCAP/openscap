@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SoftwareIdentity xmlns="http://standards.iso.org/iso/19770/-2/2015/schema.xsd"
+  xmlns:vTag="http://tagvault.org/xsd/swid-extensions-2015.xsd"
+  xmlns:SHA-256="http://www.w3.org/2001/04/xmlenc#sha256"
+  xmlns:SHA-512="http://www.w3.org/2001/04/xmlenc#sha512"
+  xmlns:dsig="http://www.w3.org/2000/09/xmldsig11#"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xml:lang="en"
+  xsi:schemaLocation="http://standards.iso.org/iso/19770/-2/2015/schema.xsd
+  http://standards.iso.org/iso/19770/-2/2015-current/schema.xsd
+  http://tagvault.org/xsd/swid-extensions-2015.xsd swid-2015-extensions-1.0.xsd"
+  name="ACME Roadrunner Detector 2013 Coyote Edition SP1"
+  tagId="com.acme.rrd2013-ce-sp1-v4-1-5-0"
+  version="4.1.5"
+  versionScheme="multipartnumeric"
+  tagVersion="1">
+  <Entity name="The ACME Corporation" regid="acme.com" role="tagCreator softwareCreator"/>
+  <Entity name="Coyote Services, Inc." regid="mycoyote.com" role="distributor"/>
+  <Link rel="license" href="www.gnu.org/licenses/gpl.txt"/>
+  <Meta activationStatus="trial" product="Roadrunner Detector" colloquialVersion="2013" edition="coyote" revision="sp1"/>
+  <Payload>
+    <Directory root="C:\" name="rrdetector" key="true" location="%programdata%" xml:lang="en">
+      <File name="rrdetector.exe" size="532712" SHA-256:hash="a314fc2dc663ae7a6b6bc6787594057396e6b3f569cd50fd5ddb4d1bbafd2b6a" version="1.2.3"/>
+    </Directory>
+  </Payload>
+</SoftwareIdentity>

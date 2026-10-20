@@ -1,0 +1,233 @@
+/**
+ * @file cpedict.c
+ * \brief Interface to Common Platform Enumeration (CPE) Dictionary.
+ *
+ * See more details at http://nvd.nist.gov/cpe.cfm
+ */
+
+/*
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ *
+ * Authors:
+ *      Maros Barabas <mbarabas@redhat.com>
+ *      Lukas Kuklinek <lkuklinek@redhat.com>
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "public/cpe_dict.h"
+#include "cpedict_priv.h"
+
+#include "common/list.h"
+#include "common/util.h"
+#include "common/_error.h"
+#include "common/xmlns_priv.h"
+#include "common/elements.h"
+#include "common/xmltext_priv.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
+#include <string.h>
+
+#define CPE_DICT_SUPPORTED "2.3"
+
+struct cpe_dict_model *cpe_dict_model_import_source(struct oscap_source *source)
+{
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
+	if (reader == NULL) {
+		return NULL;
+	}
+	struct cpe_dict_model *dict = NULL;
+	struct cpe_parser_ctx *ctx = cpe_parser_ctx_from_reader(reader);
+	if (ctx) {
+		xmlTextReaderNextNode(cpe_parser_ctx_get_reader(ctx));
+		dict = cpe_dict_model_parse(ctx);
+		if (dict != NULL) {
+			dict->origin_file = oscap_strdup(oscap_source_readable_origin(source));
+		}
+	}
+	cpe_parser_ctx_free(ctx);
+	xmlFreeTextReader(reader);
+	return dict;
+}
+
+void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file)
+{
+
+	__attribute__nonnull__(dict);
+	__attribute__nonnull__(file);
+
+	if (file == NULL)
+		return;
+
+	cpe_dict_model_export_xml(dict, file);
+
+}
+
+static bool _cpe_item_matches(struct cpe_item *item, struct cpe_name *cpe)
+{
+	struct cpe_name *name = cpe_item_get_name(item);
+	if (name != NULL && (cpe_name_match_one(name, cpe) || cpe_name_match_one(cpe, name)))
+		return true;
+
+	const char *cpe23_str = cpe_item_get_cpe23_name(item);
+	if (cpe23_str == NULL)
+		return false;
+
+	bool matched = false;
+	struct cpe_name *cpe23_name = cpe_name_new(cpe23_str);
+	if (cpe23_name != NULL) {
+		matched = (cpe_name_match_one(cpe23_name, cpe) || cpe_name_match_one(cpe, cpe23_name));
+		cpe_name_free(cpe23_name);
+	}
+	return matched;
+}
+
+bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict)
+{
+	// FIXME: We could match faster by matching per component and storing all
+	//        cpe_dict items in a big tree where leaves contain cpe_items and
+	//        inner nodes are the components.
+
+	__attribute__nonnull__(cpe);
+	__attribute__nonnull__(dict);
+
+	if (cpe == NULL || dict == NULL)
+		return false;
+
+	struct cpe_item_iterator *items = cpe_dict_model_get_items(dict);
+
+	bool ret = false;
+	while (cpe_item_iterator_has_more(items)) {
+		struct cpe_item* item = cpe_item_iterator_next(items);
+		if (_cpe_item_matches(item, cpe)) {
+			ret = true;
+			break;
+		}
+	}
+	cpe_item_iterator_free(items);
+	return ret;
+}
+
+bool cpe_name_applicable_dict(struct cpe_name *cpe, struct cpe_dict_model *dict, cpe_check_fn cb, void* usr)
+{
+	// FIXME: We could match faster by matching per component and storing all
+	//        cpe_dict items in a big tree where leaves contain cpe_items and
+	//        inner nodes are the components.
+
+	__attribute__nonnull__(cpe);
+	__attribute__nonnull__(dict);
+
+	if (cpe == NULL || dict == NULL)
+		return false;
+
+	struct cpe_item_iterator *items = cpe_dict_model_get_items(dict);
+
+	// essentially, we want at least one applicable match so as soon as we find
+	// a match we break and return true
+
+	bool ret = false;
+	while (cpe_item_iterator_has_more(items)) {
+		struct cpe_item* item = cpe_item_iterator_next(items);
+		if (_cpe_item_matches(item, cpe) && cpe_item_is_applicable(item, cb, usr)) {
+			ret = true;
+			break;
+		}
+	}
+	cpe_item_iterator_free(items);
+	return ret;
+}
+
+static bool cpe_check_evaluate(const struct cpe_check* check, cpe_check_fn cb, void* usr)
+{
+	const char* sys = cpe_check_get_system(check);
+	const char* href = cpe_check_get_href(check);
+	const char* name = cpe_check_get_identifier(check);
+
+	return cb(sys, href, name, usr);
+}
+
+bool cpe_item_is_applicable(struct cpe_item* item, cpe_check_fn cb, void* usr)
+{
+	struct cpe_check_iterator* checks = cpe_item_get_checks(item);
+
+	bool ret = false;
+	while (cpe_check_iterator_has_more(checks)) {
+		struct cpe_check* check = cpe_check_iterator_next(checks);
+		if (cpe_check_evaluate(check, cb, usr)) {
+			ret = true;
+			break;
+		}
+	}
+	cpe_check_iterator_free(checks);
+
+	return ret;
+}
+
+const char * cpe_dict_model_supported(void)
+{
+        return CPE_DICT_SUPPORTED;
+}
+
+char *cpe_dict_detect_version_priv(xmlTextReader *reader)
+{
+	char *version = NULL;
+	/* find root element */
+	while (xmlTextReaderRead(reader) == 1
+	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+
+	const char* elm_name = (const char *) xmlTextReaderConstLocalName(reader);
+	if (!elm_name || strcmp("cpe-list", elm_name)) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Expected root element name 'cpe-list', found '%s'.", elm_name);
+		return NULL;
+	}
+	const char* ns_uri = (const char *) xmlTextReaderConstNamespaceUri(reader);
+	if (ns_uri == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Expected namespace uri for cpe-list, found none.");
+		return NULL;
+	}
+
+	/* find generator */
+	while (xmlTextReaderRead(reader) == 1
+		   && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
+
+	// if the element found is a generator, use it to figure out the version
+	if (elm_name && strcmp(elm_name, "generator") == 0) {
+		/* find schema_version */
+		const int depth = xmlTextReaderDepth(reader);
+		while (xmlTextReaderRead(reader) == 1 && xmlTextReaderDepth(reader) > depth) {
+			if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
+				continue;
+
+			elm_name = (const char *) xmlTextReaderConstLocalName(reader);
+			if (!strcmp(elm_name, "schema_version")) {
+				version = oscap_element_string_copy(reader);
+				break;
+			}
+		}
+	}
+	else {
+		if (strcmp(ns_uri, XMLNS_CPE2D) == 0) {
+			// return the newest 2.x version we support
+			version = oscap_strdup("2.3");
+		}
+	}
+	return version;
+}

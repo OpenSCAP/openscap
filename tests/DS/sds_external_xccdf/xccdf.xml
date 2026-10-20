@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_test">
+            <status>incomplete</status>
+            <version>1.0</version>
+            <model system="urn:xccdf:scoring:flat"/>
+            <Profile id="xccdf_external_profile_file_1">
+                <title/>
+            </Profile>
+            <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
+                <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                    <check-content-ref href="test_deriving_xccdf_result_from_oval_pass.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+                </check>
+            </Rule>
+        </Benchmark>

@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+    - '[0-9]*.[0-9]*.[0-9]*'
+
+jobs:
+  release:
+    name: Build and publish release
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+    - name: Install Deps
+      run: dnf install -y cmake git procps-ng dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre2-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel python3-dbusmock rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace python3-pytest
+    - name: Checkout
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      with:
+        submodules: recursive
+    - name: Build source tarball
+      run: |
+        cmake ../
+        make package_source
+      working-directory: ./build
+    - name: Attest build provenance
+      uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4
+      with:
+        subject-path: |
+          build/openscap-*.tar.gz
+          build/openscap-*.tar.gz.sha512
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
+      with:
+        files: |
+          build/openscap-*.tar.gz
+          build/openscap-*.tar.gz.sha512

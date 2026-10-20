@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+# Copyright 2009 Red Hat Inc., Durham, North Carolina.
+# All Rights Reserved.
+#
+# OpenScap Probes Test Suite.
+#
+# Created on: Nov 30, 2009
+#
+# Authors:
+#      Peter Vrabec, <pvrabec@redhat.com>
+#      David Niemoller
+#      Ondrej Moris, <omoris@redhat.com>
+#      Evgenii Kolesnikov, <ekolesni@redhat.com>
+
+. $builddir/tests/test_common.sh
+
+set -e -o pipefail
+
+# Test Cases.
+
+function test_probes_password {
+
+    probecheck "password" || return 255
+
+    local ret_val=0;
+    local DF="${srcdir}/test_probes_password_offline.xml"
+    local RF="$(mktemp results.XXXXXXX.xml)"
+
+    [ -f $RF ] && rm -f $RF
+
+    tmpdir=$(mktemp -t -d "test_password.XXXXXX")
+    mkdir -p "$tmpdir/etc"
+    echo "root:x:0:0:root:/root:/bin/bash" > "$tmpdir/etc/passwd"
+    set_offline_chroot_dir "$tmpdir"
+
+    $OSCAP oval eval --results $RF $DF
+
+    set_offline_chroot_dir ""
+    rm -rf "$tmpdir"
+
+    if [ -f $RF ]; then
+        result=$RF
+        assert_exists 1 'oval_results/results/system/tests/test[@test_id="oval:1:tst:1"][@result="true"]'
+        ret_val=$?
+    else
+        ret_val=1
+    fi
+
+    return $ret_val
+}
+
+# Testing.
+
+test_init
+
+test_run "test_probes_password_offline" test_probes_password
+
+test_exit

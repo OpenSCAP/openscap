@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cpe-list xmlns:meta="http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cpe-23="http://scap.nist.gov/schema/cpe-extension/2.3" xsi:schemaLocation="http://scap.nist.gov/schema/cpe-dictionary-metadata/0.2 http://nvd.nist.gov/schema/cpe-dictionary-metadata_0.2.xsd http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd" xmlns="http://cpe.mitre.org/dictionary/2.0">
+    <generator>
+        <product_name>National Vulnerability Database (NVD)</product_name>
+        <product_version>2.20.0-SNAPSHOT (PRODUCTION)</product_version>
+        <schema_version>2.3</schema_version>
+        <timestamp>2013-08-13T03:50:00.290Z</timestamp>
+    </generator>
+    <cpe-item name="cpe:/a:1024cms:1024_cms:0.7">
+        <title xml:lang="en-US">1024cms.org 1024 CMS 0.7</title>
+        <cpe-23:cpe23-item name="cpe:2.3:a:1024cms:1024_cms:0.7:*:*:*:*:*:*:*"/>
+    </cpe-item>
+    <cpe-item name="cpe:/a:3com:3c16115-us:2.01">
+        <title xml:lang="ja-JP">スリーコム WebCache 1000 2.01</title>
+        <title xml:lang="en-US">3Com WebCache 1000 2.01</title>
+        <cpe-23:cpe23-item name="cpe:2.3:a:3com:3c16115-us:2.01:*:*:*:*:*:*:*"/>
+    </cpe-item>
+    <cpe-item name="cpe:/a:xhanch:my_twitter:2.5.8::~~~wordpress~~">
+       <title xml:lang="en-US">Xhance My Twitter Plugin for Wordpress 2.5.8</title>
+       <references>
+            <reference href="http://wordpress.org/plugins/xhanch-my-twitter/changelog/">Xhance My Twitter Plugin page on Wordpress</reference>
+            <reference href="http://xhanch.com/">Xhanch vendor website</reference>
+        </references>
+        <cpe-23:cpe23-item name="cpe:2.3:a:xhanch:my_twitter:2.5.8:*:*:*:*:wordpress:*:*"/>
+    </cpe-item>
+    <cpe-item deprecation_date="2010-12-28T17:36:01.163Z" deprecated="true" name="cpe:/a:3com:tippingpoint_ips_tos:2.2.1">
+        <title xml:lang="en-US">3Com TippingPoint IPS TOS 2.2.1</title>
+        <cpe-23:cpe23-item name="cpe:2.3:a:3com:tippingpoint_ips_tos:2.2.1:*:*:*:*:*:*:*">
+            <cpe-23:deprecation date="2010-12-28T12:36:01.163-05:00">
+                <cpe-23:deprecated-by type="NAME_CORRECTION" name="cpe:2.3:o:3com:tippingpoint_ips_tos:2.2.1:*:*:*:*:*:*:*"/>
+            </cpe-23:deprecation>
+        </cpe-23:cpe23-item>
+    </cpe-item>
+    <cpe-item deprecation_date="2011-04-20T14:25:24.657Z" deprecated="true" name="cpe:/o:yahama:rt100i:1.04.03">
+        <title xml:lang="en-US">Yamaha RT100i 1.04.03</title>
+        <title xml:lang="ja-JP">ヤマハ RT100i 1.04.03</title>
+        <cpe-23:cpe23-item name="cpe:2.3:o:yahama:rt100i:1.04.03:*:*:*:*:*:*:*">
+            <cpe-23:deprecation date="2011-04-20T10:25:24.657-04:00">
+                <cpe-23:deprecated-by type="NAME_CORRECTION" name="cpe:2.3:o:yamaha:rt100i:1.04.03:*:*:*:*:*:*:*"/>
+                <cpe-23:deprecated-by type="NAME_CORRECTION" name="cpe:2.3:o:yamaha:rt100i:1.04.03:*:*:*:*:*:*:*"/>
+            </cpe-23:deprecation>
+        </cpe-23:cpe23-item>
+    </cpe-item>
+    <cpe-item name="cpe:/h:hp:advancestack_10base-t_switching_hub_j3200a:a.03.07">
+        <title xml:lang="en-US">cpe:/h:HP:AdvanceStack 10Base-T Switching Hub J3200A version A.03.07</title>
+        <notes xml:lang="en-US">
+            <note>Use product number and detail plain name</note>
+        </notes>
+        <cpe-23:cpe23-item name="cpe:2.3:h:hp:advancestack_10base-t_switching_hub_j3200a:a.03.07:*:*:*:*:*:*:*"/>
+    </cpe-item>
+    <cpe-item name="cpe:/a:microsoft:.net_framework:2.0">
+        <title xml:lang="en-US">Microsoft .NET Framework 2.0</title>
+        <check href="http://oval.mitre.org/repository/data/DownloadDefinition?id=oval:org.mitre.oval:def:310" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:org.mitre.oval:def:310</check>
+        <cpe-23:cpe23-item name="cpe:2.3:a:microsoft:.net_framework:2.0:*:*:*:*:*:*:*"/>
+    </cpe-item>
+</cpe-list>

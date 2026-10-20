@@ -1,0 +1,623 @@
+.TH OSCAP "8" "March 2021" "Red Hat" "System Administration Utilities"
+
+.SH NAME
+oscap \- OpenSCAP command line tool
+
+.SH SYNOPSIS
+\fBoscap\fR [\fIgeneral-options\fR] \fBmodule\fR operation [\fIoperation-options-and-arguments\fR]
+
+.SH DESCRIPTION
+\fBoscap\fP is Security Content Automation Protocol (SCAP) toolkit based on OpenSCAP library. It provides various functions for different SCAP specifications (modules).
+
+OpenSCAP tool claims to provide capabilities of Authenticated Configuration Scanner and Authenticated Vulnerability Scanner as defined by The National Institute of Standards and Technology.
+
+.SH GENERAL OPTIONS
+.TP
+\fB\-V, -\-version\fR
+Print supported SCAP specifications, location of schema files, schematron files, CPE files, probes and supported OVAL objects.
+Displays a list of inbuilt CPE names.
+.TP
+\fB\-h, \-\-help\fR
+Help screen.
+
+.SH MODULES
+.TP
+\fBinfo\fR
+Determine type and print information about a file.
+.TP
+\fBxccdf\fR
+The eXtensible Configuration Checklist Description Format.
+.TP
+\fBoval\fR
+Open Vulnerability and Assessment Language.
+.TP
+\fBds\fR
+SCAP Data Stream
+.TP
+\fBcpe\fR
+Common Platform Enumeration.
+
+.SH COMMON OPTIONS FOR ALL MODULES
+.RE
+.TP
+\fB\-\-verbose VERBOSITY_LEVEL\fR
+.RS
+Turn on verbose mode at specified verbosity level. VERBOSITY_LEVEL is one of: DEVEL, INFO, WARNING, ERROR.
+.RE
+.TP
+\fB\-\-verbose-log-file FILE\fR
+.RS
+Set filename to write additional information.
+.RE
+
+.SH INFO OPERATIONS
+.TP
+[\fIoptions\fR] any-scap-file.xml
+.RS
+This module prints information about SCAP content in a file specified on a command line. It determines SCAP content type, specification version, date of creation, date of import and so on. Info module doesn't require any additional operation switch.
+
+For XCCDF or SCAP source data stream files, the info module prints out IDs of incorporated profiles, components, and data streams. These IDs can be used to specify the target for evaluation. Use options --profile, --xccdf-id (or --oval-id), and --datastream-id respectively.
+.PP
+\fB\-\-fetch-remote-resources\fR
+.RS
+Allow download of remote components referenced from data stream.
+.RE
+.TP
+\fB\-\-list-rules\fR
+.RS
+Print IDs of XCCDF rules that are selected by the given profile, one per line. This option must be used together with \fB\-\-profile\fR. The output is machine-readable and contains only rule IDs with no additional decoration.
+.RE
+.TP
+\fB\-\-list-vars\fR
+.RS
+Print XCCDF Value IDs and their resolved values for the given profile, one per line, tab-separated. This option must be used together with \fB\-\-profile\fR. The output is machine-readable.
+.RE
+.TP
+\fB\-\-local-files DIRECTORY\fR
+.RS
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
+.RE
+.TP
+\fB\-\-profile PROFILE\fR
+.RS
+Show info of the profile with the given ID.
+.RE
+.TP
+\fB\-\-profiles\fR
+.RS
+Show profiles from the input file in the <id>:<title> format, one line per profile.
+.RE
+.TP
+\fB\-\-references\fR
+.RS
+Show list of references available in each benchmark.
+.RE
+
+.SH XCCDF OPERATIONS
+.TP
+.B \fBeval\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
+.RS
+Perform evaluation of XCCDF document file given as INPUT_FILE. Print result of each rule to standard output, including rule title, rule id and security identifier(CCE). Optionally you can give an SCAP source data stream as the INPUT_FILE instead of an XCCDF file (see --datastream-id).
+.PP
+oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one rule with either fail or unknown result, oscap finishes with return code 2.
+.PP
+.PP
+Unless --skip-validation is used, the INPUT_FILE is validated using XSD schemas (depending on document type of INPUT_FILE) and rejected if invalid.
+.PP
+You may specify OVAL Definition files as the last parameter, XCCDF evaluation will then proceed only with those specified files. Otherwise, when \fIoval-definitions-files\fR parameter is missing, oscap tool will try to load all OVAL Definition files referenced from XCCDF automatically (search in the same path as XCCDF).
+.PP
+.TP
+\fB\-\-profile PROFILE\fR
+.RS
+Select a particular profile from XCCDF document. If "(all)" is given a virtual profile that selects all groups and rules will be used.
+.RE
+.TP
+\fB\-\-rule RULE\fR
+.RS
+Select a particular rule from XCCDF document. Only this rule will be evaluated. Any other rules required by this rule won't be evaluated. Rule will use values according to the selected profile. If no profile is selected, default values are used. This option can be used multiple times to specify multiple rules at once.
+.RE
+.TP
+\fB\-\-skip-rule RULE\fR
+.RS
+Skip a particular rule from XCCDF document. This option can be used multiple times to skip multiple rules at once.
+.RE
+.TP
+\fB\-\-reference NAME:IDENTIFIER\fR
+.RS
+Evaluate rules matching the given reference. This option can be used to check for evaluating compliance with a particular policy requirement. Rules that match the reference will be evaluated, other rules will be skipped and a result of notselected will be returned. The argument needs to be provided in the form NAME:IDENTIFIER (colon is a separator), where NAME is the reference name used as a text of xccdf:reference elements that are child of xccdf:Benchmark element and IDENTIFIER is a text of xccdf:reference element that is child of a particular xccdf:Rule element which has the same @href value as the xccdf:reference element of the NAME value. This feature requires SCAP content to be formed in the aforementioned way. For example: --reference "cis:4.1.3.19", --reference "anssi:BP28(R29)"
+List of references available in the given benchmark can be obtained by running the oscap info --references command.
+.RE
+.TP
+\fB\-\-tailoring-file TAILORING_FILE\fR
+.RS
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.RE
+.TP
+\fB\-\-tailoring-id COMPONENT_REF_ID\fR
+.RS
+Use tailoring component in input source data stream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source data stream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.RE
+.TP
+\fB\-\-cpe CPE_FILE\fR
+.RS
+Use given CPE dictionary or language (auto-detected) for applicability checks. (Some CPE names are provided by openscap, see oscap --version for inbuilt CPE names)
+.RE
+.TP
+\fB\-\-results FILE\fR
+.RS
+Write XCCDF results into FILE.
+.RE
+.TP
+\fB\-\-results-arf FILE\fR
+.RS
+Writes results to a given FILE in Asset Reporting Format. It is recommended to use this option instead of --results when dealing with data streams.
+.RE
+.TP
+\fB\-\-stig-viewer FILE\fR
+.RS
+Writes XCCDF results into FILE. The rule result IDs in FILE are modified according to STIG references in evaluated content. The FILE can be simply imported into DISA STIG Viewer. See \fIhttps://public.cyber.mil/stigs/srg-stig-tools/\fR for information about DISA STIG Viewer.
+.RE
+.TP
+\fB\-\-thin-results\fR
+.RS
+Thin Results provides only minimal amount of information in OVAL/ARF results. The option --without-syschar is automatically enabled when you use Thin Results.
+.RE
+.TP
+\fB\-\-without-syschar\fR
+.RS
+Don't provide system characteristics in OVAL/ARF result files.
+.RE
+.TP
+\fB\-\-report FILE\fR
+.RS
+Write HTML report into FILE.
+.RE
+.TP
+\fB\-\-oval-results\fR
+.RS
+Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file in current working directory. To change the directory where OVAL files are generated change the CWD using the `cd` command.
+.RE
+.TP
+\fB\-\-check-engine-results\fR
+.RS
+After evaluation is finished, each loaded check engine plugin is asked to export its results. The export itself is plugin specific, please refer to documentation of the plugin for more details.
+.RE
+.TP
+\fB\-\-export-variables\fR
+.RS
+Generate OVAL Variables documents which contain external variables' values that were provided to the OVAL checking engine during evaluation. The filename format is '\fIoriginal-oval-definitions-filename\fR-\fIsession-index\fR.variables-\fIvariables-index\fR.xml'.
+.RE
+.TP
+\fB\-\-datastream-id ID\fR
+.RS
+Uses a data stream with that particular ID from the given data stream collection. If not given the first data stream is used. Only applies if you give source data stream in place of an XCCDF file.
+.RE
+.TP
+\fB\-\-xccdf-id ID\fR
+.RS
+Takes component ref with given ID from checklists. This allows one to select a particular XCCDF component even in cases where there are multiple XCCDFs in a single data stream. If none is given, the first component from the checklists element is used.
+.RE
+.TP
+\fB\-\-benchmark-id ID\fR
+.RS
+Selects a component ref from any data stream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly. Please note that this is not the recommended way of selecting a component-ref. You are advised to use --xccdf-id AND/OR --datastream-id for more precision. --benchmark-id is only used when both --xccdf-id and --datastream-id are not present on the command line!
+.RE
+.TP
+\fB\-\-skip-validation\fR
+.RS
+Do not validate input/output files.
+.RE
+.TP
+\fB\-\-skip-signature-validation\fR
+.RS
+Do not validate digital signatures in digitally signed SCAP source data streams.
+.RE
+.TP
+\fB\-\-enforce-signature\fR
+.RS
+Process only digitally signed SCAP source data streams. Data streams without a signature would be rejected if this switch is used.
+.RE
+.TP
+\fB\-\-fetch-remote-resources\fR
+.RS
+Allow download of remote OVAL content referenced from XCCDF by check-content-ref/@href.
+.RE
+.TP
+\fB\-\-local-files DIRECTORY\fR
+.RS
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
+.RE
+.TP
+\fB\-\-remediate\fR
+.RS
+Execute XCCDF remediation in the process of XCCDF evaluation. This option automatically executes content of XCCDF fix elements for failed rules, and thus this shall be avoided unless for trusted content. Use of this option is always at your own risk.
+.RE
+.TP
+\fB\-\-show-rule-details\fR
+.RS
+Show rule description and rationale when reporting results.
+.RE
+.RE
+.TP
+.B remediate\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
+.RS
+This module provides post-scan remediation. It assumes that the INPUT_FILE is result of `oscap xccdf eval` operation. The input file must contain TestResult element. This module executes XCCDF fix elements for failed rule-result contained in the given TestResult. Use of this option is always at your own risk and it shall be avoided unless for trusted content.
+.TP
+\fB\-\-result-id ID
+.RS
+ID of the XCCDF TestResult element which shall be remedied. If this option is missing the last TestResult (in top-down processing) will be remedied.
+.RE
+.TP
+\fB\-\-skip-validation\fR
+.RS
+Do not validate input/output files.
+.RE
+.TP
+\fB\-\-fetch-remote-resources\fR
+.RS
+Allow download of remote OVAL content referenced from XCCDF by check-content-ref/@href.
+.RE
+.TP
+\fB\-\-local-files DIRECTORY\fR
+.RS
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
+.RE
+.TP
+\fB\-\-cpe CPE_FILE\fR
+.RS
+Use given CPE dictionary or language (auto-detected) for applicability checks.
+.RE
+.TP
+\fB\-\-results FILE\fR
+.RS
+Write XCCDF results into FILE.
+.RE
+.TP
+\fB\-\-results-arf FILE\fR
+.RS
+Writes results to a given FILE in Asset Reporting Format. It is recommended to use this option instead of --results when dealing with data streams.
+.RE
+.TP
+\fB\-\-stig-viewer FILE\fR
+.RS
+Writes XCCDF results into FILE. The rule result IDs in FILE are modified according to STIG references in evaluated content. The FILE can be simply imported into DISA STIG Viewer. See \fIhttps://public.cyber.mil/stigs/srg-stig-tools/\fR for information about DISA STIG Viewer.
+.RE
+.TP
+\fB\-\-report FILE\fR
+.RS
+Write HTML report into FILE.
+.RE
+.TP
+\fB\-\-oval-results\fR
+.RS
+Generate OVAL Result file for each OVAL session used for evaluation. File with name '\fIoriginal-oval-definitions-filename\fR.result.xml' will be generated for each referenced OVAL file.
+.RE
+.TP
+\fB\-\-check-engine-results\fR
+.RS
+After evaluation is finished, each loaded check engine plugin is asked to export its results. The export itself is plugin specific, please refer to documentation of the plugin for more details.
+.RE
+.TP
+\fB\-\-export-variables\fR
+.RS
+Generate OVAL Variables documents which contain external variables' values that were provided to the OVAL checking engine during evaluation. The filename format is '\fIoriginal-oval-definitions-filename\fR-\fIsession-index\fR.variables-\fIvariables-index\fR.xml'.
+.RE
+.TP
+\fB\-\-progress\fR
+.RS
+Switch to sparse output suitable for progress reporting. Format of the output is "$rule_id:$result\\n".
+.RE
+.TP
+\fB\-\-progress-full\fR
+.RS
+Switch to sparse but a bit more saturated output also suitable for progress reporting. Format of the output is "$rule_id|$rule_title|$result\\n".
+.RE
+.RE
+.TP
+.B resolve\fR -o output-file xccdf-file
+.RS
+Resolve an XCCDF file as described in the XCCDF specification. It will flatten inheritance hierarchy of XCCDF profiles, groups, rules, and values. Result is another XCCDF document, which will be written to \fIoutput-file\fR.
+.TP
+\fB\-\-force\fR
+Force resolving XCCDF document even if it is already marked as resolved.
+.RE
+.TP
+.B validate\fR [\fIoptions\fR] xccdf-file
+.RS
+Validate given XCCDF file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the XCCDF document is not valid.
+.TP
+\fB\-\-skip-schematron\fR
+Turn off Schematron-based validation. It is able to find more errors and inconsistencies but is much slower. Schematron is available only for XCCDF version 1.2.
+.RE
+.TP
+.B export-oval-variables\fR [\fIoptions\fR] xccdf-file [\fIoval-definitions-files\fR]
+.RS
+Collect all the XCCDF values that would be used by OVAL during evaluation of a certain profile and export them as OVAL external-variables document(s). The filename format is '\fIoriginal-oval-definitions-filename\fR-\fIsession-index\fR.variables-\fIvariables-index\fR.xml'.
+.PP
+.TP
+\fB\-\-profile PROFILE\fR
+.RS
+Select a particular profile from XCCDF document.
+.RE
+.TP
+\fB\-\-fetch-remote-resources\fR
+.RS
+Allow download of remote OVAL content referenced from XCCDF by check-content-ref/@href.
+.RE
+.TP
+\fB\-\-local-files DIRECTORY\fR
+.RS
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
+.RE
+.TP
+\fB\-\-skip-validation\fR
+.RS
+Do not validate input/output files.
+.RE
+.TP
+\fB\-\-datastream-id ID\fR
+.RS
+Uses a data stream with that particular ID from the given data stream collection. If not given the first data stream is used. Only applies if you give an SCAP source data stream in place of an XCCDF file.
+.RE
+.TP
+\fB\-\-xccdf-id ID\fR
+.RS
+Takes component ref with given ID from checklists. This allows one to select a particular XCCDF component even in cases where there are 2 XCCDFs in one data stream.
+.RE
+.TP
+\fB\-\-benchmark-id ID\fR
+.RS
+Selects a component ref from any data stream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly. Please note that this is not the recommended way of selecting a component-ref. You are advised to use --xccdf-id AND/OR --datastream-id for more precision. --benchmark-id is only used when both --xccdf-id and --datastream-id are not present on the command line!
+.RE
+.TP
+\fB\-\-cpe CPE_FILE\fR
+.RS
+Use given CPE dictionary or language (auto-detected) for applicability checks. The variables documents are created only for xccdf:Rules which are applicable.
+.RE
+.RE
+.TP
+.B \fBgenerate\fR [\fIoptions\fR] <submodule> [submodule-specific-options]
+.RS
+Generate another document from an XCCDF file such as security guide or result report.
+.TP
+\fB\-\-profile ID\fR
+Apply profile with given ID to the Benchmark before further processing takes place.
+.TP
+Available submodules:
+.TP
+.B \fBguide\fR  [\fIoptions\fR] xccdf-file
+.RS
+Generate a HTML document containing a security guide from an XCCDF Benchmark. Unless the --output option is specified it will be written to the standard output. Without profile being set only groups (not rules) will be included in the output.
+.TP
+\fB\-\-output FILE\fR
+Write the guide to this file instead of standard output.
+.TP
+\fB\-\-hide-profile-info\fR
+This option has no effect and is kept only for backward compatibility purposes.
+.TP
+\fB\-\-benchmark-id ID\fR
+Selects a component ref from any datastream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly.
+.TP
+\fB\-\-xccdf-id ID\fR
+Takes component ref with given ID from checklists. This allows one to select a particular XCCDF component even in cases where there are multiple XCCDFs in a single data stream. If none is given, the first component from the checklists element is used.
+.TP
+\fB\-\-tailoring-file TAILORING_FILE\fR
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.TP
+\fB\-\-tailoring-id COMPONENT_REF_ID\fR
+Use tailoring component in input source data stream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source data stream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.TP
+\fB\-\-skip-signature-validation\fR
+Do not validate digital signatures in digitally signed SCAP source data streams.
+.TP
+\fB\-\-enforce-signature\fR
+Process only digitally signed SCAP source data streams. Data streams without a signature would be rejected if this switch is used.
+.RE
+.TP
+.B \fBreport\fR  [\fIoptions\fR] xccdf-file
+.RS
+Generate a HTML document containing results of an XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output.
+.TP
+\fB\-\-output FILE\fR
+Write the report to this file instead of standard output.
+.TP
+\fB\-\-result-id ID\fR
+ID of the XCCDF TestResult from which the report will be generated.
+.RE
+.TP
+.B \fBfix\fR  [\fIoptions\fR] xccdf-file
+.RS
+Generate a script that shall bring the system to a state of compliance with given XCCDF Benchmark. There are 2 possibilities when generating fixes: Result-oriented fixes (--result-id) or Profile-oriented fixes (--profile). Result-oriented takes precedences over Profile-oriented, if result-id is given, oscap will ignore any profile provided.
+.TP
+Result-oriented fixes are generated using result-id provided to select only the failing rules from results in xccdf-file, it skips all other rules.
+It isn't possible to generate result-oriented fixes for the kickstart and bootc fix type.
+.TP
+Profile-oriented fixes are generated using all rules within the provided profile. If no result-id/profile are provided, (default) profile will be used to generate fixes.
+.TP
+\fB\-\-fix-type TYPE\fR
+Specify fix type. There are multiple programming languages in which the fix script can be generated. TYPE should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint, kickstart, bootc. Default is bash.
+.TP
+\fB\-\-output FILE\fR
+Write the report to this file instead of standard output.
+.TP
+\fB\-\-result-id \fIID\fR\fR
+Fixes will be generated for failed rule-results of the specified TestResult.
+.TP
+\fB\-\-xccdf-id ID\fR
+Takes component ref with given ID from checklists. This allows one to select a particular XCCDF component even in cases where there are multiple XCCDFs in a single data stream. If none is given, the first component from the checklists element is used.
+.TP
+\fB\-\-benchmark-id ID\fR
+Selects a component ref from any data stream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly.
+.TP
+\fB\-\-tailoring-file TAILORING_FILE\fR
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.TP
+\fB\-\-tailoring-id COMPONENT_REF_ID\fR
+Use tailoring component in input source data stream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source data stream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.TP
+\fB\-\-skip-signature-validation\fR
+Do not validate digital signatures in digitally signed SCAP source data streams.
+.TP
+\fB\-\-enforce-signature\fR
+Process only digitally signed SCAP source data streams. Data streams without a signature would be rejected if this switch is used.
+.RE
+.TP
+.B \fBcustom\fR  --stylesheet xslt-file [\fIoptions\fR] xccdf-file
+.RS
+Generate a custom output (depending on given XSLT file) from an XCCDF file.
+.TP
+\fB\-\-stylesheet \fIFILE\fR\fR
+Specify an absolute path to a custom stylesheet to format the output.
+.TP
+\fB\-\-output FILE\fR
+ Write the document into file.
+.RE
+
+.SH OVAL OPERATIONS
+.TP
+.B eval\fR [\fIoptions\fR] INPUT_FILE
+.RS
+Probe the system and evaluate all definitions from OVAL Definition file. Print result of each definition to standard output. The return code is 0 after a  successful evaluation. On error, value 1 is returned.
+.PP
+INPUT_FILE can be either OVAL Definition File or SCAP source data stream, it depends on used options.
+.PP
+Unless --skip-validation is used, the INPUT_FILE is validated using XSD schemas (depending on document type of INPUT_FILE) and rejected if invalid.
+.TP
+\fB\-\-id DEFINITION-ID\fR
+Evaluate ONLY specified OVAL Definition from OVAL Definition File.
+.TP
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definition File.
+.TP
+\fB\-\-directives FILE\fR
+Use OVAL Directives content to specify desired results content.
+.TP
+\fB\-\-without-syschar\fR
+Don't provide system characteristics in result file.
+.TP
+\fB\-\-results FILE\fR
+Write OVAL Results into file.
+.TP
+\fB\-\-report FILE\fR
+Create human readable (HTML) report from OVAL Results.
+.TP
+\fB\-\-datastream-id ID\fR
+Uses a data stream with that particular ID from the given data stream collection. If not given the first data stream is used. Only applies if you give source data stream in place of an OVAL file.
+.TP
+\fB\-\-oval-id ID\fR
+Takes component ref with given ID from checks. This allows one to select a particular OVAL component even in cases where there are multiple OVALs in a single data stream.
+.TP
+\fB\-\-skip-validation\fR
+Do not validate input/output files.
+.TP
+\fB\-\-fetch-remote-resources\fR
+Allow download of remote components referenced from data stream.
+.TP
+\fB\-\-local-files DIRECTORY\fR
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+This option works only with SCAP 1.3 source data streams. It can't be used with SCAP 1.2 source data streams.
+.RE
+
+.TP
+.B collect\fR [\fIoptions\fR] definitions-file
+.RS
+Probe the system and gather system characteristics for all objects in OVAL Definition file.
+.PP
+.TP
+\fB\-\-id OBJECT-ID\fR
+Collect system characteristics ONLY for specified OVAL Object.
+.TP
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definitions.
+.TP
+\fB\-\-syschar FILE\fR
+Write OVAL System Characteristic into file.
+.TP
+\fB\-\-skip-validation\fR
+Do not validate input/output files.
+.RE
+
+.TP
+.B analyse\fR [\fIoptions\fR] --results FILE definitions-file syschar-file
+.RS
+In this mode, the oscap tool does not perform data collection on the local system, but relies upon the input file, which may have been generated on another system. The output (OVAL Results) is printed to file specified by \fB--results\fR parameter.
+.TP
+\fB\-\-variables FILE\fR
+Provide external variables expected by OVAL Definitions.
+.TP
+\fB\-\-directives FILE\fR
+Use OVAL Directives content to specify desired results content.
+.TP
+\fB\-\-skip-validation\fR
+Do not validate input/output files.
+.RE
+
+.TP
+.B validate\fR [\fIoptions\fR] oval-file
+.RS
+Validate given OVAL file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the OVAL document is not valid.
+.TP
+\fB\-\-definitions\fR, \fB\-\-variables\fR, \fB\-\-syschar\fR, \fB\-\-results\fR \fB\-\-directives\fR
+Type of the OVAL document is automatically detected by default. If you want enforce certain document type, you can use one of these options.
+.TP
+\fB\-\-skip-schematron\fR
+Turn off Schematron-based validation. It is able to find more errors and inconsistencies but is much slower.
+.RE
+.TP
+.B \fBgenerate\fR <submodule> [submodule-specific-options]
+.RS
+Generate another document from an OVAL file.
+.TP
+Available submodules:
+.TP
+.B \fBreport\fR  [\fIoptions\fR] oval-results-file
+.RS
+Generate a formatted HTML page containing visualisation of an OVAL results file. Unless the --output option is specified it will be written to the standard output.
+.TP
+\fB\-\-output FILE\fR
+Write the report to this file instead of standard output.
+.RE
+
+.SH CPE OPERATIONS
+.TP
+.B \fBcheck\fR name
+.RS
+Check whether name is in correct CPE format.
+.RE
+.PP
+.B \fBmatch\fR name dictionary.xml
+.RS
+Find an exact match of CPE name in the dictionary.
+.RE
+.PP
+.B validate\fR  cpe-dict-file
+.RS
+Validate given CPE dictionary file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the XCCDF document is not valid.
+
+.SH DS OPERATIONS
+.TP
+.B \fBsds-validate\fR SOURCE_DS
+.RS
+Validate given source data stream file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the source data stream is not valid.
+.RE
+.TP
+.B \fBrds-validate\fR SOURCE_RDS
+.RS
+Validate given result data stream file against a XML schema. Every found error is printed to the standard error. Return code is 0 if validation succeeds, 1 if validation could not be performed due to some error, 2 if the result data stream is not valid.
+.RE
+
+.SH REPORTING BUGS
+.nf
+Please report bugs using https://github.com/OpenSCAP/openscap/issues
+Make sure you include the full output of `oscap --v` in the bug report.
+
+.SH AUTHORS
+.nf
+Peter Vrabec <pvrabec@redhat.com>
+Šimon Lukašík
+Martin Preisler <mpreisle@redhat.com>
+.fi

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xccdf:Tailoring xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_scap-workbench_tailoring_default">
+  <xccdf:benchmark href="test_single_rule.ds.xml"/>
+  <xccdf:version time="2017-06-09T16:42:18">1</xccdf:version>
+  <xccdf:Profile id="xccdf_com.example.www_profile_test_single_rule_customized" extends="xccdf_com.example.www_profile_test_single_rule">
+    <xccdf:title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">xccdf_test_profile [CUSTOMIZED]</xccdf:title>
+    <xccdf:description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">This profile is for testing.</xccdf:description>
+    <xccdf:select idref="xccdf_com.example.www_rule_test-fail" selected="false"/>
+  </xccdf:Profile>
+</xccdf:Tailoring>

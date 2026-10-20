@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+      <cpe-item name="cpe:/o:example:applicable:5">
+            <title xml:lang="en-us">Applicable example platform</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="cpe-oval.xml">oval:x:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:example:not_applicable:5">
+            <title xml:lang="en-US">Not applicable example platform</title>
+      </cpe-item>
+</cpe-list>

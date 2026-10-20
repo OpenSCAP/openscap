@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_test">
+  <status>incomplete</status>
+  <version>1.0</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="rpminfo.oval.xml" name="oval:x:def:1"/>
+    </check>
+  </Rule>
+</Benchmark>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.family" bundleVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>Ind:Family Tests</bundleName>
+	<bundleGuiName>Ind:Family Tests</bundleGuiName>
+	<testSuite version="1" suiteId="G2.family_tests_config_6">
+		<suiteName>Configuration 6</suiteName>
+		<guiName>Configuration 6 Unix</guiName>
+		<schema>unix</schema>
+		<datastreamFile>ind_family_test-datastream.xml</datastreamFile>
+		<cpeOvalFilename>family_validation_content-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>family_validation_content-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>family_validation_content-oval.xml</ovalFilename>
+		<xccdfFilename>family_validation_content-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist_profile_family-validation</xccdfProfile>
+		<expectedResults reportType="xccdf">
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-7" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-6" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-5" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-4" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-3" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-2" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-1" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_extend-definition-construct-with-negate-property-9" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-8" expectedResult="fail"/>
+		</expectedResults>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-7" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-6" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-5" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-4" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-3" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-2" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-1" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_extend-definition-construct-with-negate-property-9" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_family-with-equals-operation-8" expectedResult="fail"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>

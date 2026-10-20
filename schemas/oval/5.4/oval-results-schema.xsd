@@ -1,0 +1,390 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-res="http://oval.mitre.org/XMLSchema/oval-results-5" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-results-5" elementFormDefault="qualified" version="5.4">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../common/xmldsig-core-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>The following is a description of the elements, types, and attributes that compose the core schema for encoding Open Vulnerability and Assessment Language (OVAL) Results. Each of the elements, types, and attributes that make up the Core Results Schema are described in detail and should provide the information necessary to understand what each object represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between these objects is not outlined here.</xsd:documentation>
+          <xsd:documentation>The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>Core Results</schema>
+               <version>5.4</version>
+               <date>4/1/2008 10:41:44 AM</date>
+                <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                <sch:title>schematron validation of the Core portion of an OVAL Results file</sch:title>
+               <sch:ns prefix="oval-res" uri="http://oval.mitre.org/XMLSchema/oval-results-5"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="oval_results">
+          <xsd:annotation>
+               <xsd:documentation>The oval_results element is the root of an OVAL Results Document. Its purpose is to bind together the four major sections of a results file - generator, directives, oval_definitions, and results - which are the children of the root element. It must contain exactly one generator section, one directives section, and one results section.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:sequence>
+                    <xsd:element name="generator" type="oval:GeneratorType" minOccurs="1" maxOccurs="1">
+                         <xsd:annotation>
+                              <xsd:documentation>The required generator section provides information about when the results file was compiled and under what version.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="directives" type="oval-res:DirectivesType" minOccurs="1" maxOccurs="1">
+                         <xsd:annotation>
+                              <xsd:documentation>The required directives section presents flags describing what information has been included in the results file.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element ref="oval-def:oval_definitions" minOccurs="0" maxOccurs="1">
+                         <xsd:annotation>
+                              <xsd:documentation>The oval_definitions section is optional and dependent on the directives that are set. Its purpose is to provide an exact copy of the definitions evaluated for the results file.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element name="results" type="oval-res:ResultsType" minOccurs="1" maxOccurs="1">
+                         <xsd:annotation>
+                              <xsd:documentation>The required results section holds all the results of the evaluated definitions.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:element>
+                    <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1">
+                         <xsd:annotation>
+                              <xsd:documentation>The optional Signature element allows an XML Signature as defined by the W3C to be attached to the document. This allows authentication and data integrity to be provided to the user. Enveloped signatures are supported. More information about the official W3C Recommendation regarding XML digital signatures can be found at http://www.w3.org/TR/xmldsig-core/.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:element>
+               </xsd:sequence>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =================================  GENERATOR  ================================= -->
+     <!-- =============================================================================== -->
+     <!--
+		The GeneratorType is defined by the oval definition schema.  Please refer to
+		that documentation for a description of the complex type.
+	 -->
+     <!-- =============================================================================== -->
+     <!-- ================================  DIRECTIVES  ================================= -->
+     <!-- =============================================================================== -->
+     <xsd:complexType name="DirectivesType">
+          <xsd:annotation>
+               <xsd:documentation>The DirectivesType complex type presents flags describing what information has been included in the results file. There are six possible results (true, false, unknown, error, not evaluated, and not applicable) for an evaluation of an OVAL Definition. The directives state which of these results are being reported in the results file. For example, a results file dealing with vulnerabilities might only present to the user the definitions that returned a true result meaning the vulnerability exists. A different result file dealing with compliance definitions might want to report the results of all definitions except those not evaluated.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:sequence>
+               <xsd:element name="definition_true" type="oval-res:DirectiveType" minOccurs="1" maxOccurs="1"/>
+               <xsd:element name="definition_false" type="oval-res:DirectiveType" minOccurs="1" maxOccurs="1"/>
+               <xsd:element name="definition_unknown" type="oval-res:DirectiveType" minOccurs="1" maxOccurs="1"/>
+               <xsd:element name="definition_error" type="oval-res:DirectiveType" minOccurs="1" maxOccurs="1"/>
+               <xsd:element name="definition_not_evaluated" type="oval-res:DirectiveType" minOccurs="1" maxOccurs="1"/>
+               <xsd:element name="definition_not_applicable" type="oval-res:DirectiveType" minOccurs="1" maxOccurs="1"/>
+          </xsd:sequence>
+     </xsd:complexType>
+     <xsd:complexType name="DirectiveType">
+          <xsd:annotation>
+               <xsd:documentation>Each directive determines whether or not certain results are included in the results file. The required reported attribute controls this by providing a true or false for the specific directive. The optional content attribute controls how much information about the specific result is provided. For example, thin conten would only be the id of the definition and the result, while a full content set would be the definition id with the result along with results for all the individual tests and extended definitions.  Please refer to the contentEnumeration for details about the different content options.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:attribute name="reported" type="xsd:boolean" use="required"/>
+          <xsd:attribute name="content" type="oval-res:ContentEnumeration" use="optional" default="full"/>
+     </xsd:complexType>
+     <!-- =============================================================================== -->
+     <!-- =============================  OVAL DEFINITIONS  ============================== -->
+     <!-- =============================================================================== -->
+     <!--
+		The oval_definitions element is defined by the oval definitions schema.  Please
+		refer to that documentation for a description of the valid elements and types.
+	 -->
+     <!-- =============================================================================== -->
+     <!-- ==================================  RESULTS  ================================== -->
+     <!-- =============================================================================== -->
+     <xsd:complexType name="ResultsType">
+          <xsd:annotation>
+               <xsd:documentation>The ResultsType complex type is a container for one or more system elements. Each system element defines the results associated with an individual system. Please refer to the description of SystemType for more information about an individual system element.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:sequence>
+               <xsd:element name="system" type="oval-res:SystemType" minOccurs="1" maxOccurs="unbounded">
+                    <xsd:key name="definitionInstanceKey">
+                         <xsd:annotation>
+                              <xsd:documentation>Enforce uniqueness in the combination of OVAL id, version, and variable_instance in order to differentiate the individual definition elements.</xsd:documentation>
+                         </xsd:annotation>
+                         <xsd:selector xpath="oval-res:definitions/oval-res:definition"/>
+                         <xsd:field xpath="@definition_id"/>
+                         <xsd:field xpath="@version"/>
+                         <xsd:field xpath="@variable_instance"/>
+                    </xsd:key>
+                    <xsd:key name="testVersionKey">
+                         <xsd:annotation>
+                              <xsd:documentation>Enforce uniqueness in the combination of the individual test ids, version, and the variable_instance of the test.</xsd:documentation>
+                         </xsd:annotation>
+                         <xsd:selector xpath="oval-res:tests/oval-res:test"/>
+                         <xsd:field xpath="@test_id"/>
+                         <xsd:field xpath="@version"/>
+                         <xsd:field xpath="@variable_instance"/>
+                    </xsd:key>
+                     <xsd:keyref name="definitionInstanceKeyRef" refer="oval-res:definitionInstanceKey">
+                           <xsd:annotation>
+                                 <xsd:documentation>Requires each definition reference (used by extend_definitions) to refer to a valid definition id.</xsd:documentation>
+                           </xsd:annotation>
+                           <xsd:selector xpath=".//*"/>
+                           <xsd:field xpath="@definition_ref"/>
+                           <xsd:field xpath="@version"/>
+                           <xsd:field xpath="@variable_instance"/>
+                     </xsd:keyref>
+                     <xsd:keyref name="testVersionKeyRef" refer="oval-res:testVersionKey">
+                         <xsd:annotation>
+                              <xsd:documentation>Requires each test reference to refer to a valid test id.</xsd:documentation>
+                         </xsd:annotation>
+                         <xsd:selector xpath=".//*"/>
+                         <xsd:field xpath="@test_ref"/>
+                         <xsd:field xpath="@version"/>
+                         <xsd:field xpath="@variable_instance"/>
+                    </xsd:keyref>
+               </xsd:element>
+          </xsd:sequence>
+     </xsd:complexType>
+     <xsd:complexType name="SystemType">
+          <xsd:annotation>
+               <xsd:documentation>The SystemType complex type holds the evaluation results of the definitions and tests, as well as a copy of the OVAL System Characteristics used to perform the evaluation. The definitions section holds the results of the definitions and the tests section holds the results of the tests. The oval_system_characteristics section is a copy of the system characteristics file used to perform the evaluation of the OVAL Definitions. Note that the oval_definitions part of the system characteristics file should be left out as the definition information has already been included at the top of the results file.</xsd:documentation>
+               <xsd:appinfo>
+                    <sch:pattern id="system">
+                         <sch:rule context="oval-res:system[oval-res:tests]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='full' or /oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='full' or /oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='full' or /oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='full' or /oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='full' or /oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='full'">the tests element should not be included unless full results are to be provided (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:system[not(oval-res:tests)]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='thin' and /oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='thin' and /oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='thin' and /oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='thin' and /oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='thin' and /oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='thin'">the tests element should be included when full results are specified (see directives)</sch:assert>
+                         </sch:rule>
+                    </sch:pattern>
+               </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:sequence>
+               <xsd:element name="definitions" type="oval-res:DefinitionsType" minOccurs="0" maxOccurs="1"/>
+               <xsd:element name="tests" type="oval-res:TestsType" minOccurs="0" maxOccurs="1"/>
+               <xsd:element ref="oval-sc:oval_system_characteristics" minOccurs="1" maxOccurs="1"/>
+          </xsd:sequence>
+     </xsd:complexType>
+     <xsd:complexType name="DefinitionsType">
+          <xsd:annotation>
+               <xsd:documentation>The DefinitionsType complex type is a container for one or more definition elements. Each definition element holds the result of the evaluation of an OVAL Definition. Please refer to the description of DefinitionType for more information about an individual definition element.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:sequence>
+               <xsd:element name="definition" type="oval-res:DefinitionType" minOccurs="1" maxOccurs="unbounded"/>
+          </xsd:sequence>
+     </xsd:complexType>
+     <xsd:complexType name="DefinitionType">
+          <xsd:annotation>
+               <xsd:documentation>The DefinitionType complex type holds the result of the evaluation of an OVAL Definition. The message element holds an error message or some other string that the analysis engine wishes to pass along. In addition, the optional criteria element provides the results of the individual pieces of the criteria. Please refer to the description of the CriteriaType for more information.</xsd:documentation>
+               <xsd:documentation>The required definition_id attribute is the OVAL id of the definition. The required version attribute is the specific version of the OVAL Definition used during analysis. The optional variable_instance attrbitue is a unique id that differentiates every unique instance (based on the value of variables used) of a definition in the OVAL Results file. Languages that include OVAL might reference the same definition multiple times. Each time a different set of values is supplied for the variables, a new instance of the definition result must be created. (definitions that do not use variables can only have one unique instance) The inclusion of a unique instance identifier will allow the OVAL results file to report the correct result of a definition for each combination of supplied values. The required result attribute holds the result of the evaluation. Please refer to the description of the resultEnumeration for details about the different result values.</xsd:documentation>
+               <xsd:appinfo>
+                    <sch:pattern id="directives">
+                         <sch:rule context="oval-res:definition[@result='true' and oval-res:criteria]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of TRUE should not be included (see directives)</sch:assert>
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='full'"><sch:value-of select="@definition_id"/> - definitions with a result of TRUE should contain THIN content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='true' and not(oval-res:criteria)]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of TRUE should not be included (see directives) xx</sch:assert>
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_true/@content='thin'"><sch:value-of select="@definition_id"/> - definitions with a result of TRUE should contain FULL content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='false' and oval-res:criteria]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of FALSE should not be included (see directives)</sch:assert>
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='full'"><sch:value-of select="@definition_id"/> - definitions with a result of FALSE should contain THIN content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='false' and not(oval-res:criteria)]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of FALSE should not be included (see directives)</sch:assert>
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_false/@content='thin'"><sch:value-of select="@definition_id"/> - definitions with a result of FALSE should contain FULL content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='unknown' and oval-res:criteria]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of UNKNOWN should not be included (see directives)</sch:assert>
+                               <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='full'"><sch:value-of select="@definition_id"/> - definitions with a result of UNKNOWN should contain THIN content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='unknown' and not(oval-res:criteria)]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of UNKNOWN should not be included (see directives)</sch:assert>
+                               <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_unknown/@content='thin'"><sch:value-of select="@definition_id"/> - definitions with a result of UNKNOWN should contain FULL content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='error' and oval-res:criteria]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of ERROR should not be included (see directives)</sch:assert>
+                               <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='full'"><sch:value-of select="@definition_id"/> - definitions with a result of ERROR should contain THIN content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='error' and not(oval-res:criteria)]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of ERROR should not be included (see directives)</sch:assert>
+                               <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_error/@content='thin'"><sch:value-of select="@definition_id"/> - definitions with a result of ERROR should contain FULL content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='not evaluated' and oval-res:criteria]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of NOT EVALUATED should not be included (see directives)</sch:assert>
+                               <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='full'"><sch:value-of select="@definition_id"/> - definitions with a result of NOT EVALUATED should contain THIN content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='not evaluated' and not(oval-res:criteria)]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of NOT EVALUATED should not be included (see directives)</sch:assert>
+                               <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_not_evaluated/@content='thin'"><sch:value-of select="@definition_id"/> - definitions with a result of NOT EVALUATED should contain FULL content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='not applicable' and oval-res:criteria]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of NOT APPLICABLE should not be included (see directives)</sch:assert>
+                               <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='full'"><sch:value-of select="@definition_id"/> - definitions with a result of NOT APPLICABLE should contain THIN content (see directives)</sch:assert>
+                         </sch:rule>
+                         <sch:rule context="oval-res:definition[@result='not applicable' and not(oval-res:criteria)]">
+                              <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@reported='true'"><sch:value-of select="@definition_id"/> - definitions with a result of NOT APPLICABLE should not be included (see directives)</sch:assert>
+                               <sch:assert test="/oval-res:oval_results/oval-res:directives/oval-res:definition_not_applicable/@content='thin'"><sch:value-of select="@definition_id"/> - definitions with a result of NOT APPLICABLE should contain FULL content (see directives)</sch:assert>
+                         </sch:rule>
+                    </sch:pattern>
+               </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:sequence>
+               <xsd:element name="message" type="oval:MessageType" minOccurs="0" maxOccurs="unbounded"/>
+               <xsd:element name="criteria" type="oval-res:CriteriaType" minOccurs="0" maxOccurs="1"/>
+          </xsd:sequence>
+          <xsd:attribute name="definition_id" type="oval:DefinitionIDPattern" use="required"/>
+          <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
+          <xsd:attribute name="variable_instance" type="xsd:nonNegativeInteger" use="optional" default="1"/>
+          <xsd:attribute name="result" type="oval-res:ResultEnumeration" use="required"/>
+     </xsd:complexType>
+     <xsd:complexType name="CriteriaType">
+          <xsd:annotation>
+               <xsd:documentation>The CriteriaType complex type describes the high level container for all the tests and represents the meat of the definition. Each criteria can contain other criteria elements in a recursive structure allowing complex logical trees to be constructed. Each referenced test is represented by a criterion element. Please refer to the description of the CriterionType for more information about and individual criterion element. The optional extend_definition element allows existing definitions to be included in the criteria. Refer to the description of the ExtendDefinitionType for more information.</xsd:documentation>
+               <xsd:documentation>The required operator attribute provides the logical operator that binds the different statements inside a criteria together. The optional negate attribute signifies that the result of an extended definition should be negated during analysis. For example, consider a definition that evaluates TRUE if a certain software is installed. By negating the definition, it now evaluates to TRUE if the software is NOT installed. The required result attribute holds the result of the evaluation of the criteria. Note that this would be after any negation operation has been applied. Please refer to the description of the resultEnumeration for details about the different result values.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:choice minOccurs="1" maxOccurs="unbounded">
+               <xsd:element name="criteria" type="oval-res:CriteriaType"/>
+               <xsd:element name="criterion" type="oval-res:CriterionType"/>
+               <xsd:element name="extend_definition" type="oval-res:ExtendDefinitionType"/>
+          </xsd:choice>
+          <xsd:attribute name="operator" type="oval:OperatorEnumeration" use="required"/>
+          <xsd:attribute name="negate" type="xsd:boolean" use="optional" default="false"/>
+          <xsd:attribute name="result" type="oval-res:ResultEnumeration" use="required"/>
+     </xsd:complexType>
+     <xsd:complexType name="CriterionType">
+          <xsd:annotation>
+               <xsd:documentation>The CriterionType complex type identifies a specific test that is included in the definition's criteria.</xsd:documentation>
+               <xsd:documentation>The required test_id attribute is the actual id of the included test. The required version attribute is the specific version of the OVAL Test used during analysis. The optional variable_instance attribute differentiates between unique instances of a test. This can happen when a test includes a variable reference and different values for that variable are used by different definitions. The optional negate attribute signifies that the result of an individual test should be negated during analysis. For example, consider a test that evaluates to TRUE if a specific patch is installed. By negating this test, it now evaluates to TRUE if the patch is NOT installed. The required result attribute holds the result of the evaluation. Please refer to the description of the resultEnumeration for details about the different result values.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:attribute name="test_ref" type="oval:TestIDPattern" use="required"/>
+          <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
+          <xsd:attribute name="variable_instance" type="xsd:nonNegativeInteger" use="optional" default="1"/>
+          <xsd:attribute name="negate" type="xsd:boolean" use="optional" default="false"/>
+          <xsd:attribute name="result" type="oval-res:ResultEnumeration" use="required"/>
+     </xsd:complexType>
+     <xsd:complexType name="ExtendDefinitionType">
+          <xsd:annotation>
+               <xsd:documentation>The ExtendDefinitionType complex type identifies a specific definition that has been extended by the criteria.</xsd:documentation>
+               <xsd:documentation>The required definition_id attribute is the actual id of the extended definition. The required version attribute is the specific version of the OVAL Definition used during analysis. The optional variable_instance identifier is a unique id that differentiates every unique instance of a definition in the OVAL Results file based on the combination of variable values used. Languages that include OVAL might reference the same definition multiple times. Each time a different set of values is supplied for the variables, a new instance of the definition must be created. (definitions that do not use variables can only have one unique instance) The inclusion of a unique instance identifier will allow the OVAL results file to report the correct result of a definition for each combination of supplied values. The optional negate attribute signifies that the result of an extended definition should be negated during analysis. For example, consider a definition that evaluates TRUE if a certain software is installed. By negating the definition, it now evaluates to TRUE if the software is NOT installed. The required result attribute holds the result of the evaluation. Please refer to the description of the resultEnumeration for details about the different result values.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:attribute name="definition_ref" type="oval:DefinitionIDPattern" use="required"/>
+          <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
+          <xsd:attribute name="variable_instance" type="xsd:nonNegativeInteger" use="optional" default="1"/>
+          <xsd:attribute name="negate" type="xsd:boolean" use="optional" default="false"/>
+          <xsd:attribute name="result" type="oval-res:ResultEnumeration" use="required"/>
+     </xsd:complexType>
+     <xsd:complexType name="TestsType">
+          <xsd:annotation>
+               <xsd:documentation>The TestsType complex type is a container for one or more test elements. Each test element holds the result of the evaluation of an OVAL Test. Please refer to the description of TestType for more information about an individual test element.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:sequence>
+               <xsd:element name="test" type="oval-res:TestType" minOccurs="1" maxOccurs="unbounded"/>
+          </xsd:sequence>
+     </xsd:complexType>
+     <xsd:complexType name="TestType">
+          <xsd:annotation>
+               <xsd:documentation>The TestType complex type provides a reference to every item that matched the object section of the original test as well as providing an overall test result based on these items. The optional message element holds an error message or some other string that the analysis engine wishes to pass along. The optional tested_variable elements hold the value of each variable used by the test during evaluation. This includes the values used in both OVAL Objects and OVAL States. If a variable represents an array of values, then multiple tested_variable elements would exist with the same variable_id attribute. Please refer to the description of TestedVariableType for more information.</xsd:documentation>
+               <xsd:documentation>The required test_id attribute identifies the test, and must conform to the format specified by the testidPattern simple type. The required version attribute is the specific version of the OVAL Test used during analysis. The optional variable_instance attribute differentiates between unique instances of a test. This can happen when a test includes a variable reference and different values for that variable are used by different definitions. The required check_existance attribute is used in determining the overall result by signifying how many matching items must exist.  The optional check_state attribute is also used in determining the overall result and is used to define how many of the matching items must meet the supplied OVAL State.  (For example: Should the test check that all files match a specified version or that at least one file matches the specified version?) The valid values for both the check_existance and check_state attribute are explained in the simple type declarations found in the common schema.</xsd:documentation>
+               <xsd:documentation> The required result attribute holds the result of the evaluation. Please refer to the description of the resultEnumeration for details about the different result values.  The overall result of the test is determined by the results of each matching item and the different check attributes.  If you are using an OVAL System Characteristics file, then the following rules apply:  If a collected_object is not found the result for the OVAL Test should be "unknown". When the flag attribute of the collected_object is “error” the result for the OVAL Test should be set to “error”.  When the flag attribute is “complete” the result of the test is determined by first evaluating the check_existance attribute on the test and then evaluating the check_state attribute. The check_state attribute only needs to be considered if the result of evaluating the check_existance attribute is “true”.  When the flag attribute is “does not exist” the result of the test is determined by examining the check_existance attribute’s value, if the check_existance attribute is “none_exist” or “any_exist” the Test should evaluate to “true”, for all other values of the check_existance attribute the Test should evaluate to “false”.  When the flag attribute is “not collected” the result of the test should be set to “unknown”.  When the flag attribute is “not applicable” the result for the Test should be set to “not applicable”.  When the flag attribute is “incomplete” it may not be possible to determine a result other than “unknown” for the test. However, in some cases it will be possible to determine a result. These cases are: 1) when the check_existance attribute on a test is set to “none_exist” and the collected object has 1 or more item references with a status of "exists" a result of “false” should be reported  2) when the check_existance attribute is set to “only_one_exists” the collected object has more than 1 item reference with a status of "exists" a result of “false” should be reported  3) if after evaluating the check_existance attribute a non "true" result has not been determined the check_state attribute must be considered. As follows: 3a) if the check_state attribute evaluation results in "false" then the OVAL Test result should be set to "false" 3b) if the check_state attribute is set to "at_least_one_satisfies" and its evaluation results in "true" the OVAL Test result should be set to "true". For all other cases when the collected_object flag is "incompete" the OVAL Test result should be set to "unknown".</xsd:documentation>
+               <xsd:appinfo>
+                    <sch:pattern id="testids">
+                         <sch:rule context="oval-res:test">
+                              <sch:assert test="@test_id = ../../oval-res:definitions//oval-res:criterion/@test_ref"><sch:value-of select="@test_id"/> - the specific test is not used in any definition's criteria</sch:assert>
+                         </sch:rule>
+                    </sch:pattern>
+               </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:sequence>
+               <xsd:element name="message" type="oval:MessageType" minOccurs="0" maxOccurs="unbounded"/>
+               <xsd:element name="tested_item" type="oval-res:TestedItemType" minOccurs="0" maxOccurs="unbounded"/>
+               <xsd:element name="tested_variable" type="oval-res:TestedVariableType" minOccurs="0" maxOccurs="unbounded"/>
+          </xsd:sequence>
+          <xsd:attribute name="test_id" type="oval:TestIDPattern" use="required"/>
+          <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
+          <xsd:attribute name="variable_instance" type="xsd:nonNegativeInteger" use="optional" default="1"/>
+          <xsd:attribute name="check_existence" type="oval:ExistenceEnumeration" use="optional" default="at_least_one_exists"/>
+          <xsd:attribute name="check" type="oval:CheckEnumeration" use="required"/>
+          <xsd:attribute name="result" type="oval-res:ResultEnumeration" use="required"/>
+     </xsd:complexType>
+     <xsd:complexType name="TestedItemType">
+          <xsd:annotation>
+               <xsd:documentation>The TestedItemType complex type holds a reference to each system characteristic item that matches the object specified in a test. Details of the item can be found in the oval_system_characteristics section of the OVAL Results file by using the required item_id. The optional message element holds an error message or some other string that the analysis engine wishes to pass along. The required result attribute holds the result of the evaluation of the individual item as it relates to the state specified by the test. Please refer to the description of the resultEnumeration for details about the different result values.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:sequence>
+               <xsd:element name="message" type="oval:MessageType" minOccurs="0" maxOccurs="unbounded"/>
+          </xsd:sequence>
+          <xsd:attribute name="item_id" type="oval:ItemIDPattern" use="required"/>
+          <xsd:attribute name="result" type="oval-res:ResultEnumeration" use="required"/>
+     </xsd:complexType>
+     <xsd:complexType name="TestedVariableType">
+          <xsd:annotation>
+               <xsd:documentation>The TestedVariableType complex type holds the value to a variable used during the evaluation of a test. Of special importance are the values of any external variables used since these values are not captured in either the definition or system characteristic files. If a variable is represented by an array of values, then multiple elements of TestedVariableType, each with the same variable_id attribute, would exist. The required variable_id attribute is the unique id of the variable that was used.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:extension base="xsd:anySimpleType">
+                    <xsd:attribute name="variable_id" type="oval:VariableIDPattern" use="required"/>
+               </xsd:extension>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <!-- =============================================================================== -->
+     <!-- =================================  SIGNATURE  ================================= -->
+     <!-- =============================================================================== -->
+     <!--
+		The signature element is defined by the xmldsig schema.  Please refer to that
+		documentation for a description of the valid elements and types.  More
+		information about the official W3C Recommendation regarding XML digital
+		signatures can be found at http://www.w3.org/TR/xmldsig-core/.
+	-->
+     <!-- =============================================================================== -->
+     <!-- ===============================  ENUMERATIONS  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:simpleType name="ContentEnumeration">
+          <xsd:annotation>
+               <xsd:documentation>Defines the valid values for the directives controlling the expected content of the results file. The specific content that is expected with each value is defined by a style sheet that complements the OVAL Results Schema. Please refer to these style sheets for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:restriction base="xsd:string">
+               <xsd:enumeration value="thin">
+                    <xsd:annotation>
+                         <xsd:documentation>A value of 'thin' means only the minimal amount of information will be provided. This is the id associated with an evaluated OVAL Definition and the result of the evaluation. The criteria child element of a definition should not be present when providing thin results. In addition, system characteristic information for the objects used by the given definition should not be presented.</xsd:documentation>
+                    </xsd:annotation>
+               </xsd:enumeration>
+               <xsd:enumeration value="full">
+                    <xsd:annotation>
+                         <xsd:documentation>A value of 'full' means that very detailed information will be provided allowing in-depth reports to be generated from the results. In addition to the results of the evaluated definition, the results of all extended definitions and tests included in the criteria as well as the actual information collected off the system must be presented.</xsd:documentation>
+                    </xsd:annotation>
+               </xsd:enumeration>
+          </xsd:restriction>
+     </xsd:simpleType>
+     <xsd:simpleType name="ResultEnumeration">
+          <xsd:annotation>
+               <xsd:documentation>Define acceptable result values for the evaluation of an OVAL Definition or an OVAL Test.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:restriction base="xsd:string">
+               <xsd:enumeration value="true">
+                    <xsd:annotation>
+                         <xsd:documentation>When evaluating a definition or test, a result value of 'true' means that the characteristics being evaluated match the information represented in the system characteristic file.</xsd:documentation>
+                    </xsd:annotation>
+               </xsd:enumeration>
+               <xsd:enumeration value="false">
+                    <xsd:annotation>
+                         <xsd:documentation>When evaluating a definition or test, a result value of 'false' means that the characteristics being evaluated do not match the information represented in the system characteristic file.</xsd:documentation>
+                    </xsd:annotation>
+               </xsd:enumeration>
+               <xsd:enumeration value="unknown">
+                    <xsd:annotation>
+                         <xsd:documentation>When evaluating a definition or test, a result value of 'unknown' means that the characteristics being evaluated can not be found in the system characteristic file. (or the characteristics can be found but collected object flag is 'not collected') For example, assume you have a definition that tests a file, but when you look at the system characteristic file, data pertaining to that file can not be found. The lack of an object (in the collected_object section) for this file in the SC file means that no attempt was made to even try and collect information about the file. So you do not know what the result would be if it was collected. Note that finding a collected_object element in the system characteristic file is not the same as finding a matching element of the system. When evaluating an OVAL Test, the lack of a matching object on a system (for example, file not found) does not mean an unknown result since part of a test in OVAL is about existence. In this case the result would be 'false'.</xsd:documentation>
+                    </xsd:annotation>
+               </xsd:enumeration>
+               <xsd:enumeration value="error">
+                    <xsd:annotation>
+                         <xsd:documentation>When evaluating a definition or test, a result value of 'error' means that the characteristics being evaluated exist in the system characteristic file but there was an error either collecting information or in performing anaylsis. For example, if there was an error returned by an api when trying to determine if an object exists on a system. Another example would be: xsi:nil might be set on an object entity, but then the entity is compared to a state entity with a value, thus producing an error.</xsd:documentation>
+                    </xsd:annotation>
+               </xsd:enumeration>
+               <xsd:enumeration value="not evaluated">
+                    <xsd:annotation>
+                         <xsd:documentation>When evaluating a definition or test, a result value of 'not evaluated' means that a choice was made not to evaluate the given definition or test. The actual result is in essence unknown since if evaluation had occurred it could have been either true or false.</xsd:documentation>
+                    </xsd:annotation>
+               </xsd:enumeration>
+               <xsd:enumeration value="not applicable">
+                    <xsd:annotation>
+                         <xsd:documentation>When evaluating a definition or test, a result value of 'not applicable' means that the definition or test being evaluated is not valid on the given platform. For example, trying to collect Linux RPM information on a Windows system.  Another example would be in trying to collect RPM information on a linux system that does not have the RPM packaging system installed.</xsd:documentation>
+                    </xsd:annotation>
+               </xsd:enumeration>
+          </xsd:restriction>
+     </xsd:simpleType>
+</xsd:schema>

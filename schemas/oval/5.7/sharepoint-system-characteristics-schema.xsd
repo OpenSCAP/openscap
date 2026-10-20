@@ -1,0 +1,1994 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:sp-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#sharepoint" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#sharepoint" elementFormDefault="qualified" version="5.7">
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation>The following is a description of the elements, types, and attributes that compose the SharePoint specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard item element defined in the Core System Characteristic Schema. Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items. Each item is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+            <xsd:documentation>The SharePoint Component Schema is based on the SharePoint Object Model (Windows SharePoint Services 3.0)</xsd:documentation>
+            <xsd:documentation>The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>SharePoint System Characteristics</schema>
+                  <version>5.7</version>
+                  <date>5/3/2010 8:41:20 PM</date>
+                  <terms_of_use>Copyright (c) 2002-2010, The MITRE Corporation. All rights reserved. The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema. When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                  <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+                  <sch:ns prefix="sp-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#sharepoint"/>
+                  <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+            </xsd:appinfo>
+      </xsd:annotation>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPWEBAPPLCIATION ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spwebapplication_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spwebapplication item stores information for security related features and permissions related to each web application. See the defintion of the SPWebApplication class in the SharePoint object model documentation. </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="webapplicationurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the url that identifies the web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemwebapplicationurl">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:webapplicationurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the webapplicationurl entity of a spwebapplication_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowparttopartcommunication" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a user can create connections between Web Parts.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemallowparttopartcommunication">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:allowparttopartcommunication">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the allowparttopartcommunication entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowaccesstowebpartcatalog" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a user can create connections to Online Web Part Galleries.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemallowaccesstowebpartcatalog">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:allowaccesstowebpartcatalog">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the allowaccesstowebpartcatalog entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="blockedfileextention" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="unbounded">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A single blockedfileextention for the application. An applicaiton may have zero or more blocked file extensions.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemblockedfileextention">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:blockedfileextentions">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the blockedfileextention entity of a spwebapplication_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="defaultquotatemplate" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the default quota template for the web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemdefaultquotatemplate">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:defaultquotatemplate">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the defaultquotatemplate entity of a spwebapplication_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="externalworkflowparticipantsenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a user is allowed to participate in workflow by sending them a copy of the document.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemexternalworkflowparticipantsenabled">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:externalworkflowparticipantsenabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the externalworkflowparticipantsenabled entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="recyclebinenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the recycle bin is enabled or disabled.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemrecyclebinenabled">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:recyclebinenabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the recyclebinenabled entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="automaticallydeleteunusedsitecollections" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the site can be automatically deleted.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemautomaticallydeleteunusedsitecollections">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:automaticallydeleteunusedsitecollections">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the automaticallydeleteunusedsitecollections entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="selfservicesitecreationenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a self service site can be created.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemselfservicesitecreationenabled">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:selfservicesitecreationenabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the selfservicesitecreationenabled entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="secondstagerecyclebinquota" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Size of the second stage recycle bin quota.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemsecondstagerecyclebinquota">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:secondstagerecyclebinquota">
+                                                                  <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the secondstagerecyclebinquota entity of a spwebapplication_item should be 'int'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="recyclebinretentionperiod" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The recyclebinretentionperiod is the retention period for the recyle bin.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemrecyclebinretentionperiod">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:recyclebinretentionperiod">
+                                                                  <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the recyclebinretentionperiod entity of a spwebapplication_item should be 'int'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="outboundmailserverinstance" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the outboundmailserver.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemoutboundmailserverinstance">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:outboundmailserverinstance">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the outboundmailserverinstance entity of a spwebapplication_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="outboundmailsenderaddress" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The from address that is used when sending email.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemoutboundmailsenderaddress">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:outboundmailsenderaddress">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the outboundmailsenderaddress entity of a spwebapplication_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="outboundmailreplytoaddress" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The reply to address that is used when sending email.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemoutboundmailreplytoaddress">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:outboundmailreplytoaddress">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the outboundmailreplytoaddress entity of a spwebapplication_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="secvalexpires" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a security validation can expire.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemsecvalexpires">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:secvalexpires">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for thesecvalexpires entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="timeout" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The timeout is the amount of time before security validation expires.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemtimeout">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:timeout">
+                                                                  <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the timeout entity of a spwebapplication_item should be 'int'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="isadministrationwebapplication" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that specifies whether the current web application is the Central Administration web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemisadministrationwebapplication">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:isadministrationwebapplication">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the isadministrationwebapplication entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="applicationpoolname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string that represents the application pool name.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemapplicationpoolname">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:applicationpoolname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the applicationpoolname entity of a spwebapplication_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="applicationpoolusername" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string that represents the application pool username.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemapplicationpoolusername">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:applicationpoolusername">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the applicationpoolusername entity of a spwebapplication_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="openitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view the source of documents with server-side file handlers is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemopenitems">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:openitems">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the openitems entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="addlistitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to add items to lists, add documents to document libraries, and add Web discussion comments to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemaddlistitems">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:addlistitems">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the addlistitems entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="approveitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to approve a minor version of a list item or document is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemapproveitems">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:approveitems">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the approveitems entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="deletelistitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to delete items from a list, documents from a document library, and Web discussion comments in documents is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemdeletelistitems">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:deletelistitems">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the deletelistitems entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="deleteversions" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to delete past versions of a list item or document is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemdeleteversions">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:deleteversions">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the deleteversions entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="editlistitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if edit items in lists, edit documents in document libraries, edit Web discussion comments in documents, and customize Web Part Pages in document libraries is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemeditlistitems">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:editlistitems">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the editlistitems entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="managelists" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create and delete lists, add or remove columns in a list, and add or remove public views of a list is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemmanagelists">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:managelists">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the managelists entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewversions" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view past versions of a list item or document is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemviewversions">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:viewversions">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the viewversions entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewlistitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view items in lists, documents in document libraries, and view Web discussion commentsis available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemviewlistitems">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:viewlistitems">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the viewlistitems entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="cancelcheckout" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to discard or check in a document which is checked out to another user is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemcancelcheckout">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:cancelcheckout">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the cancelcheckout entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="createalerts" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to Create e-mail alerts is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemcreatealerts">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:createalerts">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the createalerts entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewformpages" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view forms, views, and application pages, and enumerate lists is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemviewformpages">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:viewformpages">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the viewformpages entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewpages" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view pages in a Web site is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemviewpages">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:viewpages">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the viewpages entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="addandcustomizepages" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemaddandcustomizepages">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:addandcustomizepages">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the addandcustomizepages entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="applystylesheets" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to Apply a style sheet (.css file) to the Web site is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemapplystylesheets">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:applystylesheets">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the applystylesheets entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="applythemeandborder" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to apply a theme or borders to the entire Web site is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemapplythemeandborder">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:applythemeandborder">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the applythemeandborder entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="browsedirectories" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to enumerate files and folders in a Web site using Microsoft Office SharePoint Designer and WebDAV interfaces is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitembrowsedirectories">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:browsedirectories">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the browsedirectories entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="browseuserinfo" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view information about users of the Web site is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitembrowseuserinfo">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:browseuserinfo">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the browseuserinfo entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="creategroups" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create a group of users that can be used anywhere within the site collection is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemcreategroups">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:creategroups">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the creategroups entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="createsscsite" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create a Web site using Self-Service Site Creation is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemcreatesscsite">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:createsscsite">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the createsscsite entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="editmyuserinfo" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to allows a user to change his or her user information, such as adding a picture is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemeditmyuserinfo">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:editmyuserinfo">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the editmyuserinfo entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="enumeratepermissions" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to enumerate permissions on the Web site, list, folder, document, or list itemis is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemenumeratepermissions">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:enumeratepermissions">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the enumeratepermissions entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="managealerts" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to manage alerts for all users of the Web site is available for the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemmanagealerts">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:managealerts">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the managealerts entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="managepermissions" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create and change permission levels on the Web site and assign permissions to users and groups is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemmanagepermissions">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:managepermissions">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the managepermissions entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="managesubwebs" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create subsites such as team sites, Meeting Workspace sites, and Document Workspace sites is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemmanagesubwebs">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:managesubwebs">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the managesubwebs entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="manageweb" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to perform all administration tasks for the Web site as well as manage content is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemmanageweb">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:manageweb">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the manageweb entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="open" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to allow users to open a Web site, list, or folder to access items inside that containeris available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemopens">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:open">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the open entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="useclientintegration" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to use features that launch client applications; otherwise, users must work on documents locally and upload changesis is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemuseclientintegration">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:useclientintegration">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the useclientintegration entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="useremoteapis" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to use SOAP, WebDAV, or Microsoft Office SharePoint Designer interfaces to access the Web siteis available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemuseremoteapis">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:useremoteapis">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the useremoteapis entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewusagedata" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view reports on Web site usage in documents is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemviewusagedata">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:viewusagedata">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the viewusagedata entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="managepersonalviews" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to Create, change, and delete personal views of lists is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemmanagepersonalviews">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:managepersonalviews">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the managepersonalviews entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="adddelprivatewebparts" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to add or remove personal Web Parts on a Web Part Page is available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemadddelprivatewebparts">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:adddelprivatewebparts">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the adddelprivatewebparts entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="updatepersonalwebparts" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to update Web Parts to display personalized informationis available to the Web application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webappitemupdatepersonalwebparts">
+                                                            <sch:rule context="sp-sc:spwebapplication_item/sp-sc:updatepersonalwebparts">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the updatepersonalwebparts entity of an spwebapplication_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPGROUP ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spgroup_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spgroup item stores information for security related features related to site groups </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the url that identifies the site collection.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_grpitemsitecollectionurl">
+                                                            <sch:rule context="sp-sc:spgroup_item/sp-sc:sitecollectionurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the sitecollectionurl entity of a spgroup_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="gname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the name of a group in a site collection.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_grpitemgname">
+                                                            <sch:rule context="sp-sc:spgroup_item/sp-sc:gname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the gname entity of a spgroup_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="autoacceptrequesttojoinleave" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if sites can automatically accepts requests.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_grpitemautoacceptrequesttojoinleave">
+                                                            <sch:rule context="sp-sc:spgroup_item/sp-sc:autoacceptrequesttojoinleave">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the autoacceptrequesttojoinleave entity of an spgroup_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowmemberseditmembership" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if owners other than the group owner can edit the membership of groups.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_grpitemallowmemberseditmembership">
+                                                            <sch:rule context="sp-sc:spgroup_item/sp-sc:allowmemberseditmembership">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the allowmemberseditmembership entity of an spgroup_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="onlyallowmembersviewmembership" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if owners other than the group owner can edit the membership of groups.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_grpitemonlyallowmembersviewmembership">
+                                                            <sch:rule context="sp-sc:spgroup_item/sp-sc:onlyallowmembersviewmembership">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the onlyallowmembersviewmembership entity of an spgroup_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPWEB ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spweb_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spweb item stores information for security related features related to site collections. </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="webcollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the Web application url.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webitemwebcollectionurl">
+                                                            <sch:rule context="sp-sc:spweb_item/sp-sc:webcollectionurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the webapplicationurl entity of a spgroup_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the sitecollection url.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webitemsitecollectionurl">
+                                                            <sch:rule context="sp-sc:spweb_item/sp-sc:sitecollectionurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the sitecollectionurl entity of a spgroup_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="secondarysitecolladmin" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the secondarysitecolladmin.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webitemsecondarysitecolladmin">
+                                                            <sch:rule context="sp-sc:spweb_item/sp-sc:secondarysitecolladmin">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the secondarysitecolladmin entity of a spgroup_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="secondsitecolladminenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the secondsitecolladmin is enabled.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webitemsecondsitecolladminenabled">
+                                                            <sch:rule context="sp-sc:spweb_item/sp-sc:secondsitecolladminenabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the secondsiteadminenabled entity of an spweb_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowanonymousaccess" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a anonymous access is allowed to the web site.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_webitemallowanonymousaccess">
+                                                            <sch:rule context="sp-sc:spweb_item/sp-sc:allowanonymousaccess">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the allowanonymousaccess entity of an spweb_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPLIST ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="splist_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>An SPList represents a list of content on a Sharepoint web site. It consists of items or rows and columns or fields that contain data.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="spsiteurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The url that identifies the website.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_listitemspwebsiteurl">
+                                                            <sch:rule context="sp-sc:splist_item/sp-sc:spwebsiteurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the websiteurl entity of a splist_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="irmenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The irmenabled attribute tests to see if documents that leave the Sharepoint environment are protected.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_listitemirmenabled">
+                                                            <sch:rule context="sp-sc:splist_item/sp-sc:irmenabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the irmenabled entity of an splist_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="enableversioning" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The enableversioning attribute specifies whether backup copies of files should be created and managed in the Sharepoint system.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_listitemenableversioning">
+                                                            <sch:rule context="sp-sc:splist_item/sp-sc:enableversioning">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the enableversioning entity of an splist_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="nocrawl" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The nocrawl attribute indicates that this site should not be among those crawled and indexed.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_listitemnocrawl">
+                                                            <sch:rule context="sp-sc:splist_item/sp-sc:nocrawl">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the nocrawl entity of an splist_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPANTIVIRUSSETTINGS ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spantivirussettings_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>An SPAntivirusSettings Item represents the set of antivirus-related security settings on a Sharepoint server.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="spwebservicename" type="oval-sc:EntityItemStringType" minOccurs="1" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the SP Web Service for which to retrieve the antivirus settings or * for all web services. The default value is * which checks all SP Web services</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemspwebservicename">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:spwebservicename">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the spwebservicename entity of a spantivirussettings_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="spfarmname" type="oval-sc:EntityItemStringType" minOccurs="1" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The Farm in which the SP Web Service resides.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemspfarmname">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:spfarmname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the spfarmname entity of a spantivirussettings_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowdownload" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether SharePoint users can download documents that are found to be infected.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemallowdownload">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:allowdownload">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the allowdownload entity of an spantivirussettings_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="cleaningenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether or not the virus scanner should attempt to cure infected files.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemcleaningenabled">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:cleaningenabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the cleaningenabled entity of an spantivirussettings_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="downloadscanenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether files are scanned when they are downloaded.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemdownloadscanenabled">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:downloadscanenabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the downloadscanenabled entity of an spantivirussettings_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="numberofthreads" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies the number of threads that the virus scanner may use to perform virus scans.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemnumberofthreads">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:numberofthreads">
+                                                                  <sch:assert test="@datatype='integer'">item <sch:value-of select="../@id"/> - datatype attribute for the numberofthreads entity of an spantivirussettings_item should be 'integer'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="skipsearchcrawl" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether to skip document virus scanning during a search crawl.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemskipsearchcrawl">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:skipsearchcrawl">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the skipsearchcrawl entity of an spantivirussettings_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="timeout" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The amount of time before the virus scanner times out.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemtimeout">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:timeout">
+                                                                  <sch:assert test="@datatype='integer'">item <sch:value-of select="../@id"/> - datatype attribute for the timeout entity of an spantivirussettings_item should be 'integer'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="uploadscanenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether files are scanned for viruses when they are uploaded.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemuploadscanenabled">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:uploadscanenabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the uploadscanenabled entity of an spantivirussettings_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="vendorupdatecount" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The current increment of the number of times the vendor has been updated.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_avsitemvendorupdatecount">
+                                                            <sch:rule context="sp-sc:spantivirussettings_item/sp-sc:vendorupdatecount">
+                                                                  <sch:assert test="@datatype='integer'">item <sch:value-of select="../@id"/> - datatype attribute for the vendorupdatecount entity of an spantivirussettings_item should be 'integer'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPADMINISTRATION ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spsiteadministration_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spsiteadministration item stores information for security related features and permissions related to each top-level web sites. See the defintion of the SPSiteAdministration class in the SharePoint object model documentation. </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the url that identifies the sitecollection application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_siteadminitemsitecollectionurl">
+                                                            <sch:rule context="sp-sc:spsiteadministration_item/sp-sc:sitecollectionurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the sitecollectionurl entity of a spsiteadministration_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="storagemaxlevel" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The storagemaxlevel is the maximum storage allowed for the site.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_siteadminitemstoragemaxlevel">
+                                                            <sch:rule context="sp-sc:spsiteadministration_item/sp-sc:storagemaxlevel">
+                                                                  <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the storagemaxlevel entity of a spsiteadministration_item should be 'int'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="storagewarninglevel" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>When the storagewarninglevel is reached a site collection receive advance notice before available storage is expended.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_siteadminitemstoragewarninglevel">
+                                                            <sch:rule context="sp-sc:spsiteadministration_item/sp-sc:storagewarninglevel">
+                                                                  <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the storagewarninglevel entity of a spwebapplication_item should be 'int'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPSITE ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spsite_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spsite item stores information for security related features for sites. See the defintion of the SPSite class in the SharePoint object model documentation. </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the url that identifies the sitecollection application.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_siteitemsitecollectionurl">
+                                                            <sch:rule context="sp-sc:spsite_item/sp-sc:sitecollectionurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the sitecollectionurl entity of a spsite_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="quotaname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The string that represents the name of the quota for a specific site collection.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_siteitemquotaname">
+                                                            <sch:rule context="sp-sc:spsite_item/sp-sc:quotaname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the quotaname entity of a spsite_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="url" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation></xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_siteitemurl">
+                                                            <sch:rule context="sp-sc:spsite_item/sp-sc:url">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the url entity of a spsite_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPCRAWLRULE ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spcrawlrule_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>The spcrawlrule_item specifies rules that the SharePoint system follows when it crawls the content of sites stored within it.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="spsiteurl" type="oval-sc:EntityItemStringType" minOccurs="1" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A URL that represents the resource (eg. sites, documents,etc.) on which the crawlrule tests should be run or * if the check should be run on all sites/documents on the server.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_critemsiteurl">
+                                                            <sch:rule context="sp-sc:spcrawlrule_item/sp-sc:siteurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the spsiteurl entity of a spcrawlrule_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="crawlashttp" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the crawler should crawl content from a hierarchical content source, such as HTTP content.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_critemcrawlashttp">
+                                                            <sch:rule context="sp-sc:spcrawlrule_item/sp-sc:crawlashttp">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the crawlashttp entity of an spcrawlrule_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="enabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether a particular crawl rule is enabled.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_critemenabled">
+                                                            <sch:rule context="sp-sc:spcrawlrule_item/sp-sc:enabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the enabled entity of an spcrawlrule_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="followcomplexurls" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the indexer should crawl websites that contain the question mark (?) character.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_critemfollowcomplexurls">
+                                                            <sch:rule context="sp-sc:spcrawlrule_item/sp-sc:followcomplexurls">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the followcomplexurls entity of an spcrawlrule_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The path to which a particular crawl rule applies.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_critempath">
+                                                            <sch:rule context="sp-sc:spcrawlrule_item/sp-sc:path">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the path entity of a spcrawlrule_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="priority" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The priority setting for a particular crawl rule.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_critempriority">
+                                                            <sch:rule context="sp-sc:spcrawlrule_item/sp-sc:priority">
+                                                                  <sch:assert test="@datatype='integer'">item <sch:value-of select="../@id"/> - datatype attribute for the priority entity of an spcrawlrule_item should be 'integer'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="suppressindexing" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the crawler should exclude the content of items that this rule applies to from the content index.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_critemsuppressindexing">
+                                                            <sch:rule context="sp-sc:spcrawlrule_item/sp-sc:suppressindexing">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the suppressindexing entity of an spcrawlrule_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="accountname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string containing the account name for the crawl rule.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_critemaccountname">
+                                                            <sch:rule context="sp-sc:spcrawlrule_item/sp-sc:accountname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the accountname entity of a spcrawlrule_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPJOBDEFINITION ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spjobdefinition_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents the set of Job Definitions that are scheduled to run on each SharePoint Web Application</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="webappuri" type="oval-sc:EntityItemStringType" minOccurs="1" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The URI that represents the web application for which the IIS Settings should be checked.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_jobdefitemwebappuri">
+                                                            <sch:rule context="sp-sc:spjobdefinition_item/sp-sc:webappuri">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the webappuri entity of a spjobdefinition_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="displayname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the job as displayed in the SharePoint Central Administration site.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_jobdefitemdisplayname">
+                                                            <sch:rule context="sp-sc:spjobdefinition_item/sp-sc:displayname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the displayname entity of a spjobdefinition_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="isdisabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Determines whether or not the job definition is enabled.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_jobdefitemisdisabled">
+                                                            <sch:rule context="sp-sc:spjobdefinition_item/sp-sc:isdisabled">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the isdisabled entity of an spjobdefinition_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="retry" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Determines whether the job definition should be retried if it ends abnormally.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_jobdefitemretry">
+                                                            <sch:rule context="sp-sc:spjobdefinition_item/sp-sc:retry">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the retry entity of an spjobdefinition_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="title" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The title of a job as displayed in the SharePoint Central Administration site.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_jobdefitemtitle">
+                                                            <sch:rule context="sp-sc:spjobdefinition_item/sp-sc:title">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the title entity of a spjobdefinition_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  BestBet ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="bestbet_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents the set of Best Bets for a site collection.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The sitecollectionurl represents the URL for the site.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_bbitemsitecollectionurl">
+                                                            <sch:rule context="sp-sc:bestbet_item/sp-sc:sitecollectionurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the sitecollectionurl entity of a bestbet_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="bestbeturl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The bestbeturl represents the URL for the best bet.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_bbitembestbeturl">
+                                                            <sch:rule context="sp-sc:bestbet_item/sp-sc:bestbeturl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the bestbeturl entity of a bestbet_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="title" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The title of the Best Bet.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_bbitemtitle">
+                                                            <sch:rule context="sp-sc:bestbet_item/sp-sc:title">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the title entity of a bestbet_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="description" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The description of the Best Bet.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_bbitemdescription">
+                                                            <sch:rule context="sp-sc:bestbet_item/sp-sc:description">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the description entity of a bestbet_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ======================    INFOPOLICYCOLLECTION ITEM  ========================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="infopolicycoll_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents the set of Information Policies for a site collection.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The sitecollectionurl represents the URL for the site.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policycollitemsitecollectionurl">
+                                                            <sch:rule context="sp-sc:policycoll_item/sp-sc:sitecollectionurl">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the sitecollectionurl entity of a policycoll_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The id of the sitecollection poilicy.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policycollitemid">
+                                                            <sch:rule context="sp-sc:policycoll_item/sp-sc:id">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the id entity of a policycoll_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the sitecollection poilicy.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policycollitemname">
+                                                            <sch:rule context="sp-sc:policycoll_item/sp-sc:name">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the name entity of a policycoll_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="description" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The description of the Information Policy.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policycollitemdescription">
+                                                            <sch:rule context="sp-sc:policycoll_item/sp-sc:description">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the description entity of a policycoll_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="longdescription" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The long description of  an Information Policy.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policycollitemlongdescription">
+                                                            <sch:rule context="sp-sc:infopolicy_item/sp-sc:longdescription">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the longdesc entity of a infopolicy_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPDIAGNOSTICSSERVICE ITEM  ========================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spdiagnosticsservice_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents the set of diagnostic capabilities for Windows Sharepoint Services.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="farmname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The farm whose diagnostic capabilities should be checked. Use .* for all farms or SPFarm.Local for the local farm.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticserviceitemfarmname">
+                                                            <sch:rule context="sp-sc:spdiagnosticsservice_item/sp-sc:farmname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the farmname entity of a spdiagnosticsservice_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="displayname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the diagnostic service as shown in the Sharepoint Central Administration site.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticsserviceitemdisplayname">
+                                                            <sch:rule context="sp-sc:spdiagnosticsservice_item/sp-sc:displayname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the displayname entity of a spdiagnosticsservice_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="logcutinterval" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The number of minutes to capture events to a single log file. This value lies in the range 0 to 1440. The default value is 30.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticsserviceitemlogcutinterval">
+                                                            <sch:rule context="sp-sc:spdiagnosticsservice_item/sp-sc:logcutinterval">
+                                                                  <sch:assert test="not(@datatype) or @datatype='integer'">item <sch:value-of select="../@id"/> - datatype attribute for the logcutinterval entity of a spdiagnosticsservice_item should be 'integer'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="loglocation" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The path to the file system directory where log files are created and stored.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticsserviceitemloglocation">
+                                                            <sch:rule context="sp-sc:spdiagnosticsservice_item/sp-sc:loglocation">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the loglocation entity of a spdiagnosticsservice_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="logstokeep" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The value that indicates the number of log files to create. This lies in the range 0 to 1024 with a default of 96.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticsserviceitemlogstokeep">
+                                                            <sch:rule context="sp-sc:spdiagnosticsservice_item/sp-sc:logstokeep">
+                                                                  <sch:assert test="not(@datatype) or @datatype='integer'">item <sch:value-of select="../@id"/> - datatype attribute for the logstokeep entity of a spdiagnosticsservice_item should be 'integer'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="required" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The required property specifies whether an instance of the spdiagnosticsservice must be running on the farm.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticsserviceitemrequired">
+                                                            <sch:rule context="sp-sc:spdiagnosticsservice_item/sp-sc:required">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the required entity of an spdiagnosticsservice_item should be 'boolean'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="typename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The friendly name for the service as displayed in the Central Administration and in logs. This should be "Windows Sharepoint Diagnostics Service" by default.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticsserviceitemtypename">
+                                                            <sch:rule context="sp-sc:spdiagnosticsservice_item/sp-sc:typename">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the typename entity of a spdiagnosticsservice_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPDIAGNOSTICSLEVEL ITEM  ============================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spdiagnosticslevel_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>The diagnostics level associated with a particular instance of a diagnostics service on a Sharepoint farm.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="farmname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The farm whose diagnostics levels should be checked. Use .* for all farms or SPFarm.Local for the local farm.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticslevelitemfarmname">
+                                                            <sch:rule context="sp-sc:spdiagnosticslevel_item/sp-sc:farmname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the farmname entity of a spdiagnosticslevel_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="eventseverity" type="sp-sc:EntityItemEventSeverityType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The event severity setting for a particular diagnostic level category.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticslevelitemeventseverity">
+                                                            <sch:rule context="sp-sc:spdiagnosticslevel_item/sp-sc:eventseverity">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the eventseverity entity of a spdiagnosticslevel_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="hidden" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the trace log category is hidden in the Windows Sharepoint Services Central Administration interface.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticslevelitemhidden">
+                                                            <sch:rule context="sp-sc:spdiagnosticslevel_item/sp-sc:hidden">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the hidden entity of an spdiagnosticslevel_item should be 'boolean'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="levelid" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string that represents the ID of the trace log category. This is its English language name.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticsitemlevelid">
+                                                            <sch:rule context="sp-sc:spdiagnosticslevel_item/sp-sc:levelid">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the levelid entity of a spdiagnosticslevel_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="levelname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the trace log category. This represents the localized name for the category.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticsitemlevelname">
+                                                            <sch:rule context="sp-sc:spdiagnosticslevel_item/sp-sc:levelname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the levelname entity of a spdiagnosticslevel_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="traceseverity" type="sp-sc:EntityItemTraceSeverityType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The trace severity setting for a particular diagnostic level category.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_diagnosticslevelitemtraceseverity">
+                                                            <sch:rule context="sp-sc:spdiagnosticslevel_item/sp-sc:traceseverity">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the traceseverity entity of a spdiagnosticslevel_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPPOLICYFEATURE ITEM  =============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="sppolicyfeature_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents a policy feature that is installed on the Sharepoint server farm.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="farmname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The farm whose policy features should be checked. Use .* for all farms or SPFarm.Local for the local farm.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitemfarmname">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:farmname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the farmname entity of a sppolicyfeature_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="configpage" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The URL to a web control used to edit policy instance-level settings.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitemconfigpage">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:configpage">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the configpage entity of a sppolicyfeature_item should be 'string'</sch:assert>   
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="defaultcustomdata" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The default values for any policy instance-level settings for a policy feature.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitemdefaultcustomdata">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:defaultcustomdata">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the defaultcustomdata entity of a sppolicyfeature_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="description" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The short description of the policy feature and of the service it provides.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitemdescription">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:description">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the description entity of a sppolicyfeature_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="globalconfigpage" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The URL to a web control used to edit server farm-level settings for this policy feature.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitemglobalconfigpage">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:globalconfigpage">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the globalconfigpage entity of a sppolicyfeature_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="globalcustomdata" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The default settings for any server farm-level settings for this policy feature.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitemglobalcustomdata">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:globalcustomdata">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the globalcustomdata entity of a sppolicyfeature_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="group" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The policy feature group to which a policy feature belongs.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitemgroup">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:group">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the group entity of a sppolicyfeature_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name to display in the Microsoft Office Sharepoint Server 2007 interface for an information policy feature.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitemname">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:name">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the name entity of a sppolicyfeature_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="publisher" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the creator of the policy feature as it is displayed in the Microsoft Office Sharepoint Server 2007 user interface.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitempublisher">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:publisher">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the publisher entity of a sppolicyfeature_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="state" type="sp-sc:EntityItemPolicyFeatureStateType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the policy feature is hidden or visible.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyfeatureitemstate">
+                                                            <sch:rule context="sp-sc:sppolicyfeature_item/sp-sc:state">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the state entity of a sppolicyfeature_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPPOLICY ITEM  ====================================== -->
+      <!-- =============================================================================== -->     
+      <xsd:element name="sppolicy_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents a policy on the Sharepoint system.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="webappuri" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The URI that represents the web application for which policies should be checked.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyitemwebappuri">
+                                                            <sch:rule context="sp-sc:sppolicy_item/sp-sc:webappuri">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the webappuri entity of a sppolicy_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="urlzone" type="sp-sc:EntityItemUrlZoneType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The zone for which policies should be checked.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyitemurlzone">
+                                                            <sch:rule context="sp-sc:sppolicy_item/sp-sc:urlzone">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the urlzone entity of a sppolicy_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="displayname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The user or group display name for a policy. This defaults to the user name if the display name cannot be resolved through Active Directory.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyitemdisplayname">
+                                                            <sch:rule context="sp-sc:sppolicy_item/sp-sc:displayname">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the displayname entity of a sppolicy_item should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="issystemuser" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the user identified by a particular policy is visible only as a System account within the Windows Sharepoint Services user interface.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyitemissystemuser">
+                                                            <sch:rule context="sp-sc:sppolicy_item/sp-sc:issystemuser">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the issystemuser entity of an sppolicy_item should be 'boolean'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="username" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The user name of the user or group that is associated with policy.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyitemusername">
+                                                            <sch:rule context="sp-sc:sppolicy_item/sp-sc:username">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the username entity of a sppolicy_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="policyroletype" type="sp-sc:EntityItemPolicyRoleType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The policy role type to apply globally in a Sharepoint web application to a user or group.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="sp-sc_policyitempolicyroletype">
+                                                            <sch:rule context="sp-sc:sppolicy_item/sp-sc:policyroletype">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the policyroletype entity of a sppolicy_item should be 'string'</sch:assert> 
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =================================================================================================================================== -->
+      <!-- ====================================================TYPES========================================================================== -->
+      <!-- =================================================================================================================================== -->
+     
+      <xsd:complexType name="EntityItemUrlZoneType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemUrlZoneType restricts a string value to a set of values that describe the different IIS Url Zones. The empty string is also allowed to support empty element associated with error conditions.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="Custom"/>
+                        <xsd:enumeration value="Default"/>
+                        <xsd:enumeration value="Extranet"/>
+                        <xsd:enumeration value="Intranet"/>
+                        <xsd:enumeration value="Internet"/>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="EntityItemEventSeverityType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemEventSeverityType restricts a string value to a set of values that describe the different states that can be configured for a diagnostics level  event severity level property of the diagnostics service.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="Error"/>
+                        <xsd:enumeration value="ErrorCritical"/>
+                        <xsd:enumeration value="ErrorSecurityBreach"/>
+                        <xsd:enumeration value="ErrorServiceUnavailable"/>
+                        <xsd:enumeration value="FailureAudit"/>
+                        <xsd:enumeration value="Information"/>
+                        <xsd:enumeration value="None"/>
+                        <xsd:enumeration value="Success"/>
+                        <xsd:enumeration value="SuccessAudit"/>
+                        <xsd:enumeration value="Warning"/>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="EntityItemTraceSeverityType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemTraceSeverityType restricts a string value to a set of values that describe the different states that can be configured for a diagnostics level trace severity level property of the diagnostics service.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="High"/>
+                        <xsd:enumeration value="Medium"/>
+                        <xsd:enumeration value="Monitorable"/>
+                        <xsd:enumeration value="None"/>
+                        <xsd:enumeration value="Unexpected"/>
+                        <xsd:enumeration value="Verbose"/>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      
+      <xsd:complexType name="EntityItemPolicyFeatureStateType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemPolicyFeatureStateType restricts a string value to a set of values that describe the different states that can be configured for a policy feature.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="Hidden">
+                              <xsd:annotation>
+                                    <xsd:documentation>Specifies that the policy feature is hidden from the Sharepoint Central Administration user interface.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="Visible">
+                              <xsd:annotation>
+                                    <xsd:documentation>Specifies that the policy feature is visible from the Sharepoint Central Administration user interface.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      
+      <xsd:complexType name="EntityItemPolicyRoleType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemPolicyRoleType restricts a string value to a set of values that describe the different Policy settings for Access Control that are available for users.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="DenyAll">
+                              <xsd:annotation>
+                                    <xsd:documentation>Deny all rights.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="DenyWrite">
+                              <xsd:annotation>
+                                    <xsd:documentation>Deny write permissions.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="FullControl">
+                              <xsd:annotation>
+                                    <xsd:documentation>Grant full control.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="FullRead">
+                              <xsd:annotation>
+                                    <xsd:documentation>Grant full read permissions.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="None">
+                              <xsd:annotation>
+                                    <xsd:documentation>No role type assigned.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+</xsd:schema>
+

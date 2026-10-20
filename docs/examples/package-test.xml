@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+            xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
+            xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+            xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+            class="compliance"
+            version="1"
+            id="oval:tresys.example:def:1">
+   <generator>
+            <oval:product_name>oval_probes Python Example</oval:product_name>
+            <oval:product_version>1.0</oval:product_version>
+            <oval:schema_version>5.5</oval:schema_version>
+            <oval:timestamp>2010-01-12T00:00:00-00:00</oval:timestamp>
+      </generator>
+   <definitions>
+      <definition class="inventory" version="1" id="oval:tresys.example:def:1">
+                  <metadata>
+                        <title>Fedora OS installed</title>
+                        <affected family="unix">
+                              <platform>Fedora</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora" source="CPE"/>
+                        <description>You are running the test on a Fedora System</description>
+                  </metadata>
+                  <criteria>
+                        <criterion test_ref="oval:tresys.example:tst:1"
+                       comment="Fedora is installed"/>
+                        <criterion test_ref="oval:tresys.example:tst:2"
+                       comment="Installed operating system is part of the unix family"/>
+                  </criteria>
+            </definition>
+       </definitions>
+   <tests>
+      <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+                    check_existence="at_least_one_exists"
+                    comment="Fedora Version is 1-12"
+                    version="1"
+                    id="oval:tresys.example:tst:1"
+                    check="at least one">
+                  <object object_ref="oval:tresys.example:obj:1"/>
+                  <state state_ref="oval:tresys.example:ste:1"/>
+            </rpminfo_test>
+      <family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+                   check_existence="at_least_one_exists"
+                   comment="System is part of the Unix family"
+                   version="1"
+                   id="oval:tresys.example:tst:2"
+                   check="only one">
+                  <object object_ref="oval:tresys.example:obj:2"/>
+                  <state state_ref="oval:tresys.example:ste:2"/>
+            </family_test>
+   </tests>
+   <objects>
+     <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" version="1"
+                      id="oval:tresys.example:obj:1">
+                  <name>fedora-release</name>
+      </rpminfo_object>
+      <family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+                     version="1"
+                     id="oval:tresys.example:obj:2"/>
+
+   </objects>
+   <states>
+      <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" version="1"
+                     id="oval:tresys.example:ste:1">
+                  <version operation="pattern match">[0-9]*</version>
+            </rpminfo_state>
+      <family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+                    version="1"
+                    id="oval:tresys.example:ste:2">
+                  <family>unix</family>
+            </family_state>
+   </states>
+</definition>

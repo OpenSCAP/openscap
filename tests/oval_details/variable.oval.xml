@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:schema_version>5.10.1</oval:schema_version>
+    <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+    <definition class="compliance" version="1" id="oval:x:def:1">
+      <metadata>
+        <title>x</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+
+  <tests>
+    <ind:variable_test id="oval:x:tst:1" version="1" check="all" comment="oval:x:var:1 should equals 24">
+      <ind:object object_ref="oval:x:obj:1"/>
+      <ind:state state_ref="oval:x:ste:1"/>
+    </ind:variable_test>
+  </tests>
+
+  <objects>
+    <ind:variable_object id="oval:x:obj:1" version="1">
+      <ind:var_ref>oval:x:var:1</ind:var_ref>
+    </ind:variable_object>
+  </objects>
+ 
+  <states>
+    <ind:variable_state id="oval:x:ste:1" version="1">
+      <ind:value datatype="int" operation="equals" var_ref="oval:x:var:2"/>
+    </ind:variable_state>
+  </states>
+  
+      
+  <variables>
+    <constant_variable id="oval:x:var:1" datatype="int" version="1" comment="var1">
+      <value>42</value>
+    </constant_variable>
+    <constant_variable id="oval:x:var:2" datatype="int" version="1" comment="var2">
+      <value>24</value>
+    </constant_variable>
+  </variables>  
+
+
+</oval_definitions>

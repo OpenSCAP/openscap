@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:aix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#aix" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#aix" elementFormDefault="qualified" version="5.11">
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation>The following is a description of the elements, types, and attributes that compose the AIX specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+            <xsd:documentation>This schema was originally developed by Yuzheng Zhou and Todd Dolinsky at Hewlett-Packard. The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>AIX Definition</schema>
+                  <version>5.11:5.11</version>
+                  <date>12/18/2014 09:00:00 AM</date>
+                  <terms_of_use>Copyright (c) 2002-2014, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                  <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+                  <sch:ns prefix="aix-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#aix"/>
+                  <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+            </xsd:appinfo>
+      </xsd:annotation>
+      <!-- =============================================================================== -->
+      <!-- ================================  INTERIM FIX TEST  =========================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="interim_fix_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The interim fix test is used to check information associated with different interim or emergency fixes installed on the system. The information being tested is based off the emgr -l -u VUID command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references an interim_fix_object and the optional state element specifies the information to check.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>interim_fix_test</oval:test>
+                              <oval:object>interim_fix_object</oval:object>
+                              <oval:state>interim_fix_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#aix">interim_fix_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="aix-def_interimfixtst">
+                              <sch:rule context="aix-def:interim_fix_test/aix-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/aix-def:interim_fix_object/@id"><sch:value-of select="../@id"/> - the object child element of a <sch:name path=".."/> must reference a interim_fix_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="aix-def:interim_fix_test/aix-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/aix-def:interim_fix_state/@id"><sch:value-of select="../@id"/> - the state child element of a <sch:name path=".."/> must reference a interim_fix_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="interim_fix_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The interim_fix_object element is used by a interim_fix_test to define the specific fix to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+                  <xsd:documentation>An interim_fix_object consists of a single vuid entity that identifies the fix to be used.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="aix-def_interim_fix_object_verify_filter_state">
+                              <sch:rule context="aix-def:interim_fix_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::aix-def:interim_fix_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#aix') and ($state_name='interim_fix_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="vuid" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>Virtually Unique ID. A combination of time and cpuid, this ID can be used to differentiate fixes that are otherwise identical.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="interim_fix_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The interim_fix_state element defines the different information associated with a specific interim fix installed on the system. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="vuid" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Virtually Unique ID. A combination of time and cpuid, this ID can be used to differentiate fixes that are otherwise identical.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="label" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Each efix that is installed on a given system has a unique efix label.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="abstract" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Describes the efix package.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="state" type="aix-def:EntityStateInterimFixStateType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The the emergency fix state.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>      
+      <!-- =============================================================================== -->
+      <!-- ===============================  FILESET TEST  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="fileset_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The fileset_test is used to check information associated with different filesets installed on the system. The information used by this test is modeled after the /usr/bin/lslpp -l command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references an inetd_object and the optional state element specifies the information to check.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>fileset_test</oval:test>
+                              <oval:object>fileset_object</oval:object>
+                              <oval:state>fileset_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#aix">fileset_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                    <sch:pattern id="aix-def_filesettst">
+                        <sch:rule context="aix-def:fileset_test/aix-def:object">
+                            <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/aix-def:fileset_object/@id"><sch:value-of select="../@id"/> - the object child element of a fileset_test must reference a fileset_object</sch:assert>
+                        </sch:rule>
+                        <sch:rule context="aix-def:fileset_test/aix-def:state">
+                            <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/aix-def:fileset_state/@id"><sch:value-of select="../@id"/> - the state child element of a fileset_test must reference a fileset_state</sch:assert>
+                        </sch:rule>
+                    </sch:pattern>
+                </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="fileset_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The fileset_object element is used by a fileset_test to define the fileset to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+                  <xsd:documentation>A fileset_object consists of a single flstinst entity that identifies the fileset to be used.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="aix-def_fileset_object_verify_filter_state">
+                              <sch:rule context="aix-def:fileset_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::aix-def:fileset_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#aix') and ($state_name='fileset_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="flstinst" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The flstinst entity represents the fileset name we want to check. For example, if we want to check the status of the fileset 'bos.rte', we can use fileset test and the flstinst entity will be 'bos.rte' or 'bot.*' or etc.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="fileset_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The fileset_state element defines the different information associated with filesets installed on the system. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="flstinst" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Represents the name of a fileset.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="level" type="oval-def:EntityStateVersionType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Maintenance level (also known as version in Solaris or Linux) of a fileset. For example, "5.3.0.10" is the level for 'bos.txt.tfs' fileset in one AIX machine.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="state" type="aix-def:EntityStateFilesetStateType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This gives the state of a fileset. The state can be 'APPLIED', 'APPLYING','BROKEN', 'COMMITTED', 'EFIX LOCKED', 'OBSOLETE', 'COMMITTING','REJECTING'. See the manpage of the 'lslpp' command more information.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="description" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Short description of a fileset.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ================================  FIX TEST  =================================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="fix_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The fix test is used to check information associated with different fixes installed on the system. The information being tested is based off the /usr/sbin/instfix -iavk command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references an fix_object and the optional state element specifies the information to check.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>fix_test</oval:test>
+                              <oval:object>fix_object</oval:object>
+                              <oval:state>fix_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#aix">fix_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                    <sch:pattern id="aix-def_fixtst">
+                        <sch:rule context="aix-def:fix_test/aix-def:object">
+                            <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/aix-def:fix_object/@id"><sch:value-of select="../@id"/> - the object child element of a fix_test must reference a fix_object</sch:assert>
+                        </sch:rule>
+                        <sch:rule context="aix-def:fix_test/aix-def:state">
+                            <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/aix-def:fix_state/@id"><sch:value-of select="../@id"/> - the state child element of a fix_test must reference a fix_state</sch:assert>
+                        </sch:rule>
+                    </sch:pattern>
+                </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="fix_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The fix_object element is used by a fix test to define the specific fix to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+                  <xsd:documentation>A fix object consists of a single apar_number entity that identifies the fix to be used.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="aix-def_fix_object_verify_filter_state">
+                              <sch:rule context="aix-def:fix_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::aix-def:fix_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#aix') and ($state_name='fix_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="apar_number" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>APAR is the short for 'Authorized Program Analysis Report'. APAR identifies and describes a software product defect. An APAR number can obtain a PTF (Program Temporary Fix) for the defect, if a PTF is available. An example of an apar_number is 'IY78751', it includes two alphabetic characters and a 5-digit integer.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="fix_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The fix_state element defines the different information associated with a specific fix installed on the system. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="apar_number" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>APAR is the short for 'Authorized Program Analysis Report'. APAR identifies and describes a software product defect. An APAR number can obtain a PTF (Program Temporary Fix) for the defect, if a PTF is available. An example of an apar_number is 'IY78751', it includes two alphabetic characters and a 5-digit integer.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="abstract" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The abstract of an APAR. For instance, 'LL syas rXct are available even when not susea' is the abstract of APAR 'IY78751'.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="symptom" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The symptom text related to an APAR. For example, the symptom text for 'IY75211' is 'Daylight savings change for year 2007 and beyond'.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="installation_status" type="aix-def:EntityStateFixInstallationStatusType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The installation status of files associated with the APAR. This cannot be got from the output of the instfix command directly. The last line of the output is 'All filesets for XXXXXXX were found', or 'Not all filesets for XXXXXXX were found' or 'No filesets which have fixes for XXXXXXX are currently installed.'. These can be translated to the correct value as defined by the EntityStateFixInstallationStatusType.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ===================================  NO TEST  ================================= -->
+      <!-- =============================================================================== -->
+      <xsd:element name="no_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The no test is used to check information related to the /usr/sbin/no command and the parameters it manages. The no command sets or displays current or next boot values for network tuning parameters.  The information being tested is based off the /usr/sbin/no -o command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a no_object and the optional state element specifies the value to check for.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="aix-def_notst">
+                              <sch:rule context="aix-def:no_test/aix-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/aix-def:no_object/@id"><sch:value-of select="../@id"/> - the object child element of a <sch:name path=".."/> must reference a no_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="aix-def:no_test/aix-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/aix-def:no_state/@id"><sch:value-of select="../@id"/> - the state child element of a <sch:name path=".."/> must reference a no_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="no_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The no_object element is used by a no_test to define the specific parameter to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+                  <xsd:documentation>A no_object consists of a single tunable entity that identifies the parameter to be looked at.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="tunable" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The tunable entity holds the name of the tunable parameter to be queried by the /usr/sbin/no command.  Examples include ip_forwarding and tcp_keepalive_interval.</xsd:documentation>                                                            
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="no_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The no_state element defines the different information associated with a specific call to /usr/sbin/no. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="tunable" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The tunable entity is used to check the name of the tunable parameter that was used by the /usr/sbin/no command.  Examples include ip_forwarding and tcp_keepalive_interval.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="value" type="oval-def:EntityStateAnySimpleType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The value entity defines the value to check against the tunable parameter being examined.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ===============================  OSLEVEL TEST  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="oslevel_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The oslevel test reveals information about the release and maintenance level of AIX operating system. This information can be retrieved by the /usr/bin/oslevel -r command. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references an oslevel_object and the optional state element specifies the metadata to check.</xsd:documentation>
+                <xsd:appinfo>
+                    <sch:pattern id="aix-def_osleveltst">
+                        <sch:rule context="aix-def:oslevel_test/aix-def:object">
+                            <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/aix-def:oslevel_object/@id"><sch:value-of select="../@id"/> - the object child element of a oslevel_test must reference a oslevel_object</sch:assert>
+                        </sch:rule>
+                        <sch:rule context="aix-def:oslevel_test/aix-def:state">
+                            <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/aix-def:oslevel_state/@id"><sch:value-of select="../@id"/> - the state child element of a oslevel_test must reference a oslevel_state</sch:assert>
+                        </sch:rule>
+                    </sch:pattern>
+                </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="oslevel_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The oslevel_object element is used by an oslevel test to define those objects to be evaluated based on a specified state. There is actually only one object relating to oslevel and this is the system as a whole. Therefore, there are no child entities defined. Any OVAL Test written to check oslevel will reference the same oslevel_object which is basically an empty object element.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType"/>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="oslevel_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The oslevel_state element defines the information about maintenance level (system version). Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="maintenance_level" type="oval-def:EntityStateVersionType">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the maintenance level (system version) of current AIX operating system.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <xsd:complexType name="EntityStateFilesetStateType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityStateFilesetStateType complex type defines the different values that are valid for the state entity of a fileset state. The empty string is also allowed as a valid value to support an empty element that is found when a variable reference is used within the state entity. Note that when using pattern matches and variables care must be taken to ensure that the regular expression and variable values align with the enumerated values.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-def:EntityStateStringType">
+                        <xsd:enumeration value="APPLIED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset is installed on the system. The APPLIED state means that the fileset can be rejected with the installp command and the previous level of the fileset restored. This state is only valid for Version 4 fileset updates and 3.2 migrated filesets.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="APPLYING">
+                              <xsd:annotation>
+                                    <xsd:documentation>An attempt was made to apply the specified fileset, but it did not complete successfully, and cleanup was not performed.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="BROKEN">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset or fileset update is broken and should be reinstalled before being used.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="COMMITTED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset is installed on the system. The COMMITTED state means that a commitment has been made to this level of the software. A committed fileset update cannot be rejected, but a committed fileset base level and its updates (regardless of state) can be removed or deinstalled by the installp command.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="COMMITTING">
+                              <xsd:annotation>
+                                    <xsd:documentation>An attempt was made to commit the specified fileset, but it did not complete successfully, and cleanup was not performed.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="EFIX LOCKED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset was installed sucessfully and locked by the interim fix (interim fix) manager.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="OBSOLETE">
+                              <xsd:annotation>
+                                    <xsd:documentation>The specified fileset was installed with an earlier version of the operating system but has been replaced by a repackaged (renamed) newer version. Some of the files that belonged to this fileset have been replaced by versions from the repackaged fileset.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="REJECTING">
+                              <xsd:annotation>
+                                    <xsd:documentation>An attempt was made to reject the specified fileset, but it did not complete successfully, and cleanup was not performed.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for empty elements associated with variable references.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      <xsd:complexType name="EntityStateFixInstallationStatusType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityStateFixInstallationStatusType complex type defines the different values that are valid for the installation_status entity of a fix_state state. The empty string is also allowed as a valid value to support an empty element that is found when a variable reference is used within the installation_status entity. Note that when using pattern matches and variables care must be taken to ensure that the regular expression and variable values align with the enumerated values.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-def:EntityStateStringType">
+                        <xsd:enumeration value="ALL_INSTALLED">
+                              <xsd:annotation>
+                                    <xsd:documentation>All filesets for XXXXXXX were found</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="SOME_INSTALLED">
+                              <xsd:annotation>
+                                    <xsd:documentation>Not all filesets for XXXXXXX were found</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="NONE_INSTALLED">
+                              <xsd:annotation>
+                                    <xsd:documentation>No filesets which have fixes for XXXXXXX are currently installed.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for empty elements associated with variable references.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      <xsd:complexType name="EntityStateInterimFixStateType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityStateInterimFixStateType complex type defines the different values that are valid for the state entity of a interim_fix_state state. Please refer to the AIX documentation of Emergency Fix States. The empty string is also allowed as a valid value to support an empty element that is found when a variable reference is used within the state entity. Note that when using pattern matches and variables care must be taken to ensure that the regular expression and variable values align with the enumerated values.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-def:EntityStateStringType">
+                        <xsd:enumeration value="STABLE">
+                              <xsd:annotation>
+                                    <xsd:documentation>The efix was installed with a standard installation, and successfully completed the last installation operation.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="MOUNTED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The efix was installed with a mount installation operation, and successfully completed the last installation or mount operation.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="UNMOUNTED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The efix was installed with a mount installation operation and one or more efix files were unmounted in a previous emgr command operation.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="BROKEN">
+                              <xsd:annotation>
+                                    <xsd:documentation>An unrecoverable error occurred during an installation or removal operation. The status of the efix is unreliable.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="INSTALLING">
+                              <xsd:annotation>
+                                    <xsd:documentation>The efix is in the process of installing.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="REBOOT_REQUIRED">
+                              <xsd:annotation>
+                                    <xsd:documentation>The efix was installed successfully and requires a reboot to fully integrate into the target system.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="REMOVING">
+                              <xsd:annotation>
+                                    <xsd:documentation>The efix is in the process of being removed.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for empty elements associated with variable references.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+</xsd:schema>

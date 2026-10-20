@@ -1,0 +1,65 @@
+#!/bin/bash -
+# openscap 'run' programs locally script
+# Copyright (C) 2011-2013 Red Hat Inc.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+#----------------------------------------------------------------------
+
+# With this script you can run oscap (or valgrind, gdb, ...) without needing to
+# install the utility first.  You just have to do for example:
+#
+#   ./run program [program args ...]
+#
+# This works for any C program or test that uses the openscap
+# libraries.
+
+#----------------------------------------------------------------------
+
+# Build directory
+b=@CMAKE_BINARY_DIR@
+# Top source directory
+s=@CMAKE_SOURCE_DIR@
+
+# Set library.
+export LD_LIBRARY_PATH=$b/src:$b/swig${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+
+# This is used for SCE check engine (if it is built and enabled)
+export OSCAP_CHECK_ENGINE_PLUGIN_DIR=$b/src/SCE
+
+# Set paths to probes, schemas, transformations and cpes.
+# If those variables are already set, don't change their values.
+if [ -z ${OSCAP_SCHEMA_PATH+x} ] ; then
+    export OSCAP_SCHEMA_PATH=$s/schemas
+fi
+if [ -z ${OSCAP_XSLT_PATH+x} ] ; then
+    export OSCAP_XSLT_PATH=$s/xsl
+fi
+if [ -z ${OSCAP_CPE_PATH+x} ] ; then
+    export OSCAP_CPE_PATH=$s/cpe
+fi
+
+# For SWIG bindings.
+export PERL5LIB=$b/swig/perl:$b/swig/perl${PERL5LIB:+:$PERL5LIB}
+export PYTHONPATH=$s/utils:$s/swig/python3:$b/swig/src:$b/swig/python3:$b/swig/python3${PYTHONPATH:+:$PYTHONPATH}
+export PYTHONDONTWRITEBYTECODE=Y
+
+# This is a cheap way to find some use-after-free and uninitialized
+# read problems when using glibc.
+random_val="$(awk 'BEGIN{srand(); print 1+int(255*rand())}' < /dev/null)"
+export MALLOC_PERTURB_=$random_val
+
+# Run the program.
+exec "$@"

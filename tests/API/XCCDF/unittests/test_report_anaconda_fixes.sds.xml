@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_test_report_anaconda_fixes.xccdf.xml" schematron-version="1.2"><ds:data-stream id="scap_org.open-scap_datastream_from_xccdf_test_report_anaconda_fixes.xccdf.xml" scap-version="1.2" use-case="OTHER"><ds:checklists><ds:component-ref id="scap_org.open-scap_cref_test_report_anaconda_fixes.xccdf.xml" xlink:href="#scap_org.open-scap_comp_test_report_anaconda_fixes.xccdf.xml"><cat:catalog><cat:uri name="oval_without_definitions.oval.xml" uri="#scap_org.open-scap_cref_oval_without_definitions.oval.xml"/></cat:catalog></ds:component-ref></ds:checklists><ds:checks><ds:component-ref id="scap_org.open-scap_cref_oval_without_definitions.oval.xml" xlink:href="#scap_org.open-scap_comp_oval_without_definitions.oval.xml"/></ds:checks></ds:data-stream><ds:component id="scap_org.open-scap_comp_oval_without_definitions.oval.xml" timestamp="2023-11-03T13:47:12"><oval_definitions xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+	<generator>
+		<oval:product_name>Text Editors</oval:product_name>
+		<oval:schema_version>5.8</oval:schema_version>
+		<oval:timestamp>2010-06-08T12:00:00-04:00</oval:timestamp>
+	</generator>
+	<tests>
+		<unix-def:file_test check_existence="all_exist" id="oval:moc.elpmaxe.www:tst:1" version="1" check="all" comment="Testing permissions on ./not_executable">
+			<unix-def:object object_ref="oval:moc.elpmaxe.www:obj:1"/>
+			<unix-def:state state_ref="oval:moc.elpmaxe.www:ste:1"/>
+		</unix-def:file_test>
+		<unix-def:file_test check_existence="all_exist" id="oval:moc.elpmaxe.www:tst:2" version="1" check="all" comment="Testing permissions on ./not_executable">
+			<unix-def:object object_ref="oval:moc.elpmaxe.www:obj:1"/>
+			<unix-def:state state_ref="oval:moc.elpmaxe.www:ste:2"/>
+		</unix-def:file_test>
+	</tests>
+	<objects>
+		<unix-def:file_object id="oval:moc.elpmaxe.www:obj:1" version="1" comment="not_executable">
+			<unix-def:path>./</unix-def:path>
+			<unix-def:filename>not_executable</unix-def:filename>
+		</unix-def:file_object>
+	</objects>
+	<states>
+		<unix-def:file_state id="oval:moc.elpmaxe.www:ste:1" version="1">
+			<unix-def:oexec datatype="boolean">false</unix-def:oexec>
+		</unix-def:file_state>
+		<unix-def:file_state id="oval:moc.elpmaxe.www:ste:2" version="1">
+			<unix-def:oexec datatype="boolean">true</unix-def:oexec>
+		</unix-def:file_state>
+	</states>
+</oval_definitions></ds:component><ds:component id="scap_org.open-scap_comp_test_report_anaconda_fixes.xccdf.xml" timestamp="2023-11-03T13:47:12"><Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_moc.elpmaxe.www_benchmark_test" resolved="1">
+  <status>accepted</status>
+  <version>1.0</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Profile id="xccdf_moc.elpmaxe.www_profile_1">
+    <title>Some arbitrary hardening profile for anaconda testing</title>
+    <select idref="xccdf_moc.elpmaxe.www_group_1" selected="true"/>
+    <select idref="xccdf_moc.elpmaxe.www_rule_3" selected="true"/>
+    <refine-value idref="xccdf_moc.elpmaxe.www_value_1" selector="len14"/>
+  </Profile>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_1" selected="true">
+    <title>Ensure /tmp Located On Separate Partition</title>
+    <ident system="http://cce.mitre.org">CCE-14161-4</ident>
+    <fix id="partition_for_tmp_fix_anaconda_pre" system="urn:redhat:anaconda:pre">
+      <!--the system attribute identifies that this fix is for anaconda before installation-->
+      part /tmp
+    </fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="oval_without_definitions.oval.xml"/>
+    </check>
+  </Rule>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_2" selected="true">
+    <title>Add nodev Option to /tmp</title>
+    <ident system="http://cce.mitre.org">CCE-14412-1</ident>
+    <fix id="mount_option_tmp_fix_anaconda_pre" system="urn:redhat:anaconda:pre">
+      part /tmp --mountoptions=nodev
+    </fix>
+    <fix id="mount_option_tmp_fix" system="urn:xccdf:script:sh">
+      <!--should run either post-install or during firstboot-->
+      grep -e '^[^#].*/tmp.*nodev' /etc/fstab
+      if [ "$?" -ne 0 ]; then
+          new_fstab=$(cat /etc/fstab | sed -e 's%^[^#]([^ ]+)\s+/tmp([^ ]+)\s+([^ ]+)\s+(\d)\s+(\d)%\1\t/tmp\2\t\3,nodev\t\4 \5'
+          echo $new_fstab &gt; /etc/fstab
+      fi
+    </fix>
+  </Rule>
+  <Group id="xccdf_moc.elpmaxe.www_group_1" selected="false">
+    <Value id="xccdf_moc.elpmaxe.www_value_1">
+      <title>Minimal password length</title>
+      <value selector="len8">8</value>
+      <value selector="len14">14</value>
+      <value selector="len18">18</value>
+    </Value>
+    <Rule id="xccdf_moc.elpmaxe.www_rule_3">
+      <title>Set Password Minimum Length in login.defs</title>
+      <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" system="urn:redhat:anaconda:pre">
+        <!--effect passwords created during installation-->
+        passwd --minlen=<sub idref="xccdf_moc.elpmaxe.www_value_1"/>
+      </fix>
+      <fix id="password_min_len_fix" system="urn:xccdf:script:python">
+        <!--should run either post-install or during firstboot-->
+        <!--python script to set
+                PASS_MIN_LEN=<sub idref="xccdf_moc.elpmaxe.www_value_1"/> in /etc/login.defs
+            and
+                minlen=<sub idref="xccdf_moc.elpmaxe.www_value_1"/> in /etc/security/pwquality.conf
+         -->
+      </fix>
+    </Rule>
+  </Group>
+</Benchmark></ds:component></ds:data-stream-collection>

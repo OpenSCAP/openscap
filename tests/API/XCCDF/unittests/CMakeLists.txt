@@ -1,0 +1,161 @@
+add_oscap_test_executable(test_oscap_common
+	"test_oscap_common.c"
+	${CMAKE_SOURCE_DIR}/src/common/util.c
+	${CMAKE_SOURCE_DIR}/src/common/list.c
+	${CMAKE_SOURCE_DIR}/src/common/error.c
+	${CMAKE_SOURCE_DIR}/src/common/err_queue.c
+	${CMAKE_SOURCE_DIR}/src/common/oscap_pcre.c
+)
+
+add_oscap_test_executable(test_xccdf_overrides
+	"test_xccdf_overrides.c"
+)
+
+add_oscap_test_executable(test_xccdf_shall_pass
+	test_xccdf_shall_pass.c
+	unit_helper.c
+)
+target_link_libraries(test_xccdf_shall_pass openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE2_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
+
+add_oscap_test_executable(test_xccdf_result_sysinfo_platform
+	"test_xccdf_result_sysinfo_platform.c"
+)
+
+if(PYTHONINTERP_FOUND)
+	add_oscap_test("all_python.sh")
+endif()
+
+add_oscap_test("test_ansible_yaml_block_scalar.sh")
+add_oscap_test("test_xccdf_shall_pass1.sh")
+add_oscap_test("test_xccdf_shall_pass2.sh")
+add_oscap_test("test_xccdf_shall_pass3.sh")
+add_oscap_test("test_oscap_common.sh")
+add_oscap_test("test_xccdf_overrides.sh")
+add_oscap_test("test_xccdf_role_unscored.sh")
+add_oscap_test("test_remediate_unresolved.sh")
+add_oscap_test("test_empty_variable.sh")
+add_oscap_test("test_fix_instance.sh")
+add_oscap_test("test_xccdf_xml_escaping_value.sh")
+add_oscap_test("test_xccdf_check_negate.sh")
+add_oscap_test("test_xccdf_check_multi_check.sh")
+add_oscap_test("test_xccdf_check_multi_check2.sh")
+add_oscap_test("test_xccdf_check_multi_check_zero_definitions.sh")
+add_oscap_test("test_xccdf_check_ocil.sh")
+add_oscap_test("test_xccdf_check_content_ref_without_name_attr.sh")
+add_oscap_test("test_xccdf_check_without_content_refs.sh")
+add_oscap_test("test_xccdf_refine_rule.sh")
+add_oscap_test("test_xccdf_refine_rule_refine.sh")
+add_oscap_test("test_xccdf_fix_attr_export.sh")
+add_oscap_test("test_xccdf_complex_check_and_notchecked.sh")
+add_oscap_test("test_xccdf_check_processing_complex_priority.sh")
+add_oscap_test("test_xccdf_check_processing_selector_bad.sh")
+add_oscap_test("test_xccdf_check_processing_selector_empty.sh")
+add_oscap_test("test_xccdf_check_processing_invalid_content_refs.sh")
+add_oscap_test("test_xccdf_notchecked_has_check.sh")
+add_oscap_test("test_xccdf_role_unchecked.sh")
+add_oscap_test("test_xccdf_oval_absolute_path.sh")
+add_oscap_test("test_xccdf_oval_relative_path.sh")
+add_oscap_test("test_xccdf_selectors_cluster1.sh")
+add_oscap_test("test_xccdf_selectors_cluster2.sh")
+add_oscap_test("test_xccdf_selectors_cluster3.sh")
+add_oscap_test("test_deriving_xccdf_result_from_oval.sh")
+add_oscap_test("test_deriving_xccdf_result_from_oval2.sh")
+add_oscap_test("test_oval_without_definition.sh")
+add_oscap_test("test_deriving_xccdf_result_from_oval_multicheck.sh")
+add_oscap_test("test_multiple_oval_files_with_same_basename.sh")
+add_oscap_test("test_xccdf_check_unsupported_check_system.sh")
+add_oscap_test("test_xccdf_multiple_testresults.sh")
+add_oscap_test("test_default_selector.sh")
+add_oscap_test("test_inherit_selector.sh")
+add_oscap_test("test_xccdf_refine_value_bad.sh")
+add_oscap_test("test_xccdf_resolve.sh")
+add_oscap_test("test_xccdf_resolve_profile_platform.sh")
+add_oscap_test("test_xccdf_results_arf_no_oval.sh")
+add_oscap_test("test_xccdf_results_arf_asset.sh")
+add_oscap_test("test_xccdf_sub_title.sh")
+add_oscap_test("test_xccdf_test_system.sh")
+add_oscap_test("test_profile_selection_by_suffix.sh")
+add_oscap_test("test_unfinished.sh")
+add_oscap_test("test_xccdf_transformation.sh")
+add_oscap_test("test_single_rule.sh")
+add_oscap_test("test_single_rule_stigw.sh")
+add_oscap_test("test_remediation_simple.sh")
+add_oscap_test("test_remediation_offline.sh")
+add_oscap_test("test_remediation_kickstart.sh")
+add_oscap_test("test_remediation_kickstart_raw.sh")
+add_oscap_test("test_remediation_metadata.sh")
+add_oscap_test("test_remediation_blueprint.sh")
+add_oscap_test("test_remediation_bad_fix.sh")
+add_oscap_test("test_remediation_subs_plain_text.sh")
+add_oscap_test("test_remediation_subs_plain_text_empty.sh")
+add_oscap_test("test_remediation_subs_value_refine_value.sh")
+add_oscap_test("test_remediation_subs_value_take_first.sh")
+add_oscap_test("test_remediation_subs_value_without_selector.sh")
+add_oscap_test("test_remediation_subs_value_title.sh")
+add_oscap_test("test_remediation_amp_escaping.sh")
+add_oscap_test("test_remediation_xml_comments.sh")
+add_oscap_test("test_remediation_cdata.sh")
+add_oscap_test("test_remediation_subs_unresolved.sh")
+add_oscap_test("test_remediation_fix_without_system.sh")
+add_oscap_test("test_remediation_invalid_characters.sh")
+add_oscap_test("test_remediation_environment.sh")
+add_oscap_test("test_remediate_simple.sh")
+add_oscap_test("test_remediate_perl.sh")
+add_oscap_test("test_report_check_with_empty_selector.sh")
+add_oscap_test("test_report_without_xsl_fails_gracefully.sh")
+add_oscap_test("test_report_without_oval_poses_no_errors.sh")
+add_oscap_test("test_report_anaconda_fixes.sh")
+add_oscap_test("test_report_anaconda_fixes_ds.sh")
+add_oscap_test("test_fix_filtering.sh")
+add_oscap_test("test_fix_script_header.sh")
+add_oscap_test("test_fix_arf.sh")
+add_oscap_test("test_fix_resultid_by_suffix.sh")
+add_oscap_test("test_generate_fix_ansible_vars.sh")
+add_oscap_test("test_xccdf_requires_conflicts.sh")
+add_oscap_test("test_results_hostname.sh")
+add_oscap_test("test_xccdf_result_sysinfo_platform.sh" LABELS macos freebsd)
+add_oscap_test("test_skip_rule.sh")
+add_oscap_test("test_no_newline_between_select_elements.sh")
+add_oscap_test("test_single_line_tailoring.sh")
+add_oscap_test("test_reference.sh")
+add_oscap_test("test_remediation_bootc.sh")
+add_oscap_test("openscap_2289_regression.sh")
+add_oscap_test("test_null_ptr_regression.sh")
+
+set_tests_properties(
+     "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval2.sh"
+     "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval_multicheck.sh"
+     "API/XCCDF/unittests/test_deriving_xccdf_result_from_oval.sh"
+     "API/XCCDF/unittests/test_fix_arf.sh"
+     "API/XCCDF/unittests/test_multiple_oval_files_with_same_basename.sh"
+     "API/XCCDF/unittests/test_xccdf_check_multi_check2.sh"
+     "API/XCCDF/unittests/test_xccdf_check_processing_complex_priority.sh"
+     "API/XCCDF/unittests/test_xccdf_check_processing_selector_bad.sh"
+     "API/XCCDF/unittests/test_xccdf_selectors_cluster2.sh"
+     "API/XCCDF/unittests/test_xccdf_selectors_cluster3.sh"
+     PROPERTIES RESOURCE_LOCK not_executable_file
+     )
+
+set_tests_properties(
+     "API/XCCDF/unittests/test_fix_instance.sh"
+     "API/XCCDF/unittests/test_profile_selection_by_suffix.sh"
+     "API/XCCDF/unittests/test_remediate_perl.sh"
+     "API/XCCDF/unittests/test_remediate_simple.sh"
+     "API/XCCDF/unittests/test_remediate_unresolved.sh"
+     "API/XCCDF/unittests/test_remediation_amp_escaping.sh"
+     "API/XCCDF/unittests/test_remediation_bad_fix.sh"
+     "API/XCCDF/unittests/test_remediation_cdata.sh"
+     "API/XCCDF/unittests/test_remediation_environment.sh"
+     "API/XCCDF/unittests/test_remediation_fix_without_system.sh"
+     "API/XCCDF/unittests/test_remediation_invalid_characters.sh"
+     "API/XCCDF/unittests/test_remediation_simple.sh"
+     "API/XCCDF/unittests/test_remediation_subs_plain_text_empty.sh"
+     "API/XCCDF/unittests/test_remediation_subs_plain_text.sh"
+     "API/XCCDF/unittests/test_remediation_subs_unresolved.sh"
+     "API/XCCDF/unittests/test_remediation_subs_value_refine_value.sh"
+     "API/XCCDF/unittests/test_remediation_subs_value_take_first.sh"
+     "API/XCCDF/unittests/test_remediation_subs_value_title.sh"
+     "API/XCCDF/unittests/test_remediation_subs_value_without_selector.sh"
+     "API/XCCDF/unittests/test_remediation_xml_comments.sh"
+     PROPERTIES RESOURCE_LOCK test_file_lock
+)

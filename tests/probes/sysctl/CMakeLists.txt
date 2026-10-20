@@ -1,0 +1,5 @@
+if(ENABLE_PROBES_UNIX)
+	add_oscap_test("test_sysctl_probe.sh" LABELS unix freebsd macos)
+	add_oscap_test("test_sysctl_probe_all.sh" LABELS unix freebsd macos linux)
+	add_oscap_test("test_sysctl_probe_offline_mode.sh" LABELS unix)
+endif()

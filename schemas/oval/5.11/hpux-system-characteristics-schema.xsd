@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:hpux-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux" elementFormDefault="qualified" version="5.11">
+	<xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+	<xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>     
+	<xsd:annotation>
+		<xsd:documentation>The following is a description of the elements, types, and attributes that compose the HP-UX specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL).  Each item is an extension of the standard item element defined in the Core System Characteristic Schema.  Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items.  Each item is described in detail and should provide the information necessary to understand what each element and attribute represents.  This document is intended for developers and assumes some familiarity with XML.  A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+		<xsd:documentation>The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+		<xsd:appinfo>
+			<schema>HP-UX System Characteristics</schema>
+		     <version>5.11:5.11</version>
+		     <date>12/18/2014 09:00:00 AM</date>
+		      <terms_of_use>Copyright (c) 2002-2014, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+			<sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+			<sch:ns prefix="hpux-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux"/>
+		    <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<!-- =============================================================================== -->
+	<!-- ===============================  GETCONF ITEM  ================================ -->
+	<!-- =============================================================================== -->
+	<xsd:element name="getconf_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>These items contain getconf items.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="parameter_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the parameter name to check</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pathname" type="oval-sc:EntityItemStringType" nillable="true" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the pathname to check</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="output" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The output produced by the getconf command.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- =============================================================================== -->
+	<!-- ================================  NDD ITEM  =================================== -->
+	<!-- =============================================================================== -->
+	<xsd:element name="ndd_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>This item represents data collected by the ndd command.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="device" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The name of the device for which the parameter was collected.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="parameter" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The name of a parameter for example, ip_forwarding</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="value" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The observed value of the named parameter.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+    <!-- =============================================================================== -->
+    <!-- ================================  PATCH ITEM  ================================= -->
+	<!-- =============================================================================== -->
+	<xsd:element name="patch_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+		     <xsd:documentation>From /usr/sbin/swlist -l patch PHxx_yyyyy. See swlist manpage for specific fields</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="patch_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the patch name to check.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="swtype" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+					          <xsd:annotation>
+					               <xsd:documentation>HP-UX patch names begin with 'PH'</xsd:documentation>
+					          </xsd:annotation>
+					     </xsd:element>
+					     <xsd:element name="area_patched" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+							     <xsd:documentation>The third and fourth characters in HP-UX patch names indicate the area of software being patched. CO - General HP-UX commands KL - Kernel patches NE - Network specific patches SS - All other subsystems (X11, starbase, etc.)</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="patch_base" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The sixth through tenth characters in HP-UX patch names represent a unique numeric identifier for the patch.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- =============================================================================== -->
+	<!-- =============================  SOFTWARE LIST ITEM  ============================ -->
+	<!-- =============================================================================== -->
+	<xsd:element name="swlist_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>Output of /usr/sbin/swlist command.  Note:  A quick way to check for the installation of a specific fileset is to use the command 'swlist -a version -l fileset filesetname'. See manpage for swlist for explanation of additional command options.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="swlist" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the name of the bundle or fileset to check.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="bundle" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="fileset" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="version" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:simpleContent>
+									<xsd:restriction base="oval-sc:EntityItemAnySimpleType">
+										<xsd:attribute name="datatype" use="optional" default="string">
+											<xsd:simpleType>
+												<xsd:restriction base="oval:SimpleDatatypeEnumeration">
+													<xsd:enumeration value="string"/>
+													<xsd:enumeration value="fileset_revision"/>
+												</xsd:restriction>
+											</xsd:simpleType>
+										</xsd:attribute>                                                  
+									</xsd:restriction>
+								</xsd:simpleContent>                                        
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="title" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="vendor" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- =============================================================================== -->
+	<!-- ===========================  TRUSTED ACCOUNTS ITEM  =========================== -->
+	<!-- =============================================================================== -->
+	<xsd:element name="trusted_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>These items contain account settings for trusted HP-UX installations.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="username" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the name of the user being checked</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="uid" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The user's ID</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="password" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>This is the encrypted version of the user's password</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="account_owner" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The Account owner for pseudo-users</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="boot_auth" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Boot authorization</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="audit_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>getprpwaid uses the audit ID rather than the UID</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="audit_flag" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation/>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_change_min" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Minimum time between password changes</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_max_size" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Maximum password length in characters</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_expiration" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Password expiration time in seconds</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_life" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Trusted lifetime, after which the account is locked</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_change_s" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Time of last successful password change</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_change_u" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Time of last unsuccessful password change</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="acct_expire" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Absolute account lifetime in seconds</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="max_llogin" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Maximum time allowed between logins before the account is locked</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="exp_warning" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The time in seconds before expiration when a warning will appear</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="usr_chg_pw" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Who can change this user's password</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="gen_pw" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Allows user to use system-generated passwords</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_restrict" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Whether a triviality check is performed on user-generated passwords</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_null" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Determines if null passwords are allowed for this account</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_gen_char" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Allows password generator to use random printable ASCII characters</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_gen_let" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Allows password generator to use random letters</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_time" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Specifies the times when the user may login to this account</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="pw_changer" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The user ID of the user who last changed the password on the user's account, if it was not the account owner</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_time_s" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The time of the last successful login using this account</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_time_u" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The time of the last unsuccessful login using this account</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_tty_s" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The terminal or remote host associated with the last successful login to the account</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="login_tty_u" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The terminal or remote hosts associated with the last unsuccessful login to the account</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="num_u_logins" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The number of unsuccessful login attempts since that last successful login</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="max_u_logins" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The maximum number of unsuccessful login attempts before the account is locked</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="lock_flag" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>Indicates whether the administrative lock on the account is set</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    id="xccdf_moc.elpmaxe.www_benchmark_test" resolved="1">
+  <status>accepted</status>
+  <version>1.0</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_1" selected="true">
+    <title>Ensure /tmp Located On Separate Partition</title>
+    <ident system="http://cce.mitre.org">CCE-14161-4</ident>
+    <fix id="partition_for_tmp_fix_anaconda_pre" system="urn:redhat:anaconda:pre"
+        disruption="low" reboot="true">
+      <!--the system attribute identifies that this fix is for anaconda before installation-->
+      part /tmp
+    </fix>
+    <fix id="partition_for_tmp_fix_anaconda_pre_same" system="urn:redhat:anaconda:pre"
+        disruption="high" reboot="false">
+      <!--the system attribute identifies that this fix is for anaconda before installation-->
+      part /var
+    </fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="oval_without_definitions.oval.xml"/>
+    </check>
+  </Rule>
+</Benchmark>

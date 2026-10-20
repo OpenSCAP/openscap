@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://checklists.nist.gov/xccdf/1.1" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="false" xml:lang="en-US">
+  <status>draft</status>
+  <version>0.1</version>
+  <Rule id="test_fix_element" selected="true">
+        <fix system="urn:xccdf:fix:script:sh">
+           echo Hello &gt; test_file #<instance/>
+        </fix>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <check-content-ref href="test_fix_instance.oval.xml" name="oval:x:def:1"/>
+        </check>
+  </Rule>
+  <TestResult id="xccdf_org.open-scap_testresult_default-profile" start-time="2015-03-02T14:26:09" end-time="2015-03-02T14:26:09" version="0.1">
+    <benchmark href="test_fix.xccdf.xml"/>
+    <title>OSCAP Scan Result</title>
+    <identity authenticated="false" privileged="false">user</identity>
+    <target>some_machine</target>
+    <target-address>127.0.0.1</target-address>
+    <target-facts>
+      <fact name="urn:xccdf:fact:scanner:name" type="string">OpenSCAP</fact>
+      <fact name="urn:xccdf:fact:scanner:version" type="string">1.1.2</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+    </target-facts>
+    <rule-result idref="test_fix_element" time="2015-03-02T14:26:09" weight="1.000000">
+      <result>fail</result>
+      <instance>a</instance>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:x:def:1" href="test_fix_instance.oval.xml"/>
+      </check>
+    </rule-result>
+    <rule-result idref="test_fix_element" time="2015-03-02T14:26:09" weight="1.000000">
+      <result>fail</result>
+      <instance>b</instance>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:x:def:1" href="test_fix_instance.oval.xml"/>
+      </check>
+    </rule-result>
+    <score system="urn:xccdf:scoring:default" maximum="100.000000">0.000000</score>
+  </TestResult>
+
+</Benchmark>
+

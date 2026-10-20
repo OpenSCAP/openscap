@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_results xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-results-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-results-5 oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:product_name>cpe:/a:open-scap:oscap</oval:product_name>
+    <oval:schema_version>5.8</oval:schema_version>
+    <oval:timestamp>2012-10-24T10:10:49</oval:timestamp>
+  </generator>
+  <directives>
+    <definition_true reported="true" content="full"/>
+    <definition_false reported="true" content="full"/>
+    <definition_unknown reported="true" content="full"/>
+    <definition_error reported="true" content="full"/>
+    <definition_not_evaluated reported="true" content="full"/>
+    <definition_not_applicable reported="true" content="full"/>
+  </directives>
+  <oval_definitions xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+    <generator>
+      <oval:product_name>Text Editors</oval:product_name>
+      <oval:schema_version>5.8</oval:schema_version>
+      <oval:timestamp>2010-06-08T12:00:00-04:00</oval:timestamp>
+    </generator>
+    <definitions>
+      <definition id="oval:gov.nist.usgcb.rhel:def:20042" version="1" class="compliance">
+        <metadata>
+          <title>Verify permissions on 'shadow' file</title>
+          <affected family="unix">
+            <platform>Red Hat Enterprise Linux 5</platform>
+          </affected>
+          <reference source="CCE" ref_id="CCE-4130-1"/>
+          <description>File permissions for /etc/shadow should be set correctly.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:gov.nist.usgcb.rhel:tst:20042"/>
+        </criteria>
+      </definition>
+    </definitions>
+    <tests>
+      <unix-def:file_test id="oval:gov.nist.usgcb.rhel:tst:20042" version="1" check_existence="all_exist" check="all" comment="Testing file permissions of /etc/shadow">
+        <unix-def:object object_ref="oval:gov.nist.usgcb.rhel:obj:20034"/>
+        <unix-def:state state_ref="oval:gov.nist.usgcb.rhel:ste:1000400"/>
+      </unix-def:file_test>
+    </tests>
+    <objects>
+      <unix-def:file_object id="oval:gov.nist.usgcb.rhel:obj:20034" version="1" comment="/etc/shadow">
+        <unix-def:path>/etc</unix-def:path>
+        <unix-def:filename>shadow</unix-def:filename>
+      </unix-def:file_object>
+    </objects>
+    <states>
+      <unix-def:file_state id="oval:gov.nist.usgcb.rhel:ste:1000400" version="1">
+        <unix-def:uread datatype="boolean">true</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">false</unix-def:uexec>
+        <unix-def:gread datatype="boolean">false</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">false</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">false</unix-def:gexec>
+        <unix-def:oread datatype="boolean">false</unix-def:oread>
+        <unix-def:owrite datatype="boolean">false</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">false</unix-def:oexec>
+      </unix-def:file_state>
+    </states>
+    <variables>
+    </variables>
+  </oval_definitions>
+  <results>
+    <system>
+      <definitions>
+        <definition definition_id="oval:gov.nist.usgcb.rhel:def:20042" result="false" version="1">
+          <criteria operator="AND" result="false">
+            <criterion test_ref="oval:gov.nist.usgcb.rhel:tst:20042" version="1" result="false"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <test test_id="oval:gov.nist.usgcb.rhel:tst:20042" version="1" check_existence="all_exist" check="all" result="false">
+          <tested_item item_id="1171501" result="false"/>
+        </test>
+      </tests>
+      <oval_system_characteristics xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:unix-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix" xmlns:ind-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" xmlns:lin-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 oval-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent independent-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix unix-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux linux-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+        <generator>
+          <oval:product_name>cpe:/a:open-scap:oscap</oval:product_name>
+          <oval:schema_version>5.8</oval:schema_version>
+          <oval:timestamp>2012-10-24T10:10:49</oval:timestamp>
+        </generator>
+        <system_info>
+          <os_name>Linux</os_name>
+          <os_version>#1 SMP Thu Jul 5 20:01:38 UTC 2012</os_version>
+          <architecture>x86_64</architecture>
+          <primary_host_name>dhcp-2-170.brq.redhat.com</primary_host_name>
+          <interfaces>
+            <interface>
+              <interface_name>lo</interface_name>
+              <ip_address>::1</ip_address>
+              <mac_address>00:00:00:00:00:00</mac_address>
+            </interface>
+          </interfaces>
+        </system_info>
+        <collected_objects>
+          <object id="oval:gov.nist.usgcb.rhel:obj:20034" version="1" flag="complete">
+            <reference item_ref="1171501"/>
+          </object>
+        </collected_objects>
+        <system_data>
+          <unix-sys:file_item id="1171501" status="exists">
+            <unix-sys:filepath>/etc/shadow</unix-sys:filepath>
+            <unix-sys:path>/etc</unix-sys:path>
+            <unix-sys:filename>shadow</unix-sys:filename>
+            <unix-sys:type>regular</unix-sys:type>
+            <unix-sys:group_id datatype="int">0</unix-sys:group_id>
+            <unix-sys:user_id datatype="int">0</unix-sys:user_id>
+            <unix-sys:a_time datatype="int">1351062061</unix-sys:a_time>
+            <unix-sys:c_time datatype="int">1337679496</unix-sys:c_time>
+            <unix-sys:m_time datatype="int">1337679496</unix-sys:m_time>
+            <unix-sys:size datatype="int">1108</unix-sys:size>
+            <unix-sys:suid datatype="boolean">false</unix-sys:suid>
+            <unix-sys:sgid datatype="boolean">false</unix-sys:sgid>
+            <unix-sys:sticky datatype="boolean">false</unix-sys:sticky>
+            <unix-sys:uread datatype="boolean">false</unix-sys:uread>
+            <unix-sys:uwrite datatype="boolean">false</unix-sys:uwrite>
+            <unix-sys:uexec datatype="boolean">false</unix-sys:uexec>
+            <unix-sys:gread datatype="boolean">false</unix-sys:gread>
+            <unix-sys:gwrite datatype="boolean">false</unix-sys:gwrite>
+            <unix-sys:gexec datatype="boolean">false</unix-sys:gexec>
+            <unix-sys:oread datatype="boolean">false</unix-sys:oread>
+            <unix-sys:owrite datatype="boolean">false</unix-sys:owrite>
+            <unix-sys:oexec datatype="boolean">false</unix-sys:oexec>
+          </unix-sys:file_item>
+        </system_data>
+      </oval_system_characteristics>
+    </system>
+  </results>
+</oval_results>

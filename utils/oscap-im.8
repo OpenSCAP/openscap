@@ -1,0 +1,54 @@
+.TH oscap-im "8" "January 2025" "Red Hat, Inc." "System Administration Utilities"
+
+.SH NAME
+oscap-im \- Tool for building hardened bootable container images
+
+.SH DESCRIPTION
+The oscap-im tool is a convenience script that makes building hardened bootable container images easier.
+This tool is designed to be used during the build of the bootable container image.
+Include oscap-im in your Containerfile that will be used to build your bootable container image.
+The oscap-im runs oscap tool on a given container image.
+
+The oscap-im tool can't be used anywhere else than in a Containerfile.
+
+.SH USAGE
+
+oscap-im [OPTION...] DATASTREAM_FILE
+
+Usage of the tool mimics usage and options of oscap(8) tool.
+
+.SH OPTIONS
+.TP
+\fB\-\-profile PROFILE_ID\fR
+.RS
+ID of the profile to be evaluated.
+.RE
+.TP
+\fB\-\-tailoring-file TAILORING_FILE\fR
+.RS
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.RE
+.TP
+\fB\-\-tailoring-id COMPONENT_REF_ID\fR
+.RS
+Use tailoring component in input source data stream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source data stream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.RE
+.TP
+\fB\-\-results-arf FILE\fR
+.RS
+Writes results to a given FILE in Asset Reporting Format.
+.RE
+.TP
+\fB\-\-report FILE\fR
+.RS
+Write HTML report into FILE.
+.RE
+
+.SH REPORTING BUGS
+.nf
+Please report bugs using https://github.com/OpenSCAP/openscap/issues
+
+.SH AUTHORS
+.nf
+Jan Černý <jcerny@redhat.com>
+.fi

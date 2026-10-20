@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:esx-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#esx" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#esx" elementFormDefault="qualified" version="5.4">
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation>The following is a description of the elements, types, and attributes that compose the VMware ESX server specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+            <xsd:documentation>This schema was originally developed by Yuzheng Zhou and Todd Dolinsky at Hewlett-Packard. The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>VMware ESX server System Characteristics</schema>
+                  <version>5.4</version>
+                  <date>4/1/2008 10:41:39 AM</date>
+                  <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                  <sch:title>schematron validation of the VMware ESX server portion of an OVAL System Characteristics file</sch:title>
+                  <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+                  <sch:ns prefix="esx-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#esx"/>
+            </xsd:appinfo>
+      </xsd:annotation>
+      <!-- =============================================================================== -->
+      <!-- ===============================  PATCH ITEM  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="patch_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>Installation information about a specific patch in the VMware ESX server. This information can be retrieved by the "esxupdate query | grep ESX-xxxxxxx" command.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="patch_number" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the patch number which identifies the patch being checked in current VMware ESX server.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="esxpatchitempatch_number">
+                                                            <sch:rule context="esx-sc:patch_item/esx-sc:patch_number">
+                                                                  <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the patch_number entity of a patch_item should be 'int'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="status" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the installtaion status of a specific patch which is checked in current VMware ESX server.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="esxpatchitemstatus">
+                                                            <sch:rule context="esx-sc:patch_item/esx-sc:status">
+                                                                  <sch:assert test="@datatype='boolean'">item <sch:value-of select="../@id"/> - datatype attribute for the status entity of a patch_item should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ===============================  VERSION ITEM  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="version_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>Information about the release and build version of VMware ESX server. This information can be retrieved by the "vmware -v" command or by checking the /proc/vmware/version file.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="release" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the release of current VMware ESX server.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="versionitemrelease">
+                                                            <sch:rule context="esx-sc:version_item/esx-sc:release">
+                                                                  <sch:assert test="@datatype='version'">item <sch:value-of select="../@id"/> - datatype attribute for the release entity of a version_item should be 'version'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="build" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the build version of current VMware ESX server.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="versionitembuild">
+                                                            <sch:rule context="esx-sc:version_item/esx-sc:build">
+                                                                  <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the build entity of a version_item should be 'int'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+</xsd:schema>

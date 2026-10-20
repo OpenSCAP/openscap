@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<oval-def:oval_definitions xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <oval-def:generator>
+    <oval:product_name>jcerny</oval:product_name>
+    <oval:product_version>1</oval:product_version>
+    <oval:schema_version>5.11</oval:schema_version>
+    <oval:timestamp>2021-07-28T07:40:55</oval:timestamp>
+  </oval-def:generator>
+  <oval-def:definitions>
+    <oval-def:definition class="compliance" id="oval:x:def:1" version="1">
+      <oval-def:metadata>
+        <oval-def:title>title</oval-def:title>
+        <oval-def:description>description</oval-def:description>
+      </oval-def:metadata>
+      <oval-def:criteria>
+        <oval-def:criterion comment="comment" test_ref="oval:x:tst:1"/>
+      </oval-def:criteria>
+    </oval-def:definition>
+  </oval-def:definitions>
+  <oval-def:tests>
+    <ind:filehash58_test check="all" check_existence="all_exist" comment="comment" id="oval:x:tst:1" version="1">
+      <ind:object object_ref="oval:x:obj:1"/>
+      <ind:state state_ref="oval:x:ste:1"/>
+    </ind:filehash58_test>
+  </oval-def:tests>
+  <oval-def:objects>
+    <ind:filehash58_object id="oval:x:obj:1" version="1">
+      <ind:filepath>/etc/os-release</ind:filepath>
+      <ind:hash_type>SHA-256</ind:hash_type>
+    </ind:filehash58_object>
+  </oval-def:objects>
+  <oval-def:states>
+    <ind:filehash58_state id="oval:x:ste:1" version="1">
+      <ind:filepath>/etc/os-release</ind:filepath>
+      <ind:hash_type>SHA-256</ind:hash_type>
+      <ind:hash>6488c757642cd493da09dd78ee27f039711a1ad79039900970553772fd2106af</ind:hash>
+    </ind:filehash58_state>
+  </oval-def:states>
+</oval-def:oval_definitions>

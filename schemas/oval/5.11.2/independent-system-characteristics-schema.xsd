@@ -1,0 +1,1207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:ind-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"
+            elementFormDefault="qualified" version="5.11">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>This document outlines the items of the OVAL System Characteristics XML schema that are independent of any specific family or platform. Each iten is an extention of a basic System Characteristics item defined in the core System Characteristics XML schema.</xsd:documentation>
+          <xsd:documentation>The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>Independent System Characteristics</schema>
+               <version>5.11.1:1.2</version>
+               <date>11/30/2016 09:00:00 AM</date>
+               <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+               <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+               <sch:ns prefix="ind-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"/>
+              <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- ================================  FAMILY ITEM  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="family_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This element stores high level system OS type, otherwise known as the family.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="family" type="ind-sc:EntityItemFamilyType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This element describes the high level system OS type, otherwise known as the family.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ==============================  FILE HASH ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="filehash_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This element stores the different hash values associated with a specific file.</xsd:documentation>
+               <xsd:appinfo>
+                    <oval:deprecated_info>
+                         <oval:version>5.8</oval:version>
+                         <oval:reason>Replaced by the filehash58_item which allows the hash algorithm to be specified when collecting data. See the filehash58_item.</oval:reason>
+                         <oval:comment>This item has been deprecated and may be removed in a future version of the language.</oval:comment>
+                    </oval:deprecated_info>
+                    <sch:pattern id="ind-sc_filehash_item_dep">
+                         <sch:rule context="ind-sc:filehash_item">
+                              <sch:report test="true()">DEPRECATED ITEM: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                         </sch:rule>
+                    </sch:pattern>
+               </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="filepath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The filepath element specifies the absolute path for a file on the machine. A directory cannot be specified as a filepath.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The path element specifies the directory component of the absolute path to a file on the machine.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name of the file.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="md5" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The md5 hash of the file</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="sha1" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The sha1 hash of the file</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="windows_view" type="ind-sc:EntityItemWindowsViewType" minOccurs="0">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The windows view value from which this OVAL Item was collected. This is used to indicate from which view (32-bit or 64-bit), the associated Item was collected. A value of '32_bit' indicates the Item was collected from the 32-bit view.  A value of '64-bit' indicates the Item was collected from the 64-bit view. Omitting this entity removes any assertion about which view the Item was collected from, and therefore it is strongly suggested that this entity be set. This entity only applies to 64-bit Microsoft Windows operating systems.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ============================  FILE HASH ITEM (58) ============================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="filehash58_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This element stores a hash value associated with a specific file.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="filepath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The filepath element specifies the absolute path for a file on the machine. A directory cannot be specified as a filepath.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The path element specifies the directory component of the absolute path to a file on the machine.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name of the file.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="hash_type" type="ind-sc:EntityItemHashTypeType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Identifier for the hash algorithm used to calculate the hash.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="hash" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The result of applying the hash algorithm to the file.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="windows_view" type="ind-sc:EntityItemWindowsViewType" minOccurs="0">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The windows view value from which this OVAL Item was collected. This is used to indicate from which view (32-bit or 64-bit), the associated Item was collected. A value of '32_bit' indicates the Item was collected from the 32-bit view.  A value of '64-bit' indicates the Item was collected from the 64-bit view. Omitting this entity removes any assertion about which view the Item was collected from, and therefore it is strongly suggested that this entity be set. This entity only applies to 64-bit Microsoft Windows operating systems.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =======================  ENVIRONMENT VARIABLE ITEM  =========================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="environmentvariable_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores information about environment variables and their values.</xsd:documentation>
+               <xsd:appinfo>
+                    <oval:deprecated_info>
+                         <oval:version>5.8</oval:version>
+                         <oval:reason>Replaced by the environmentvariable58_item. This item allows the hash algorithm to be specified. See the filehash58_item.</oval:reason>
+                         <oval:comment>This object has been deprecated and may be removed in a future version of the language.</oval:comment>
+                    </oval:deprecated_info>
+                    <sch:pattern id="ind-sc_environmentvariable_item_dep">
+                         <sch:rule context="ind-sc:environmentvariable_item">
+                              <sch:report test="true()">DEPRECATED ITEM: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                         </sch:rule>
+                    </sch:pattern>
+               </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This element describes the name of an environment variable.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="value" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The actual value of the specified environment variable.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =======================  ENVIRONMENT VARIABLE ITEM (58) ======================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="environmentvariable58_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores information about an environment variable, the process ID of the process from which it was retrieved, and its corresponding value.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="pid" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1" nillable="true">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The process ID of the process from which the environment variable was retrieved.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This element describes the name of an environment variable.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="value" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The actual value of the specified environment variable.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =================================  LDAP ITEM  ================================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="ldap_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This element holds information about specific entries in the LDAP directory. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="suffix" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Each object in an LDAP directory exists under a certain suffix (also known as a naming context). A suffix is defined as a single object in the Directory Information Tree (DIT) with every object in the tree subordinate to it.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="relative_dn" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1" nillable="true">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The relative_dn field is used to uniquely identify an item inside the specified suffix. It contains all of the parts of the item's distinguished name except those outlined by the suffix. If the xsi:nil attribute is set to true, then the item being represented is the higher level suffix. </xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="attribute" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1" nillable="true">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Specifies a named value contained by the object.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="object_class" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name of the class of which the object is an instance.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="ldaptype" type="ind-sc:EntityItemLdaptypeType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Specifies the type of information that the specified attribute represents.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="value" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The actual value of the specified LDAP attribute.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =================================  LDAP ITEM (57)  ============================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="ldap57_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This element holds information about specific entries in the LDAP directory. It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+               <xsd:appinfo>
+                    <oval:deprecated_info>
+                         <oval:version>5.11.2</oval:version>
+                         <oval:reason>Use the original ldap_item. The ldap57_test suffers from ambiguity; it was never adequately specified, and it does not even seem possible to have structured data in the context of the enumerated LdaptypeTypes. Use the original ldap_test instead.</oval:reason>
+                         <oval:comment>This test has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                    </oval:deprecated_info>
+                    <sch:pattern id="ind-sc_ldap57_item_dep">
+                         <sch:rule context="ind-sc:ldap57_item">
+                              <sch:report test="true()">DEPRECATED ITEM: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                         </sch:rule>
+                    </sch:pattern>
+               </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="suffix" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Each object in an LDAP directory exists under a certain suffix (also known as a naming context). A suffix is defined as a single object in the Directory Information Tree (DIT) with every object in the tree subordinate to it.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="relative_dn" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1" nillable="true">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The relative_dn field is used to uniquely identify an item inside the specified suffix. It contains all of the parts of the item's distinguished name except those outlined by the suffix. If the xsi:nil attribute is set to true, then the item being represented is the higher level suffix.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="attribute" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1" nillable="true">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Specifies a named value contained by the object.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="object_class" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name of the class of which the object is an instance.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="ldaptype" type="ind-sc:EntityItemLdaptypeType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Specifies the type of information that the specified attribute represents.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="value" type="oval-sc:EntityItemRecordType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The actual value of the specified LDAP attribute. Note that while an LDAP attribute can contain structured data where it is necessary to collect multiple related fields that can be described by the 'record' datatype, it is not always the case.  It also is possible that an LDAP attribute can contain only a single value or an array of values. In these cases, there is not a name to uniquely identify the corresponding field(s) which is a requirement for fields in the 'record' datatype.  As a result, the name of the LDAP attribute will be used to uniquely identify the field(s) and satisfy this requirement. If the LDAP attribute contains a single value, the 'record' will have a single field identified by the name of the LDAP attribute. If the LDAP attribute contains an array of values, the 'record' will have multiple fields all identified by the name of the LDAP attribute.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ind-sc_ldap57_itemvalue">
+                                                  <sch:rule context="ind-sc:ldap57_item/ind-sc:value">
+                                                       <sch:assert test="@datatype='record'"><sch:value-of select="../@id"/> - datatype attribute for the value entity of a ldap57_item must be 'record'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================  SQL CONTENT ITEM   ============================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="sql_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The sql_item outlines information collected from a database via an SQL query.</xsd:documentation>
+               <xsd:appinfo>
+                    <oval:deprecated_info>
+                         <oval:version>5.7</oval:version>
+                         <oval:reason>Replaced by the sql57_item. This item allows for single fields to be selected from a database. A new item was created to allow more than one field to be selected in one statement. See the sql57_item.</oval:reason>
+                         <oval:comment>This object has been deprecated and may be removed in a future version of the language.</oval:comment>
+                    </oval:deprecated_info>
+                    <sch:pattern id="ind-sc_sql_item_dep">
+                         <sch:rule context="ind-sc:sql_item">
+                              <sch:report test="true()">DEPRECATED ITEM: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                         </sch:rule>
+                    </sch:pattern>
+               </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="engine" type="ind-sc:EntityItemEngineType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The engine entity identifies the specific database engine used to connect to the database.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The version entity identifies the version of the database engine used to connect to the database.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="connection_string" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The connection_string entity defines connection parameters used to connect to the specific database.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="sql" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The sql entity holds the specific query used to identify the object(s) in the database.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="result" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The result entity specifies the result(s) of the given SQL query against the database.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================  SQL CONTENT ITEM (57)   ======================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="sql57_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The sql57_item outlines information collected from a database via an SQL query.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="engine" type="ind-sc:EntityItemEngineType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The engine entity identifies the specific database engine used to connect to the database.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The version entity identifies the version of the database engine used to connect to the database.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="connection_string" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The connection_string entity defines connection parameters used to connect to the specific database.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="sql" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The sql entity holds the specific query used to identify the object(s) in the database.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="result" type="oval-sc:EntityItemRecordType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The result entity holds the results of the specified SQL statement.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="ind-sc_sql57_itemresult">
+                                                  <sch:rule context="ind-sc:sql57_item/ind-sc:result">
+                                                       <sch:assert test="@datatype='record'"><sch:value-of select="../@id"/> - datatype attribute for the result entity of a sql57_item must be 'record'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ==========================  TEXT FILE CONTENT ITEM  =========================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="textfilecontent_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The textfilecontent_item looks at the contents of a text file (aka a configuration file) by looking at individual lines.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="filepath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The filepath element specifies the absolute path for a file on the machine. A directory cannot be specified as a filepath.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The path element specifies the directory component of the absolute path to a file on the machine.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>The filename entity specifies the name of the file (without the path) that is being represented.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                               <xsd:element name="pattern" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                     <xsd:annotation>
+                                           <xsd:documentation>The pattern entity represents a regular expression that is used to define a block of text.  Subexpression notation (parenthesis) is used to call out a value(s) to test against.  For example, the pattern abc(.*)xyz would look for a block of text in the file that starts with abc and ends with xyz, with the subexpression being all the characters that exist inbetween.  Note that if the pattern can match more than one block of text starting at the same point, then it matches the longest. Subexpressions also match the longest possible substrings, subject to the constraint that the whole match be as long as possible, with subexpressions starting earlier in the pattern taking priority over ones starting later.</xsd:documentation>
+                                     </xsd:annotation>
+                               </xsd:element>
+                               <xsd:element name="instance" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                     <xsd:annotation>
+                                           <xsd:documentation>The instance entity calls out which match of the pattern is being represented by this item.  The first match is given an instance value of 1, the second match is given an instance value of 2, and so on.  The main purpose of this entity is too provide uniqueness for different textfilecontent_items that results from multiple matches of a given pattern against the same file.</xsd:documentation>
+                                           <xsd:appinfo>
+                                                 <sch:pattern id="win-sc_tfc_i">
+                                                       <sch:rule context="win-sc:textfilecontent_item/win-sc:instance">
+                                                             <sch:assert test="string-length(.) = 0 or number(.) &lt; 1"><sch:value-of select="../@id"/> - the value of instance must be greater than one</sch:assert>
+                                                       </sch:rule>
+                                                 </sch:pattern>
+                                           </xsd:appinfo>
+                                     </xsd:annotation>
+                               </xsd:element>
+                               <xsd:element name="line" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>The line element represents a line in the file and is represented using a regular expression.</xsd:documentation>
+                                         <xsd:appinfo>
+                                             <oval:deprecated_info>
+                                                  <oval:version>5.4</oval:version>
+                                                  <oval:reason>Due to the fact that the TextFileContent54_test supports multi-line pattern matching, the line entity is no longer needed.</oval:reason>
+                                                  <oval:comment>This entity has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                                             </oval:deprecated_info>
+                                             <sch:pattern id="ind-sc_txtitemline">
+                                                  <sch:rule context="ind-sc:textfilecontent_item/ind-sc:line">
+                                                        <sch:report test="true()">DEPRECATED ELEMENT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="text" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="1">
+                                     <xsd:annotation>
+                                           <xsd:documentation>The text entity represents the block of text that matched the specified pattern.</xsd:documentation>
+                                     </xsd:annotation>
+                               </xsd:element>
+                               <xsd:element name="subexpression" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The subexpression entity represents the value of a subexpression in the specified pattern.  If multiple subexpressions are specified in the pattern, then multiple entities are presented.  Note that the textfilecontent_state in the definition schema only allows a single subexpression entity.  This means that the test will check that all (or at least one, none, etc.) the subexpressions pass the same check.  This means that the order of multiple subexpression entities in the item does not matter.</xsd:documentation>
+                                   </xsd:annotation>
+                               </xsd:element>
+                              <xsd:element name="windows_view" type="ind-sc:EntityItemWindowsViewType" minOccurs="0">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The windows view value from which this OVAL Item was collected. This is used to indicate from which view (32-bit or 64-bit), the associated Item was collected. A value of '32_bit' indicates the Item was collected from the 32-bit view.  A value of '64-bit' indicates the Item was collected from the 64-bit view. Omitting this entity removes any assertion about which view the Item was collected from, and therefore it is strongly suggested that this entity be set. This entity only applies to 64-bit Microsoft Windows operating systems.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===============================  VARIABLE ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="variable_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores information about OVAL Variables and their values.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="var_ref" type="ind-sc:EntityItemVariableRefType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The id of the variable.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="value" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The value of the variable. If a variable represents and array of values, then multiple value elements should exist.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===========================  XML FILE CONTENT ITEM  =========================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="xmlfilecontent_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores results from checking the contents of an xml file.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="filepath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The filepath element specifies the absolute path for a file on the machine. A directory cannot be specified as a filepath.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The path element specifies the directory component of the absolute path to a file on the machine.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The filename element specifies the name of the file.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="xpath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Specifies an XPath 1.0 expression to evaluate against the XML file specified by the filename entity.  This XPath 1.0 expression must evaluate to a list of zero or more text values which will be accessible in OVAL via instances of the value_of entity.  Any results from evaluating the XPath 1.0 expression other than a list of text strings (e.g., a nodes set) is considered an error.  The intention is that the text values be drawn from instances of a single, uniquely named element or attribute.  However, an OVAL interpreter is not required to verify this, so the author should define the XPath expression carefully.  Note that "equals" is the only valid operator for the xpath entity.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="value_of" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The value_of element checks the value(s) of the text node(s) or attribute(s) found. How this is used is entirely controlled by operator attributes.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="windows_view" type="ind-sc:EntityItemWindowsViewType" minOccurs="0">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The windows view value from which this OVAL Item was collected. This is used to indicate from which view (32-bit or 64-bit), the associated Item was collected. A value of '32_bit' indicates the Item was collected from the 32-bit view.  A value of '64-bit' indicates the Item was collected from the 64-bit view. Omitting this entity removes any assertion about which view the Item was collected from, and therefore it is strongly suggested that this entity be set. This entity only applies to 64-bit Microsoft Windows operating systems.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <xsd:complexType name="EntityItemEngineType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityItemEngineType complex type defines a string entity value that is restricted to an enumeration. Each valid entry in the enumeration is a valid database engine.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="access">
+                         <xsd:annotation>
+                              <xsd:documentation>The access value describes the Microsoft Access database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="db2">
+                         <xsd:annotation>
+                              <xsd:documentation>The db2 value describes the IBM DB2 database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="cache">
+                         <xsd:annotation>
+                              <xsd:documentation>The cache value describes the InterSystems Cache database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="firebird">
+                         <xsd:annotation>
+                              <xsd:documentation>The firebird value describes the Firebird database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="firstsql">
+                         <xsd:annotation>
+                              <xsd:documentation>The firstsql value describes the FirstSQL database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="foxpro">
+                         <xsd:annotation>
+                              <xsd:documentation>The foxpro value describes the Microsoft FoxPro database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="informix">
+                         <xsd:annotation>
+                              <xsd:documentation>The informix value describes the IBM Informix database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="ingres">
+                         <xsd:annotation>
+                              <xsd:documentation>The ingres value describes the Ingres database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="interbase">
+                         <xsd:annotation>
+                              <xsd:documentation>The interbase value describes the Embarcadero Technologies InterBase database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="lightbase">
+                         <xsd:annotation>
+                              <xsd:documentation>The lightbase value describes the Light Infocon LightBase database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="maxdb">
+                         <xsd:annotation>
+                              <xsd:documentation>The maxdb value describes the SAP MaxDB database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="monetdb">
+                         <xsd:annotation>
+                              <xsd:documentation>The monetdb value describes the MonetDB SQL database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="mimer">
+                         <xsd:annotation>
+                              <xsd:documentation>The mimer value describes the Mimer SQL database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="mysql">
+                         <xsd:annotation>
+                              <xsd:documentation>The mysql value describes the MySQL database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="oracle">
+                         <xsd:annotation>
+                              <xsd:documentation>The oracle value describes the Oracle database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="paradox">
+                         <xsd:annotation>
+                              <xsd:documentation>The paradox value describes the Paradox database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="pervasive">
+                         <xsd:annotation>
+                              <xsd:documentation>The pervasive value describes the Pervasive PSQL database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="postgre">
+                         <xsd:annotation>
+                              <xsd:documentation>The postgre value describes the PostgreSQL database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="sqlbase">
+                         <xsd:annotation>
+                              <xsd:documentation>The sqlbase value describes the Unify SQLBase database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="sqlite">
+                         <xsd:annotation>
+                              <xsd:documentation>The sqlite value describes the SQLite database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="sqlserver">
+                         <xsd:annotation>
+                              <xsd:documentation>The sqlserver value describes the Microsoft SQL database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="sybase">
+                         <xsd:annotation>
+                              <xsd:documentation>The sybase value describes the Sybase database engine.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="">
+                         <xsd:annotation>
+                              <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <xsd:complexType name="EntityItemFamilyType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityItemFamilyType complex type defines a string entity value that is restricted to a set of enumerations. Each valid enumeration is a high-level family of system operating system.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="android">
+                         <xsd:annotation>
+                               <xsd:documentation>The android value describes the Android mobile operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="apple_ios">
+                         <xsd:annotation>
+                               <xsd:documentation>The apple_ios value describes the iOS mobile operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="asa">
+                        <xsd:annotation>
+                             <xsd:documentation>The asa value describes the Cisco ASA security devices.</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="catos">
+                         <xsd:annotation>
+                              <xsd:documentation>The catos value describes the Cisco CatOS operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="ios">
+                         <xsd:annotation>
+                              <xsd:documentation>The ios value describes the Cisco IOS operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="iosxe">
+                         <xsd:annotation>
+                              <xsd:documentation>The iosxe value describes the Cisco IOS-XE operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="junos">
+                         <xsd:annotation>
+                              <xsd:documentation>The junos value describes the Juniper JunOS operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="macos">
+                         <xsd:annotation>
+                              <xsd:documentation>The macos value describes the Mac operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="pixos">
+                         <xsd:annotation>
+                              <xsd:documentation>The pixos value describes the Cisco PIX operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="undefined">
+                         <xsd:annotation>
+                              <xsd:documentation>The undefined value is to be used when the desired family is not available.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="unix">
+                         <xsd:annotation>
+                              <xsd:documentation>The unix value describes the UNIX operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="vmware_infrastructure">
+                         <xsd:annotation>
+                              <xsd:documentation>The vmware_infrastructure value describes VMWare Infrastructure.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="windows">
+                         <xsd:annotation>
+                              <xsd:documentation>The windows value describes the Microsoft Windows operating system.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="">
+                         <xsd:annotation>
+                              <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <xsd:complexType name="EntityItemHashTypeType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityItemHashTypeType complex type restricts a string value to a specific set of values that specify the different hash algorithms that are supported. The empty string is also allowed to support empty elements associated with variable references.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="MD5">
+                         <xsd:annotation>
+                              <xsd:documentation>The MD5 hash algorithm.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="SHA-1">
+                         <xsd:annotation>
+                              <xsd:documentation>The SHA-1 hash algorithm.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="SHA-224">
+                         <xsd:annotation>
+                              <xsd:documentation>The SHA-224 hash algorithm.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="SHA-256">
+                         <xsd:annotation>
+                              <xsd:documentation>The SHA-256 hash algorithm.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="SHA-384">
+                         <xsd:annotation>
+                              <xsd:documentation>The SHA-384 hash algorithm.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="SHA-512">
+                         <xsd:annotation>
+                              <xsd:documentation>The SHA-512 hash algorithm.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="">
+                         <xsd:annotation>
+                              <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <xsd:complexType name="EntityItemVariableRefType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityItemVariableRefType complex type defines a string item entity that has a valid OVAL variable id as the value.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:pattern value="oval:[A-Za-z0-9_\-\.]+:var:[1-9][0-9]*"/>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <xsd:complexType name="EntityItemLdaptypeType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityItemLdaptypeType complex type restricts a string value to a specific set of values that specify the different types of information that an ldap attribute can represent. The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="LDAPTYPE_ACI_ITEM">
+                         <xsd:annotation>
+                             <xsd:documentation>ACI Item, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.1</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_ACCESS_POINT">
+                         <xsd:annotation>
+                             <xsd:documentation>Access Point, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.2</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_ATTRIBUTE_TYPE_DESCRIP_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>Attribute Type Description, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.3</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_AUDIO">
+                         <xsd:annotation>
+                             <xsd:documentation>Audio, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.4</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_BINARY">
+                         <xsd:annotation>
+                             <xsd:documentation>Binary, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.5</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_BIT_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>Bit String, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.6</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_BOOLEAN">
+                         <xsd:annotation>
+                             <xsd:documentation>Boolean, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.7</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_CERTIFICATE">
+                         <xsd:annotation>
+                             <xsd:documentation>Certificate, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.8</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_CERTIFICATE_LIST">
+                         <xsd:annotation>
+                             <xsd:documentation>Certificate List, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.9</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_CERTIFICATE_PAIR">
+                         <xsd:annotation>
+                             <xsd:documentation>Certificate Pair, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.10</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_COUNTRY_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>Country String, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.11</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_DN_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>DN, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.12</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_DATA_QUALITY_SYNTAX">
+                         <xsd:annotation>
+                             <xsd:documentation>Data Quality Syntax, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.13</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_DELIVERY_METHOD">
+                         <xsd:annotation>
+                             <xsd:documentation>Delivery Method, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.14</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_DIRECTORY_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>Directory String, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.15</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_DIR_CONTENT_RULE_DESCRIPTION">
+                         <xsd:annotation>
+                             <xsd:documentation>DIT Content Rule Description, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.16</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_DIT_STRUCTURE_RULE_DESCRIPTION">
+                         <xsd:annotation>
+                             <xsd:documentation>DIT Structure Rule Description, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.17</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_DL_SUBMIT_PERMISSION">
+                         <xsd:annotation>
+                             <xsd:documentation>DL Submit Permission, corresponding to OID Y  1.3.6.1.4.1.1466.115.121.1.18</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_DSA_QUALITY_SYNTAX">
+                         <xsd:annotation>
+                             <xsd:documentation>DSA Quality Syntax, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.19</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_DSE_TYPE">
+                         <xsd:annotation>
+                             <xsd:documentation>DSE Type, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.20</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_ENHANCED_GUIDE">
+                         <xsd:annotation>
+                             <xsd:documentation>Enhanced Guide, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.21</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_FAX_TEL_NUMBER">
+                         <xsd:annotation>
+                             <xsd:documentation>Facsimile Telephone Number, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.22</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_FAX">
+                         <xsd:annotation>
+                             <xsd:documentation>Fax, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.23</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_GENERALIZED_TIME">
+                         <xsd:annotation>
+                             <xsd:documentation>Generalized Time, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.24</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_GUIDE">
+                         <xsd:annotation>
+                             <xsd:documentation>Guide, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.25</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_IA5_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>IA5 String, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.26</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_INTEGER">
+                         <xsd:annotation>
+                             <xsd:documentation>INTEGER, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.27</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_JPEG">
+                         <xsd:annotation>
+                             <xsd:documentation>JPEG, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.28</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_LDAP_SYNTAX_DESCRIPTION">
+                         <xsd:annotation>
+                             <xsd:documentation>LDAP Syntax Description, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.54</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_LDAP_SCHEMA_DEFINITION">
+                         <xsd:annotation>
+                             <xsd:documentation>LDAP Schema Definition, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.56</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_LDAP_SCHEMA_DESCRIPTION">
+                         <xsd:annotation>
+                             <xsd:documentation>LDAP Schema Description, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.57</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_MASTER_AND_SHADOW_ACCESS_POINTS">
+                         <xsd:annotation>
+                             <xsd:documentation>Master And Shadow Access Points, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.29</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_MATCHING_RULE_DESCRIPTION">
+                         <xsd:annotation>
+                             <xsd:documentation>Matching Rule Description, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.30</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_MATCHING_RULE_USE_DESCRIPTION">
+                         <xsd:annotation>
+                             <xsd:documentation>Matching Rule Use Description, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.31</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_MAIL_PREFERENCE">
+                         <xsd:annotation>
+                             <xsd:documentation>Mail Preference, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.32</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_MHS_OR_ADDRESS">
+                         <xsd:annotation>
+                             <xsd:documentation>MHS OR Address, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.33</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_MODIFY_RIGHTS">
+                         <xsd:annotation>
+                             <xsd:documentation>Modify Rights, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.55</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_NAME_AND_OPTIONAL_UID">
+                         <xsd:annotation>
+                             <xsd:documentation>Name And Optional UID, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.34</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_NAME_FORM_DESCRIPTION">
+                         <xsd:annotation>
+                             <xsd:documentation>Name Form Description, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.35</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_NUMERIC_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>Numeric String, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.36</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_OBJECT_CLASS_DESCRIP_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>Object Class Description, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.37</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_OCTET_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>Octet String, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.40</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_OID">
+                         <xsd:annotation>
+                             <xsd:documentation>OID, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.38</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_MAILBOX">
+                         <xsd:annotation>
+                             <xsd:documentation>Other Mailbox, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.39</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_POSTAL_ADDRESS">
+                         <xsd:annotation>
+                             <xsd:documentation>Postal Address, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.41</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_PROTOCOL_INFORMATION">
+                         <xsd:annotation>
+                             <xsd:documentation>Protocol Information, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.42</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_PRESENTATION_ADDRESS">
+                         <xsd:annotation>
+                             <xsd:documentation>Presentation Address, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.43</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_PRINTABLE_STRING">
+                         <xsd:annotation>
+                             <xsd:documentation>Printable String, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.44</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_SUBSTRING_ASSERTION">
+                         <xsd:annotation>
+                             <xsd:documentation>Substring Assertion, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.58</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_SUBTREE_SPECIFICATION">
+                         <xsd:annotation>
+                             <xsd:documentation>Subtree Specification, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.45</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_SUPPLIER_INFORMATION">
+                         <xsd:annotation>
+                             <xsd:documentation>Supplier Information, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.46</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_SUPPLIER_OR_CONSUMER">
+                         <xsd:annotation>
+                             <xsd:documentation>Supplier Or Consumer, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.47</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_SUPPLIER_AND_CONSUMER">
+                         <xsd:annotation>
+                             <xsd:documentation>Supplier And Consumer, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.48</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_SUPPORTED_ALGORITHM">
+                         <xsd:annotation>
+                             <xsd:documentation>Supported Algorithm, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.49</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_TELEPHONE_NUMBER">
+                         <xsd:annotation>
+                             <xsd:documentation>Telephone Number, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.50</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_TELEX_TERMINAL_ID">
+                         <xsd:annotation>
+                             <xsd:documentation>Teletex Terminal Identifier, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.51</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_TELEX_NUMBER">
+                         <xsd:annotation>
+                             <xsd:documentation>Telex Number, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.52</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_UTC_TIME">
+                         <xsd:annotation>
+                             <xsd:documentation>UTC Time, corresponding to OID 1.3.6.1.4.1.1466.115.121.1.53</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_TIMESTAMP">
+                         <xsd:annotation>
+                             <xsd:documentation>The data is of a time stamp in seconds.</xsd:documentation>
+                             <xsd:appinfo>
+                                 <oval:deprecated_info>
+                                     <oval:version>5.7</oval:version>
+                                     <oval:reason>This value was accidently carried over from the win-sc:EntityItemAdstypeType as it was used as a template for the ind-sc:EntityItemLdaptypeType.</oval:reason>
+                                     <oval:comment>This value has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                                 </oval:deprecated_info>
+                                 <sch:pattern id="ind-sc_ldaptype_timestamp_value_dep">
+                                     <sch:rule context="oval-sc:oval_system_characteristics/oval-sc:system_data/ind-sc:ldap_item/ind-sc:ldaptype|oval-sc:oval_system_characteristics/oval-sc:system_data/ind-sc:ldap57_item/ind-sc:ldaptype">
+                                         <sch:report test=".='LDAPTYPE_TIMESTAMP'">
+                                                       DEPRECATED ELEMENT VALUE IN: ldap_item ELEMENT VALUE: <sch:value-of select="."/>
+                                                  </sch:report>
+                                     </sch:rule>
+                                 </sch:pattern>
+                             </xsd:appinfo>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="LDAPTYPE_EMAIL">
+                         <xsd:annotation>
+                             <xsd:documentation>The data is of an e-mail message.</xsd:documentation>
+                             <xsd:appinfo>
+                                 <oval:deprecated_info>
+                                     <oval:version>5.7</oval:version>
+                                     <oval:reason>This value was accidently carried over from the win-sc:EntityItemAdstypeType as it was used as a template for the ind-sc:EntityItemLdaptypeType.</oval:reason>
+                                     <oval:comment>This value has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                                 </oval:deprecated_info>
+                                 <sch:pattern id="ind-sc_ldaptype_email_value_dep">
+                                     <sch:rule context="oval-sc:oval_system_characteristics/oval-sc:system_data/ind-sc:ldap_item/ind-sc:ldaptype|oval-sc:oval_system_characteristics/oval-sc:system_data/ind-sc:ldap57_item/ind-sc:ldaptype">
+                                         <sch:report test=".='LDAPTYPE_EMAIL'">
+                                                       DEPRECATED ELEMENT VALUE IN: ldap_item ELEMENT VALUE: <sch:value-of select="."/>
+                                                  </sch:report>
+                                     </sch:rule>
+                                 </sch:pattern>
+                             </xsd:appinfo>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+                     <xsd:enumeration value="">
+                         <xsd:annotation>
+                             <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                         </xsd:annotation>
+                     </xsd:enumeration>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <xsd:complexType name="EntityItemWindowsViewType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityItemWindowsViewType restricts a string value to a specific set of values: 32-bit and 64-bit. These values describe the different values possible for the windows view behavior.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="32_bit">
+                         <xsd:annotation>
+                              <xsd:documentation>Indicates the 32_bit windows view.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="64_bit">
+                         <xsd:annotation>
+                              <xsd:documentation>Indicates the 64_bit windows view.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="">
+                         <xsd:annotation>
+                              <xsd:documentation>The empty string value is permitted here to allow for empty elements associated with variable references.</xsd:documentation>
+                         </xsd:annotation>
+                    </xsd:enumeration>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+</xsd:schema>

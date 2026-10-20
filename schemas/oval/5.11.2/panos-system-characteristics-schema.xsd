@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
+            xmlns:panos-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#panos"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#panos"
+            elementFormDefault="qualified" version="5.11">
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+    <xsd:annotation>
+        <xsd:documentation>
+            This document outlines the items of the OVAL System Characteristics XML schema that are composed of Palo Alto-specific 
+            tests. Each item is an extention of a basic System Characteristics item defined in the core System Characteristics XML 
+            schema.
+        </xsd:documentation>
+        <xsd:documentation>
+            This schema was originally developed by William Munyan at cisecurity.org. The OVAL Schema is maintained by the OVAL 
+            Community. For more information, including how to get involved in the project and how to submit change requests, please 
+            visit the OVAL website at http://oval.cisecurity.org.
+        </xsd:documentation>
+        <xsd:appinfo>
+            <schema>Palo Alto (PAN-OS) Definitions</schema>
+            <version>5.11.2:2.0</version>
+            <date>03/30/2021 09:00:00 AM</date>
+            <terms_of_use>
+                For the portion subject to the copyright in the United States: Copyright (c) 2016 United States Government. 
+                All rights reserved. Copyright (c) 2016, Center for Internet Security. All rights reserved. The contents of 
+                this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the 
+                OVAL License for the specific language governing permissions and limitations for use of this schema. When 
+                distributing copies of the OVAL Schema, this license header must be included.
+            </terms_of_use>
+            <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+            <sch:ns prefix="panos-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#panos"/>
+            <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    
+    <!-- =============================================================================== -->
+    <!-- ===============================  CONFIG ITEM  ================================= -->
+    <!-- =============================================================================== -->
+    <xsd:element name="config_item" substitutionGroup="oval-sc:item">
+        <xsd:annotation>
+            <xsd:documentation>This item stores results from checking the contents of an XML configuration.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-sc:ItemType">
+                    <xsd:sequence>
+                        <xsd:element name="xpath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>Specifies an XPath expression describing the text node(s) or attribute(s) which were collected.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="value_of" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The value_of element checks the value(s) of the text node(s) or attribute(s) found. How this 
+                                    is used is entirely controlled by operator attributes.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

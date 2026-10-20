@@ -1,0 +1,401 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+
+  <generator>
+    <oval:product_name>textfilecontent54</oval:product_name>
+    <oval:product_version>1.0</oval:product_version>
+    <oval:schema_version>5.4</oval:schema_version>
+    <oval:timestamp>2008-03-31T00:00:00-00:00</oval:timestamp>
+  </generator>
+  
+  <definitions>
+
+    <definition class="compliance" version="1" id="oval:0:def:1"> <!-- comment="false" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:2"/>
+        <criterion test_ref="oval:0:tst:3"/>
+        <criterion test_ref="oval:0:tst:4"/>
+        <criterion test_ref="oval:0:tst:5"/>
+        <criterion test_ref="oval:0:tst:6"/>
+        <criterion test_ref="oval:0:tst:7"/>
+        <criterion test_ref="oval:0:tst:8"/>
+        <criterion test_ref="oval:0:tst:9"/>
+        <criterion test_ref="oval:0:tst:10"/>
+        <criterion test_ref="oval:0:tst:11"/>
+        <criterion test_ref="oval:0:tst:12"/>
+        <criterion test_ref="oval:0:tst:13"/>
+        <criterion test_ref="oval:0:tst:14"/>
+        <criterion test_ref="oval:0:tst:15"/>
+        <criterion test_ref="oval:0:tst:16"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:2" > <!-- comment="false" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:3" > <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:1"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:4" > <!-- comment="false" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion test_ref="oval:0:tst:4"/>
+        <criterion test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:5" > <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="OR">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:6" > <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="OR">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:1"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:7" > <!-- comment="false" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="OR">
+        <criterion test_ref="oval:0:tst:4"/>
+        <criterion test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:8" > <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="XOR">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:9" > <!-- comment="false" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="XOR">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:1"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:10" > <!-- comment="false" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="XOR">
+        <criterion test_ref="oval:0:tst:4"/>
+        <criterion test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:11" > <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="ONE">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:12" > <!-- comment="false" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="ONE">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:1"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:13" > <!-- comment="false" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="ONE">
+        <criterion test_ref="oval:0:tst:4"/>
+        <criterion test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+  </definitions>
+
+  <tests>
+
+    <!-- ##### SINGLE OBJECT TESTS ##### -->
+
+    <!-- ALL_EXIST -->
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:1" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:1"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:2" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:2"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:3" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:3"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:4" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:4"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:5" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:5"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:6" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:6"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:7" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:7"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:8" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:8"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:9" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:9"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:10" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:10"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:11" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:11"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:12" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:12"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:13" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:13"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:14" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:14"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:15" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:15"/>
+    </textfilecontent54_test>
+
+    <textfilecontent54_test check_existence="all_exist" version="1" id="oval:0:tst:16" check="all" comment="false" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:0:obj:16"/>
+    </textfilecontent54_test>
+
+    <!-- ANY_EXIST -->
+
+
+    <!-- AT_LEAST_ONE_EXISTS -->
+
+
+    <!-- ONLY_ONE_EXISTS -->
+
+
+    <!-- NONE_EXIST -->
+
+
+    <!-- ##### OBJECT & STATE TESTS ##### -->
+
+    <!-- ALL_EXIST -->
+
+    <!-- ANY_EXIST -->
+
+    <!-- AT_LEAST_ONE_EXISTS -->
+
+    <!-- ONLY_ONE_EXISTS -->
+
+    <!-- NONE_EXIST -->
+
+
+    <!-- ##### BEHAVIOURAL OBJECT TESTS ##### -->
+
+    <!-- ALL_EXIST -->
+
+    <!-- ANY_EXIST -->
+
+    <!-- AT_LEAST_ONE_EXISTS -->
+
+    <!-- ONLY_ONE_EXISTS -->
+
+    <!-- NONE_EXIST -->
+
+  </tests>
+
+  <objects>
+
+    <!-- SIMPLE OBJECTS -->
+
+    <textfilecontent54_object version="1" id="oval:0:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename> 
+      <pattern operation="pattern match">(\s)*valid_key(\s)*=(\s)*valid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">0</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename>
+      <pattern operation="pattern match">(\s)*valid_key(\s)*=(\s)*valid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">1</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename> 
+      <pattern operation="pattern match">(\s)*valid_key(\s)*=(\s)*valid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">2</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:4" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*valid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">3</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:5" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*valid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">0</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:6" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename>
+      <pattern operation="pattern match">(\s)*valid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">1</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:7" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename>
+      <pattern operation="pattern match">(\s)*valid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">0</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:8" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">1</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:9" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">0</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:10" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">1</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:11" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file_empty</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">0</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:12" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">1</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:13" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file_non_existing</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">0</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:14" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/tmp</path>
+      <filename>test_probes_textfilecontent54.tmp_file_non_existing</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">1</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:15" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/invalid_path</path>
+      <filename>test_probes_textfilecontent54.tmp_file_non_existing</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">0</instance>
+    </textfilecontent54_object>
+
+    <textfilecontent54_object version="1" id="oval:0:obj:16" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <path>/invalid_path</path>
+      <filename>test_probes_textfilecontent54.tmp_file_non_existing</filename>
+      <pattern operation="pattern match">(\s)*invalid_key(\s)*=(\s)*invalid_value(\s)*</pattern>
+      <instance operation="greater than or equal" datatype="int">1</instance>
+    </textfilecontent54_object>
+
+    <!-- BEHAVIOURAL OJECTS -->
+
+  </objects>
+
+</oval_definitions>

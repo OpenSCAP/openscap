@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_variable.xccdf.xml" schematron-version="1.2">
+  <ds:data-stream id="scap_org.open-scap_datastream_from_xccdf_variable.xccdf.xml" scap-version="1.2" use-case="OTHER">
+    <ds:checklists>
+      <ds:component-ref id="scap_org.open-scap_cref_variable.xccdf.xml" xlink:href="#scap_org.open-scap_comp_variable.xccdf.xml">
+        <cat:catalog>
+          <cat:uri name="variable.oval.xml" uri="#scap_org.open-scap_cref_variable.oval.xml"/>
+        </cat:catalog>
+      </ds:component-ref>
+    </ds:checklists>
+    <ds:checks>
+      <ds:component-ref id="scap_org.open-scap_cref_variable.oval.xml" xlink:href="#scap_org.open-scap_comp_variable.oval.xml"/>
+    </ds:checks>
+  </ds:data-stream>
+  <ds:component id="scap_org.open-scap_comp_variable.oval.xml" timestamp="2021-01-21T08:56:08">
+    <oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+      <generator>
+        <oval:schema_version>5.10.1</oval:schema_version>
+        <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition class="compliance" version="1" id="oval:x:def:1">
+          <metadata>
+            <title>x</title>
+            <description>x</description>
+            <affected family="unix">
+              <platform>x</platform>
+            </affected>
+          </metadata>
+          <criteria>
+            <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <ind:variable_test id="oval:x:tst:1" version="1" check="all" comment="oval:x:var:1 should equals 24">
+          <ind:object object_ref="oval:x:obj:1"/>
+          <ind:state state_ref="oval:x:ste:1"/>
+        </ind:variable_test>
+      </tests>
+      <objects>
+        <ind:variable_object id="oval:x:obj:1" version="1">
+          <ind:var_ref>oval:x:var:1</ind:var_ref>
+        </ind:variable_object>
+      </objects>
+      <states>
+        <ind:variable_state id="oval:x:ste:1" version="1">
+          <ind:value datatype="int" operation="equals" var_ref="oval:x:var:2"/>
+        </ind:variable_state>
+      </states>
+      <variables>
+        <constant_variable id="oval:x:var:1" datatype="int" version="1" comment="var1">
+          <value>42</value>
+        </constant_variable>
+        <constant_variable id="oval:x:var:2" datatype="int" version="1" comment="var2">
+          <value>24</value>
+        </constant_variable>
+      </variables>
+    </oval_definitions>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_variable.xccdf.xml" timestamp="2021-01-21T08:56:08">
+    <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_test">
+      <status>incomplete</status>
+      <version>1.0</version>
+      <model system="urn:xccdf:scoring:default"/>
+      <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
+        <title>Simple rule</title>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <check-content-ref href="variable.oval.xml" name="oval:x:def:1"/>
+        </check>
+      </Rule>
+    </Benchmark>
+  </ds:component>
+</ds:data-stream-collection>

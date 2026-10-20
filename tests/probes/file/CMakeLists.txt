@@ -1,0 +1,5 @@
+if(ENABLE_PROBES_UNIX)
+	add_oscap_test("test_probes_file.sh" LABELS unix)
+	add_oscap_test("test_probes_file_behaviour.sh" LABELS unix)
+	add_oscap_test("test_probes_file_multiple_file_paths.sh" LABELS unix)
+endif()

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+##########
+# This script can be installed to get regular oscap-scan checks. Results are 
+# sent to root mail. Please configure oscap-scan options before you use it!
+##########
+
+#OPTIONS="oval eval --report /var/log/oscap-scan.html.log --results /var/log/oscap-scan.xml.log /usr/share/openscap/scap-fedora14-oval.xml"
+PROG="/usr/bin/oscap"
+if [ -z "$OPTIONS" ]
+then
+	logger "OpenSCAP security scan: NOT CONFIGURED. (Cron job)"
+	exit 0
+fi
+
+$PROG $OPTIONS
+RETVAL=$?
+if [ $RETVAL -eq 0 ] ; then
+	logger "OpenSCAP security scan: PASS. (Cron job)"
+elif [ $RETVAL -eq 1 ] ; then
+	logger "OpenSCAP security scan: ERROR. (Cron job)"
+else
+	logger "OpenSCAP security scan: FAILED. (Cron job)"
+fi
+exit "$RETVAL"
+

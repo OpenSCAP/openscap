@@ -1,0 +1,40 @@
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>Šimon Lukašík</oval:product_name>
+    <oval:product_version>1.0</oval:product_version>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2013-10-01T13:44:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="compliance" id="oval:test:def:116" version="1">
+      <metadata>
+        <title>Ensure that No Dangerous Directories Exist in Root's Path</title>
+        <affected family="unix">
+          <platform>Red Hat Enterprise Linux 6</platform>
+        </affected>
+        <description>The environment variable PATH should be set correctly for
+      the root user.</description>
+      </metadata>
+      <criteria comment="environment variable PATH contains dangerous path" operator="AND">
+        <criterion comment="environment variable PATH starts with : or ." test_ref="oval:test:tst:117"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <ind:environmentvariable58_test check="none satisfy" comment="environment variable PATH starts with : or ." id="oval:test:tst:117" version="1">
+      <ind:object object_ref="oval:test:obj:3303"/>
+      <ind:state state_ref="oval:test:ste:1192"/>
+    </ind:environmentvariable58_test>
+  </tests>
+  <objects>
+    <ind:environmentvariable58_object id="oval:test:obj:3303" version="1">
+      <ind:pid xsi:nil="true" datatype="int"/>
+      <ind:name>PATH</ind:name>
+    </ind:environmentvariable58_object>
+  </objects>
+  <states>
+    <ind:environmentvariable58_state comment="starts with colon or period" id="oval:test:ste:1192" version="1">
+      <ind:value operation="pattern match">^[:\.]</ind:value>
+    </ind:environmentvariable58_state>
+  </states>
+</oval_definitions>

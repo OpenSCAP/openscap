@@ -1,0 +1,88 @@
+/**
+ * @file   fsdev.h
+ * @brief  fsdev header file
+ * @author "Daniel Kopecek" <dkopecek@redhat.com>
+ *
+ */
+/*
+ * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ *
+ * Authors:
+ *      "Daniel Kopecek" <dkopecek@redhat.com>
+ */
+
+#pragma once
+#ifndef FSDEV_H
+#define FSDEV_H
+
+#include <stddef.h>
+#include <stdint.h>
+#include <sys/stat.h>
+#include "oscap_export.h"
+
+#if defined(__linux__) || defined(_AIX)
+#include <mntent.h>
+#endif
+
+/**
+ * Filesystem device structure.
+ */
+typedef struct {
+	dev_t *ids;   /**< Sorted array of device ids   */
+	uint16_t cnt; /**< Number of items in the array */
+} fsdev_t;
+
+/**
+ * Initialize the fsdev_t structure from an array of filesystem
+ * names.
+ */
+fsdev_t *fsdev_init(void);
+
+/**
+ * Free the fsdev_t structure.
+ */
+void fsdev_free(fsdev_t *lfs);
+
+/**
+ * Search an id in the fsdev_t structure.
+ */
+int fsdev_search(fsdev_t *lfs, void *id);
+
+/**
+ * Check whether a path points points to a place on any of the devices
+ * in the fsdev_t structure.
+ * @param lfs pointer to the fsdev_t structure
+ * @param path path
+ * @retval 1 if found
+ * @retval 0 otherwise
+ * @retval -1 error
+ */
+int fsdev_path(fsdev_t *lfs, const char *path);
+
+/**
+ * Check whether a file descriptor is associated with a file that resides
+ * on any of the devices in the fsdev_t structure.
+ * @param lfs pointer to the fsdev_t structure
+ * @param fd file descriptor
+ * @retval 1 if found
+ * @retval 0 otherwise
+ * @retval -1 error
+ */
+int fsdev_fd(fsdev_t *lfs, int fd);
+
+#endif				/* FSDEV_H */

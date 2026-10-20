@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+	<cpe-item name="cpe:/o:redhat:enterprise_linux">
+		<title xml:lang="en-US">Red Hat Enterprise Linux</title>
+		<notes xml:lang="en-US">
+			<note>This CPE Name represents Red Hat Enterprise Linux OS</note>
+		</notes>
+		<check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1100-scap10-rhel-cpe-oval.xml">oval:gov.nist.validation.cpe.oval:def:100</check>
+	</cpe-item>
+	<cpe-item name="cpe:/o:microsoft:windows">
+		<title xml:lang="en-US">Microsoft Windows</title>
+		<notes xml:lang="en-US">
+			<note>This CPE Name represents the Windows family</note>
+		</notes>
+		<check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1100-scap10-rhel-cpe-oval.xml">oval:gov.nist.validation.cpe.oval:def:1</check>
+	</cpe-item>
+</cpe-list>

@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+                  xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                  xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" 
+                  xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
+                  xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+                  xmlns:sol-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+                  xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unixunix-definitions-schema.xsd
+                                      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd
+                                      http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd
+                                      http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris solaris-definitions-schema.xsd
+                                      http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd
+                                      http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+    
+    <generator>
+        <oval:product_name>isainfo</oval:product_name>
+        <oval:product_version>1.0</oval:product_version>
+        <oval:schema_version>5.4</oval:schema_version>
+        <oval:timestamp>2008-03-31T00:00:00-00:00</oval:timestamp>
+    </generator>
+    
+    <definitions>
+        
+        <definition class="compliance" version="1" id="oval:1:def:1">  <!-- comment="true" -->
+            <metadata>
+                <title></title>
+                <description></description>
+            </metadata>
+            <criteria operator="AND">
+                <criterion test_ref="oval:1:tst:1"/>
+                <criterion test_ref="oval:1:tst:2" negate="true"/>
+            </criteria>
+        </definition>
+        
+    </definitions>
+    
+    <tests>
+        
+        <isainfo_test version="1" id="oval:1:tst:1" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris">
+            <object object_ref="oval:1:obj:1"/>
+            <state state_ref="oval:1:ste:1"/>
+        </isainfo_test>
+        <isainfo_test version="1" id="oval:1:tst:2" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris">
+            <object object_ref="oval:1:obj:1"/>
+            <state state_ref="oval:1:ste:2"/>
+        </isainfo_test>
+    </tests>
+    
+    <objects>
+        <isainfo_object version="1" id="oval:1:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris"/>
+    </objects>
+    
+    <states>
+        <isainfo_state version="1" id="oval:1:ste:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris">
+            <bits datatype="int">64</bits>
+            <kernel_isa>amd64</kernel_isa>
+            <application_isa>amd64</application_isa>
+        </isainfo_state>
+        <isainfo_state version="1" id="oval:1:ste:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris">
+            <bits datatype="int">32</bits>
+            <kernel_isa>i386</kernel_isa>
+            <application_isa>i386</application_isa>
+        </isainfo_state>
+    </states>
+    
+</oval_definitions>
+

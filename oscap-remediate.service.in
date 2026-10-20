@@ -1,0 +1,13 @@
+[Unit]
+Description=Scan and remediate the operating system using OpenSCAP scanner in accordance with the selected profile
+
+DefaultDependencies=no
+Requires=sysinit.target dbus.socket
+After=sysinit.target dbus.socket systemd-journald.socket system-update-pre.target
+Before=shutdown.target system-update.target
+
+[Service]
+Type=oneshot
+ExecStart=@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBEXECDIR@/oscap-remediate
+
+FailureAction=reboot

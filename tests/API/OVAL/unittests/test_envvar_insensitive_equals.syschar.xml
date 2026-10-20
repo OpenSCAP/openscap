@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_system_characteristics xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:unix-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix" xmlns:ind-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" xmlns:lin-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 oval-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent independent-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix unix-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux linux-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:product_name>cpe:/a:open-scap:oscap</oval:product_name>
+    <oval:schema_version>5.8</oval:schema_version>
+    <oval:timestamp>2013-12-04T10:38:05</oval:timestamp>
+  </generator>
+  <system_info>
+    <os_name>Linux</os_name>
+    <os_version>#1 SMP Wed Nov 20 21:22:24 UTC 2013</os_version>
+    <architecture>x86_64</architecture>
+    <primary_host_name>you.dont.know.it</primary_host_name>
+    <interfaces>
+      <interface>
+        <interface_name>lo</interface_name>
+        <ip_address>127.0.0.1</ip_address>
+        <mac_address>00:00:00:00:00:00</mac_address>
+      </interface>
+    </interfaces>
+  </system_info>
+  <collected_objects>
+    <object id="oval:x:obj:1" version="1" flag="complete">
+      <reference item_ref="1270271"/>
+    </object>
+  </collected_objects>
+  <system_data>
+    <ind-sys:environmentvariable_item id="1270271" status="exists">
+      <ind-sys:name>temp</ind-sys:name>
+      <ind-sys:value>/tmp</ind-sys:value>
+    </ind-sys:environmentvariable_item>
+  </system_data>
+</oval_system_characteristics>

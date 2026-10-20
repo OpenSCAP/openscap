@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.unix_file_test" bundleVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>R1200</bundleName>
+	<bundleGuiName>R1200 Test</bundleGuiName>
+	<testSuite version="1" suiteId="test-case-1.a">
+		<suiteName>Test case 1.a: Benchmark applicability</suiteName>
+		<guiName>Profile 1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-1</benchmarkID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-1" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-2" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-3" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-4" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-5" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-6" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-7" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-8" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-9" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-10" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-11" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-12" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="test-case-1.b">
+		<suiteName>Test case 1.b: Benchmark applicability</suiteName>
+		<guiName>Profile 2</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-2</benchmarkID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-20" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-21" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="test-case-1.c">
+		<suiteName>Test case 1.c: Benchmark applicability</suiteName>
+		<guiName>Profile 3</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-3</benchmarkID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-100" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-200" expectedResult="notselected"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="test-case-1.d">
+		<suiteName>Test case 1.d: Benchmark applicability</suiteName>
+		<guiName>Profile 4</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-4</benchmarkID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-1000" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-2000" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-8000" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="test-case-1.e">
+		<suiteName>Test case 1.e: Benchmark applicability</suiteName>
+		<guiName>Profile 5</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-5</benchmarkID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-10000" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="test-case-2.a">
+		<suiteName>Test case 2.a: Group applicability</suiteName>
+		<guiName>Profile 1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_1</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-2" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-3" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-4" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-5" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-6" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-7" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-8" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-9" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-10" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-11" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-12" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="test-case-2.b">
+		<suiteName>Test case 2.b: Group applicability</suiteName>
+		<guiName>Profile 3</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_3</xccdfProfile>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-3</benchmarkID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-100" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-200" expectedResult="fail"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="test-case-2.c">
+		<suiteName>Test case 2.c: Group applicability</suiteName>
+		<guiName>Profile 4</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_4</xccdfProfile>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-4</benchmarkID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-1000" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-2000" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-8000" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="test-case-3.a">
+		<suiteName>Test case 3.a: Rule applicability</suiteName>
+		<guiName>Profile 1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_1</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-2" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-3" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-4" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-5" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-6" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-7" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-8" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-9" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-10" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-11" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-12" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="test-case-3.b">
+		<suiteName>Test case 3.b: Rule applicability</suiteName>
+		<guiName>Profile 2</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-2</benchmarkID>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_2</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-20" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-21" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>	
+
+	<testSuite version="1" suiteId="G2.profile1">
+		<suiteName>Profile 1</suiteName>
+		<guiName>Profile 1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_1</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-2" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-3" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-4" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-5" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-6" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-7" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-8" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-9" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-10" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-11" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-12" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="G2.profile2">
+		<suiteName>Profile 2</suiteName>
+		<guiName>Profile 2</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-2</benchmarkID>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_2</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-20" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-21" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="G2.profile3">
+		<suiteName>Profile 3</suiteName>
+		<guiName>Profile 3</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-3</benchmarkID>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_3</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-100" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-200" expectedResult="fail"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="G2.profile4">
+		<suiteName>Profile 4</suiteName>
+		<guiName>Profile 4</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-4</benchmarkID>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_4</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-1000" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-2000" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-8000" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="G2.profile5">
+		<suiteName>Profile 5</suiteName>
+		<guiName>Profile 5</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1200-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r1200-datastream.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1200-datastream.xml</cpeDictionaryFilename>
+		<ovalFilename>r1200-datastream.xml</ovalFilename>
+		<xccdfFilename>r1200-datastream.xml</xccdfFilename>
+		<benchmarkID>xccdf_gov.nist_benchmark_r1200-5</benchmarkID>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_cpe_applicability_5</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r1200_cpe_applicability-10000" expectedResult="notapplicable"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>
+

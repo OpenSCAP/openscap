@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+ xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+ xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+ xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+ xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+ xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+	<generator>
+		<oval:product_name>vim</oval:product_name>
+		<oval:schema_version>5.8</oval:schema_version>
+		<oval:timestamp>2011-03-06T12:00:00-04:00</oval:timestamp>
+	</generator>
+	<definitions>
+	<definition class="compliance" id="oval:org.open-scap.rhel6:def:1077" version="1">
+		<metadata>
+			<title>Modify the System Login Banner</title>
+			<reference ref_id="CCE-4060-0" source="CCE"/>
+			<description>The system login banner text should be set correctly.</description>
+		</metadata>
+		<criteria>
+			<criterion comment="/etc/issue is set appropriately" test_ref="oval:org.open-scap.rhel6:tst:10771"/>
+		</criteria>
+	</definition>
+	</definitions>
+
+
+	<tests>
+        <ind-def:textfilecontent54_test check_existence="all_exist" id="oval:org.open-scap.rhel6:tst:10771" version="1" check="all" comment="Tests contents of /etc/issue">
+                <ind-def:object object_ref="oval:org.open-scap.rhel6:obj:107711"/>
+                <ind-def:state state_ref="oval:org.open-scap.rhel6:ste:107711"/>
+        </ind-def:textfilecontent54_test>
+	</tests>
+
+
+	<objects>
+        <ind-def:textfilecontent54_object id="oval:org.open-scap.rhel6:obj:107711" version="1" comment="Contents of /etc/issue">
+		<ind-def:behaviors multiline="false" singleline="true"/>
+                <ind-def:filepath>/etc/issue</ind-def:filepath>
+                <ind-def:pattern operation="pattern match">(.*[^\n])\n?</ind-def:pattern>
+                <ind-def:instance datatype="int">1</ind-def:instance>
+        </ind-def:textfilecontent54_object>
+        </objects>
+
+
+	<states>
+        <ind-def:textfilecontent54_state id="oval:org.open-scap.rhel6:ste:107711" version="1" comment="Expected contents of /etc/issue">
+                <ind-def:subexpression var_check="all" var_ref="oval:org.open-scap.rhel6:var:1077"/>
+        </ind-def:textfilecontent54_state>
+	</states>
+
+	<variables>
+        <external_variable id="oval:org.open-scap.rhel6:var:1077" version="1" datatype="string" comment="Login banner"/>
+	</variables>
+
+</oval_definitions>
+

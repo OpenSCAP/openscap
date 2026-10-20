@@ -1,0 +1,1122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
+            xmlns:sp-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#sharepoint"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#sharepoint"
+            elementFormDefault="qualified" version="5.11">
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation>The following is a description of the elements, types, and attributes that compose the SharePoint specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard item element defined in the Core System Characteristic Schema. Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items. Each item is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+            <xsd:documentation>The SharePoint Component Schema is based on the SharePoint Object Model (Windows SharePoint Services 3.0)</xsd:documentation>
+            <xsd:documentation>The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>SharePoint System Characteristics</schema>
+                  <version>5.11.1:1.1</version>
+                  <date>11/30/2016 09:00:00 AM</date>
+                  <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                  <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+                  <sch:ns prefix="sp-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#sharepoint"/>
+                  <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+            </xsd:appinfo>
+      </xsd:annotation>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPWEBAPPLCIATION ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spwebapplication_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spwebapplication item stores information for security related features and permissions related to each web application. See the defintion of the SPWebApplication class in the SharePoint object model documentation. </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="webapplicationurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the url that identifies the web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowparttopartcommunication" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a user can create connections between Web Parts.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowaccesstowebpartcatalog" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a user can create connections to Online Web Part Galleries.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="blockedfileextention" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="unbounded">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A single blockedfileextention for the application. An applicaiton may have zero or more blocked file extensions.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="defaultquotatemplate" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the default quota template for the web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="externalworkflowparticipantsenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a user is allowed to participate in workflow by sending them a copy of the document.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="recyclebinenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the recycle bin is enabled or disabled.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="automaticallydeleteunusedsitecollections" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the site can be automatically deleted.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="selfservicesitecreationenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a self service site can be created.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="secondstagerecyclebinquota" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Size of the second stage recycle bin quota.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="recyclebinretentionperiod" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The recyclebinretentionperiod is the retention period for the recyle bin.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="outboundmailserverinstance" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The string name of the outboundmailserver.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="outboundmailsenderaddress" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The from address that is used when sending email.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="outboundmailreplytoaddress" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The reply to address that is used when sending email.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="secvalexpires" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a security validation can expire.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="timeout" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The timeout is the amount of time before security validation expires in seconds.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="isadministrationwebapplication" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that specifies whether the current web application is the Central Administration web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="applicationpoolname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string that represents the application pool name.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="applicationpoolusername" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string that represents the application pool username.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="openitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view the source of documents with server-side file handlers is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="addlistitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to add items to lists, add documents to document libraries, and add Web discussion comments to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="approveitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to approve a minor version of a list item or document is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="deletelistitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to delete items from a list, documents from a document library, and Web discussion comments in documents is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="deleteversions" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to delete past versions of a list item or document is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="editlistitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if edit items in lists, edit documents in document libraries, edit Web discussion comments in documents, and customize Web Part Pages in document libraries is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="managelists" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create and delete lists, add or remove columns in a list, and add or remove public views of a list is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewversions" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view past versions of a list item or document is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewlistitems" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view items in lists, documents in document libraries, and view Web discussion commentsis available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="cancelcheckout" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to discard or check in a document which is checked out to another user is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="createalerts" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to Create e-mail alerts is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewformpages" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view forms, views, and application pages, and enumerate lists is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewpages" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view pages in a Web site is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="addandcustomizepages" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="applystylesheets" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to Apply a style sheet (.css file) to the Web site is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="applythemeandborder" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to apply a theme or borders to the entire Web site is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="browsedirectories" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to enumerate files and folders in a Web site using Microsoft Office SharePoint Designer and WebDAV interfaces is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="browseuserinfo" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view information about users of the Web site is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="creategroups" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create a group of users that can be used anywhere within the site collection is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="createsscsite" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create a Web site using Self-Service Site Creation is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="editmyuserinfo" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to allows a user to change his or her user information, such as adding a picture is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="enumeratepermissions" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to enumerate permissions on the Web site, list, folder, document, or list itemis is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="managealerts" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to manage alerts for all users of the Web site is available for the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="managepermissions" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create and change permission levels on the Web site and assign permissions to users and groups is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="managesubwebs" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to create subsites such as team sites, Meeting Workspace sites, and Document Workspace sites is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="manageweb" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to perform all administration tasks for the Web site as well as manage content is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="open" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to allow users to open a Web site, list, or folder to access items inside that containeris available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+
+                                    <xsd:element name="useclientintegration" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to use features that launch client applications; otherwise, users must work on documents locally and upload changesis is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="useremoteapis" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to use SOAP, WebDAV, or Microsoft Office SharePoint Designer interfaces to access the Web siteis available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="viewusagedata" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to view reports on Web site usage in documents is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="managepersonalviews" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to Create, change, and delete personal views of lists is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="adddelprivatewebparts" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to add or remove personal Web Parts on a Web Part Page is available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="updatepersonalwebparts" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the permission to update Web Parts to display personalized informationis available to the Web application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPGROUP ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spgroup_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spgroup item stores information for security related features related to site groups </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the url that identifies the site collection.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="gname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the name of a group in a site collection.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="autoacceptrequesttojoinleave" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if sites can automatically accepts requests.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowmemberseditmembership" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if owners other than the group owner can edit the membership of groups.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="onlyallowmembersviewmembership" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if owners other than the group owner can edit the membership of groups.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPWEB ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spweb_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spweb item stores information for security related features related to site collections. </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="webcollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string that specifies a web site (the SPWeb object).</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string that specifies a site collection.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="secondarysitecolladmin" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the secondarysitecolladmin.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="secondsitecolladminenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if the secondsitecolladmin is enabled.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowanonymousaccess" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A boolean that represents if a anonymous access is allowed to the web site.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPLIST ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="splist_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>An SPList represents a list of content on a Sharepoint web site. It consists of items or rows and columns or fields that contain data.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="spsiteurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The url that identifies the website.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="irmenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The irmenabled attribute tests to see if documents that leave the Sharepoint environment are protected.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="enableversioning" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The enableversioning attribute specifies whether backup copies of files should be created and managed in the Sharepoint system.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="nocrawl" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The nocrawl attribute indicates that this site should not be among those crawled and indexed.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPANTIVIRUSSETTINGS ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spantivirussettings_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>An SPAntivirusSettings Item represents the set of antivirus-related security settings on a Sharepoint server.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="spwebservicename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the SP Web Service for which to retrieve the antivirus settings or * for all web services. The default value is * which checks all SP Web services</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="spfarmname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The Farm in which the SP Web Service resides.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="allowdownload" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether SharePoint users can download documents that are found to be infected.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="cleaningenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether or not the virus scanner should attempt to cure infected files.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="downloadscanenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether files are scanned when they are downloaded.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="numberofthreads" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies the number of threads that the virus scanner may use to perform virus scans.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="skipsearchcrawl" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether to skip document virus scanning during a search crawl.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="timeout" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The amount of time before the virus scanner times out in seconds.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="uploadscanenabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether files are scanned for viruses when they are uploaded.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="vendorupdatecount" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The current increment of the number of times the vendor has been updated.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPADMINISTRATION ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spsiteadministration_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spsiteadministration item stores information for security related features and permissions related to each top-level web sites. See the defintion of the SPSiteAdministration class in the SharePoint object model documentation. </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the url that identifies the sitecollection application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="storagemaxlevel" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The storagemaxlevel is the maximum storage allowed for the site.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="storagewarninglevel" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>When the storagewarninglevel is reached a site collection receive advance notice before available storage is expended.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPSITE ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spsite_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This spsite item stores information for security related features for sites. See the defintion of the SPSite class in the SharePoint object model documentation. </xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string the represents the url that identifies the sitecollection application.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="quotaname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The string that represents the name of the quota for a specific site collection.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="url" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation></xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPCRAWLRULE ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spcrawlrule_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>The spcrawlrule_item specifies rules that the SharePoint system follows when it crawls the content of sites stored within it.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="spsiteurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A URL that represents the resource (eg. sites, documents,etc.) on which the crawlrule tests should be run or * if the check should be run on all sites/documents on the server.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="crawlashttp" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the crawler should crawl content from a hierarchical content source, such as HTTP content.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="enabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether a particular crawl rule is enabled.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="followcomplexurls" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the indexer should crawl websites that contain the question mark (?) character.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The path to which a particular crawl rule applies.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="priority" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The priority setting for a particular crawl rule.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="suppressindexing" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the crawler should exclude the content of items that this rule applies to from the content index.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="accountname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string containing the account name for the crawl rule.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPJOBDEFINITION ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spjobdefinition_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents the set of Job Definitions that are scheduled to run on each SharePoint Web Application</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.10</oval:version>
+                              <oval:reason>Replaced by the spjobdefinition510_item. This item does not uniquely identify a single job definition. A new state was created to use displaynames, which are unique. See the spjobdefinition510_item.</oval:reason>
+                              <oval:comment>This item has been deprecated and may be removed in a future version of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="sp-sc_spjobdefinition_item_dep">
+                              <sch:rule context="sp-sc:spjobdefinition_item">
+                                    <sch:report test="true()">DEPRECATED ITEM: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="webappuri" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The URI that represents the web application for which the IIS Settings should be checked.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="displayname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the job as displayed in the SharePoint Central Administration site.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="isdisabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Determines whether or not the job definition is enabled.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="retry" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Determines whether the job definition should be retried if it ends abnormally.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="title" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The title of a job as displayed in the SharePoint Central Administration site.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPJOBDEFINITION ITEM(510)  ========================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spjobdefinition510_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents the set of Job Definitions that are scheduled to run on each SharePoint Web Application</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="webappuri" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The URI that represents the web application for which the IIS Settings should be checked.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="displayname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the job as displayed in the SharePoint Central Administration site.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="isdisabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Determines whether or not the job definition is enabled.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="retry" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Determines whether the job definition should be retried if it ends abnormally.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="title" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The title of a job as displayed in the SharePoint Central Administration site.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  BestBet ITEM  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="bestbet_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents the set of Best Bets for a site collection.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The sitecollectionurl represents the URL for the site.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="bestbeturl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The bestbeturl represents the URL for the best bet.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="title" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The title of the Best Bet.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="description" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The description of the Best Bet.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ======================    INFOPOLICYCOLLECTION ITEM  ========================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="infopolicycoll_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents the set of Information Policies for a site collection.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="sitecollectionurl" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The sitecollectionurl represents the URL for the site.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The id of the sitecollection poilicy.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the sitecollection poilicy.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="description" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The description of the Information Policy.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="longdescription" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The long description of  an Information Policy.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPDIAGNOSTICSSERVICE ITEM  ========================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spdiagnosticsservice_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents the set of diagnostic capabilities for Windows Sharepoint Services.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="farmname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The farm whose diagnostic capabilities should be checked. Use .* for all farms or SPFarm.Local for the local farm.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="displayname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the diagnostic service as shown in the Sharepoint Central Administration site.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="logcutinterval" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The number of minutes to capture events to a single log file. This value lies in the range 0 to 1440. The default value is 30.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="loglocation" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The path to the file system directory where log files are created and stored.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="logstokeep" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The value that indicates the number of log files to create. This lies in the range 0 to 1024 with a default of 96.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="required" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The required property specifies whether an instance of the spdiagnosticsservice must be running on the farm.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="typename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The friendly name for the service as displayed in the Central Administration and in logs. This should be "Windows Sharepoint Diagnostics Service" by default.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPDIAGNOSTICSLEVEL ITEM  ============================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="spdiagnosticslevel_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>The diagnostics level associated with a particular instance of a diagnostics service on a Sharepoint farm.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="farmname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The farm whose diagnostics levels should be checked. Use .* for all farms or SPFarm.Local for the local farm.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="eventseverity" type="sp-sc:EntityItemEventSeverityType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The event severity setting for a particular diagnostic level category.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="hidden" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the trace log category is hidden in the Windows Sharepoint Services Central Administration interface.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="levelid" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>A string that represents the ID of the trace log category. This is its English language name.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="levelname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the trace log category. This represents the localized name for the category.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="traceseverity" type="sp-sc:EntityItemTraceSeverityType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The trace severity setting for a particular diagnostic level category.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPPOLICYFEATURE ITEM  =============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="sppolicyfeature_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents a policy feature that is installed on the Sharepoint server farm.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="farmname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The farm whose policy features should be checked. Use .* for all farms or SPFarm.Local for the local farm.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="configpage" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The URL to a web control used to edit policy instance-level settings.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="defaultcustomdata" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The default values for any policy instance-level settings for a policy feature.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="description" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The short description of the policy feature and of the service it provides.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="globalconfigpage" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The URL to a web control used to edit server farm-level settings for this policy feature.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="globalcustomdata" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The default settings for any server farm-level settings for this policy feature.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="group" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The policy feature group to which a policy feature belongs.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name to display in the Microsoft Office Sharepoint Server 2007 interface for an information policy feature.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="publisher" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the creator of the policy feature as it is displayed in the Microsoft Office Sharepoint Server 2007 user interface.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="state" type="sp-sc:EntityItemPolicyFeatureStateType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the policy feature is hidden or visible.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ========================  SPPOLICY ITEM  ====================================== -->
+      <!-- =============================================================================== -->     
+      <xsd:element name="sppolicy_item" substitutionGroup="oval-sc:item">
+            <xsd:annotation>
+                  <xsd:documentation>This represents a policy on the Sharepoint system.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-sc:ItemType">
+                              <xsd:sequence>
+                                    <xsd:element name="webappuri" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The URI that represents the web application for which policies should be checked.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="urlzone" type="sp-sc:EntityItemUrlZoneType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The zone for which policies should be checked.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="displayname" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The user or group display name for a policy. This defaults to the user name if the display name cannot be resolved through Active Directory.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="issystemuser" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies whether the user identified by a particular policy is visible only as a System account within the Windows Sharepoint Services user interface.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="username" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The user name of the user or group that is associated with policy.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="policyroletype" type="sp-sc:EntityItemPolicyRoleType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The policy role type to apply globally in a Sharepoint web application to a user or group.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =================================================================================================================================== -->
+      <!-- ====================================================TYPES========================================================================== -->
+      <!-- =================================================================================================================================== -->
+     
+      <xsd:complexType name="EntityItemUrlZoneType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemUrlZoneType restricts a string value to a set of values that describe the different IIS Url Zones. The empty string is also allowed to support empty element associated with error conditions.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="Custom"/>
+                        <xsd:enumeration value="Default"/>
+                        <xsd:enumeration value="Extranet"/>
+                        <xsd:enumeration value="Intranet"/>
+                        <xsd:enumeration value="Internet"/>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="EntityItemEventSeverityType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemEventSeverityType restricts a string value to a set of values that describe the different states that can be configured for a diagnostics level  event severity level property of the diagnostics service.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="Error"/>
+                        <xsd:enumeration value="ErrorCritical"/>
+                        <xsd:enumeration value="ErrorSecurityBreach"/>
+                        <xsd:enumeration value="ErrorServiceUnavailable"/>
+                        <xsd:enumeration value="FailureAudit"/>
+                        <xsd:enumeration value="Information"/>
+                        <xsd:enumeration value="None"/>
+                        <xsd:enumeration value="Success"/>
+                        <xsd:enumeration value="SuccessAudit"/>
+                        <xsd:enumeration value="Warning"/>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="EntityItemTraceSeverityType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemTraceSeverityType restricts a string value to a set of values that describe the different states that can be configured for a diagnostics level trace severity level property of the diagnostics service.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="High"/>
+                        <xsd:enumeration value="Medium"/>
+                        <xsd:enumeration value="Monitorable"/>
+                        <xsd:enumeration value="None"/>
+                        <xsd:enumeration value="Unexpected"/>
+                        <xsd:enumeration value="Verbose"/>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      
+      <xsd:complexType name="EntityItemPolicyFeatureStateType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemPolicyFeatureStateType restricts a string value to a set of values that describe the different states that can be configured for a policy feature.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="Hidden">
+                              <xsd:annotation>
+                                    <xsd:documentation>Specifies that the policy feature is hidden from the Sharepoint Central Administration user interface.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="Visible">
+                              <xsd:annotation>
+                                    <xsd:documentation>Specifies that the policy feature is visible from the Sharepoint Central Administration user interface.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      
+      <xsd:complexType name="EntityItemPolicyRoleType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityItemPolicyRoleType restricts a string value to a set of values that describe the different Policy settings for Access Control that are available for users.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-sc:EntityItemStringType">
+                        <xsd:enumeration value="DenyAll">
+                              <xsd:annotation>
+                                    <xsd:documentation>Deny all rights.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="DenyWrite">
+                              <xsd:annotation>
+                                    <xsd:documentation>Deny write permissions.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="FullControl">
+                              <xsd:annotation>
+                                    <xsd:documentation>Grant full control.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="FullRead">
+                              <xsd:annotation>
+                                    <xsd:documentation>Grant full read permissions.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="None">
+                              <xsd:annotation>
+                                    <xsd:documentation>No role type assigned.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="">
+                              <xsd:annotation>
+                                    <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+</xsd:schema>
+

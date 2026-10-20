@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/security_guide/sect-defining_compliance_policy -->
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2"
+    id="xccdf_com.example.www_benchmark_test">
+  <status>incomplete</status>
+  <version>0.1</version>
+  <Profile id="xccdf_com.example.www_profile_1">
+    <title>Profile title is compulsory</title>
+    <select idref="xccdf_com.example.www_group_1"
+        selected="true"/>
+    <select idref="xccdf_com.example.www_rule_1"
+        selected="true"/>
+    <refine-value idref="xccdf_com.example.www_value_1"
+        selector="telnet_service"/>
+  </Profile>
+  <Group id="xccdf_com.example.www_group_1">
+    <Value id="xccdf_com.example.www_value_1">
+	  <title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Which package is installed ? (telnet-server/dhcpd/tftpd) </title>	
+      <value selector="telnet_service">telnet-server</value>
+      <value selector="dhcp_service">dhcpd</value>
+      <value selector="ftp_service">tftpd</value>
+    </Value>
+    <Rule id="xccdf_com.example.www_rule_1">
+      <title>The telnet-server Package Shall Not Be Installed </title>
+      <rationale>
+        Removing the telnet-server package decreases the risk
+        of the telnet service’s accidental (or intentional) activation
+      </rationale>
+      <fix platform="cpe:/o:redhat:enterprise_linux:6"
+          reboot="false"
+          disruption="low"
+          system="urn:xccdf:fix:script:sh">
+        yum -y remove
+        <sub idref="xccdf_com.example.www_value_1"/>
+      </fix>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-export value-id="xccdf_com.example.www_value_1"
+            export-name="oval:com.example.www:var:1"/>
+        <check-content-ref href="examplary.oval.xml"
+            name="oval:com.example.www:def:1"/>
+      </check>
+      <check system="http://open-scap.org/page/SCE">
+        <check-import import-name="stdout"/>
+        <check-content-ref href="telnet_server.sh"/>
+      </check>
+    </Rule>
+  </Group>
+</Benchmark>

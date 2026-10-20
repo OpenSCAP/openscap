@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://cpe.mitre.org/dictionary/2.0" xmlns:cpe_dict="http://cpe.mitre.org/dictionary/2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xml="http://www.w3.org/XML/1998/namespace" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../common/xml.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation xml:lang="en">This is an XML Schema for the CPE Dictionary. It is used to transfer a collection of official CPE Names along with any necessary supporting information (title, references, automated check, etc.). For more information, consult the CPE Specification document.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>CPE Dictionary</schema>
+                  <author>Neal Ziring, Andrew Buttner</author>
+                  <version>2.0</version>
+                  <date>9/14/2007 09:00:00 AM</date>
+            </xsd:appinfo>
+      </xsd:annotation>
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="cpe-list">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">This element acts as a top-level container for CPE Name items.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:sequence>
+                        <xsd:element ref="cpe_dict:cpe-item" minOccurs="1" maxOccurs="unbounded"/>
+                        <xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="skip"/>
+                  </xsd:sequence>
+            </xsd:complexType>
+            <xsd:key name="itemURIKey">
+                  <xsd:selector xpath="./cpe_dict:cpe-item"/>
+                  <xsd:field xpath="@name"/>
+            </xsd:key>
+      </xsd:element>
+      <xsd:element name="cpe-item">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">This element denotes a single name in the Common Platform Enumeration. It has the following parts: - name, a URI, which must be a unique key, and should follow the URI structure outlined in the CPE Specification. - title, arbitrary friendly name - notes, optional descriptive material - references, optional external info references - check, optional reference to an OVAL test that can confirm or reject an IT system as an instance of the named platform.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:sequence>
+                        <xsd:element name="title" type="cpe_dict:textType" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="notes" minOccurs="0" maxOccurs="1">
+                              <xsd:complexType>
+                                    <xsd:sequence>
+                                          <xsd:element name="note" type="cpe_dict:textType" minOccurs="1" maxOccurs="unbounded"/>
+                                    </xsd:sequence>
+                              </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="references" minOccurs="0" maxOccurs="1">
+                              <xsd:complexType>
+                                    <xsd:sequence>
+                                          <xsd:element name="reference" type="cpe_dict:referenceType" minOccurs="1" maxOccurs="unbounded"/>
+                                    </xsd:sequence>
+                              </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="check" type="cpe_dict:checkType" minOccurs="0" maxOccurs="unbounded"/>
+                  </xsd:sequence>
+                  <xsd:attribute name="name" type="cpe_dict:namePattern" use="required"/>
+                  <xsd:attribute name="deprecated" type="xsd:boolean" use="optional" default="false"/>
+                  <xsd:attribute name="deprecated_by" type="cpe_dict:namePattern" use="optional"/>
+            </xsd:complexType>
+            <xsd:unique name="checkSystemKey">
+                  <xsd:selector xpath="./cpe_dict:check"/>
+                  <xsd:field xpath="@system"/>
+            </xsd:unique>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ==============================  SUPPORTING TYPES  ============================== -->
+      <!-- =============================================================================== -->
+      <xsd:complexType name="referenceType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Type for an reference in the description of a CPE item. This would normally be used to point to extra descriptive material, or the supplier's web site, or the platform documentation. It consists of a piece of text (intended to be human-readable) and a URI (intended to be a URL, and point to a real resource).</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:extension base="xsd:string">
+                        <xsd:attribute name="href" type="xsd:anyURI"/>
+                  </xsd:extension>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      <xsd:complexType name="checkType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Data type for the check element, a checking system specification URI, string content, and an optional external file reference. The checking system specification should be the URI for a particular version of OVAL or a related system testing language, and the content will be an identifier of a test written in that language. The external file reference could be used to point to the file in which the content test identifier is defined.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:extension base="xsd:string">
+                        <xsd:attribute name="system" type="xsd:anyURI" use="required"/>
+                        <xsd:attribute name="href" type="xsd:anyURI" use="optional"/>
+                  </xsd:extension>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      <xsd:complexType name="textType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">This type allows the xml:lang attribute to associate a specific language with an element's string content.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:extension base="xsd:string">
+                        <xsd:attribute ref="xml:lang"/>
+                  </xsd:extension>
+            </xsd:simpleContent>
+      </xsd:complexType>
+      <!-- =============================================================================== -->
+      <!-- ================================  ID PATTERNS  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:simpleType name="namePattern">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Define the format for acceptable CPE Names. An urn format is used with the id starting with the word oval followed by a unique string, followed by the three letter code 'def', and ending with an integer.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:anyURI">
+                  <xsd:pattern value="cpe:/([aho](:[A-Za-z0-9\._\-~]*(:[A-Za-z0-9\._\-~]*(:[A-Za-z0-9\._\.\-~]*(:[A-Za-z0-9\._\-~]*(:[A-Za-z0-9\._\-~]*(:[A-Za-z0-9\._\-~]*)?)?)?)?)?)?)?"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+</xsd:schema>

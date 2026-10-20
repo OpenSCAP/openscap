@@ -1,0 +1,2 @@
+testuser1:x:315:100:Test User 1 fÃ¼r openscap bug:/home/testuser1:/bin/bash
+testuser2:x:316:100:Test User 2 für openscap bug:/home/testuser2:/bin/bash

@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+
+# Copyright 2015 Martin Preisler <martin@preisler.me>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+function die()
+{
+    echo "$*" >&2
+    exit 1
+}
+
+function invalid()
+{
+    echo -e "$*\n" >&2
+    usage
+    exit 1
+}
+
+function usage()
+{
+    echo "oscap-vm -- Tool for offline SCAP evaluation of virtual machines."
+    echo
+    echo "Usage:"
+    echo
+    echo "$ oscap-vm [--oscap=<oscap_binary>] image VM_STORAGE_IMAGE xccdf eval [options] INPUT_CONTENT"
+    echo "$ oscap-vm [--oscap=<oscap_binary>] domain VM_DOMAIN xccdf eval [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap xccdf eval options are:"
+    echo "  --profile"
+    echo "  --tailoring-file"
+    echo "  --tailoring-id"
+    echo "  --cpe (external OVAL dependencies are not supported yet!)"
+    echo "  --oval-results"
+    echo "  --check-engine-results"
+    echo "  --results"
+    echo "  --results-arf"
+    echo "  --report"
+    echo "  --skip-validation"
+    echo "  --fetch-remote-resources"
+    echo "  --local-files"
+    echo "  --progress"
+    echo "  --datastream-id"
+    echo "  --xccdf-id"
+    echo "  --benchmark-id"
+    echo
+    echo "$ oscap-vm image VM_STORAGE_IMAGE oval eval [options] INPUT_CONTENT"
+    echo "$ oscap-vm domain VM_DOMAIN oval eval [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap oval eval options are:"
+    echo "  --id"
+    echo "  --variables"
+    echo "  --directives"
+    echo "  --results"
+    echo "  --report"
+    echo "  --skip-validation"
+    echo "  --datastream-id"
+    echo "  --oval-id"
+    echo
+    echo "$ oscap-vm image VM_STORAGE_IMAGE oval collect [options] INPUT_CONTENT"
+    echo "$ oscap-vm domain VM_DOMAIN oval collect [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap oval collect options are:"
+    echo "  --id"
+    echo "  --syschar"
+    echo "  --variables"
+    echo "  --skip-validation"
+    echo
+    echo "See \`man oscap\` to learn more about semantics of these options."
+}
+
+OSCAP_BINARY=oscap
+
+if [ $# -lt 1 ]; then
+    invalid "No arguments provided."
+elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    usage
+    exit 0
+elif [[ "$1" == --oscap=* ]] && [ $# -gt 3 ]; then
+    OSCAP_BINARY=${1#"--oscap="}
+    shift
+elif [ "$1" == "image" ] && [ $# -gt 2 ]; then
+    true
+elif [ "$1" == "domain" ] && [ $# -gt 2 ]; then
+    true
+else
+    invalid "Invalid arguments provided."
+fi
+
+hash guestmount 2> /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
+
+if hash guestunmount 2> /dev/null; then
+    UNMOUNT_COMMAND="guestunmount"
+elif hash fusermount 2> /dev/null; then
+    echo "guestunmount command not present on the system, using simpler fusermount instead"
+    UNMOUNT_COMMAND="fusermount -u"
+else
+    die "Cannot find guestunmount or fusermount, please install libguestfs utilities, or fuse."
+fi
+
+hash mktemp 2> /dev/null || die "Cannot find mktemp, please install coreutils."
+
+MOUNTPOINT=$(mktemp -d)
+
+if [ "$1" == "image" ]; then
+    echo "Mounting guestfs image '$2' to '$MOUNTPOINT'..."
+    guestmount -a "$2" -i --ro "$MOUNTPOINT"
+    if [ $? -ne 0 ]; then
+        rmdir "$MOUNTPOINT"
+        die "Failed to mount image '$2' to '$MOUNTPOINT'!"
+    fi
+elif [ "$1" == "domain" ]; then
+    echo "Mounting guestfs domain '$2' to '$MOUNTPOINT'..."
+    guestmount -d "$2" -i --ro "$MOUNTPOINT"
+    if [ $? -ne 0 ]; then
+        rmdir "$MOUNTPOINT"
+        die "Failed to mount guestfs domain '$2' to '$MOUNTPOINT'!"
+    fi
+fi
+
+# Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
+export OSCAP_PROBE_ROOT
+OSCAP_PROBE_ROOT="$(cd "$MOUNTPOINT" && pwd)" || die "Unable to change current directory to OSCAP_PROBE_ROOT (MOUNTPOINT)."
+export OSCAP_EVALUATION_TARGET="oscap-vm $1 $2"
+shift 2
+
+$OSCAP_BINARY "$@"
+EXIT_CODE=$?
+echo "Unmounting '$MOUNTPOINT'..."
+$UNMOUNT_COMMAND "$MOUNTPOINT"
+rmdir "$MOUNTPOINT"
+exit $EXIT_CODE

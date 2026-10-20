@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2021 Red Hat Inc., Durham, North Carolina.
+#
+# Evgenii Kolesnikov <ekolesni@redhat.com>
+#
+# The setup script for the offline system remediation (systemd's /system-update)
+# service.
+
+
+SYSTEMD_SYSTEM_UPDATE_LINK="/system-update"
+OSCAP_REMEDIATE_CONF="/var/tmp/oscap-remediate-offline.conf.sh"
+
+die() {
+	echo "$*" >&2
+	exit 1
+}
+
+invalid() {
+	echo -e "$*\n" >&2
+	usage
+	exit 1
+}
+
+usage() {
+	echo "oscap-remediate-offline -- Setup script for the SCAP evaluation and remediation using systemd'd update service."
+	echo
+	echo "Usage:"
+	echo
+	echo "$ oscap-remediate-offline PROFILE INPUT_CONTENT"
+	echo
+	echo "See \`man oscap\` 'xccdf eval' section to learn more about semantics of these options."
+}
+
+
+if [ $# -lt 1 ]; then
+	invalid "No arguments provided."
+elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+	usage
+	exit 0
+elif [ "$#" -gt 1 ]; then
+	true
+else
+	invalid "Invalid arguments provided."
+fi
+
+if [ "$(id -u)" -ne 0 ]; then
+	die "This script cannot run in rootless mode."
+fi
+
+profile="$1"
+ds="$2"
+
+if [ ! -f "${ds}" ]; then
+	die "The data stream file does not exists: ${ds}"
+fi
+
+oscap xccdf validate --skip-schematron "${ds}" || {
+	die "Invalid data stream file: ${ds}"
+}
+
+profile_title_line=$(oscap info --profile "${profile}" "${ds}" | grep Title) || {
+	die "Can not find profile: ${profile}"
+}
+
+echo "OSCAP_REMEDIATE_DS=\"${ds}\"" > "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_PROFILE_ID=\"${profile}\"" >> "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_DATASTREAM_ID=" >> "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_XCCDF_ID=" >> "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_BENCHMARK_ID=" >> "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_TAILORING=" >> "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_TAILORING_ID=" >> "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_ARF_RESULT=\"/var/tmp/oscap_arf_result.xml\"" >> "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_HTML_REPORT=\"/var/tmp/oscap_report.html\"" >> "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_VERBOSE_LOG=\"/var/tmp/oscap_verbose.log\"" >> "${OSCAP_REMEDIATE_CONF}"
+echo "OSCAP_REMEDIATE_VERBOSE_LEVEL=" >> "${OSCAP_REMEDIATE_CONF}" # Defaults to INFO
+
+if [ -f "${SYSTEMD_SYSTEM_UPDATE_LINK}" ]; then
+	die "The system is already set up for an offline update procedure (${SYSTEMD_SYSTEM_UPDATE_LINK} symlink exists), aborting."
+fi
+
+ln -fs "${OSCAP_REMEDIATE_CONF}" "${SYSTEMD_SYSTEM_UPDATE_LINK}" || die "Unable to create symlink ${OSCAP_REMEDIATE_CONF} for ${SYSTEMD_SYSTEM_UPDATE_LINK}."
+
+profile_title=${profile_title_line#*Title: }
+echo "The system is configured for the next boot to be evaluated and remediated using '${profile_title}' from '${ds}'."
+
+exit 0

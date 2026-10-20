@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+            xmlns:nxos-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#nxos"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#nxos"
+            elementFormDefault="qualified" version="5.11">
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5"/>
+    <xsd:annotation>
+        <xsd:documentation>The following is a description of the elements, types, and attributes that compose the NX-OS specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+        <xsd:documentation>The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+        <xsd:appinfo>
+            <schema>NX-OS Definition</schema>
+            <version>5.11.1:1.0</version>
+            <date>05/02/2020 09:00:00 AM</date>
+            <terms_of_use>For the portion subject to copyright in the United States: Copyright (c) 2020 United States Government. All rights reserved. Copyright (c) 2020, Center for Internet Security. All rights reserved. The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema. When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+            <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+            <sch:ns prefix="nxos-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#nxos"/>
+            <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <!-- ================================================================================= -->
+    <!-- ===============================  GLOBAL TEST  =================================== -->
+    <!-- ================================================================================= -->
+    <xsd:element name="global_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The global test is used to check for the existence of a particular line in the NX-OS config file under the global context. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a global_object and the optional state element specifies the data to check.</xsd:documentation>
+            <xsd:appinfo>
+                <oval:element_mapping>
+                    <oval:test>global_test</oval:test>
+                    <oval:object>global_object</oval:object>
+                    <oval:state>global_state</oval:state>
+                    <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#nxos">global_item</oval:item>
+                </oval:element_mapping>
+            </xsd:appinfo>
+            <xsd:appinfo>
+                <sch:pattern id="nxos-def_globaltst">
+                    <sch:rule context="nxos-def:global_test/nxos-def:object">
+                        <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/nxos-def:global_object/@id"><sch:value-of select="../@id"/> - the object child element of a global_test must reference a global_object</sch:assert>
+                    </sch:rule>
+                    <sch:rule context="nxos-def:global_test/nxos-def:state">
+                        <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/nxos-def:global_state/@id"><sch:value-of select="../@id"/> - the state child element of a global_test must reference a global_state</sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType" />
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="global_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The global_object element is used by a global test to define the object to be evaluated. For the most part this object checks for existence and is used without a state comparision. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+            <xsd:appinfo>
+                <sch:pattern id="nxos-def_global_object_verify_filter_state">
+                    <sch:rule context="nxos-def:global_object//oval-def:filter">
+                        <sch:let name="parent_object" value="ancestor::nxos-def:global_object"/>
+                        <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                        <sch:let name="state_ref" value="."/>
+                        <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                        <sch:let name="state_name" value="local-name($reffed_state)"/>
+                        <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                        <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#nxos') and ($state_name='global_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType">
+                    <xsd:sequence>
+                        <xsd:choice>
+                            <xsd:element ref="oval-def:set"/>
+                            <xsd:sequence>
+                                <xsd:element name="global_command" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>The global_command entity identifies a specific line in the NX-OS config file under the global context.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="global_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The global_state element defines the different information that can be found in the NX-OS config file under the global context. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="global_command" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The global_command entity identifies a specific line in the NX-OS config file under the global context.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- ================================================================================= -->
+    <!-- ===================================  LINE TEST  ================================= -->
+    <!-- ================================================================================= -->
+    <xsd:element name="line_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The line test is used to check the properties of specific output lines from a SHOW command, such as show running-config. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a line_object and the optional state element specifies the data to check.</xsd:documentation>
+            <xsd:appinfo>
+                <oval:element_mapping>
+                    <oval:test>line_test</oval:test>
+                    <oval:object>line_object</oval:object>
+                    <oval:state>line_state</oval:state>
+                    <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#nxos">line_item</oval:item>
+                </oval:element_mapping>
+            </xsd:appinfo>
+            <xsd:appinfo>
+                <sch:pattern id="nxos-def_linetst">
+                    <sch:rule context="nxos-def:line_test/nxos-def:object">
+                        <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/nxos-def:line_object/@id"><sch:value-of select="../@id"/> - the object child element of a line_test must reference a line_object</sch:assert>
+                    </sch:rule>
+                    <sch:rule context="nxos-def:line_test/nxos-def:state">
+                        <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/nxos-def:line_state/@id"><sch:value-of select="../@id"/> - the state child element of a line_test must reference a line_state</sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType" />
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="line_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The line_object element is used by a line test to define the object to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+            <xsd:documentation>A line object consists of a show_subcommand entity that is the name of a SHOW sub-command to be tested.</xsd:documentation>
+            <xsd:appinfo>
+                <sch:pattern id="nxos-def_line_object_verify_filter_state">
+                    <sch:rule context="nxos-def:line_object//oval-def:filter">
+                        <sch:let name="parent_object" value="ancestor::nxos-def:line_object"/>
+                        <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                        <sch:let name="state_ref" value="."/>
+                        <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                        <sch:let name="state_name" value="local-name($reffed_state)"/>
+                        <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                        <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#nxos') and ($state_name='line_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType">
+                    <xsd:sequence>
+                        <xsd:choice>
+                            <xsd:element ref="oval-def:set"/>
+                            <xsd:sequence>
+                                <xsd:element name="show_subcommand" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>The name of a SHOW sub-command.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="line_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The line_state element defines the different information that can be used to evaluate the result of a specific SHOW sub-command. This includes the name of ths sub-command and the corresponding config line. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="show_subcommand" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The name of the SHOW sub-command.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="config_line" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The value returned from by the specified SHOW sub-command.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- ================================================================================= -->
+    <!-- ================================  VERSION TEST  ================================= -->
+    <!-- ================================================================================= -->
+    <xsd:element name="version_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The version_test is used to check the version of the NX-OS operating system. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a version_object and the optional state element specifies the data to check.</xsd:documentation>
+            <xsd:appinfo>
+                <oval:element_mapping>
+                    <oval:test>version_test</oval:test>
+                    <oval:object>version_object</oval:object>
+                    <oval:state>version_state</oval:state>
+                    <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#nxos">version_item</oval:item>
+                </oval:element_mapping>
+            </xsd:appinfo>
+            <xsd:appinfo>
+                <sch:pattern id="nxos-def_versiontst">
+                    <sch:rule context="nxos-def:version_test/nxos-def:object">
+                        <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/nxos-def:version_object/@id"><sch:value-of select="../@id"/> - the object child element of a version_test must reference a version_object</sch:assert>
+                    </sch:rule>
+                    <sch:rule context="nxos-def:version_test/nxos-def:state">
+                        <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/nxos-def:version_state/@id"><sch:value-of select="../@id"/> - the state child element of a version_test must reference a version_state</sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType" />
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="version_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The version_object element is used by a version_test to define the different version information associated with an NX-OS system. There is actually only one object relating to version and this is the system as a whole. Therefore, there are no child entities defined.  Any OVAL Test written to check version will reference the same version_object which is basically an empty object element.</xsd:documentation>
+            <xsd:documentation>For information on how Cisco NX-OS versionioning works, see: https://tools.cisco.com/security/center/resources/ios_nx_os_reference_guide#release_naming_nx_os</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType"/>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="version_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The version_state element defines the version information held within a Cisco NX-OS version.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="version_string" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The entire NX-OS version string, for example: '7.1(0)N1(1b)' or '9.2(1)'.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="major_release" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The major version piece of the version string. The value is an integer, and in the example 6.2(8b) the major_release is '6'</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="minor_release" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The minor release piece of the version string. The value is an integer, and in the example 6.2(8b) the minor_release is '2'</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="maintenance_release" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The maintenance release piece of the version string. The value is an integer, and in the example 6.2(8b) the maintenance release is '8'</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="rebuild" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The rebuild identifier piece of the version string. The value is a string, and in the example 6.2(8b) the rebuild is 'b'. For the examples 7.1(0)N1(1b) and 9.2(1), there is no rebuild identifier.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="platform" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The platform designator piece of the version string. The value is a string, and in the example 7.1(0)N1(1b) the platform designator is 'N'. For the examples 6.2(8b) and 9.2(1), there is no platform designator.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="platform_minor" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The platform minor release piece of the version string. The value is an integer, and in the example 7.1(0)N2(1b) the platform minor release is '2'. For the examples 6.2(8b) and 9.2(1), there is no platform minor release.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="platform_maintenance" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The platform maintenance release piece of the version string. The value is an integer, and in the example 7.1(0)N1(2b) the platform maintenance release is '2'. For the examples 6.2(8b) and 9.2(1), there is no platform maintenance release.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="platform_rebuild" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The platform rebuild identifier piece of the version string. The value is a string, and in the example 7.1(0)N1(1b) the platform rebuild identifier is 'b'. For the examples 6.2(8b) and 9.2(1), there is no platform rebuild identifier.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- ================================================================================= -->
+    <!-- =================================  SECTION TEST  ================================ -->
+    <!-- ================================================================================= -->
+    <xsd:element name="section_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The section test is used to check the properties of specific output lines from a configuration section.</xsd:documentation>
+            <xsd:appinfo>
+                <oval:element_mapping>
+                    <oval:test>section_test</oval:test>
+                    <oval:object>section_object</oval:object>
+                    <oval:state>section_state</oval:state>
+                    <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#nxos">section_item</oval:item>
+                </oval:element_mapping>
+            </xsd:appinfo>
+            <xsd:appinfo>
+                <sch:pattern id="nxos-def_sectiontst">
+                    <sch:rule context="nxos-def:section_test/nxos-def:object">
+                        <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/nxos-def:section_object/@id"><sch:value-of select="../@id"/> - the object child element of a section_test must reference a section_object</sch:assert>
+                    </sch:rule>
+                    <sch:rule context="nxos-def:section_test/nxos-def:state">
+                        <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/nxos-def:section_state/@id"><sch:value-of select="../@id"/> - the state child element of a section_test must reference a section_state</sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType"/>
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="section_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The section_object element is used by a section test to define the object to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+            <xsd:documentation>A section object consists of a section_command entity that is the name of a section command to be tested.</xsd:documentation>
+            <xsd:appinfo>
+                <sch:pattern id="nxos-def_section_object_verify_filter_state">
+                    <sch:rule context="nxos-def:section_object//oval-def:filter">
+                        <sch:let name="parent_object" value="ancestor::nxos-def:section_object"/>
+                        <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                        <sch:let name="state_ref" value="."/>
+                        <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                        <sch:let name="state_name" value="local-name($reffed_state)"/>
+                        <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                        <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#nxos') and ($state_name='section_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type.</sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType">
+                    <xsd:sequence>
+                        <xsd:choice>
+                            <xsd:element ref="oval-def:set"/>
+                            <xsd:sequence>
+                                <xsd:element name="section_command" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>The name of a section command.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="section_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The section_state element defines the different information that can be used to evaluate the result of a specific section command. This includes the name of ths section_command and the corresponding config lines. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="section_command" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The name of the section command.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="section_config_lines" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The value returned with all config lines of the section.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="config_line" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The value returned with one config line of the section at a time.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

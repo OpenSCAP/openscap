@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ds:data-stream-collection xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" 
+  xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog"
+  xmlns:xlink="http://www.w3.org/1999/xlink" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" 
+  id="scap_gov.nist_collection_r3005-datastream_01" 
+  schematron-version="1.2" 
+  xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2.xsd
+  http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd">
+
+  <ds:data-stream id="scap_gov.nist_datastream_r3005-datastream_01"
+    scap-version="1.2" 
+    timestamp="2016-05-25T14:00:00" 
+    use-case="CONFIGURATION">
+    <ds:dictionaries>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-cpe-dictionary-01" xlink:href="#scap_gov.nist_comp_r3005-cpe-dictionary-01">
+        <cat:catalog>
+          <cat:uri name="r3005-cpe-oval-01" uri="#scap_gov.nist_cref_r3005-cpe-oval-01"/>
+        </cat:catalog>
+      </ds:component-ref>
+    </ds:dictionaries>
+    <ds:checklists>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-xccdf_01" xlink:href="#scap_gov.nist_comp_r3005-xccdf_01">
+        <cat:catalog>
+          <cat:uri name="r3005-oval-01" uri="#scap_gov.nist_cref_r3005-oval-01"/>
+        </cat:catalog>
+      </ds:component-ref>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-xccdf_tailoring_01" xlink:href="#scap_gov.nist_comp_r3005-xccdf_tailoring_01"/>
+    </ds:checklists>
+    <ds:checks>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-oval-01" xlink:href="#scap_gov.nist_comp_r3005-oval-01"/>
+      <ds:component-ref id="scap_gov.nist_cref_r3005-cpe-oval-01" xlink:href="#scap_gov.nist_comp_r3005-cpe-oval"/>
+    </ds:checks>
+  </ds:data-stream>
+
+  <ds:component id="scap_gov.nist_comp_r3005-xccdf_01" timestamp="2016-05-25T14:00:00">
+    <xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" 
+      id="xccdf_gov.nist_benchmark_r3005_id_01" 
+      style="SCAP_1.2" 
+      xml:lang="en" 
+      xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd 
+      http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+      <xccdf:status date="2016-05-25">draft</xccdf:status>
+      <xccdf:title>XCCDF Benchmark That References the Validation Content for the R3005 requirement</xccdf:title>
+      <xccdf:description>This XCCDF Benchmark references the OVAL Definitions in the validation content for the R3005 requirement.</xccdf:description>
+      <xccdf:version time="2016-05-25T14:00:00" update="http://scap.nist.gov/validation/resources.html">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:contributor>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+
+      <xccdf:Profile id="xccdf_gov.nist.validation_profile_r3005_01" prohibitChanges="1">
+        <xccdf:title>XCCDF Profile That References the Validation Content for the R3005 requirement</xccdf:title>
+        <xccdf:description>This Profile allows for the tailoring of the validation content for the R3005 requirement.</xccdf:description>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_1" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_2" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_3" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_4" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_4" selector="check_selector_1">
+          <xccdf:remark override="false">Remarks go here ...</xccdf:remark>
+        </xccdf:refine-rule>
+        <!-- <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_5" selected="true"/> This rule's selector is true -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_6" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_7" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_7" selector="check_selector_0">
+          <xccdf:remark override="false">Remarks go here ...</xccdf:remark>
+        </xccdf:refine-rule>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_8" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_9" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_9" weight="7.5" severity="medium" selector="check_selector_1"/>
+        <xccdf:refine-value idref="xccdf_gov.nist_value_validation.r3005_for_rule_9" selector="value_r9_test2" operator="pattern match"/>
+
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_10" selected="true"/>
+      </xccdf:Profile>
+
+
+
+
+      <xccdf:Value id="xccdf_gov.nist_value_validation.r3005_for_rule_6" type="string" operator="equals">
+        <xccdf:title>XCCDF Value 6</xccdf:title>
+        <xccdf:description>XCCDF Value 6</xccdf:description>
+        <xccdf:value>test</xccdf:value>
+        <xccdf:value selector="value_test0">test0</xccdf:value>
+        <xccdf:value selector="value_test1">test1</xccdf:value>
+        <xccdf:value selector="value_test2">test2</xccdf:value>
+        <xccdf:value selector="value_test3">test3</xccdf:value>
+      </xccdf:Value>
+      <xccdf:Value id="xccdf_gov.nist_value_validation.r3005_for_rule_7" type="string" operator="equals">
+        <xccdf:title>XCCDF Value 7</xccdf:title>
+        <xccdf:description>XCCDF Value 7</xccdf:description>
+        <xccdf:value>test 0</xccdf:value>
+        <xccdf:value selector="value_test">test 00</xccdf:value>
+        <xccdf:value selector="value_test1">test 01</xccdf:value>
+        <xccdf:value selector="value_test2">test</xccdf:value>
+        <xccdf:value selector="value_test3">test 03</xccdf:value>
+      </xccdf:Value>
+      <xccdf:Value id="xccdf_gov.nist_value_validation.r3005_for_rule_9" type="string" operator="pattern match">
+        <xccdf:title>XCCDF Value 9</xccdf:title>
+        <xccdf:description>XCCDF Value 9</xccdf:description>
+        <xccdf:value>f[Oo]o\.bar</xccdf:value>
+        <xccdf:value selector="value_r9_test">^[Ff]oo\.bar.+$</xccdf:value>
+        <xccdf:value selector="value_r9_test1">^.*$</xccdf:value>
+        <xccdf:value selector="value_r9_test2">^.+$</xccdf:value>
+        <xccdf:value selector="value_r9_test3">^[^\d].*$</xccdf:value>
+      </xccdf:Value>
+
+
+      <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 1: identified selector -->
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_1" selected="false" weight="1.0" severity="high">
+        <xccdf:title>Test that the check_existence property is properly supported using the specified value</xccdf:title>
+        <xccdf:description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</xccdf:description>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="sel0">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:1"/>
+          <!-- true -->
+        </xccdf:check>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="sel1">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:2"/>
+          <!-- true -->
+        </xccdf:check>
+        <xccdf:check negate="true" system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="sel2">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:3"/>
+          <!-- false -->
+        </xccdf:check>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:1"/>
+          <!-- true -->
+        </xccdf:check>
+      </xccdf:Rule>
+
+      <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 2: empty selector -->
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_2" selected="false" weight="1.0" severity="high">
+        <xccdf:title>Test that the check_existence property is properly supported using the specified value</xccdf:title>
+        <xccdf:description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</xccdf:description>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_1">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:2"/>
+        </xccdf:check>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:1"/>
+          <!-- true/pass -->
+        </xccdf:check>
+        <xccdf:check negate="true" system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_2">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:2"/>
+        </xccdf:check>
+      </xccdf:Rule>
+
+      <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 2: absent selector -->
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_3" selected="false">
+        <xccdf:title>Test that the check_existence property is properly supported using the specified value</xccdf:title>
+        <xccdf:description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</xccdf:description>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_1">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:1"/>
+        </xccdf:check>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:3"/>
+          <!-- true/Pass -->
+        </xccdf:check>
+        <xccdf:check negate="true" system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_3">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:3"/>
+        </xccdf:check>
+      </xccdf:Rule>
+
+      <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 3: no valid candidate checks. Expected result 'notchecked' -->
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_4" selected="false">
+        <xccdf:title>Test that the check_existence property is properly supported using the specified value</xccdf:title>
+        <xccdf:description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</xccdf:description>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_0">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:1"/>
+        </xccdf:check>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_1">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:2"/>
+          <!-- config 1: true/pass -->
+        </xccdf:check>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_2">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:3"/>
+        </xccdf:check>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_3">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:4"/>
+        </xccdf:check>
+        <xccdf:check negate="true" system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_4">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:4"/>
+        </xccdf:check>
+      </xccdf:Rule>
+
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_5" selected="true">
+        <xccdf:title>Test that the check_existence property is properly supported using the specified value</xccdf:title>
+        <xccdf:description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</xccdf:description>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:5"/>
+          <!-- Config1: false/fail -->
+        </xccdf:check>
+      </xccdf:Rule>
+
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_6" selected="false">
+        <xccdf:title>Test the value entity with the equals operation</xccdf:title>
+        <xccdf:description>Make sure the value entity properly supports the equals operation.</xccdf:description>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-export export-name="oval:nist.validation.r3005:var:2600" value-id="xccdf_gov.nist_value_validation.r3005_for_rule_6"/>
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:6"/>
+          <!-- Config1: true / pass -->
+        </xccdf:check>
+      </xccdf:Rule>
+
+      <!-- test case for refine rule selector and value selector -->
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_7" selected="false">
+        <xccdf:title>Test the value entity with the not equal operation</xccdf:title>
+        <xccdf:description>Make sure the value entity properly supports the not equal operation.</xccdf:description>
+        
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_0">
+          <xccdf:check-export export-name="oval:nist.validation.r3005:var:2700" value-id="xccdf_gov.nist_value_validation.r3005_for_rule_7"/>
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:7"/>
+          <!-- Config1: true/pass -->
+        </xccdf:check>
+        
+        <xccdf:check negate="true" system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_1">
+          <xccdf:check-export export-name="oval:nist.validation.r3005:var:2700" value-id="xccdf_gov.nist_value_validation.r3005_for_rule_7"/>
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:7"/>
+          <!-- Config2: false/fail -->
+        </xccdf:check>
+        
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:1"/>
+          <!-- true/pass -->
+        </xccdf:check>
+        
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_8" selected="false" role="unchecked">
+        <xccdf:title>Test xccdf:complex-check with operator eq 'OR'</xccdf:title>
+        <xccdf:description>Test xccdf:complex-check with operator eq 'OR'</xccdf:description>
+        <xccdf:complex-check operator="OR" negate="false">
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:8"/>
+          </xccdf:check>
+          <xccdf:check negate="true" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:8"/>
+          </xccdf:check>
+        </xccdf:complex-check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_9" selected="false" role="full">
+        <xccdf:title>Test the var_ref entity with the equals operation</xccdf:title>
+        <xccdf:description>Make sure the var_ref entity properly supports the equals operation.</xccdf:description>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-export export-name="oval:nist.validation.r3005:var:2900" value-id="xccdf_gov.nist_value_validation.r3005_for_rule_9"/>
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:9"/>
+        </xccdf:check>
+        <xccdf:check negate="true" system="http://oval.mitre.org/XMLSchema/oval-definitions-5" selector="check_selector_1">
+          <xccdf:check-export export-name="oval:nist.validation.r3005:var:2900" value-id="xccdf_gov.nist_value_validation.r3005_for_rule_9"/>
+          <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:9"/>
+          <!-- Config1: rule returns Pass -->
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r3005_rule_10" selected="false" role="full">
+        <xccdf:title>Test xccdf:complex-check with operator eq 'AND'</xccdf:title>
+        <xccdf:description>Test xccdf:complex-check with operator eq 'AND'</xccdf:description>
+        <xccdf:complex-check operator="AND" negate="false">
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:8"/>
+          </xccdf:check>
+          <xccdf:check negate="true" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r3005-oval-01" name="oval:nist.validation.r3005:def:8"/>
+          </xccdf:check>
+        </xccdf:complex-check>
+      </xccdf:Rule>
+
+    </xccdf:Benchmark>
+  </ds:component>
+  <ds:component id="scap_gov.nist_comp_r3005-oval-01" timestamp="2016-05-25T14:00:00">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/windows-definitions-schema.xsd               http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/independent-definitions-schema.xsd                  http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-definitions-schema.xsd               http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-common-schema.xsd">
+      <generator>
+        <oval:product_name>NIST Validation Content Generation Script</oval:product_name>
+        <oval:product_version>1.0</oval:product_version>
+        <oval:schema_version>5.10.1</oval:schema_version>
+        <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition class="compliance" id="oval:nist.validation.r3005:def:1" version="1">
+          <metadata>
+            <title>Test that the check_existence property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that every variable item exists for the specified object." negate="false" test_ref="oval:nist.validation.r3005:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.r3005:def:2" version="1">
+          <metadata>
+            <title>Test that the check_existence property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that any variable items exist for the specified object." negate="false" test_ref="oval:nist.validation.r3005:tst:2"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.r3005:def:3" version="1">
+          <metadata>
+            <title>Test that the check_existence property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that at least one variable item exists for the specified object." negate="false" test_ref="oval:nist.validation.r3005:tst:3"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.r3005:def:4" version="1">
+          <metadata>
+            <title>Test that the check_existence property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that no variable items exist for the specified object." negate="false" test_ref="oval:nist.validation.r3005:tst:4"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.r3005:def:5" version="1">
+          <metadata>
+            <title>Test that the check_existence property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the check_existence property, is properly supported for the ind-def:variable_test.</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that only one variable item exists for the specified object." negate="false" test_ref="oval:nist.validation.r3005:tst:5"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.r3005:def:6" version="1">
+          <metadata>
+            <title>Test the value entity with the equals operation</title>
+            <description>Make sure the value entity properly supports the equals operation.</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value equals xccdf:var." negate="false" test_ref="oval:nist.validation.r3005:tst:6"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.r3005:def:7" version="1">
+          <metadata>
+            <title>Test the value entity with the not equal operation</title>
+            <description>Make sure the value entity properly supports the not equal operation.</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value is not equal to xccdf:var." negate="false" test_ref="oval:nist.validation.r3005:tst:7"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.r3005:def:8" version="1">
+          <metadata>
+            <title>Test the value entity with the equals operation</title>
+            <description>Make sure the value entity properly supports the equals operation.</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value equals foo.bar." negate="false" test_ref="oval:nist.validation.r3005:tst:8"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.r3005:def:9" version="1">
+          <metadata>
+            <title>Test the var_ref entity with the equals operation</title>
+            <description>Make sure the var_ref entity properly supports the equals operation.</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref equals foo.bar." negate="false" test_ref="oval:nist.validation.r3005:tst:9"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="all_exist" comment="Test to see that every variable item exists for the specified object." id="oval:nist.validation.r3005:tst:1" version="1">
+          <object object_ref="oval:nist.validation.r3005:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="any_exist" comment="Test to see that any variable items exist for the specified object." id="oval:nist.validation.r3005:tst:2" version="1">
+          <object object_ref="oval:nist.validation.r3005:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that at least one variable item exists for the specified object." id="oval:nist.validation.r3005:tst:3" version="1">
+          <object object_ref="oval:nist.validation.r3005:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="none_exist" comment="Test to see that no variable items exist for the specified object." id="oval:nist.validation.r3005:tst:4" version="1">
+          <object object_ref="oval:nist.validation.r3005:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="only_one_exists" comment="Test to see that only one variable item exists for the specified object." id="oval:nist.validation.r3005:tst:5" version="1">
+          <object object_ref="oval:nist.validation.r3005:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value equals xccdf:var." id="oval:nist.validation.r3005:tst:6" version="1">
+          <object object_ref="oval:nist.validation.r3005:obj:2"/>
+          <state state_ref="oval:nist.validation.r3005:ste:6"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value is not equal to xccdf:var." id="oval:nist.validation.r3005:tst:7" version="1">
+          <object object_ref="oval:nist.validation.r3005:obj:2"/>
+          <state state_ref="oval:nist.validation.r3005:ste:7"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="none_exist" comment="Test to see that the value equals foo.bar." id="oval:nist.validation.r3005:tst:8" version="1">
+          <object object_ref="oval:nist.validation.r3005:obj:13"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="none satisfy" check_existence="at_least_one_exists" comment="Test to see that the var_ref equals foo.bar." id="oval:nist.validation.r3005:tst:9" version="1">
+          <object object_ref="oval:nist.validation.r3005:obj:1"/>
+          <state state_ref="oval:nist.validation.r3005:ste:9"/>
+        </variable_test>
+
+      </tests>
+      <objects>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:1" version="1">
+          <set xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" set_operator="UNION">
+            <set>
+              <set>
+                <object_reference>oval:nist.validation.r3005:obj:2</object_reference>
+                <object_reference>oval:nist.validation.r3005:obj:14</object_reference>
+              </set>
+              <set>
+                <object_reference>oval:nist.validation.r3005:obj:4</object_reference>
+                <object_reference>oval:nist.validation.r3005:obj:5</object_reference>
+              </set>
+            </set>
+            <set>
+              <set>
+                <set>
+                  <object_reference>oval:nist.validation.r3005:obj:6</object_reference>
+                  <object_reference>oval:nist.validation.r3005:obj:7</object_reference>
+                </set>
+              </set>
+              <set>
+                <set>
+                  <object_reference>oval:nist.validation.r3005:obj:10</object_reference>
+                  <object_reference>oval:nist.validation.r3005:obj:11</object_reference>
+                </set>
+                <set>
+                  <object_reference>oval:nist.validation.r3005:obj:12</object_reference>
+                </set>
+              </set>
+            </set>
+          </set>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:2" version="1">
+          <var_ref>oval:nist.validation.r3005:var:1</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:3" version="1">
+          <var_ref>oval:nist.validation.r3005:var:2</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:4" version="1">
+          <var_ref>oval:nist.validation.r3005:var:3</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:5" version="1">
+          <var_ref>oval:nist.validation.r3005:var:4</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:6" version="1">
+          <var_ref>oval:nist.validation.r3005:var:5</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:7" version="1">
+          <var_ref>oval:nist.validation.r3005:var:6</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:8" version="1">
+          <var_ref>oval:nist.validation.r3005:var:7</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:9" version="1">
+          <var_ref>oval:nist.validation.r3005:var:8</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:10" version="1">
+          <var_ref>oval:nist.validation.r3005:var:9</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:11" version="1">
+          <var_ref>oval:nist.validation.r3005:var:10</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:12" version="1">
+          <var_ref>oval:nist.validation.r3005:var:11</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:13" version="1">
+          <var_ref>oval:nist.validation.r3005:var:1</var_ref>
+          <filter xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:nist.validation.r3005:ste:145</filter>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:obj:14" version="1">
+          <var_ref>oval:nist.validation.r3005:var:15</var_ref>
+        </variable_object>
+      </objects>
+      <states>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:ste:1" version="1">
+          <value datatype="int" operation="not equal">2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:ste:2" version="1">
+          <var_ref datatype="string" operation="equals">oval:nist.validation.r3005:var:1</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:ste:5" version="1">
+          <value datatype="int" operation="equals">1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:ste:6" version="1">
+          <value entity_check="all" var_check="all" mask="false" datatype="string" operation="equals" var_ref="oval:nist.validation.r3005:var:2600"/>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:ste:7" version="1">
+          <value datatype="string" operation="not equal" var_ref="oval:nist.validation.r3005:var:2700"/>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:ste:9" version="1">
+          <value datatype="string" operation="pattern match" var_check="at least one" entity_check="at least one" var_ref="oval:nist.validation.r3005:var:2900"/>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r3005:ste:145" version="1">
+          <value var_ref="oval:nist.validation.r3005:var:1"/>
+        </variable_state>
+      </states>
+      <variables>
+        <constant_variable comment="This variable contains the string value 'test'." datatype="string" id="oval:nist.validation.r3005:var:1" version="1">
+          <value>test</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the boolean value 'true'." datatype="boolean" id="oval:nist.validation.r3005:var:2" version="1">
+          <value>true</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the integer value '1'." datatype="int" id="oval:nist.validation.r3005:var:3" version="1">
+          <value>1</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the binary value '9f'." datatype="binary" id="oval:nist.validation.r3005:var:4" version="1">
+          <value>9f</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the float value '1.5'." datatype="float" id="oval:nist.validation.r3005:var:5" version="1">
+          <value>3.1519</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the evr_string value '1:23-2a'." datatype="evr_string" id="oval:nist.validation.r3005:var:6" version="1">
+          <value>1:23-2a</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the fileset_revision value 'A.03.61.00'." datatype="fileset_revision" id="oval:nist.validation.r3005:var:7" version="1">
+          <value>A.03.61.00</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the ios_version value '3.2.4'." datatype="ios_version" id="oval:nist.validation.r3005:var:8" version="1">
+          <value>A.03.61.00</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the ip4_address value '2.2.2.2'." datatype="ipv4_address" id="oval:nist.validation.r3005:var:9" version="1">
+          <value>2.2.2.2</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the ip6_address value '2001:0db8:85a3:0000:0000:8a2e:0370:7334'." datatype="ipv6_address" id="oval:nist.validation.r3005:var:10" version="1">
+          <value>2001:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the version value '2-2-35'." datatype="version" id="oval:nist.validation.r3005:var:11" version="1">
+          <value>2-2-35</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the string value '^[Oo]val:nist\.validation\.variable:var:\d+$'." datatype="string" id="oval:nist.validation.r3005:var:12" version="1">
+          <value>^[Oo]val:nist\.validation\.variable:var:\d+$</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the string value 'TesT'." datatype="string" id="oval:nist.validation.r3005:var:13" version="1">
+          <value>TesT</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the string value 'TesT1'." datatype="string" id="oval:nist.validation.r3005:var:14" version="1">
+          <value>TesT1</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the boolean value 'false'." datatype="boolean" id="oval:nist.validation.r3005:var:15" version="1">
+          <value>false</value>
+        </constant_variable>
+
+        <external_variable id="oval:nist.validation.r3005:var:2600" version="1" comment="external value" datatype="string"/>
+        <external_variable id="oval:nist.validation.r3005:var:2700" version="1" comment="external value" datatype="string"/>
+        <external_variable id="oval:nist.validation.r3005:var:2900" version="1" comment="external value" datatype="string"/>
+      </variables>
+    </oval_definitions>
+  </ds:component>
+  <ds:component id="scap_gov.nist_comp_r3005-cpe-oval" timestamp="2016-05-25T14:00:00">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/windows-definitions-schema.xsd  http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/independent-definitions-schema.xsd  http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-definitions-schema.xsd  http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-common-schema.xsd  http://oval.mitre.org/XMLSchema/oval-definitions-5#linux http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/linux-definitions-schema.xsd">
+      <generator>
+        <oval:product_name>National Institute of Standards and Technology</oval:product_name>
+        <oval:schema_version>5.10.1</oval:schema_version>
+        <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+      </generator>
+      <!-- ==================================================================================================== -->
+      <!-- ==========================================  DEFINITIONS  =========================================== -->
+      <!-- ==================================================================================================== -->
+      <definitions>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:1" version="4">
+          <metadata>
+            <title>Microsoft Windows is installed</title>
+            <affected family="windows">
+              <platform>Microsoft Windows XP</platform>
+              <platform>Microsoft Windows Vista</platform>
+              <platform>Microsoft Windows 7</platform>
+              <platform>Microsoft Windows 8</platform>
+              <platform>Microsoft Windows 8.1</platform>
+              <platform>Microsoft Windows 10</platform>
+              <platform>Microsoft Windows Server 2012</platform>
+              <platform>Microsoft Windows Server 2012 R2</platform>
+            </affected>
+            <reference ref_id="cpe:/o:microsoft:windows" source="CPE"/>
+            <description>The operating system installed on the system is Microsoft Windows</description>
+          </metadata>
+          <criteria>
+            <criterion comment="the installed operating system is part of the Microsoft Windows family" test_ref="oval:org.mitre.oval:tst:99"/>
+          </criteria>
+        </definition>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:100" version="2">
+          <metadata>
+            <title>Red Hat Enterprise Linux 3, 4, 5, 6, or 7</title>
+            <affected family="unix">
+              <platform>Red Hat Enterprise Linux</platform>
+            </affected>
+            <reference ref_id="cpe:/o:redhat:enterprise_linux" source="CPE"/>
+            <description>The operating system installed on the system is Red Hat Enterprise Linux 3, 4, 5, 6, or 7</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Installed operating system is part of the unix family" test_ref="oval:gov.nist.validation.cpe.oval:tst:100"/>
+            <criterion comment="Red Hat Enterprise Linux 3, 4, 5, 6, or 7 is installed" test_ref="oval:gov.nist.validation.cpe.oval:tst:101"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <!-- ==================================================================================================== -->
+      <!-- ============================================  TESTS  =============================================== -->
+      <!-- ==================================================================================================== -->
+      <tests>
+        <family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="the installed operating system is part of the Microsoft Windows family" id="oval:org.mitre.oval:tst:99" version="1">
+          <object object_ref="oval:org.mitre.oval:obj:99"/>
+          <state state_ref="oval:org.mitre.oval:ste:99"/>
+        </family_test>
+        <family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="installed operating system is part of the Unix family" id="oval:gov.nist.validation.cpe.oval:tst:100" version="1">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:100"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:100"/>
+        </family_test>
+        <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="at least one" check_existence="at_least_one_exists" comment="redhat-release is version 3, 4, 5, 6, or 7" id="oval:gov.nist.validation.cpe.oval:tst:101" version="2">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:101"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:101"/>
+        </rpminfo_test>
+      </tests>
+      <!-- ==================================================================================================== -->
+      <!-- ============================================  OBJECTS  ============================================= -->
+      <!-- ==================================================================================================== -->
+      <objects>
+        <family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="This is the default family object. Only one family object should exist." id="oval:org.mitre.oval:obj:99" version="1"/>
+        <family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:gov.nist.validation.cpe.oval:obj:100" version="1"/>
+        <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="the redhat-release rpm" id="oval:gov.nist.validation.cpe.oval:obj:101" version="2">
+          <name operation="pattern match">^redhat-release.*$</name>
+        </rpminfo_object>
+      </objects>
+      <!-- ==================================================================================================== -->
+      <!-- =============================================  STATES  ============================================= -->
+      <!-- ==================================================================================================== -->
+      <states>
+        <family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="Microsoft Windows family" id="oval:org.mitre.oval:ste:99" version="2">
+          <family operation="equals">windows</family>
+        </family_state>
+        <family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:gov.nist.validation.cpe.oval:ste:100" version="1">
+          <family>unix</family>
+        </family_state>
+        <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:gov.nist.validation.cpe.oval:ste:101" version="2">
+          <version operation="pattern match">^[3-7]\D</version>
+        </rpminfo_state>
+      </states>
+      <!-- ==================================================================================================== -->
+      <!-- ==================================================================================================== -->
+      <!-- ==================================================================================================== -->
+    </oval_definitions>
+  </ds:component>
+  <ds:component id="scap_gov.nist_comp_r3005-cpe-dictionary-01" timestamp="2016-05-25T14:00:00">
+    <cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+      <cpe-item name="cpe:/o:microsoft:windows">
+        <title xml:lang="en-US">Microsoft Windows</title>
+        <notes xml:lang="en-US">
+          <note>This CPE Name represents the Windows OS</note>
+        </notes>
+        <check href="r3005-cpe-oval-01" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.validation.cpe.oval:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux">
+        <title xml:lang="en-us">Red Hat Enterprise Linux</title>
+        <notes xml:lang="en-us">
+          <note>This CPE Name represents Red Hat Enterprise Linux OS</note>
+        </notes>
+        <check href="r3005-cpe-oval-01" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.validation.cpe.oval:def:100</check>
+      </cpe-item>
+    </cpe-list>
+  </ds:component>
+
+  <!-- local tailoring component -->
+  <ds:component id="scap_gov.nist_comp_r3005-xccdf_tailoring_01" timestamp="2016-05-25T14:00:00">
+    <xccdf:Tailoring xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" 
+      id="xccdf_gov.nist_tailoring_r3005_01" 
+      xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd
+      http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+      <xccdf:benchmark href="#scap_gov.nist_cref_r3005-xccdf_01" id="xccdf_gov.nist_benchmark_r3005_id_01" version="1-2.1.1.0"/>
+      <xccdf:status date="2016-05-25">draft</xccdf:status>
+      <xccdf:version time="2016-05-25T14:00:00">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">NIST</dc:contributor>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">NIST</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">NIST</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+
+      <xccdf:Profile id="xccdf_gov.nist.validation_profile_r3005_tailoring_01" abstract="false" prohibitChanges="true">
+        <xccdf:title>Tailoring Component Profile Title 01</xccdf:title>
+        <xccdf:description>Tailoring Component Profile Description 01</xccdf:description>
+        <xccdf:platform idref="cpe:/o:microsoft:windows"/>
+        <xccdf:platform idref="cpe:/o:redhat:enterprise_linux"/>
+
+        <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 1: identified selector -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_1" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_1" selector="sel2" weight="5.5" role="full" severity="low">
+          <xccdf:remark override="false">Remarks go here ...</xccdf:remark>
+        </xccdf:refine-rule>
+
+        <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 2: empty selector -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_2" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_2" selector="check_selector_2" weight="5" role="full"/>
+
+        <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 2: absent selector -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_3" selected="true"/>
+
+        <!--  XCCDF 1.2: Table 39: Check Processing Algorithm Sub-Steps -> Check.Selector - bullet 3: no valid candidate checks. Expected result 'notchecked' -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_4" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_4" selector="check_selector_5" weight="5.5" role="full" severity="low">
+          <xccdf:remark override="false">Remarks go here ...</xccdf:remark>
+        </xccdf:refine-rule>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_5" selected="false"/>
+
+        <!-- it uses other value than default -->
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_6" selected="true"/>
+        <xccdf:refine-value idref="xccdf_gov.nist_value_validation.r3005_for_rule_6" selector="value_test2"/>
+
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_7" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_7" selector="check_selector_1" weight="2.5" role="unscored" severity="info">
+          <xccdf:remark override="false">Remarks go here ...</xccdf:remark>
+        </xccdf:refine-rule>
+        <xccdf:refine-value idref="xccdf_gov.nist_value_validation.r3005_for_rule_7" selector="value_test3" operator="not equal"/>
+
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_8" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_8" weight="9.0" role="full" severity="medium"/>
+
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_9" selected="true"/>
+        <xccdf:refine-rule idref="xccdf_gov.nist_rule_validation.r3005_rule_9" selector="check_selector_1" weight="7.5" role="unchecked" severity="unknown"/>
+
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r3005_rule_10" selected="false"/>
+
+      </xccdf:Profile>
+      
+    </xccdf:Tailoring>
+  </ds:component>
+</ds:data-stream-collection>

@@ -1,0 +1,604 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ios-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#ios" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#ios" elementFormDefault="qualified" version="5.4">
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation>The following is a description of the elements, types, and attributes that compose the IOS specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+            <xsd:documentation>The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>IOS Definition</schema>
+                  <version>5.4</version>
+                  <date>4/1/2008 10:41:41 AM</date>
+                  <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                  <sch:title>schematron validation of the Cisco IOS portion of an OVAL Definitions file</sch:title>
+                  <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+                  <sch:ns prefix="ios-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#ios"/>
+                  <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+            </xsd:appinfo>
+      </xsd:annotation>
+      <!-- =============================================================================== -->
+      <!-- =============================  GLOBAL TEST  =================================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="global_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The global test is used to check for the existence of a particular line in the ios config file under the global context. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a global_object and the optional state element specifies the data to check. The evaluation of the test is guided by the check attribute that is inherited from the TestType.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="globaltst">
+                              <sch:rule context="ios-def:global_test/ios-def:object">
+                                    <sch:assert test="@object_ref=/oval-def:oval_definitions/oval-def:objects/ios-def:global_object/@id"><sch:value-of select="../@id"/> - the object child element of a global_test must reference a global_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="ios-def:global_test/ios-def:state">
+                                    <sch:assert test="@state_ref=/oval-def:oval_definitions/oval-def:states/ios-def:global_state/@id"><sch:value-of select="../@id"/> - the state child element of a global_test must reference a global_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" minOccurs="1" maxOccurs="1"/>
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="1"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="global_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The global_object element is used by a global test to define the object to be evaluated. For the most part this object checks for existance and is used without a state comparision. Each object extends the standard ObjectType as definied in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice minOccurs="1" maxOccurs="1">
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="global_command" type="oval-def:EntityObjectStringType" minOccurs="1" maxOccurs="1">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The global_command entity identifies a specific line in the ios config file under the global context.</xsd:documentation>
+                                                            <xsd:appinfo>
+                                                                  <sch:pattern id="globalobjglobal_command">
+                                                                        <sch:rule context="ios-def:global_object/ios-def:global_command">
+                                                                              <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the global_command entity of a global_object should be 'string'</sch:assert>
+                                                                        </sch:rule>
+                                                                  </sch:pattern>
+                                                            </xsd:appinfo>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="global_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The global_state element defines the different information that can be found in the ios config file under the global context. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="global_command" type="oval-def:EntityStateStringType" minOccurs="1" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The global_command entity identifies a specific line in the ios config file under the global context.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="globalsteglobal_command">
+                                                            <sch:rule context="ios-def:global_state/ios-def:global_command">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the global_command entity of a global_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =============================  INTERFACE TEST  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="interface_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation/>
+                  <xsd:appinfo>
+                        <sch:pattern id="iosinterfacetst">
+                              <sch:rule context="ios-def:interface_test/ios-def:object">
+                                    <sch:assert test="@object_ref=/oval-def:oval_definitions/oval-def:objects/ios-def:interface_object/@id"><sch:value-of select="../@id"/> - the object child element of an interface_test must reference an interface_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="ios-def:interface_test/ios-def:state">
+                                    <sch:assert test="@state_ref=/oval-def:oval_definitions/oval-def:states/ios-def:interface_state/@id"><sch:value-of select="../@id"/> - the state child element of an interface_test must reference an interface_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" minOccurs="1" maxOccurs="1"/>
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="1"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="interface_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation/>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice minOccurs="1" maxOccurs="1">
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="name" type="oval-def:EntityObjectStringType" minOccurs="1" maxOccurs="1">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation/>
+                                                            <xsd:appinfo>
+                                                                  <sch:pattern id="iosinterfaceobjname">
+                                                                        <sch:rule context="ios-def:interface_object/ios-def:name">
+                                                                              <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the name entity of an interface_object should be 'string'</sch:assert>
+                                                                        </sch:rule>
+                                                                  </sch:pattern>
+                                                            </xsd:appinfo>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="interface_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation/>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="name" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="iosinterfacestename">
+                                                            <sch:rule context="ios-def:interface_state/ios-def:name">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the name entity of an interface_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="ip_directed_broadcast_command" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="iosinterfacesteip_directed_broadcast_command">
+                                                            <sch:rule context="ios-def:interface_state/ios-def:ip_directed_broadcast_command">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the ip_directed_broadcast_command entity of an interface_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="no_ip_directed_broadcast_command" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="iosinterfacesteno_ip_directed_broadcast_command">
+                                                            <sch:rule context="ios-def:interface_state/ios-def:no_ip_directed_broadcast_command">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the no_ip_directed_broadcast_command entity of an interface_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="proxy_arp_command" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="iosinterfacesteproxy_arp_command">
+                                                            <sch:rule context="ios-def:interface_state/ios-def:proxy_arp_command">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the proxy_arp_command entity of an interface_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="shutdown_command" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="iosinterfacesteshutdown_command">
+                                                            <sch:rule context="ios-def:interface_state/ios-def:shutdown_command">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the shutdown_command entity of an interface_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =================================  LINE TEST  ================================= -->
+      <!-- =============================================================================== -->
+      <xsd:element name="line_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The line test is used to check the properties of specific output lines from a SHOW command, such as show running-config. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a line_object and the optional state element specifies the data to check. The evaluation of the test is guided by the check attribute that is inherited from the TestType.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="linetst">
+                              <sch:rule context="ios-def:line_test/ios-def:object">
+                                    <sch:assert test="@object_ref=/oval-def:oval_definitions/oval-def:objects/ios-def:line_object/@id"><sch:value-of select="../@id"/> - the object child element of a line_test must reference a line_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="ios-def:line_test/ios-def:state">
+                                    <sch:assert test="@state_ref=/oval-def:oval_definitions/oval-def:states/ios-def:line_state/@id"><sch:value-of select="../@id"/> - the state child element of a line_test must reference a line_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" minOccurs="1" maxOccurs="1"/>
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="1"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="line_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The line_object element is used by a line test to define the object to be evaluated. Each object extends the standard ObjectType as definied in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+                  <xsd:documentation>A line object consists of a show_subcommand entity that is the name of a SHOW sub-command to be tested.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice minOccurs="1" maxOccurs="1">
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="show_subcommand" type="oval-def:EntityObjectStringType" minOccurs="1" maxOccurs="1">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The name of a SHOW sub-command.</xsd:documentation>
+                                                            <xsd:appinfo>
+                                                                  <sch:pattern id="lineobjshow_subcommand">
+                                                                        <sch:rule context="ios-def:line_object/ios-def:show_subcommand">
+                                                                              <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the show_subcommand entity of a line_object should be 'string'</sch:assert>
+                                                                        </sch:rule>
+                                                                  </sch:pattern>
+                                                            </xsd:appinfo>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="line_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The line_state element defines the different information that can be used to evaluate the result of a specific SHOW sub-command. This includes the name of ths sub-command and the corresponding config line. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="show_subcommand" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the SHOW sub-command.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="linesteshow_subcommand">
+                                                            <sch:rule context="ios-def:line_state/ios-def:show_subcommand">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the show_subcommand entity of a line_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="config_line" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The value returned from by the specified SHOW sub-command.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="linesteconfig_line">
+                                                            <sch:rule context="ios-def:line_state/ios-def:config_line">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the config_line entity of a line_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =================================  SNMP TEST  ================================= -->
+      <!-- =============================================================================== -->
+      <xsd:element name="snmp_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>Tests if lines under the global context associated with snmp that have a specifiec access list or cmmunity name.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="snmptst">
+                              <sch:rule context="ios-def:snmp_test/ios-def:object">
+                                    <sch:assert test="@object_ref=/oval-def:oval_definitions/oval-def:objects/ios-def:snmp_object/@id"><sch:value-of select="../@id"/> - the object child element of a snmp_test must reference a snmp_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="ios-def:snmp_test/ios-def:state">
+                                    <sch:assert test="@state_ref=/oval-def:oval_definitions/oval-def:states/ios-def:snmp_state/@id"><sch:value-of select="../@id"/> - the state child element of a snmp_test must reference a snmp_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" minOccurs="1" maxOccurs="1"/>
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="1"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="snmp_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The snmp_object element is used by a snmp test to define those objects to evaluated based on a specified state. There is actually only one object relating to snmp and this is the system as a whole. Therefore, there are no child entities defined. Any OVAL Test written to check snmp will reference the same snmp_object which is basically an empty object element.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType"/>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="snmp_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation/>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="access_list" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="snmpsteaccess_list">
+                                                            <sch:rule context="ios-def:snmp_state/ios-def:access_list">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the access_list entity of a snmp_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="community_name" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="snmpstecommunity_name">
+                                                            <sch:rule context="ios-def:snmp_state/ios-def:community_name">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the community_name entity of a snmp_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =================================  TCLSH TEST  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="tclsh_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The tclsh test is used to check tclsh information of the IOS operating system. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a tclsh_object and the optional state element specifies the data to check. The evaluation of the test is guided by the check attribute that is inherited from the TestType.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="tclshtst">
+                              <sch:rule context="ios-def:tclsh_test/ios-def:object">
+                                    <sch:assert test="@object_ref=/oval-def:oval_definitions/oval-def:objects/ios-def:tclsh_object/@id"><sch:value-of select="../@id"/> - the object child element of a tclsh_test must reference a tclsh_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="ios-def:tclsh_test/ios-def:state">
+                                    <sch:assert test="@state_ref=/oval-def:oval_definitions/oval-def:states/ios-def:tclsh_state/@id"><sch:value-of select="../@id"/> - the state child element of a tclsh_test must reference a tclsh_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" minOccurs="1" maxOccurs="1"/>
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="1"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="tclsh_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The tclsh_object element is used by a tclsh test to define those objects to evaluated based on a specified state. There is actually only one object relating to tchlsh and this is the system as a whole. Therefore, there are no child entities defined. Any OVAL Test written to check tclsh will reference the same tclsh_object which is basically an empty object element.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType"/>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="tclsh_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The tclsh_state element defines information about TCLSH. This includes the available entity which describes whether TCLSH is available on the system. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="available" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This boolean entity describes whether TCLSH is available on the system. A value of true means that TCLSH is available.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="tclshsteavailable">
+                                                            <sch:rule context="ios-def:tclsh_state/ios-def:available">
+                                                                  <sch:assert test="not(@datatype) or @datatype='boolean'"><sch:value-of select="../@id"/> - datatype attribute for the available entity of a tclsh_state should be 'boolean'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ================================  VERSION TEST  =============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="version_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The version test is used to check the version of the IOS operating system. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a version_object and the optional state element specifies the data to check. The evaluation of the test is guided by the check attribute that is inherited from the TestType.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="iosvertst">
+                              <sch:rule context="ios-def:version_test/ios-def:object">
+                                    <sch:assert test="@object_ref=/oval-def:oval_definitions/oval-def:objects/ios-def:version_object/@id"><sch:value-of select="../@id"/> - the object child element of a version_test must reference a version_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="ios-def:version_test/ios-def:state">
+                                    <sch:assert test="@state_ref=/oval-def:oval_definitions/oval-def:states/ios-def:version_state/@id"><sch:value-of select="../@id"/> - the state child element of a version_test must reference a version_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" minOccurs="1" maxOccurs="1"/>
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="1"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="version_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The version_object element is used by a version test to define the different version information associated with an IOS system. There is actually only one object relating to version and this is the system as a whole. Therefore, there are no child entities defined. Any OVAL Test written to check version will reference the same version_object which is basically an empty object element.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType"/>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="version_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The version_state element defines the version information held within a Cisco IOS Train. A Cisco IOS train is a vehicle for delivering releases that evolve from a common code base.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="major_release" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The major_release is a combination of train and rebuild information and is used by Cisco advisories to identify major releases.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="iosverstemajor_release">
+                                                            <sch:rule context="ios-def:version_state/ios-def:major_release">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the major_release entity of a version_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="train_number" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The train number is the dotted version that starts a version string. For example the version string 12.2(3)T has a train number of 12.2.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="iosverstetrain_number">
+                                                            <sch:rule context="ios-def:version_state/ios-def:train_number">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the train_number entity of a version_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="train_identifier" type="ios-def:EntityStateTrainIdentifierType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The train identifier is the type of Train. For example the version string 12.2(3)T has a train identifier of T. Please see the EntityStateVersionTrainIdentifierType for more information about the different train identifiers.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="iosverstetrain_identifier">
+                                                            <sch:rule context="ios-def:version_state/ios-def:train_identifier">
+                                                                  <sch:assert test="not(@datatype) or @datatype='string'"><sch:value-of select="../@id"/> - datatype attribute for the train_identifier entity of a version_state should be 'string'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="version_string" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The version is the raw string output of a 'show version' command.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="iosversteversion_string">
+                                                            <sch:rule context="ios-def:version_state/ios-def:version_string">
+                                                                  <sch:assert test="not(@datatype) or @datatype='ios_version'"><sch:value-of select="../@id"/> - datatype attribute for the version_string entity of a version_state should be 'ios_version'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <xsd:complexType name="EntityStateTrainIdentifierType">
+            <xsd:annotation>
+                  <xsd:documentation>The EntityStateTrainIdentifierType complex type restricts a string value to a specific set of values. These values describe the possible types of trains in a Cisco IOS release. The empty string is also allowed to support empty emlement associated with variable references.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleContent>
+                  <xsd:restriction base="oval-def:EntityStateStringType">
+                        <xsd:enumeration value="mainline">
+                              <xsd:annotation>
+                                    <xsd:documentation>The mainline Train consolidates releases and fixes defects. Inherits features from the parent T train, and does not add additional features.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="T">
+                              <xsd:annotation>
+                                    <xsd:documentation>Introduces new features and fixes defects. </xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="S">
+                              <xsd:annotation>
+                                    <xsd:documentation>Consolidates 12.1E, 12.2 mainline, and 12.0S, which supports high-end backbone routing, and fixes defects. </xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="E">
+                              <xsd:annotation>
+                                    <xsd:documentation>Targets enterprise core and SP edge, supports advanced QoS, voice, security, and firewall, and fixes defects.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value="B">
+                              <xsd:annotation>
+                                    <xsd:documentation>Supports broadband features and fixes defects.</xsd:documentation>
+                              </xsd:annotation>
+                        </xsd:enumeration>
+                        <xsd:enumeration value=""/>
+                  </xsd:restriction>
+            </xsd:simpleContent>
+      </xsd:complexType>
+</xsd:schema>

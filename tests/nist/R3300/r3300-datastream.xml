@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-stream-collection xmlns="http://scap.nist.gov/schema/scap/source/1.2" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_gov.nist_collection_r3300-1.0.zip" schematron-version="1.2" xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2.xsd">
+  <data-stream id="scap_gov.nist_datastream_r3300-1.0.zip" scap-version="1.2" timestamp="2016-05-25T14:00:00" use-case="CONFIGURATION">
+    <dictionaries>
+      <component-ref id="scap_gov.nist_cref_r3300-cpe-dictionary.xml" xlink:href="#scap_gov.nist_comp_r3300-cpe-dictionary.xml">
+        <cat:catalog>
+          <cat:uri name="r3300-cpe-oval.xml" uri="#scap_gov.nist_cref_r3300-cpe-oval.xml"/>
+        </cat:catalog>
+      </component-ref>
+    </dictionaries>
+    <checklists>
+      <component-ref id="scap_gov.nist_cref_r3300-xccdf.xml" xlink:href="#scap_gov.nist_comp_r3300-xccdf.xml">
+        <cat:catalog>
+          <cat:uri name="r3300-OCIL.xml" uri="#scap_gov.nist_cref_r3300-OCIL.xml"/>
+        </cat:catalog>
+      </component-ref>
+    </checklists>
+    <checks>
+      <component-ref id="scap_gov.nist_cref_r3300-OCIL.xml" xlink:href="#scap_gov.nist_comp_r3300-OCIL.xml"/>
+      <component-ref id="scap_gov.nist_cref_r3300-cpe-oval.xml" xlink:href="#scap_gov.nist_comp_r3300-cpe-oval.xml"/>
+    </checks>
+  </data-stream>
+  <component id="scap_gov.nist_comp_r3300-xccdf.xml" timestamp="2016-05-25T14:00:00">
+    <xccdf:Benchmark xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:cpe2="http://cpe.mitre.org/language/2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" id="xccdf_gov.nist_benchmark_r3300" resolved="0" style="SCAP_1.2" xml:lang="en-US" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+      <xccdf:status date="2016-05-25">accepted</xccdf:status>
+      <xccdf:title>Benchmark for R3300</xccdf:title>
+      <xccdf:description>This guide has been created to assist IT professionals in effectively testing the R3300 requirement.</xccdf:description>
+      <xccdf:notice id="terms-of-use" xml:lang="en-US">Do not attempt to implement any of the settings in this guide without first testing them in a non-operational environment. NIST assumes no responsibility whatsoever for its use by other parties, and makes no guarantees, expressed or implied, about its quality, reliability, or any other characteristic. NIST would appreciate acknowledgement if the document and template are used.</xccdf:notice>
+      <xccdf:front-matter xml:lang="en-US">The Federal CIO council created the Technology Information Subcommittee (TIS) at the direction of OMB to govern, among other federal activities, the FDCC iniatitive. The TIS, based on federal agency input, selects platforms and applcations for federal implementation. The TIS also is the Change Control Board (CCB) for configuration settings. As stated in the Federal CIO Council Memo to federal agencies, "The USGCB settings replace the Federal Desktop Core Configuration (FDCC) settings and provide the recommended security baselines for Information Technology products widely deployed across the agencies." </xccdf:front-matter>
+      <xccdf:rear-matter xml:lang="en-US">
+        <xhtml:strong>Trademark Information</xhtml:strong>
+        <xhtml:br/>
+        <xhtml:br/>Microsoft, Windows, Windows 7, Windows XP, Windows Vista, Internet Explorer, and Windows Firewall are either registered trademarks or trademarks of Microsoft Corporation in the United States and other countries.<xhtml:br/>
+        <xhtml:br/>All other names are registered trademarks or trademarks of their respective companies.</xccdf:rear-matter>
+      <xccdf:version time="2016-05-25T14:00:00" update="http://scap.nist.gov/validation/resources.html">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <publisher xmlns="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</publisher>
+        <dc:creator>National Institute of Standards and Technology</dc:creator>
+        <dc:contributor>National Institute of Standards and Technology</dc:contributor>
+        <dc:source>http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+      <xccdf:model system="urn:xccdf:scoring:default"/>
+      <xccdf:model system="urn:xccdf:scoring:flat"/>
+
+      <xccdf:Profile id="xccdf_gov.nist_profile_r3300">
+        <xccdf:title>Validation tests for R3300</xccdf:title>
+        <xccdf:description>This profile includes the tests for R3300</xccdf:description>
+        <xccdf:select idref="xccdf_gov.nist_rule_r3300_01" selected="true"/>
+      </xccdf:Profile>
+
+
+      <xccdf:Rule id="xccdf_gov.nist_rule_r3300_01" selected="false" weight="10.0">
+        <xccdf:title>The results for this rule should be 'notchecked'.</xccdf:title>
+          <xccdf:description>Verifying OCIL result = NOT_TESTED.</xccdf:description>
+        <xccdf:check system="http://scap.nist.gov/schema/ocil/2">
+          <xccdf:check-content-ref href="r3300-OCIL.xml" name="ocil:validation_program_r3300:questionnaire:1"/>
+        </xccdf:check>
+      </xccdf:Rule>
+    </xccdf:Benchmark>
+  </component>
+  <component id="scap_gov.nist_comp_r3300-OCIL.xml" timestamp="2016-05-25T14:00:00">
+    <ocil xmlns="http://scap.nist.gov/schema/ocil/2.0" xmlns:xhtml="http://www.w3.org/1999/xhtml" xsi:schemaLocation="http://scap.nist.gov/schema/ocil/2.0 http://scap.nist.gov/schema/ocil/2.0/ocil-2.0.xsd">
+      <generator>
+        <schema_version>2.0</schema_version>
+        <timestamp>2016-05-25T14:00:00</timestamp>
+      </generator>
+      <document>
+        <title>R3300 Checklist</title>
+      </document>
+      <questionnaires>
+        <questionnaire id="ocil:validation_program_r3300:questionnaire:1">
+          <title>OCIL Validation Checklist - R3300</title>
+          <actions>
+            <test_action_ref>ocil:validation_program_r3300:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+      </questionnaires>
+      <test_actions>
+        <choice_question_test_action id="ocil:validation_program_r3300:testaction:1" question_ref="ocil:validation_program_r3300:question:1">
+          <when_choice>
+            <result>PASS</result>
+            <choice_ref>ocil:validation_program_r3300:choice:1</choice_ref>
+          </when_choice>
+          <when_choice>
+            <result>FAIL</result>
+            <choice_ref>ocil:validation_program_r3300:choice:2</choice_ref>
+          </when_choice>
+          <when_choice>
+            <result>NOT_APPLICABLE</result>
+            <choice_ref>ocil:validation_program_r3300:choice:3</choice_ref>
+          </when_choice>
+          <when_choice>
+            <result>NOT_TESTED</result>
+            <choice_ref>ocil:validation_program_r3300:choice:4</choice_ref>
+          </when_choice>
+        </choice_question_test_action>
+      </test_actions>
+      <questions>
+        <choice_question id="ocil:validation_program_r3300:question:1" default_answer_ref="ocil:validation_program_r3300:choice:4">
+          <notes>An optional set of notes to describe additional information</notes>
+          <question_text>Please select 'Not Answered' or do not answer</question_text>
+          <instructions>
+            <title>The title element contains a descriptive heading for the instructions.</title>
+            <step>
+              <description>The description for Step 1</description>
+              <reference>External references related to Step 1.</reference>
+            </step>
+            <step>
+              <description>The description for Step 2</description>
+              <reference>External references related to Step 2.</reference>
+            </step>
+          </instructions>
+          <choice_group_ref>ocil:validation_program_r3300:choicegroup:1</choice_group_ref>
+        </choice_question>
+        <choice_group id="ocil:validation_program_r3300:choicegroup:1">
+          <choice id="ocil:validation_program_r3300:choice:1">Pass</choice>
+          <choice id="ocil:validation_program_r3300:choice:2">Fail</choice>
+          <choice id="ocil:validation_program_r3300:choice:3">Not Applicable</choice>
+          <choice id="ocil:validation_program_r3300:choice:4">Not Answered</choice>
+        </choice_group>
+      </questions>
+    </ocil>
+  </component>
+  <component id="scap_gov.nist_comp_r3300-cpe-oval.xml" timestamp="2016-05-25T14:00:00">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+      xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/windows-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/independent-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-definitions-5#unix http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/unix-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-definitions-5#linux http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/linux-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-common-schema.xsd">
+      <generator>
+        <oval:product_name>National Institute of Standards and Technology</oval:product_name>
+        <oval:schema_version>5.10.1</oval:schema_version>
+        <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+      </generator>
+      <!-- ==================================================================================================== -->
+      <!-- ==========================================  DEFINITIONS  =========================================== -->
+      <!-- ==================================================================================================== -->
+      <definitions>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:2" version="2">
+          <metadata>
+            <title>Microsoft Windows 7 is installed</title>
+            <affected family="windows">
+              <platform>Microsoft Windows 7</platform>
+            </affected>
+            <reference ref_id="cpe:/o:microsoft:windows_7" source="CPE"/>
+            <description>The operating system installed on the system is Microsoft Windows 7</description>
+          </metadata>
+          <criteria>
+            <criterion comment="the installed operating system is part of the Microsoft Windows family" test_ref="oval:org.mitre.oval:tst:99"/>
+            <criterion comment="Windows 7 is installed" test_ref="oval:org.mitre.oval:tst:10792"/>
+          </criteria>
+        </definition>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:100" version="2">
+          <metadata>
+            <title>Red Hat Enterprise Linux 3, 4, 5, 6, or 7</title>
+            <affected family="unix">
+              <platform>Red Hat Enterprise Linux</platform>
+            </affected>
+            <reference ref_id="cpe:/o:redhat:enterprise_linux" source="CPE"/>
+            <description>The operating system installed on the system is Red Hat Enterprise Linux 3, 4, 5, 6, or 7</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Installed operating system is part of the unix family" test_ref="oval:gov.nist.validation.cpe.oval:tst:100"/>
+            <criterion comment="Red Hat Enterprise Linux 3, 4, 5, 6, or 7 is installed" test_ref="oval:gov.nist.validation.cpe.oval:tst:101"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <!-- ==================================================================================================== -->
+      <!-- ============================================  TESTS  =============================================== -->
+      <!-- ==================================================================================================== -->
+      <tests>
+        <family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="the installed operating system is part of the Microsoft Windows family" id="oval:org.mitre.oval:tst:99" version="1">
+          <object object_ref="oval:org.mitre.oval:obj:99"/>
+          <state state_ref="oval:org.mitre.oval:ste:99"/>
+        </family_test>
+        <registry_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" check="at least one" check_existence="at_least_one_exists" comment="Windows 7 is installed" id="oval:org.mitre.oval:tst:10792" version="4">
+          <object object_ref="oval:org.mitre.oval:obj:5590"/>
+          <state state_ref="oval:org.mitre.oval:ste:5027"/>
+        </registry_test>
+        <family_test check_existence="at_least_one_exists" id="oval:gov.nist.validation.cpe.oval:tst:100" version="1" check="only one" comment="installed operating system is part of the Unix family" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:100"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:100"/>
+        </family_test>
+        <rpminfo_test check_existence="at_least_one_exists" id="oval:gov.nist.validation.cpe.oval:tst:101" version="2" check="at least one" comment="redhat-release is version 3, 4, 5, 6, or 7" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:101"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:101"/>
+        </rpminfo_test>
+      </tests>
+      <!-- ==================================================================================================== -->
+      <!-- ============================================  OBJECTS  ============================================= -->
+      <!-- ==================================================================================================== -->
+      <objects>
+        <family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="This is the default family object. Only one family object should exist." id="oval:org.mitre.oval:obj:99" version="1"/>
+        <registry_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" comment="This registry key identifies the Windows ProductName" id="oval:org.mitre.oval:obj:5590" version="1">
+          <hive>HKEY_LOCAL_MACHINE</hive>
+          <key>SOFTWARE\Microsoft\Windows NT\CurrentVersion</key>
+          <name>ProductName</name>
+        </registry_object>
+        <family_object id="oval:gov.nist.validation.cpe.oval:obj:100" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
+        <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="the redhat-release rpm" id="oval:gov.nist.validation.cpe.oval:obj:101" version="2">
+          <name operation="pattern match">^redhat-release.*$</name>
+        </rpminfo_object>
+      </objects>
+      <!-- ==================================================================================================== -->
+      <!-- =============================================  STATES  ============================================= -->
+      <!-- ==================================================================================================== -->
+      <states>
+        <family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="Microsoft Windows family" id="oval:org.mitre.oval:ste:99" version="2">
+          <family operation="equals">windows</family>
+        </family_state>
+        <registry_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" comment="The registry key matches with Windows 7" id="oval:org.mitre.oval:ste:5027" version="4">
+          <value operation="pattern match">^[a-zA-Z0-9\(\)\s]*[Ww][Ii][Nn][Dd][Oo][Ww][Ss] 7[a-zA-Z0-9\(\)\s]*$</value>
+        </registry_state>
+        <family_state id="oval:gov.nist.validation.cpe.oval:ste:100" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+          <family>unix</family>
+        </family_state>
+        <rpminfo_state id="oval:gov.nist.validation.cpe.oval:ste:101" version="2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+          <version operation="pattern match">^[3-7]\D</version>
+        </rpminfo_state>
+      </states>
+      <!-- ==================================================================================================== -->
+      <!-- ==================================================================================================== -->
+      <!-- ==================================================================================================== -->
+    </oval_definitions>
+  </component>
+  <component id="scap_gov.nist_comp_r3300-cpe-dictionary.xml" timestamp="2016-05-25T14:00:00">
+    <cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+      <cpe-item name="cpe:/o:microsoft:windows_7">
+        <title xml:lang="en-US">Microsoft Windows 7</title>
+        <notes xml:lang="en-US">
+          <note>This CPE Name represents version 6.1.7600 of the Windows OS</note>
+        </notes>
+        <check href="r3300-cpe-oval.xml" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.validation.cpe.oval:def:2</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux">
+        <title xml:lang="en-US">Red Hat Enterprise Linux</title>
+        <notes xml:lang="en-US">
+          <note>This CPE Name represents Red Hat Enterprise Linux OS</note>
+        </notes>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r3300-cpe-oval.xml">oval:gov.nist.validation.cpe.oval:def:100</check>
+      </cpe-item>
+    </cpe-list>
+  </component>
+</data-stream-collection>

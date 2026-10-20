@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="htnce" id="RHEL-6" xsiion="httd" resolved="0" xml:lang="en-US">
+  <status date="2011-12-08">draft</status>
+  <title xmng="S">Ss</title>
+  <description xmlg="e">Oprt</description>
+  <version>0.1</version>
+  <model sysNem="urn:xccdf:scoring:default"/>
+  <model system="urnlat"/>
+  <Group id="bash-passer" hidden="false"> <title lang="en-US">CheAL</title>
+    <description >Be </description>
+    <Rule id="rule-1000" selected="true" weight="0">
+  <title xmlg="e">TE)</title>
+  <check system="h5">
+<check-content-ref href="../l" name="ova1"/>   </check>
+</Rule>
+  </Group>
+</Benchmark>

@@ -1,0 +1,541 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:ind-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" elementFormDefault="qualified" version="5.5">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>This document outlines the items of the OVAL System Characteristics XML schema that are independent of any specific family or platform. Each iten is an extention of a basic System Characteristics item defined in the core System Characteristics XML schema.</xsd:documentation>
+          <xsd:documentation>The OVAL Schema is maintained by The Mitre Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>Independent System Characteristics</schema>
+               <version>5.5</version>
+               <date>9/26/2008 7:30:57 AM</date>
+                <terms_of_use>Copyright (c) 2002-2008, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+               <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+               <sch:ns prefix="ind-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"/>
+              <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+     <!-- =============================================================================== -->
+     <!-- ================================  FAMILY ITEM  ================================ -->
+     <!-- =============================================================================== -->
+     <xsd:element name="family_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This element stores high level system OS type, otherwise known as the family.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="family" type="ind-sc:EntityItemFamilyType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This element describes the name of an environment variable.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="famitemfamily">
+                                                  <sch:rule context="ind-sc:family_item/ind-sc:family">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the family entity of a family_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===============================  FILE MD5 ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="filemd5_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This element stores md5 hash associated with a specific file.</xsd:documentation>
+               <xsd:documentation>This item has been deprecated. You should use the filehash_item instead. This item will be dropped in the major release of OVAL.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Specifies the absolute path to a file on the machine.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="md5itempath">
+                                                  <sch:rule context="ind-sc:filemd5_item/ind-sc:path">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the path entity of a filemd5_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name of the file.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="md5itemfilename">
+                                                  <sch:rule context="ind-sc:filemd5_item/ind-sc:filename">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the filename entity of a filemd5_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="md5" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The md5 hash of the file</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="md5itemmd5">
+                                                  <sch:rule context="ind-sc:filemd5_item/ind-sc:md5">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the md5 entity of a filemd5_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ==============================  FILE HASH ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="filehash_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This element stores the different hash values associated with a specific file.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Specifies the absolute path to a file on the machine.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="hashitempath">
+                                                  <sch:rule context="ind-sc:filehash_item/ind-sc:path">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the path entity of a filehash_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The name of the file.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="hashitemfilename">
+                                                  <sch:rule context="ind-sc:filehash_item/ind-sc:filename">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the filename entity of a filehash_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="md5" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The md5 hash of the file</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="hashitemmd5">
+                                                  <sch:rule context="ind-sc:filehash_item/ind-sc:md5">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the md5 entity of a filehash_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="sha1" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The sha1 hash of the file</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="hashitemsha1">
+                                                  <sch:rule context="ind-sc:filehash_item/ind-sc:sha1">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the sha1 entity of a filehash_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =======================  ENVIRONMENT VARIABLE ITEM  =========================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="environmentvariable_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores information about environment variables and their values.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>This element describes the name of an environment variable.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="envitemname">
+                                                  <sch:rule context="ind-sc:environmentvariable_item/ind-sc:name">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the name entity of an environmentvariable_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="value" type="oval-sc:EntityItemAnyType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The actual value of the specified environment variable.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="envitemvalue">
+                                                  <sch:rule context="ind-sc:environmentvariable_item/ind-sc:value">
+                                                       <sch:assert test="(@datatype='int' and (floor(.) = number(.))) or not(@datatype='int') or not(node())"><sch:value-of select="../@id"/> - The datatype has been set to 'int' but the value is not an integer.</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================  SQL CONTENT ITEM   ============================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="sql_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The sql_item outlines information collected from a database via an SQL query.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="engine" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The engine entity identifies the specific database engine used to connect to the database.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sqlitemengine">
+                                                  <sch:rule context="ind-sc:sql_item/ind-sc:engine">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the engine entity of an sql_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The version entity identifies the version of the database engine used to connect to the database.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sqlitemversion">
+                                                  <sch:rule context="ind-sc:sql_item/ind-sc:version">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the version entity of an sql_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="connection_string" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The connection_string entity defines connection parameters used to connect to the specific database.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sqlitemconnection_string">
+                                                  <sch:rule context="ind-sc:sql_item/ind-sc:connection_string">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the connection_string entity of an sql_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="sql" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The sql entity holds the specific query used to identify the object(s) in the database.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sqlitemsql">
+                                                  <sch:rule context="ind-sc:sql_item/ind-sc:sql">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the sql entity of an sql_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="result" type="oval-sc:EntityItemAnyType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The result entity specifies the result(s) of the given SQL query against the database.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="sqlitemresult">
+                                                  <sch:rule context="ind-sc:sql_item/ind-sc:result">
+                                                       <sch:assert test="(@datatype='int' and (floor(.) = number(.))) or not(@datatype='int') or not(node())"><sch:value-of select="../@id"/> - The datatype has been set to 'int' but the value is not an integer.</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ==========================  TEXT FILE CONTENT ITEM  =========================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="textfilecontent_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>The textfilecontent_item looks at the contents of a text file (aka a configuration file) by looking at individual lines.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The path entity specifies the absolute path (without the filename) to the file that is being represented.  Note that the trailing slash should be included.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="txtitempath">
+                                                  <sch:rule context="ind-sc:textfilecontent_item/ind-sc:path">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the path entity of a textfilecontent_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>The filename entity specifies the name of the file (without the path) that is being represented.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="txtitemfilename">
+                                                  <sch:rule context="ind-sc:textfilecontent_item/ind-sc:filename">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the filename entity of a textfilecontent_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                               <xsd:element name="pattern" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                     <xsd:annotation>
+                                           <xsd:documentation>The pattern entity represents a regular expression that is used to define a block of text.  Subexpression notation (parenthesis) is used to call out a value(s) to test against.  For example, the pattern abc(.*)xyz would look for a block of text in the file that starts with abc and ends with xyz, with the subexpression being all the characters that exist inbetween.  Note that if the pattern can match more than one block of text starting at the same point, then it matches the longest. Subexpressions also match the longest possible substrings, subject to the constraint that the whole match be as long as possible, with subexpressions starting earlier in the pattern taking priority over ones starting later.</xsd:documentation>
+                                           <xsd:appinfo>
+                                                 <sch:pattern id="txtitempattern">
+                                                       <sch:rule context="ind-sc:textfilecontent_item/ind-sc:pattern">
+                                                             <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the pattern entity of a textfilecontent_item should be 'string'</sch:assert>
+                                                       </sch:rule>
+                                                 </sch:pattern>
+                                           </xsd:appinfo>
+                                     </xsd:annotation>
+                               </xsd:element>
+                               <xsd:element name="instance" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                     <xsd:annotation>
+                                           <xsd:documentation>The instance entity calls out which match of the pattern is being represented by this item.  The first match is given an instance value of 1, the second match is given and instance value of 2, and so on.  The main purpose of this entity is too provide uniqueness for different textfilecontent_items that results from multiple matches of a given pattern against the same file.</xsd:documentation>
+                                           <xsd:appinfo>
+                                                 <sch:pattern id="txtiteminstance">
+                                                       <sch:rule context="ind-sc:textfilecontent_item/ind-sc:instance">
+                                                             <sch:assert test="@datatype='int'">item <sch:value-of select="../@id"/> - datatype attribute for the instance entity of a textfilecontent_item should be 'int'</sch:assert>
+                                                       </sch:rule>
+                                                 </sch:pattern>
+                                           </xsd:appinfo>
+                                     </xsd:annotation>
+                               </xsd:element>
+                               <xsd:element name="line" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                         <xsd:documentation>The line entity has been deprecated and will be removed in version 6.0 of the language.</xsd:documentation>
+                                         <xsd:documentation>The line element represents a line in the file and is represented using a regular expression.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="txtitemline">
+                                                  <sch:rule context="ind-sc:textfilecontent_item/ind-sc:line">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the line entity of a textfilecontent_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                               <xsd:element name="text" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                     <xsd:annotation>
+                                           <xsd:documentation>The text entity represents the block of text that matched the specified pattern.</xsd:documentation>
+                                           <xsd:appinfo>
+                                                 <sch:pattern id="txtitemtext">
+                                                       <sch:rule context="ind-sc:textfilecontent_item/ind-sc:text">
+                                                             <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the text entity of a textfilecontent_item should be 'string'</sch:assert>
+                                                       </sch:rule>
+                                                 </sch:pattern>
+                                           </xsd:appinfo>
+                                     </xsd:annotation>
+                               </xsd:element>
+                               <xsd:element name="subexpression" type="oval-sc:EntityItemAnyType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                         <xsd:documentation>The subexpression entity represents the value of a subexpression in the specified pattern.  If multiple subexpressions are specified in the pattern, then multiple entities are presented.  Note that the textfilecontent_state in the definition schema only allows a single subexpression entity.  This means that the test will check that all (or at least one, none, etc.) the subexpressions pass the same check.  This means that the order of multiple subexpression entities in the item does not matter.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="txtitemsubexpression">
+                                                  <sch:rule context="ind-sc:textfilecontent_item/ind-sc:subexpression">
+                                                        <sch:assert test="(@datatype='int' and (floor(.) = number(.))) or not(@datatype='int') or not(node())"><sch:value-of select="../@id"/> - The datatype has been set to 'int' but the value is not an integer.</sch:assert>
+                                                        <!-- we can use the xpath 2.0 function matches() to define assertions for other datatypes -->
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===============================  VARIABLE ITEM  =============================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="variable_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores information about OVAL Variables and their values.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="var_ref" type="ind-sc:EntityItemVariableRefType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The id of the variable.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="varitemvar_ref">
+                                                  <sch:rule context="ind-sc:variable_item/ind-sc:var_ref">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the var_ref entity of a variable_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="value" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="unbounded">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The value of the variable. If a variable represents and array of values, then multiple value elements should exist.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="varitemvalue">
+                                                  <sch:rule context="ind-sc:variable_item/ind-sc:value">
+                                                       <sch:assert test="(@datatype='int' and (floor(.) = number(.))) or not(@datatype='int') or not(node())"><sch:value-of select="../@id"/> - The datatype has been set to 'int' but the value is not an integer.</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ===========================  XML FILE CONTENT ITEM  =========================== -->
+     <!-- =============================================================================== -->
+     <xsd:element name="xmlfilecontent_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>This item stores results from checking the contents of an xml file.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Specifies the absolute path to a file on the machine.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xmlitempath">
+                                                  <sch:rule context="ind-sc:xmlfilecontent_item/ind-sc:path">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the path entity of a xmlfilecontent_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="filename" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The filename element specifies the name of the file.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xmlitemfilename">
+                                                  <sch:rule context="ind-sc:xmlfilecontent_item/ind-sc:filename">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the filename entity of a xmlfilecontent_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="xpath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Specifies an Xpath expression describing the nodes to look at.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xmlitemxpath">
+                                                  <sch:rule context="ind-sc:xmlfilecontent_item/ind-sc:xpath">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the xpath entity of a xmlfilecontent_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="value_of" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The value element checks the value of the nodes found. How this is used is entirely controlled by operator attributes.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <sch:pattern id="xmlitemvalue_of">
+                                                  <sch:rule context="ind-sc:xmlfilecontent_item/ind-sc:value_of">
+                                                       <sch:assert test="not(@datatype) or @datatype='string'">item <sch:value-of select="../@id"/> - datatype attribute for the value_of entity of a xmlfilecontent_item should be 'string'</sch:assert>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <!-- =============================================================================== -->
+     <xsd:complexType name="EntityItemEngineType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityItemEngineType complex type defines a string entity value that is restricted to a set of enumerations. Each valid enumeration is a valid database engine.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="access"/>
+                    <xsd:enumeration value="db2"/>
+                    <xsd:enumeration value="cache"/>
+                    <xsd:enumeration value="firebird"/>
+                    <xsd:enumeration value="firstsql"/>
+                    <xsd:enumeration value="foxpro"/>
+                    <xsd:enumeration value="informix"/>
+                    <xsd:enumeration value="ingres"/>
+                    <xsd:enumeration value="interbase"/>
+                    <xsd:enumeration value="lightbase"/>
+                    <xsd:enumeration value="maxdb"/>
+                    <xsd:enumeration value="monetdb"/>
+                    <xsd:enumeration value="mimer"/>
+                    <xsd:enumeration value="oracle"/>
+                    <xsd:enumeration value="paradox"/>
+                    <xsd:enumeration value="pervasive"/>
+                    <xsd:enumeration value="postgre"/>
+                    <xsd:enumeration value="postgre"/>
+                    <xsd:enumeration value="sqlbase"/>
+                    <xsd:enumeration value="sqlite"/>
+                    <xsd:enumeration value="sqlserver"/>
+                    <xsd:enumeration value="sybase"/>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <xsd:complexType name="EntityItemFamilyType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityItemFamilyType complex type defines a string entity value that is restricted to a set of enumerations. Each valid enumeration is a high-level family of system operating system.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:enumeration value="ios"/>
+                    <xsd:enumeration value="macos"/>
+                    <xsd:enumeration value="unix"/>
+                    <xsd:enumeration value="windows"/>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+     <xsd:complexType name="EntityItemVariableRefType">
+          <xsd:annotation>
+               <xsd:documentation>The EntityItemVariableRefType complex type defines a string item entity that has a valid OVAL variable id as the value.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleContent>
+               <xsd:restriction base="oval-sc:EntityItemStringType">
+                    <xsd:pattern value="oval:[A-Za-z\-\.]+:var:[1-9][0-9]*"/>
+               </xsd:restriction>
+          </xsd:simpleContent>
+     </xsd:complexType>
+</xsd:schema>

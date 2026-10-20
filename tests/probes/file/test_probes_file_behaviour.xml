@@ -1,0 +1,257 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+
+	<generator>
+		<oval:product_name>file</oval:product_name>
+		<oval:product_version>1.0</oval:product_version>
+		<oval:schema_version>5.10.1</oval:schema_version>
+		<oval:timestamp>2008-03-31T00:00:00-00:00</oval:timestamp>
+	</generator>
+
+	<definitions>
+        <definition class="compliance" id="oval:nist.validation.unixFileTest:def:172" version="1">
+          <metadata>
+            <title>Test that the @recurse property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the @recurse property, is properly supported for the unix-def:file_test.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+          </metadata>
+          <criteria operator="AND">
+            <criterion test_ref="oval:nist.validation.unixFileTest:tst:172" comment="test @recurse='symlinks' property"/>
+            <criterion test_ref="oval:nist.validation.unixFileTest:tst:17201" comment="test @recurse='symlinks' property"/>
+            <criterion test_ref="oval:nist.validation.unixFileTest:tst:17202" comment="test @recurse='symlinks' property"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.unixFileTest:def:174" version="1">
+          <metadata>
+            <title>Test that the @recurse property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the @recurse property, is properly supported for the unix-def:file_test.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+          </metadata>
+          <criteria operator="AND">
+            <criterion test_ref="oval:nist.validation.unixFileTest:tst:174" comment="test @recurse='symlinks' property"/>
+            <criterion test_ref="oval:nist.validation.unixFileTest:tst:17401" comment="test @recurse='symlinks' property"/>
+            <criterion test_ref="oval:nist.validation.unixFileTest:tst:17402" comment="test @recurse='symlinks' property"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.unixFileTest:def:175" version="1">
+          <metadata>
+            <title>Test that the @recurse property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the @recurse property, is properly supported for the unix-def:file_test.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+          </metadata>
+          <criteria operator="AND">
+            <criterion test_ref="oval:nist.validation.unixFileTest:tst:175" comment="test @recurse='symlinks' property"/>
+            <criterion test_ref="oval:nist.validation.unixFileTest:tst:17501" comment="test @recurse='symlinks' property"/>
+            <criterion test_ref="oval:nist.validation.unixFileTest:tst:17502" comment="test @recurse='symlinks' property"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.unixFileTest:def:181" version="1">
+          <metadata>
+            <title>Test that the @recurse_direction='up' property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the @recurse_direction='up' property, is properly supported for the unix-def:file_test.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+          </metadata>
+          <criteria>
+            <criterion comment="test @recurse_direction='up' property" negate="false" test_ref="oval:nist.validation.unixFileTest:tst:181"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:nist.validation.unixFileTest:def:182" version="1">
+          <metadata>
+            <title>Test that the @recurse property is properly supported using the specified value</title>
+            <description>Make sure that the value specified, for the @recurse property, is properly supported for the unix-def:file_test.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+          </metadata>
+          <criteria>
+            <criterion comment="test @recurse_direction='up' property" negate="false" test_ref="oval:nist.validation.unixFileTest:tst:182"/>
+          </criteria>
+        </definition>
+	</definitions>
+
+	<tests>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:172" check="at least one" check_existence="at_least_one_exists" comment="test @recurse='symlinks' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:172"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:172"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:17201" check="at least one" check_existence="at_least_one_exists" comment="test @recurse='symlinks' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:172"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:17201"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:17202" check="at least one" check_existence="at_least_one_exists" comment="test @recurse='symlinks' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:172"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:17202"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:174" check="at least one" check_existence="at_least_one_exists" comment="test @recurse='symlinks' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:174"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:174"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:17401" check="only one" check_existence="at_least_one_exists" comment="test @recurse='symlinks' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:174"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:17401"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:17402" check="only one" check_existence="at_least_one_exists" comment="test @recurse='symlinks' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:174"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:17402"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:175" check="at least one" check_existence="at_least_one_exists" comment="test @recurse='symlinks' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:175"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:175"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:17501" check="only one" check_existence="at_least_one_exists" comment="test @recurse='symlinks' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:175"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:17501"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:17502" check="only one" check_existence="at_least_one_exists" comment="test @recurse='symlinks' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:175"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:17502"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:181" check="all" check_existence="only_one_exists" comment="test @recurse_direction='up' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:181"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:181"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:182" check="all" check_existence="at_least_one_exists" comment="test @recurse_direction='up' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:182"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:182"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:18201" check="at least one" check_existence="at_least_one_exists" comment="test @recurse_direction='up' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:182"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:18201"/>
+        </file_test>
+        <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:tst:18202" check="at least one" check_existence="at_least_one_exists" comment="test @recurse_direction='up' property" version="1">
+          <object object_ref="oval:nist.validation.unixFileTest:obj:182"/>
+          <state state_ref="oval:nist.validation.unixFileTest:ste:18202"/>
+        </file_test>
+	</tests>
+
+	<objects>
+       <file_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:obj:172" comment="@recurse='symlinks'" version="1">
+          <behaviors recurse_file_system="local" recurse="symlinks" recurse_direction="down" max_depth="-1"/>
+          <path operation="equals" datatype="string">/tmp/scapVal/File-Test-Level2/Level3-Folder040</path>
+          <filename xsi:nil="true" datatype="string"/>
+          <filter xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" action="exclude">oval:nist.validation.unixFileTest:ste:17101</filter>
+        </file_object>
+        <file_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:obj:174" comment="@recurse='symlinks'" version="1">
+          <behaviors max_depth="1" recurse_file_system="all" recurse_direction="down" recurse="symlinks"/>
+          <path operation="equals" datatype="string">/tmp/scapVal/File-Test-Level2/Level3-Folder040</path>
+          <filename operation="pattern match">.+</filename>
+        </file_object>
+        <file_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:obj:175" comment="@recurse='symlinks'" version="1">
+          <behaviors recurse_file_system="all" recurse="symlinks" recurse_direction="down" max_depth="-1"/>
+          <path operation="equals" datatype="string">/tmp/scapVal/File-Test-Level2/Level3-Folder040</path>
+          <filename operation="pattern match">.+</filename>
+        </file_object>
+
+       <file_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:obj:181" comment="@recurse='symlinks and directories'" version="1">
+          <behaviors max_depth="0" recurse_file_system="local" recurse="symlinks and directories" recurse_direction="up"/>
+          <path>/tmp/scapVal/File-Test-Level2/Level3-Folder010</path>
+          <filename datatype="string" operation="pattern match">.+</filename>
+        </file_object>
+        <file_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:obj:182" comment="@recurse='symlinks and directories'" version="1">
+          <behaviors max_depth="1" recurse_file_system="local" recurse_direction="up"/>
+          <path>/tmp/scapVal-Sym/File-Test-Level2-SymLinked/Level3-SymLinked-Folder010/Level4-Folder</path>
+          <filename datatype="string" operation="pattern match">.+</filename>
+        </file_object>
+	</objects>
+
+	<states>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:172" version="1">
+          <path datatype="string" var_check="at least one" var_ref="oval:nist.validation.unixFileTest:var:172" entity_check="at least one"/>
+          <type operation="pattern match" datatype="string">directory</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:17201" version="1">
+          <path datatype="string">/tmp/scapVal/File-Test-Level2/Level3-Folder040</path>
+          <type datatype="string">directory</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:17202" version="1">
+          <path datatype="string">/tmp/scapVal/File-Test-Level2/Level3-Folder040/this_is_a_symlink/Level3-SymLinked-Folder010</path>
+          <type datatype="string" operation="case insensitive equals">DirectorY</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:174" version="1">
+          <filename datatype="string" var_check="at least one" var_ref="oval:nist.validation.unixFileTest:var:174" entity_check="at least one"/>
+          <type operation="pattern match">regular|symbolic link</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:17401" version="1">
+          <filepath>/tmp/scapVal/File-Test-Level2/Level3-Folder040/this_is_a_symlink/File-Test-Sym-Level2.txt</filepath>
+          <path>/tmp/scapVal/File-Test-Level2/Level3-Folder040/this_is_a_symlink</path>
+          <filename>File-Test-Sym-Level2.txt</filename>
+          <type>regular</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:17402" version="1">
+          <filepath operation="equals" datatype="string">/tmp/scapVal/File-Test-Level2/Level3-Folder040/this_is_a_symlink</filepath>
+          <path>/tmp/scapVal/File-Test-Level2/Level3-Folder040</path>
+          <filename>this_is_a_symlink</filename>
+          <type operation="pattern match">^symbolic link$</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:175" version="1">
+          <filename datatype="string" var_check="at least one" var_ref="oval:nist.validation.unixFileTest:var:175" entity_check="at least one"/>
+          <type operation="pattern match">regular|symbolic link</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:17501" version="1">
+          <filepath>/tmp/scapVal/File-Test-Level2/Level3-Folder040/this_is_a_symlink/File-Test-Sym-Level2.txt</filepath>
+          <path>/tmp/scapVal/File-Test-Level2/Level3-Folder040/this_is_a_symlink</path>
+          <filename>File-Test-Sym-Level2.txt</filename>
+          <type>regular</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:17502" version="1">
+          <filepath operation="equals" datatype="string">/tmp/scapVal/File-Test-Level2/Level3-Folder040/this_is_a_symlink</filepath>
+          <path>/tmp/scapVal/File-Test-Level2/Level3-Folder040</path>
+          <filename>this_is_a_symlink</filename>
+          <type operation="pattern match">^symbolic link$</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:181" version="1">
+          <filepath>/tmp/scapVal/File-Test-Level2/Level3-Folder010/Level3-File010.txt</filepath>
+          <path>/tmp/scapVal/File-Test-Level2/Level3-Folder010</path>
+          <filename>Level3-File010.txt</filename>
+          <type>regular</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:182" version="1">
+          <filepath datatype="string" var_check="at least one" var_ref="oval:nist.validation.unixFileTest:var:182" entity_check="at least one"/>
+          <type>regular</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:18201" version="1">
+          <filepath>/tmp/scapVal-Sym/File-Test-Level2-SymLinked/Level3-SymLinked-Folder010/Level4-Folder/Level4-File.txt</filepath>
+          <path>/tmp/scapVal-Sym/File-Test-Level2-SymLinked/Level3-SymLinked-Folder010/Level4-Folder</path>
+          <filename>Level4-File.txt</filename>
+          <type>regular</type>
+        </file_state>
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:18202" version="1">
+          <filepath>/tmp/scapVal-Sym/File-Test-Level2-SymLinked/Level3-SymLinked-Folder010/Level3-File.txt</filepath>
+          <path>/tmp/scapVal-Sym/File-Test-Level2-SymLinked/Level3-SymLinked-Folder010</path>
+          <filename>Level3-File.txt</filename>
+          <type>regular</type>
+        </file_state>
+
+        <file_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:nist.validation.unixFileTest:ste:17101" version="1">
+          <type datatype="string" operation="case insensitive equals">SYMbolic link</type>
+        </file_state>
+	</states>
+
+	<variables>
+        <constant_variable id="oval:nist.validation.unixFileTest:var:172" version="1" datatype="string" comment="path">
+          <value>/tmp/scapVal/File-Test-Level2/Level3-Folder040</value>
+          <value>/tmp/scapVal/File-Test-Level2/Level3-Folder040/this_is_a_symlink/Level3-SymLinked-Folder010</value>
+        </constant_variable>
+        <constant_variable id="oval:nist.validation.unixFileTest:var:182" version="1" datatype="string" comment="path">
+          <value>/tmp/scapVal-Sym/File-Test-Level2-SymLinked/Level3-SymLinked-Folder010/Level4-Folder/Level4-File.txt</value>
+          <value>/tmp/scapVal-Sym/File-Test-Level2-SymLinked/Level3-SymLinked-Folder010/Level3-File.txt</value>
+        </constant_variable>
+        <constant_variable id="oval:nist.validation.unixFileTest:var:174" version="1" datatype="string" comment="path">
+          <value>this_is_a_symlink</value>
+          <value>File-Test-Sym-Level2.txt</value>
+        </constant_variable>
+        <constant_variable id="oval:nist.validation.unixFileTest:var:175" version="1" datatype="string" comment="path">
+          <value>this_is_a_symlink</value>
+          <value>File-Test-Sym-Level2.txt</value>
+        </constant_variable>
+	</variables>
+
+</oval_definitions>

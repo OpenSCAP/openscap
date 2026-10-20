@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<oval_definitions
+    xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
+    xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+    xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+    xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+    xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <generator>
+            <oval:product_name>vim</oval:product_name>
+            <oval:schema_version>5.10.1</oval:schema_version>
+            <oval:timestamp>2012-11-22T15:00:00+01:00</oval:timestamp>
+      </generator>
+      <definitions>
+            <definition class="inventory" id="oval:org.open-scap.cpe.linux:def:1" version="1">
+                  <metadata>
+                        <title>Red Hat Enterprise Linux</title>
+                        <affected family="unix">
+                              <platform>Linux</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:linux:linux_kernel:-" source="CPE"/>
+                        <description>The operating system installed is Linux</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Linux is installed" test_ref="oval:org.open-scap.cpe.linux:tst:1"/>
+                  </criteria>
+            </definition>
+      </definitions>
+      <tests>
+            <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.linux:tst:1" version="1" check="only one"
+                  comment="Installed operating system is part of the Unix family."
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                  <object object_ref="oval:org.open-scap.cpe.unix:obj:1" />
+                  <state state_ref="oval:org.open-scap.cpe.unix:ste:1" />
+            </family_test>
+      </tests>
+      <objects>
+            <family_object id="oval:org.open-scap.cpe.unix:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
+      </objects>
+      <states>
+            <family_state id="oval:org.open-scap.cpe.unix:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                  <family>unix</family>
+            </family_state>
+      </states>
+</oval_definitions>

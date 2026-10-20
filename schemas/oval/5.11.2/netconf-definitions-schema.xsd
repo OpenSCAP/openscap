@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+            xmlns:netconf-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#netconf"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#netconf"
+            elementFormDefault="qualified" version="5.11">
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+    <xsd:annotation>
+        <xsd:documentation>The following is a description of the elements, types, and attributes that compose the NETCONF (RFC 6241) protocol-specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here</xsd:documentation>
+        <xsd:documentation>This schema was originally developed by David Solin at jOVAL.org. The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+        <xsd:appinfo>
+            <schema>NETCONF Definitions</schema>
+            <version>5.11.1:1.1</version>
+            <date>11/30/2016 09:00:00 AM</date>
+            <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+            <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+            <sch:ns prefix="netconf-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#netconf"/>
+            <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <!-- ============================================================================ -->
+    <!-- ================================  CONFIG TEST  ============================= -->
+    <!-- ============================================================================ -->
+    <xsd:element name="config_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The config_test is used to check the properties of the XML output from a GET-CONFIG command, for the running configuration. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a config_object and the optional state element specifies the data to check.</xsd:documentation>
+            <xsd:appinfo>
+                <oval:element_mapping>
+                    <oval:test>config_test</oval:test>
+                    <oval:object>config_object</oval:object>
+                    <oval:state>config_state</oval:state>
+                    <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#netconf">config_item</oval:item>
+                </oval:element_mapping>
+            </xsd:appinfo>
+            <xsd:appinfo>
+                <sch:pattern id="netconf-def_configtst">
+                    <sch:rule context="netconf-def:config_test/netconf-def:object">
+                        <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/netconf-def:config_object/@id"><sch:value-of select="../@id"/> - the object child element of a config_test must reference a config_object</sch:assert>
+                    </sch:rule>
+                    <sch:rule context="netconf-def:config_test/netconf-def:state">
+                        <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/netconf-def:config_state/@id"><sch:value-of select="../@id"/> - the state child element of a config_test must reference a config_state</sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType"/>
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="config_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The config_object element is used by a config_test to define the object to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+            <xsd:documentation>A config_object consists of an xpath entity that contains an XPATH 1.0 query to perform on the NETCONF get-config response XML data.  The response data is assumed to consist of a &lt;data&gt; entity in the urn:ietf:params:xml:ns:netconf:base:1.0 XML namespace, with arbitrary (i.e., vendor-specific) child nodes.</xsd:documentation>
+            <xsd:appinfo>
+                <sch:pattern id="netconf-def_netconf_object_verify_filter_state">
+                    <sch:rule context="netconf-def:netconf_object//oval-def:filter">
+                        <sch:let name="parent_object" value="ancestor::netconf-def:config_object"/>
+                        <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                        <sch:let name="state_ref" value="."/>
+                        <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                        <sch:let name="state_name" value="local-name($reffed_state)"/>
+                        <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                        <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#netconf') and ($state_name='config_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType">
+                    <xsd:sequence>
+                        <xsd:choice>
+                            <xsd:element ref="oval-def:set"/>
+                            <xsd:sequence>
+                                <xsd:element name="xpath" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>Specifies an Xpath expression describing the text node(s) or attribute(s) to look at. Any valid Xpath 1.0 statement is usable with one exception, at most one field may be identified in the Xpath. This is because the value_of element in the data section is only designed to work against a single field. The only valid operator for xpath is equals since there is an infinite number of possible xpaths and determinining all those that do not equal a given xpath would be impossible.</xsd:documentation>
+                                        <xsd:appinfo>
+                                            <sch:pattern id="netconf-def_xmlobjxpath">
+                                                <sch:rule context="netconf-def:config_object/netconf-def:xpath">
+                                                    <sch:assert test="not(@operation) or @operation='equals'"><sch:value-of select="../@id"/> - operation attribute for the xpath entity of a config_object should be 'equals', note that this overrules the general operation attribute validation (i.e. follow this one)</sch:assert>
+                                                </sch:rule>
+                                            </sch:pattern>
+                                        </xsd:appinfo>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="config_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The config_state element defines the different information that can be used to evaluate the result of a specific config xpath evaluation. This includes the xpath used and the value of this xpath.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="xpath" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>Specifies an Xpath expression describing the text node(s) or attribute(s) to look at.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="value_of" type="oval-def:EntityStateAnySimpleType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The value_of element checks the value(s) of the text node(s) or attribute(s) found.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

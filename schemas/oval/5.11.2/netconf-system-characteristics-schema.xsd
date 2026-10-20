@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
+            xmlns:netconf-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#netconf"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#netconf"
+            elementFormDefault="qualified" version="5.11">
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+    <xsd:annotation>
+        <xsd:documentation>This document outlines the items of the OVAL System Characteristics XML schema that are composed of NETCONF (RFC 6241) protocol-specific tests. Each item is an extention of a basic System Characteristics item defined in the core System Characteristics XML schema.</xsd:documentation>
+        <xsd:documentation>This schema was originally developed by David Solin at jOVAL.org. The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+        <xsd:appinfo>
+            <schema>NETCONF System Characteristics</schema>
+            <version>5.11.1:1.1</version>
+            <date>11/30/2016 09:00:00 AM</date>
+            <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+            <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+            <sch:ns prefix="netconf-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#netconf"/>
+            <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <!-- =============================================================================== -->
+    <!-- ============================  CONFIG CONTENT ITEM  ============================ -->
+    <!-- =============================================================================== -->
+    <xsd:element name="config_item" substitutionGroup="oval-sc:item">
+        <xsd:annotation>
+            <xsd:documentation>This item stores results from checking the contents of an xml configuration.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-sc:ItemType">
+                    <xsd:sequence>
+                        <xsd:element name="xpath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>Specifies an Xpath expression describing the text node(s) or attribute(s) to look at.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="value_of" type="oval-sc:EntityItemAnySimpleType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>The value_of element checks the value(s) of the text node(s) or attribute(s) found. How this is used is entirely controlled by operator attributes.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

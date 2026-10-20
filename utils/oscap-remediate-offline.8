@@ -1,0 +1,22 @@
+.TH oscap-remediate-offline "8" "Dec 2020" "Red Hat, Inc." "System Administration Utilities"
+
+.SH NAME
+oscap-remediate-offline \- Setup script for the SCAP evaluation and remediation using systemd's update service
+.SH DESCRIPTION
+oscap-remediate-offline schedules oscap tool to evaluate and remediate the system.
+
+This script cannot run in rootless mode.
+
+.SH USAGE
+oscap-remediate-offline PROFILE INPUT_CONTENT
+
+Refer to oscap(8) (xccdf eval section) to learn about PROFILE and INPUT_CONTENT arguments.
+
+.SH REPORTING BUGS
+.nf
+Please report bugs using https://github.com/OpenSCAP/openscap/issues
+
+.SH AUTHORS
+.nf
+Evgenii Kolesnikov <ekolesni@redhat.com>
+.fi

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.ind_variable_test" bundleVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>R3010 Datastream</bundleName>
+	<bundleGuiName>R3010 Datastream</bundleGuiName>
+	<testSuite version="1" suiteId="G2.R3010">
+		<suiteName>Configuration 1</suiteName>
+		<guiName>Configuration 1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r3010-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r3010-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r3010-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>r3010-oval.xml</ovalFilename>
+		<xccdfFilename>r3010-xccdf.xml</xccdfFilename>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r3010-1_1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r3010-1_2" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r3010-1_3" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r3010-1_4" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_r3010-1_5" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r3010-1_6" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r3010-1_7" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r3010-2_8" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r3010-2_9" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r3010-2_4" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r3010-2_5" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r3010-3_1" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r3010-3_2" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r3010-3_3" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r3010-3_4" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r3010-0_1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_r3010-0_2" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r3010-0_3" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_r3010-0_4" expectedResult="notapplicable"/>
+			<result definition="xccdf_gov.nist_rule_r3010-0_5" expectedResult="informational"/>
+			<result definition="xccdf_gov.nist_rule_r3010-0_6" expectedResult="notchecked"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>

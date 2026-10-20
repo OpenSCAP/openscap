@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_test">
+  <status>incomplete</status>
+  <version>1.0</version>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
+    <title>Rule with OCIL check</title>
+    <check system="http://scap.nist.gov/schema/ocil/2">
+      <check-content-ref href="test_xccdf_check_ocil.ocil.xml"/>
+    </check>
+  </Rule>
+</Benchmark>

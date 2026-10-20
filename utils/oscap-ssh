@@ -1,0 +1,344 @@
+#!/usr/bin/env bash
+
+# Copyright 2015 Martin Preisler <martin@preisler.me> 
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+function die()
+{
+    echo "$*" >&2
+    exit 1
+}
+
+function invalid()
+{
+    echo -e "$*\n" >&2
+    usage
+    exit 1
+}
+
+function usage()
+{
+    echo "oscap-ssh -- Tool for running oscap over SSH and collecting results."
+    echo
+    echo "Usage:"
+    echo
+    echo "$ oscap-ssh user@host 22 info INPUT_CONTENT"
+    echo "$ oscap-ssh user@host 22 xccdf eval [options] INPUT_CONTENT"
+    echo
+    echo "Only source data streams are supported as INPUT_CONTENT!"
+    echo
+    echo "supported oscap xccdf eval options are:"
+    echo "  --profile"
+    echo "  --tailoring-file"
+    echo "  --tailoring-id"
+    echo "  --cpe (external OVAL dependencies are not supported yet!)"
+    # --check-engine-results is not supported
+    # use --results-arf instead
+    echo "  --oval-results"
+    echo "  --results"
+    echo "  --results-arf"
+    echo "  --report"
+    echo "  --skip-validation"
+    echo "  --fetch-remote-resources"
+    echo "  --local-files"
+    echo "  --progress"
+    echo "  --datastream-id"
+    echo "  --xccdf-id"
+    echo "  --benchmark-id"
+    echo "  --remediate"
+    echo
+    echo "$ oscap-ssh user@host 22 oval eval [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap oval eval options are:"
+    echo "  --id"
+    echo "  --variables"
+    echo "  --directives"
+    echo "  --results"
+    echo "  --report"
+    echo "  --skip-validation"
+    echo "  --datastream-id"
+    echo "  --oval-id"
+    echo
+    echo "$ oscap-ssh user@host 22 oval collect [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap oval collect options are:"
+    echo "  --id"
+    echo "  --syschar"
+    echo "  --variables"
+    echo "  --skip-validation"
+    echo
+    echo "specific option for oscap-ssh (must be first argument):"
+    echo "  --sudo"
+    echo
+    echo "To supply additional options to ssh/scp, define the SSH_ADDITIONAL_OPTIONS variable"
+    echo "For instance, to ignore known hosts records, define SSH_ADDITIONAL_OPTIONS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'"
+    echo
+    echo "specific option for oscap-ssh (must be first argument):"
+    echo
+    echo "See \`man oscap\` to learn more about semantics of these options."
+}
+
+# $1, $2, ... SSH options (pass them as separate arguments)
+function ssh_execute_with_options {
+    ssh -o ControlPath="$CONTROL_SOCKET" $SSH_ADDITIONAL_OPTIONS "$@" -p "$SSH_PORT" "$SSH_HOST"
+}
+
+# $1: The SSH command.
+# $2: More of additional options (optional, pass one space-separated string)
+function ssh_execute_with_command_and_options {
+    ssh -o ControlPath="$CONTROL_SOCKET" $SSH_ADDITIONAL_OPTIONS $2 -p "$SSH_PORT" "$SSH_HOST" "$1"
+}
+
+# $1: Local filename to copy
+# $2: Remote destination
+function scp_copy_to_temp_dir {
+    scp -o ControlPath="$CONTROL_SOCKET" -P "$SSH_PORT" $SSH_ADDITIONAL_OPTIONS "$1" "$SSH_HOST:$REMOTE_TEMP_DIR/$2"
+}
+
+# $1: Local directory name to copy
+# $2: Remote destination
+function scp_copy_dir_to_temp_dir {
+    scp -r -o ControlPath="$CONTROL_SOCKET" -P "$SSH_PORT" $SSH_ADDITIONAL_OPTIONS "$1" "$SSH_HOST:$REMOTE_TEMP_DIR/$2"
+}
+
+# $1: Remote filename to get
+# $2: Local destination
+function scp_retreive_from_temp_dir {
+    scp -o ControlPath="$CONTROL_SOCKET" -P "$SSH_PORT" $SSH_ADDITIONAL_OPTIONS "$SSH_HOST:$REMOTE_TEMP_DIR/$1" "$2"
+}
+
+# $1: The name of the array holding command elements
+# Returns: String, where individual command components are double-quoted, so they are not interpreted by the shell.
+#  For example, an array ('-p' '(all)') will be transformed to "\"-p\" \"(all)\"", so after the shell expansion, it will end up as "-p" "(all)".
+function command_array_to_string {
+    eval "printf '\"%s\" ' \"\${$1[@]}\""
+}
+
+function first_argument_is_sudo {
+    [ "$1" == "sudo" ] || [ "$1" == "--sudo" ]
+    return $?
+}
+
+function sanity_check_arguments {
+    if [ $# -lt 1 ]; then
+        invalid "No arguments provided."
+    elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+        usage
+        exit 0
+    elif first_argument_is_sudo "$@"; then
+        OSCAP_SUDO="sudo"
+        # force pseudo-tty allocation so that users can type their password if necessary
+        SSH_TTY_ALLOCATION_OPTION="-t"
+        shift
+    fi
+    if [ $# -lt 2 ]; then
+        invalid "Missing ssh host and ssh port."
+    fi
+}
+
+function check_oscap_arguments {
+    if [ "$1" == "--v" ] || [ "$1" == "--version" ]; then
+        true
+    elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+        true
+    elif [ "$1" == "info" ]; then
+        true
+    elif [ "$1 $2" == "xccdf eval" ]; then
+        true
+    elif [ "$1 $2" == "oval eval" ]; then
+        true
+    elif [ "$1 $2" == "oval collect" ]; then
+        true
+    else
+        die "This script only supports 'sudo' as first argument, '-h', '--help', '--v', '--version', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
+    fi
+}
+
+
+hash ssh 2> /dev/null || die "Cannot find ssh, please install the OpenSSH client."
+hash scp 2> /dev/null || die "Cannot find scp, please install the OpenSSH client."
+hash mktemp 2> /dev/null || die "Cannot find mktemp, please install coreutils."
+
+
+OSCAP_SUDO=""
+# SSH_ADDITIONAL_OPTIONS may be defined in the calling shell
+SSH_TTY_ALLOCATION_OPTION=""
+
+sanity_check_arguments "$@"
+first_argument_is_sudo "$@" && shift
+
+SSH_HOST="$1"
+SSH_PORT="$2"
+
+shift 2
+
+check_oscap_arguments "$@"
+
+CONTROL_SOCKET_DIR=$(mktemp -d)
+CONTROL_SOCKET="$CONTROL_SOCKET_DIR/ssh_socket"
+
+echo "Connecting to '$SSH_HOST' on port '$SSH_PORT'..."
+ssh_execute_with_options -M -f -N -o ServerAliveInterval=60 || die "Failed to connect!"
+echo "Connected!"
+
+REMOTE_TEMP_DIR=$(ssh_execute_with_command_and_options "mktemp -d") || die "Failed to create remote temporary directory!"
+
+oscap_args=("$@")
+
+LOCAL_CONTENT_PATH=""
+LOCAL_TAILORING_PATH=""
+LOCAL_LOCAL_FILES_PATH=""
+LOCAL_CPE_PATH=""
+LOCAL_VARIABLES_PATH=""
+LOCAL_DIRECTIVES_PATH=""
+TARGET_RESULTS=""
+TARGET_RESULTS_ARF=""
+TARGET_REPORT=""
+TARGET_SYSCHAR=""
+OVAL_RESULTS=""
+STIG_RESULTS=""
+
+# We have to rewrite various paths to a remote temp dir
+for i in $(seq 0 `expr $# - 1`); do
+    let j=i+1
+
+    case "${oscap_args[i]}" in
+    ("--tailoring-file")
+        LOCAL_TAILORING_PATH=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/tailoring.xml"
+      ;;
+    ("--stig-viewer")
+	STIG_RESULTS=${oscap_args[j]}
+	oscap_args[j]="$REMOTE_TEMP_DIR/stig_results.xml"
+      ;;
+    ("--local-files")
+        LOCAL_LOCAL_FILES_PATH=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/local_files"
+      ;;
+    ("--cpe")
+        LOCAL_CPE_PATH=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/cpe.xml"
+      ;;
+    ("--variables")
+        LOCAL_VARIABLES_PATH=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/variables.xml"
+      ;;
+    ("--directives")
+        LOCAL_DIRECTIVES_PATH=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/directives.xml"
+      ;;
+    ("--results")
+        TARGET_RESULTS=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/results.xml"
+      ;;
+    ("--results-arf")
+        TARGET_RESULTS_ARF=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/results-arf.xml"
+      ;;
+    ("--report")
+        TARGET_REPORT=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/report.html"
+      ;;
+    ("--syschar")
+        TARGET_SYSCHAR=${oscap_args[j]}
+        oscap_args[j]="$REMOTE_TEMP_DIR/syschar.xml"
+      ;;
+    ("--oval-results")
+        OVAL_RESULTS="yes"
+      ;;
+    *)
+      ;;
+    esac
+done
+
+if [ "$1" != "--v" ] && [ "$1" != "--version" ] && [ "$1" != "-h" ] && [ "$1" != "--help" ]; then
+    # Last argument should be the content path
+    LOCAL_CONTENT_PATH="${oscap_args[`expr $# - 1`]}"
+    oscap_args[`expr $# - 1`]="$REMOTE_TEMP_DIR/input.xml"
+fi
+
+[ "$LOCAL_CONTENT_PATH" == "" ] || [ -f "$LOCAL_CONTENT_PATH" ] || die "Expected the last argument to be an input file, '$LOCAL_CONTENT_PATH' isn't a valid file path or the file doesn't exist!"
+[ "$LOCAL_TAILORING_PATH" == "" ] || [ -f "$LOCAL_TAILORING_PATH" ] || die "Tailoring file path '$LOCAL_TAILORING_PATH' isn't a valid file path or the file doesn't exist!"
+[ "$LOCAL_LOCAL_FILES_PATH" == "" ] || [ -d "$LOCAL_LOCAL_FILES_PATH" ] || die "Directory '$LOCAL_LOCAL_FILES_PATH' isn't a valid directory path or the directory doesn't exist!"
+[ "$LOCAL_CPE_PATH" == "" ] || [ -f "$LOCAL_CPE_PATH" ] || die "CPE file path '$LOCAL_CPE_PATH' isn't a valid file path or the file doesn't exist!"
+[ "$LOCAL_VARIABLES_PATH" == "" ] || [ -f "$LOCAL_VARIABLES_PATH" ] || die "OVAL variables file path '$LOCAL_VARIABLES_PATH' isn't a valid file path or the file doesn't exist!"
+[ "$LOCAL_DIRECTIVES_PATH" == "" ] || [ -f "$LOCAL_DIRECTIVES_PATH" ] || die "OVAL directives file path '$LOCAL_DIRECTIVES_PATH' isn't a valid file path or the file doesn't exist!"
+
+if [ "$LOCAL_CONTENT_PATH" != "" ]; then
+    echo "Copying input file '$LOCAL_CONTENT_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp_copy_to_temp_dir "$LOCAL_CONTENT_PATH" input.xml || die "Failed to copy input file to remote temporary directory!"
+fi
+if [ "$LOCAL_TAILORING_PATH" != "" ]; then
+    echo "Copying tailoring file '$LOCAL_TAILORING_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp_copy_to_temp_dir "$LOCAL_TAILORING_PATH" tailoring.xml || die "Failed to copy tailoring file to remote temporary directory!"
+fi
+if [ "$LOCAL_LOCAL_FILES_PATH" != "" ]; then
+    echo "Copying directory '$LOCAL_LOCAL_FILES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp_copy_dir_to_temp_dir "$LOCAL_LOCAL_FILES_PATH" local_files || die "Failed to copy directory $LOCAL_LOCAL_FILES_PATH to remote temporary directory!"
+fi
+if [ "$LOCAL_CPE_PATH" != "" ]; then
+    echo "Copying CPE file '$LOCAL_CPE_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp_copy_to_temp_dir "$LOCAL_CPE_PATH" cpe.xml || die "Failed to copy CPE file to remote temporary directory!"
+fi
+if [ "$LOCAL_VARIABLES_PATH" != "" ]; then
+    echo "Copying OVAL variables file '$LOCAL_VARIABLES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp_copy_to_temp_dir "$LOCAL_VARIABLES_PATH" variables.xml || die "Failed to copy OVAL variables file to remote temporary directory!"
+fi
+if [ "$LOCAL_DIRECTIVES_PATH" != "" ]; then
+    echo "Copying OVAL directives file '$LOCAL_DIRECTIVES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp_copy_to_temp_dir "$LOCAL_DIRECTIVES_PATH" directives.xml || die "Failed to copy OVAL directives file to remote temporary directory!"
+fi
+
+echo "Starting the evaluation..."
+# changing directory because of --oval-results support. oval results files are
+# dumped into PWD, and we can't be sure by the file names - we need controlled
+# environment
+if [ -z "$OSCAP_SUDO" ]; then
+    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; oscap $(command_array_to_string oscap_args)" "$SSH_TTY_ALLOCATION_OPTION"
+else
+    OSCAP_CMD="oscap $(command_array_to_string oscap_args); rc=\$?; chown \$SUDO_USER $REMOTE_TEMP_DIR/*; exit \$rc"
+    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO sh -c '$OSCAP_CMD'" "$SSH_TTY_ALLOCATION_OPTION"
+fi
+OSCAP_EXIT_CODE=$?
+echo "oscap exit code: $OSCAP_EXIT_CODE"
+
+echo "Copying back requested files..."
+if [ "$TARGET_RESULTS" != "" ]; then
+    scp_retreive_from_temp_dir results.xml "$TARGET_RESULTS" || die "Failed to copy the results file back to local machine!"
+fi
+if [ "$STIG_RESULTS" != "" ]; then
+    scp_retreive_from_temp_dir stig_results.xml "$STIG_RESULTS" || die "Failed to copy the STIG results file back to local machine!"
+fi
+if [ "$TARGET_RESULTS_ARF" != "" ]; then
+    scp_retreive_from_temp_dir results-arf.xml "$TARGET_RESULTS_ARF" || die "Failed to copy the ARF file back to local machine!"
+fi
+if [ "$TARGET_REPORT" != "" ]; then
+    scp_retreive_from_temp_dir report.html "$TARGET_REPORT" || die "Failed to copy the HTML report back to local machine!"
+fi
+if [ "$TARGET_SYSCHAR" != "" ]; then
+    scp_retreive_from_temp_dir syschar.xml "$TARGET_SYSCHAR" || die "Failed to copy the OVAL syschar file back to local machine!"
+fi
+if [ "$OVAL_RESULTS" == "yes" ]; then
+    scp_retreive_from_temp_dir '*.result.xml' "./" || die "Failed to copy OVAL result files back to local machine!"
+fi
+
+echo "Removing remote temporary directory..."
+ssh_execute_with_command_and_options "rm -r $REMOTE_TEMP_DIR" || die "Failed to remove remote temporary directory!"
+echo "Disconnecting ssh and removing control ssh socket directory..."
+ssh_execute_with_options -O exit || die "Failed to disconnect!"
+rm -r "$CONTROL_SOCKET_DIR" || die "Failed to remove local control SSH socket directory!"
+
+exit $OSCAP_EXIT_CODE

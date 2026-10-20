@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+    <generator>
+      <oval:product_name>cpe:/a:open-scap:oscap</oval:product_name>
+      <oval:schema_version>5.8</oval:schema_version>
+      <oval:timestamp>2013-12-04T11:55:04</oval:timestamp>
+    </generator>
+    <definitions>
+      <definition id="oval:x:def:1" version="1" class="compliance">
+        <metadata>
+          <title>Subset: State and system contains the same address. We expect 'true' result.</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:1" comment="."/>
+        </criteria>
+      </definition>
+      <definition id="oval:x:def:2" version="1" class="compliance">
+        <metadata>
+          <title>Subset: Set of ipv4 addresses defined by state has greater cardinality. We expect 'true' result.</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:2" comment="."/>
+        </criteria>
+      </definition>
+      <definition id="oval:x:def:3" version="1" class="compliance">
+        <metadata>
+          <title>Subset: Set of ipv4 addresses defined by system has greater cardinality. We expect 'false' result.</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:3" comment="."/>
+        </criteria>
+      </definition>
+      <definition id="oval:x:def:4" version="1" class="compliance">
+        <metadata>
+          <title>Subset: Different addresses with different prefix length. We expect 'false' result.</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:4" comment="."/>
+        </criteria>
+      </definition>
+      <definition id="oval:x:def:5" version="1" class="compliance">
+        <metadata>
+          <title>Subset: Compare different ipv4 addresses. The address on system has shorter prefix length;
+                 both addresses match on first few bits. Thus state is 'subset of' syschar. We expect 'false' result.</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:5" comment="."/>
+        </criteria>
+      </definition>
+      <definition id="oval:x:def:6" version="1" class="compliance">
+        <metadata>
+          <title>Subset: Compare different ipv4 addresses. The address in state has shorter prefix length;
+                 both addresses match on first few bits, but differ beyond. We expect 'true' result.</title>
+          <description>.</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:6" comment="."/>
+        </criteria>
+      </definition>
+    </definitions>
+    <tests>
+      <ind-def:variable_test id="oval:x:tst:1" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:1"/>
+        <ind-def:state state_ref="oval:x:ste:1"/>
+      </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:2" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:1"/>
+        <ind-def:state state_ref="oval:x:ste:2"/>
+      </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:3" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:2"/>
+        <ind-def:state state_ref="oval:x:ste:1"/>
+      </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:4" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:3"/>
+        <ind-def:state state_ref="oval:x:ste:2"/>
+      </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:5" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:4"/>
+        <ind-def:state state_ref="oval:x:ste:2"/>
+      </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:6" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:5"/>
+        <ind-def:state state_ref="oval:x:ste:3"/>
+      </ind-def:variable_test>
+    </tests>
+    <objects>
+      <ind-def:variable_object id="oval:x:obj:1" version="1">
+        <ind-def:var_ref>oval:x:var:1</ind-def:var_ref>
+      </ind-def:variable_object>
+      <ind-def:variable_object id="oval:x:obj:2" version="1">
+        <ind-def:var_ref>oval:x:var:2</ind-def:var_ref>
+      </ind-def:variable_object>
+      <ind-def:variable_object id="oval:x:obj:3" version="1">
+        <ind-def:var_ref>oval:x:var:3</ind-def:var_ref>
+      </ind-def:variable_object>
+      <ind-def:variable_object id="oval:x:obj:4" version="1">
+        <ind-def:var_ref>oval:x:var:4</ind-def:var_ref>
+      </ind-def:variable_object>
+      <ind-def:variable_object id="oval:x:obj:5" version="1">
+        <ind-def:var_ref>oval:x:var:5</ind-def:var_ref>
+      </ind-def:variable_object>
+    </objects>
+    <states>
+      <ind-def:variable_state id="oval:x:ste:1" version="1">
+        <ind-def:value operation="subset of" datatype="ipv4_address">192.168.1.1</ind-def:value>
+      </ind-def:variable_state>
+      <ind-def:variable_state id="oval:x:ste:2" version="1">
+        <ind-def:value operation="subset of" datatype="ipv4_address">192.168.1.1/29</ind-def:value>
+      </ind-def:variable_state>
+      <ind-def:variable_state id="oval:x:ste:3" version="1">
+        <ind-def:value operation="subset of" datatype="ipv4_address">192.168.1.1/16</ind-def:value>
+      </ind-def:variable_state>
+    </states>
+    <variables>
+      <constant_variable id="oval:x:var:1" version="1" datatype="ipv4_address" comment=".">
+        <value>192.168.1.1</value>
+      </constant_variable>
+      <constant_variable id="oval:x:var:2" version="1" datatype="ipv4_address" comment=".">
+        <value>192.168.1.1/16</value>
+      </constant_variable>
+      <constant_variable id="oval:x:var:3" version="1" datatype="ipv4_address" comment=".">
+        <value>192.168.99.1</value>
+      </constant_variable>
+      <constant_variable id="oval:x:var:4" version="1" datatype="ipv4_address" comment=".">
+        <value>192.168.99.1/16</value>
+      </constant_variable>
+      <constant_variable id="oval:x:var:5" version="1" datatype="ipv4_address" comment=".">
+        <value>192.168.99.1/29</value>
+      </constant_variable>
+    </variables>
+</oval_definitions>

@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:catos-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#catos" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#catos" elementFormDefault="qualified" version="5.11">
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation>The following is a description of the elements, types, and attributes that compose the Cisco CatOS specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here</xsd:documentation>
+          <xsd:documentation>This schema was originally developed by Yuzheng Zhou and Eric Grey at Hewlett-Packard. The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>CatOS Definition</schema>
+                  <version>5.11:5.11</version>
+                  <date>12/18/2014 09:00:00 AM</date>
+                  <terms_of_use>Copyright (c) 2002-2014, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                  <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+                  <sch:ns prefix="catos-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#catos"/>
+                  <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+            </xsd:appinfo>
+      </xsd:annotation>
+    <!-- =============================================================================== -->
+    <!-- =================================  LINE TEST  ================================= -->
+    <!-- =============================================================================== -->
+    <xsd:element name="line_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The line_test is used to check the properties of specific output lines from a SHOW command, such as show running-config. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a line_object and the optional state element specifies the data to check.</xsd:documentation>
+              <xsd:appinfo>
+                    <oval:element_mapping>
+                          <oval:test>line_test</oval:test>
+                          <oval:object>line_object</oval:object>
+                          <oval:state>line_state</oval:state>
+                          <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#catos">line_item</oval:item>
+                    </oval:element_mapping>
+              </xsd:appinfo>
+              <xsd:appinfo>
+                <sch:pattern id="catos-def_linetst">
+                    <sch:rule context="catos-def:line_test/catos-def:object">
+                        <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/catos-def:line_object/@id"><sch:value-of select="../@id"/> - the object child element of a line_test must reference a line_object</sch:assert>
+                    </sch:rule>
+                    <sch:rule context="catos-def:line_test/catos-def:state">
+                        <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/catos-def:line_state/@id"><sch:value-of select="../@id"/> - the state child element of a line_test must reference a line_state</sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType" />
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="line_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The line_object element is used by a line_test to define the object to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+            <xsd:documentation>A line_object consists of a show_subcommand entity that is the name of a SHOW sub-command to be tested.</xsd:documentation>
+              <xsd:appinfo>
+                    <sch:pattern id="catos-def_line_object_verify_filter_state">
+                          <sch:rule context="catos-def:line_object//oval-def:filter">
+                                <sch:let name="parent_object" value="ancestor::catos-def:line_object"/>
+                                <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                <sch:let name="state_ref" value="."/>
+                                <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#catos') and ($state_name='line_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                          </sch:rule>
+                    </sch:pattern>
+              </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType">
+                    <xsd:sequence>
+                        <xsd:choice>
+                            <xsd:element ref="oval-def:set"/>
+                            <xsd:sequence>
+                                <xsd:element name="show_subcommand" type="oval-def:EntityObjectStringType">
+                                    <xsd:annotation>
+                                        <xsd:documentation>The name of a SHOW sub-command.</xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:choice>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="line_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The line_state element defines the different information that can be used to evaluate the result of a specific SHOW sub-command. This includes the name of ths sub-command and the corresponding config line. Please refer to the individual elements in the schema for more details about what each represents.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="show_subcommand" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The name of the SHOW sub-command.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="config_line" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The value returned from by the specified SHOW sub-command.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- =============================================================================== -->
+    <!-- =============================  MODULE TEST  ================================ -->
+    <!-- =============================================================================== -->
+    <xsd:element name="module_test" substitutionGroup="oval-def:test">
+          <xsd:annotation>
+                <xsd:documentation>The module test reveals module information in Cisco Catalyst switches. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a module_object and the optional state element specifies the metadata to check.</xsd:documentation>
+                <xsd:documentation>The module_test is based off the SHOW MODULE command. Having a separate module_test, as opposed to a general command_test, enables running an evaluation based on OVAL without having interactive command access to the device.</xsd:documentation>
+                <xsd:appinfo>
+                      <oval:element_mapping>
+                            <oval:test>module_test</oval:test>
+                            <oval:object>module_object</oval:object>
+                            <oval:state>module_state</oval:state>
+                            <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#catos">module_item</oval:item>
+                      </oval:element_mapping>
+                </xsd:appinfo>
+                <xsd:appinfo>
+                      <sch:pattern id="catos-def_moduletst">
+                            <sch:rule context="catos-def:module_test/catos-def:object">
+                                  <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/catos-def:module_object/@id"><sch:value-of select="../@id"/> - the object child element of a module_test must reference a module_object</sch:assert>
+                            </sch:rule>
+                            <sch:rule context="catos-def:module_test/catos-def:state">
+                                  <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/catos-def:module_state/@id"><sch:value-of select="../@id"/> - the state child element of a module_test must reference a module_state</sch:assert>
+                            </sch:rule>
+                      </sch:pattern>
+                </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:complexType>
+                <xsd:complexContent>
+                      <xsd:extension base="oval-def:TestType">
+                            <xsd:sequence>
+                                  <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                  <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                      </xsd:extension>
+                </xsd:complexContent>
+          </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="module_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+              <xsd:documentation>The module_object element is used by a module test to specify the module to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions schema.</xsd:documentation>
+              <xsd:documentation>A module object consists of a single module_number entity that identifies the module to be used.</xsd:documentation>
+              <xsd:appinfo>
+                    <sch:pattern id="catos-def_module_object_verify_filter_state">
+                          <sch:rule context="catos-def:module_object//oval-def:filter">
+                                <sch:let name="parent_object" value="ancestor::catos-def:module_object"/>
+                                <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                <sch:let name="state_ref" value="."/>
+                                <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#catos') and ($state_name='module_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                          </sch:rule>
+                    </sch:pattern>
+              </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+              <xsd:complexContent>
+                    <xsd:extension base="oval-def:ObjectType">
+                          <xsd:sequence>
+                                <xsd:choice>
+                                      <xsd:element ref="oval-def:set"/>
+                                      <xsd:sequence>
+                                            <xsd:element name="module_number" type="oval-def:EntityObjectIntType">
+                                                  <xsd:annotation>
+                                                        <xsd:documentation>A number that identifies the a specific module.</xsd:documentation>
+                                                  </xsd:annotation>
+                                            </xsd:element>
+                                            <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                      </xsd:sequence>
+                                </xsd:choice>
+                          </xsd:sequence>
+                    </xsd:extension>
+              </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="module_state" substitutionGroup="oval-def:state">
+          <xsd:annotation>
+                <xsd:documentation>The module_state element defines the module information held within a Cisco Catalyst switch. The module_number, type, and model element specifies the number, type and model of the module respectively. The software_major_release, software_individual_release and software_version_id elements specify the software version information of the module. For instance, if the software version is 8.5(4c)GLX, then software_major_release is 8.5GLX, software_individual_release is 4 and software_version_id is c. Similarly, the hardware_major_release, hardware_individual_release, firmware_major_release and firmware_individual_release elements reveal the hardware and firmware version information of the module.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+                <xsd:complexContent>
+                      <xsd:extension base="oval-def:StateType">
+                            <xsd:sequence>
+                                  <xsd:element name="module_number" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>A number that identifies the a specific module.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="type" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The type of module.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="model" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The model of a module.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="software_major_release" type="oval-def:EntityStateVersionType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The major relase of the software of a module to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="software_individual_release" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The individual release of the software of the module to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="software_version_id" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                      <xsd:annotation>
+                                              <xsd:documentation>The vesion id of the software of a module to check for.</xsd:documentation>
+                                       </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="hardware_major_release" type="oval-def:EntityStateVersionType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The hardware major release of a module to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="hardware_individual_release" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The hardware individual release of a module to check for.</xsd:documentation>
+                                       </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="firmware_major_release" type="oval-def:EntityStateVersionType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The major release of the firmware of a module to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="firmware_individual_release" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The individual release of the firmware of a module to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                            </xsd:sequence>
+                      </xsd:extension>
+                </xsd:complexContent>
+          </xsd:complexType>
+    </xsd:element>
+    <!-- =============================================================================== -->
+    <!-- =============================  VERSION TEST (55)  ============================= -->
+    <!-- =============================================================================== -->
+    <xsd:element name="version55_test" substitutionGroup="oval-def:test">
+        <xsd:annotation>
+            <xsd:documentation>The version55_test is used to check the version of the Cisco CatOS operating system. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a version_object and the optional state element specifies the data to check.</xsd:documentation>
+            <xsd:documentation>The required information of version55_test can be got via a SHOW VERSION command. The separated version55_test enables an evaluation based on OVAL without having interactive command access to the device.</xsd:documentation>
+              <xsd:appinfo>
+                    <oval:element_mapping>
+                          <oval:test>version55_test</oval:test>
+                          <oval:object>version55_object</oval:object>
+                          <oval:state>version55_state</oval:state>
+                          <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#catos">version_item</oval:item>
+                    </oval:element_mapping>
+              </xsd:appinfo>
+              <xsd:appinfo>
+                  <sch:pattern id="catos-def_version55_test">
+                        <sch:rule context="catos-def:version55_test/catos-def:object">
+                              <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/catos-def:version55_object/@id"><sch:value-of select="../@id"/> - the object child element of a version55_test must reference a version55_object</sch:assert>
+                        </sch:rule>
+                        <sch:rule context="catos-def:version55_test/catos-def:state">
+                              <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/catos-def:version55_state/@id"><sch:value-of select="../@id"/> - the state child element of a version55_test must reference a version55_state</sch:assert>
+                        </sch:rule>
+                  </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:TestType">
+                    <xsd:sequence>
+                        <xsd:element name="object" type="oval-def:ObjectRefType" />
+                        <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="version55_object" substitutionGroup="oval-def:object">
+        <xsd:annotation>
+            <xsd:documentation>The version55_object element is used by a version55_test to define the different version information associated with a Cisco CatOS system. There is actually only one object relating to version and this is the system as a whole. Therefore, there are no child entities defined. Any OVAL Test written to check version will reference the same version5_object which is basically an empty object element.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:ObjectType"/>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="version55_state" substitutionGroup="oval-def:state">
+        <xsd:annotation>
+            <xsd:documentation>The version55_state element defines the version information held within a Cisco CatOS software release. The switch_series element specifies the Catalyst switch series. The image_name element specifies the name of the CatOS image. The catos_release element specifies the software version information of the module.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-def:StateType">
+                    <xsd:sequence>
+                        <xsd:element name="switch_series" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The switch_series entity defines a target Catalyst switch series to check for.  Each version of CatOS traditionally has target a specific Catalyst series of switches.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="image_name" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The image_name entity defines a name of a CatOS image to check for.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="catos_release" type="oval-def:EntityStateVersionType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The catos_release entity defines a release version of CatOS to check for.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- =============================================================================== -->
+    <!-- ================================  VERSION TEST (deprecated)  ================== -->
+    <!-- =============================================================================== -->
+    <xsd:element name="version_test" substitutionGroup="oval-def:test">
+          <xsd:annotation>
+              <xsd:documentation>The version test is used to check the version of the Cisco CatOS operating system. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a version_object and the optional state element specifies the data to check.</xsd:documentation>
+              <xsd:documentation>The required information of version_test can be got via a SHOW VERSION command. The separated version_test enables an evaluation based on OVAL without having interactive command access to the device.</xsd:documentation>
+                <xsd:appinfo>
+                      <oval:element_mapping>
+                            <oval:test>version_test</oval:test>
+                            <oval:object>version_object</oval:object>
+                            <oval:state>version_state</oval:state>
+                            <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#catos">version_item</oval:item>
+                      </oval:element_mapping>
+                </xsd:appinfo>
+                <xsd:appinfo>
+                    <oval:deprecated_info>
+                          <oval:version>5.5</oval:version>
+                          <oval:reason>Replaced by the version55_test. Due to the fact it's not clear on how to separate the CatOS version, it was decided that the catos_major_release, catos_individual_release, and catos_version_id entities would be combined into a new single entity catos_release. A new test was created to reflect these changes. See the version55_test.</oval:reason>
+                          <oval:comment>This test has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                    </oval:deprecated_info>
+                    <sch:pattern id="catos-def_version_test_dep">
+                          <sch:rule context="catos-def:version_test">
+                                <sch:report test="true()">DEPRECATED TEST: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                          </sch:rule>
+                    </sch:pattern>
+              </xsd:appinfo>
+              <xsd:appinfo>
+                    <sch:pattern id="catos-def_version_test">
+                          <sch:rule context="catos-def:version_test/catos-def:object">
+                                <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/catos-def:version_object/@id"><sch:value-of select="../@id"/> - the object child element of a version_test must reference a version_object</sch:assert>
+                          </sch:rule>
+                          <sch:rule context="catos-def:version_test/catos-def:state">
+                                <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/catos-def:version_state/@id"><sch:value-of select="../@id"/> - the state child element of a version_test must reference a version_state</sch:assert>
+                          </sch:rule>
+                    </sch:pattern>
+              </xsd:appinfo>
+          </xsd:annotation>
+          <xsd:complexType>
+                <xsd:complexContent>
+                      <xsd:extension base="oval-def:TestType">
+                            <xsd:sequence>
+                                  <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                  <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                      </xsd:extension>
+                </xsd:complexContent>
+          </xsd:complexType>
+      </xsd:element>
+    <xsd:element name="version_object" substitutionGroup="oval-def:object">
+          <xsd:annotation>
+              <xsd:documentation>The version_object element is used by a version test to define the different version information associated with a Cisco CatOS system. There is actually only one object relating to version and this is the system as a whole. Therefore, there are no child entities defined. Any OVAL Test written to check version will reference the same version_object which is basically an empty object element.</xsd:documentation>
+              <xsd:appinfo>
+                    <oval:deprecated_info>
+                          <oval:version>5.5</oval:version>
+                          <oval:reason>Replaced by the version55_object. Due to the fact it's not clear on how to separate the CatOS version, it was decided that the catos_major_release, catos_individual_release, and catos_version_id entities would be combined into a new single entity catos_release. A new object was created to reflect these changes. See the version55_object.</oval:reason>
+                          <oval:comment>This object has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                    </oval:deprecated_info>
+                    <sch:pattern id="catos-def_version_object_dep">
+                          <sch:rule context="catos-def:version_object">
+                                <sch:report test="true()">DEPRECATED OBJECT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                          </sch:rule>
+                    </sch:pattern>                        
+              </xsd:appinfo>  
+          </xsd:annotation>
+          <xsd:complexType>
+                <xsd:complexContent>
+                      <xsd:extension base="oval-def:ObjectType"/>
+                </xsd:complexContent>
+          </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="version_state" substitutionGroup="oval-def:state">
+          <xsd:annotation>
+              <xsd:documentation>The version_state element defines the version information held within a Cisco CatOS software release. The swtich_series element specifies the Catalyst switch series. The image_name element specifies the name of the CatOS image. The catos_major_release, catos_individual_release and catos_version_id elements specify the software version information of the module. For instance, if the CatOS version is 8.5(4c)GLX, then catos_major_release is 8.5GLX, catos_individual_release is 4 and catos_version_id is c.</xsd:documentation>
+              <xsd:appinfo>
+                    <oval:deprecated_info>
+                          <oval:version>5.5</oval:version>
+                          <oval:reason>Replaced by the version55_state. Due to the fact it's not clear on how to separate the CatOS version, it was decided that the catos_major_release, catos_individual_release, and catos_version_id entities would be combined into a new single entity catos_release. A new state was created to reflect these changes. See the version55_state.</oval:reason>
+                          <oval:comment>This state has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                    </oval:deprecated_info>
+                    <sch:pattern id="catos-def_version_state_dep">
+                          <sch:rule context="catos-def:version_state">
+                                <sch:report test="true()">DEPRECATED STATE: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                          </sch:rule>
+                    </sch:pattern>                        
+              </xsd:appinfo>  
+          </xsd:annotation>
+          <xsd:complexType>
+                <xsd:complexContent>
+                      <xsd:extension base="oval-def:StateType">
+                            <xsd:sequence>
+                                  <xsd:element name="switch_series" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>A Catalyst switch series to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="image_name" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The name of a CatOS image to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="catos_major_release" type="oval-def:EntityStateVersionType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The major release of CatOS to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="catos_individual_release" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The individual release of CatOS to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                                  <xsd:element name="catos_version_id" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                        <xsd:annotation>
+                                              <xsd:documentation>The version id of Cat OS to check for.</xsd:documentation>
+                                        </xsd:annotation>
+                                  </xsd:element>
+                            </xsd:sequence>
+                      </xsd:extension>
+                </xsd:complexContent>
+          </xsd:complexType>
+    </xsd:element>
+    <!-- =============================================================================== -->
+    <!-- =============================================================================== -->
+    <!-- =============================================================================== -->
+</xsd:schema>

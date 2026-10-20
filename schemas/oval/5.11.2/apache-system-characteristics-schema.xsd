@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:apache-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apache"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apache"
+            elementFormDefault="qualified" version="5.11">
+	<xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+	<xsd:annotation>
+		<xsd:documentation>The following is a description of the elements, types, and attributes that compose the Apache specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL).  Each item is an extension of the standard item element defined in the Core System Characteristic Schema.  Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items.  Each item is described in detail and should provide the information necessary to understand what each element and attribute represents.  This document is intended for developers and assumes some familiarity with XML.  A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+		<xsd:documentation>The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+		<xsd:appinfo>
+		     <schema>Apache System Characteristics</schema>
+		     <version>5.11.1:1.1</version>
+		     <date>11/30/2016 09:00:00 AM</date>
+		      <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+			<sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+			<sch:ns prefix="apache-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows"/>
+		    <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+		</xsd:appinfo>
+	</xsd:annotation>
+	<!-- =============================================================================== -->
+	<!-- ================================  HTTPD ITEM  ================================= -->
+	<!-- =============================================================================== -->
+	<xsd:element name="httpd_item" substitutionGroup="oval-sc:item">
+		<xsd:annotation>
+			<xsd:documentation>The httpd item holds information about a installed Apache HTTPD binary.  It extends the standard ItemType as defined in the oval-system-characteristics schema and one should refer to the ItemType description for more information.</xsd:documentation>
+			<xsd:appinfo>
+				<oval:deprecated_info>
+					<oval:version>5.8</oval:version>
+					<oval:reason>The httpd_item does not specify how to detect instances of httpd and cannot be reasonably specified to allow for products to detect all instances of httpd across platforms, packaging systems, and typical user compiled and configured installations. Without a proper definition of how to identify instances of httpd products will not reliably produce consistent assessment results because they will naturally utilize different approaches to locating instances of httpd which will lead to differences in the set of collected instances of https.</oval:reason>
+					<oval:comment>This item has been deprecated and may be removed in a future version of the language.</oval:comment>
+				</oval:deprecated_info>
+				<sch:pattern id="apache-sc_httpd_item_dep">
+					<sch:rule context="apache-sc:httpd_item">
+						<sch:report test="true()">DEPRECATED ITEM: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+					</sch:rule>
+				</sch:pattern>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="oval-sc:ItemType">
+					<xsd:sequence>
+						<xsd:element name="path" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The path element specifies the directory component of the absolute path to a httpd binary found on the system.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="binary_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The name of the httpd binary.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="version" type="oval-sc:EntityItemVersionType" minOccurs="0" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:documentation>The version entity holds the version of the specified httpd binary.</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- =============================================================================== -->
+	<!-- =============================================================================== -->
+	<!-- =============================================================================== -->
+</xsd:schema>

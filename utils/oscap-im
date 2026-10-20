@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+
+# Copyright 2024 Red Hat Inc., Durham, North Carolina.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+import argparse
+import os
+import subprocess
+import sys
+import tempfile
+
+from pathlib import Path
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Use in your Containerfile to build hardened bootable "
+        "container images. Performs OpenSCAP scan and remediation of the "
+        "image.")
+    parser.add_argument(
+        "--profile",
+        help="ID of the profile to be evaluated")
+    parser.add_argument(
+        "--tailoring-file",
+        help="Use given XCCDF Tailoring file")
+    parser.add_argument(
+        "--tailoring-id", metavar="COMPONENT_ID",
+        help="Use given DS component as XCCDF Tailoring file")
+    parser.add_argument(
+        "--results-arf",
+        help="Write ARF (result data stream) into file")
+    parser.add_argument(
+        "--report",
+        help="Write HTML report into file")
+    parser.add_argument(
+        "data_stream", metavar="DATA_STREAM",
+        help="Path to a SCAP source data stream, eg. "
+        "/usr/share/xml/scap/ssg/content/ssg-rhel10-ds.xml")
+    parser.add_argument(
+        "--fetch-remote-resources", action="store_true",
+        help="Fetch remote resources referenced in the XCCDF content")
+    # Unfortunately, we can't add "--rule", "--skip-rule", or "--reference"
+    # because the "oscap xccdf generate fix" submodule doesn't support these
+    # options.
+    return parser.parse_args()
+
+
+def verify_bootc_build_env():
+    rv = subprocess.run(
+        ["rpm", "-q", "bootc"],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    bootc_env = (rv.returncode == 0)
+    container_env = Path("/run/.containerenv").exists()
+    if not bootc_env or not container_env:
+        raise RuntimeError(
+            "This script is supposed to be used only in the bootable "
+            "container build environment.")
+
+
+def install_sce_dependencies():
+    required_packages = [
+        "openscap-engine-sce",
+        "setools-console"  # seinfo is used by the sebool template
+    ]
+    install_cmd = ["dnf", "-y", "install"] + required_packages
+    install_process = subprocess.run(
+        install_cmd, universal_newlines=True,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if install_process.returncode != 0:
+        raise RuntimeError(
+            f"{install_process.stdout}\nFailed to install SCE dependencies.")
+
+
+def add_args(option_args_list, cmd):
+    for o, a in option_args_list:
+        if a:
+            cmd.append(o)
+            cmd.append(a)
+
+
+def add_common_args(args, cmd):
+    oal = [
+        ("--profile", args.profile),
+        ("--tailoring-file", args.tailoring_file),
+        ("--tailoring-id", args.tailoring_id)
+    ]
+    add_args(oal, cmd)
+    if args.fetch_remote_resources:
+        cmd.append("--fetch-remote-resources")
+
+
+def add_eval_args(args, cmd):
+    oal = [
+        ("--results-arf", args.results_arf),
+        ("--report", args.report),
+    ]
+    add_args(oal, cmd)
+
+
+def pre_scan_fix(args):
+    with tempfile.NamedTemporaryFile() as remediation_script:
+        gen_fix_cmd = [
+            "oscap", "xccdf", "generate", "fix", "--fix-type", "bootc",
+            "--output", remediation_script.name]
+        add_common_args(args, gen_fix_cmd)
+        gen_fix_cmd.append(args.data_stream)
+        try:
+            subprocess.run(gen_fix_cmd, check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(
+                f"OpenSCAP generate fix failed with return code "
+                f"{e.returncode}.\nOutput: {e.stderr.decode()}")
+        try:
+            subprocess.run(["bash", remediation_script.name], check=True)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(
+                f"Remediation script failed with return code "
+                f"{e.returncode}.")
+
+
+def scan_and_remediate(args):
+    oscap_cmd = ["oscap", "xccdf", "eval", "--progress", "--remediate"]
+    add_common_args(args, oscap_cmd)
+    add_eval_args(args, oscap_cmd)
+    oscap_cmd.append(args.data_stream)
+    env = {**os.environ, "OSCAP_PREFERRED_ENGINE": "SCE"}
+    try:
+        subprocess.run(oscap_cmd, env=env, check=True)
+    except subprocess.CalledProcessError as e:
+        if e.returncode not in [0, 2]:
+            raise RuntimeError(
+                f"OpenSCAP scan failed with return code {e.returncode}.\n")
+
+
+def main():
+    args = parse_args()
+    verify_bootc_build_env()
+    install_sce_dependencies()
+    try:
+        pre_scan_fix(args)
+        scan_and_remediate(args)
+    except RuntimeError as e:
+        print(e, file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

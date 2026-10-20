@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions 
+  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+  xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+  xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/windows-definitions-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-definitions-5#independent 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/independent-definitions-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-definitions-5 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/oval-definitions-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-common-5
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/oval-common-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-definitions-5#linux 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/linux-definitions-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-definitions-5#unix 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/unix-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>NIST Validation Content Generation Script</oval:product_name>
+    <oval:product_version>1.0</oval:product_version>
+    <oval:schema_version>5.4</oval:schema_version>
+    <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel:def:1" version="1" class="compliance">
+      <metadata>
+        <title>Test 1</title>
+        <affected family="unix"/>
+        <reference source="http://cce.mitre.org" ref_id="CCE-3744-0"/>
+        <description>Test</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:gov.nist.validation.r1100_scap10_rhel:tst:1" comment="comment ..."/>
+      </criteria>
+    </definition>
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel:def:2" version="1" class="compliance">
+      <metadata>
+        <title>Test 2</title>
+        <affected family="unix"/>
+        <reference source="http://cce.mitre.org" ref_id="CCE-3993-3"/>
+        <description>Test 2</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:gov.nist.validation.r1100_scap10_rhel:tst:2" comment="comment ..."/>
+      </criteria>
+    </definition>
+    
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel:def:3" version="1" class="compliance">
+      <metadata>
+        <title>Test 3</title>
+        <affected family="unix"/>
+        <reference source="http://cce.mitre.org" ref_id="CCE-3207-8"/>
+        <description>Test 3</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:gov.nist.validation.r1100_scap10_rhel:tst:3" comment="comment ..."/>
+      </criteria>
+    </definition>
+    
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel:def:4" version="1" class="compliance">
+      <metadata>
+        <title>Sample Defintion 4</title>
+        <affected family="unix"/>
+        <reference source="http://cce.mitre.org" ref_id="CCE-3929-7"/>
+        <description>Test 4</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:gov.nist.validation.r1100_scap10_rhel:tst:4" comment="comment ..."/>
+      </criteria>
+    </definition>
+    
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel:def:5" version="1" class="compliance">
+      <metadata>
+        <title>Sample Defintion 5</title>
+        <affected family="unix"/>
+        <reference source="http://cce.mitre.org" ref_id="CCE-3933-9"/>
+        <description>Test 5</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:gov.nist.validation.r1100_scap10_rhel:tst:2" comment="comment ..."/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <ind-def:variable_test check="all" comment="comment ..." version="1" id="oval:gov.nist.validation.r1100_scap10_rhel:tst:1">
+      <ind-def:object object_ref="oval:gov.nist.validation.r1100_scap10_rhel:obj:1"/>
+      <ind-def:state state_ref="oval:gov.nist.validation.r1100_scap10_rhel:ste:1"/>
+    </ind-def:variable_test>
+    <ind-def:variable_test check="all" comment="comment ..." version="1" id="oval:gov.nist.validation.r1100_scap10_rhel:tst:2">
+      <ind-def:object object_ref="oval:gov.nist.validation.r1100_scap10_rhel:obj:2"/>
+      <ind-def:state state_ref="oval:gov.nist.validation.r1100_scap10_rhel:ste:2"/>
+    </ind-def:variable_test>
+    <ind-def:variable_test check="all" comment="comment ..." version="1" id="oval:gov.nist.validation.r1100_scap10_rhel:tst:3">
+      <ind-def:object object_ref="oval:gov.nist.validation.r1100_scap10_rhel:obj:1"/>
+      <ind-def:state state_ref="oval:gov.nist.validation.r1100_scap10_rhel:ste:3"/>
+    </ind-def:variable_test>
+    <family_test check_existence="at_least_one_exists" id="oval:gov.nist.validation.r1100_scap10_rhel:tst:4" version="1" check="only one" comment="installed operating system is part of the Unix family" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <ind-def:object object_ref="oval:gov.nist.validation.r1100_scap10_rhel:obj:4"/>
+      <ind-def:state state_ref="oval:gov.nist.validation.r1100_scap10_rhel:ste:4"/>
+    </family_test>
+  </tests>
+  <objects>
+    <family_object id="oval:gov.nist.validation.r1100_scap10_rhel:obj:4" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
+    <ind-def:variable_object version="1" id="oval:gov.nist.validation.r1100_scap10_rhel:obj:1">
+      <ind-def:var_ref datatype="string">oval:gov.nist.validation.r1100_scap10_rhel:var:1</ind-def:var_ref>
+    </ind-def:variable_object>
+    <ind-def:variable_object version="1" id="oval:gov.nist.validation.r1100_scap10_rhel:obj:2">
+      <ind-def:var_ref datatype="string">oval:gov.nist.validation.r1100_scap10_rhel:var:2</ind-def:var_ref>
+    </ind-def:variable_object>
+  </objects>
+  <states>
+    <ind-def:variable_state version="1" id="oval:gov.nist.validation.r1100_scap10_rhel:ste:1">
+      <ind-def:value datatype="string" operation="equals" var_ref="oval:gov.nist.validation.r1100_scap10_rhel:var:10"/>
+    </ind-def:variable_state>
+    <ind-def:variable_state version="1" id="oval:gov.nist.validation.r1100_scap10_rhel:ste:2">
+      <ind-def:value datatype="string" operation="not equal">2000</ind-def:value>
+    </ind-def:variable_state>
+    <ind-def:variable_state version="1" id="oval:gov.nist.validation.r1100_scap10_rhel:ste:3">
+      <ind-def:value datatype="string" operation="equals">0</ind-def:value>
+    </ind-def:variable_state>
+    <family_state id="oval:gov.nist.validation.r1100_scap10_rhel:ste:4" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <family datatype="string" operation="pattern match" var_ref="oval:gov.nist.validation.r1100_scap10_rhel:var:4" var_check="all"/>
+    </family_state>
+  </states>
+  <variables>
+    <local_variable id="oval:gov.nist.validation.r1100_scap10_rhel:var:1" version="2" datatype="string" comment="A sample variable">
+      <literal_component>1</literal_component>
+    </local_variable>
+    <local_variable id="oval:gov.nist.validation.r1100_scap10_rhel:var:2" version="1" datatype="string" comment="A sample variable">
+      <literal_component>2</literal_component>
+    </local_variable>
+    <local_variable id="oval:gov.nist.validation.r1100_scap10_rhel:var:4" version="1" datatype="string" comment="A sample variable">
+      <literal_component>^.+$</literal_component>
+    </local_variable>
+    
+    <external_variable id="oval:gov.nist.validation.r1100_scap10_rhel:var:10" version="2" comment="External variable" datatype="string"/>
+  </variables>
+</oval_definitions>

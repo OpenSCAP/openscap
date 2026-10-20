@@ -1,0 +1,110 @@
+/**
+
+@mainpage
+
+@section Overview
+
+@par
+OpenSCAP is a set of open source libraries providing an easier path
+for integration of the SCAP line of standards.
+
+@par
+SCAP is a line of standards managed by NIST with the goal of providing
+a standard language for the expression of Computer Network Defense
+related information. 
+
+@if false
+@par
+To get started, see list of <a href="modules.html">available libraries</a>.
+@endif
+
+@section Libraries
+
+- @ref COMMON - Objects and mechanisms used across all parts of library.
+- @ref CPE - Common Platform Enumeration
+- @ref CVE - Common Vulnerabilities and Exposures
+- @ref CVSS - Common Vulnerability Scoring System
+- @ref OVAL - Open Vulnerability and Assessment Language
+- @ref XCCDF - Extensible Configuration Checklist Description Format
+- @ref XCCDF_POLICY - Policy interface to XCCDF benchmark
+
+@section Links
+
+- OpenSCAP homepage: http://www.open-scap.org/
+- Information on SCAP at NIST: http://nvd.nist.gov/scap.cfm
+
+*/
+
+/**
+
+@defgroup COMMON Common
+
+Definitions and functions common to all the OpenScap sublibraries.
+
+@defgroup CPE
+
+Common Platform Enumeration.
+
+Supported version: 2.3 and lower
+
+@defgroup CVE
+
+Common Vulnerabilities and Exposures.
+
+@defgroup CVSS
+
+Common Vulnerability Scoring System.
+
+Supported version: 2
+
+@defgroup OVAL
+
+Open Vulnerability and Assessment Language.
+
+This layer covers interface to OVAL language. It provides easier way for
+manipulation with OVAL Definition, OVAL System Characteristics and 
+OVAL Result content. Content can be imported from XML file adjusted 
+and exported back to the file. Besides this basic functionality, it also 
+enables user to use system checking mechanism. This mechanism probe 
+the OS and gather OVAL System characteristics that can be later used to
+create OVAL Results.
+
+Supported version: 5.10.1 and lower
+
+OVAL Definition supported schemas: 
+
+- Core - http://oval.mitre.org/XMLSchema/oval-definitions-5
+- Common - http://oval.mitre.org/XMLSchema/oval-common-5
+- Independent - http://oval.mitre.org/XMLSchema/oval-definitions-5#independent
+- Linux - http://oval.mitre.org/XMLSchema/oval-definitions-5#linux
+- Unix - http://oval.mitre.org/XMLSchema/oval-definitions-5#unix
+
+OVAL System Characteristics supported schemas: 
+
+- Core - http://oval.mitre.org/XMLSchema/oval-system-characteristics-5
+- Common - http://oval.mitre.org/XMLSchema/oval-common-5
+- Independent - http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent
+- Linux - http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux
+- Unix - http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix
+
+OVAL Results supported schemas:
+
+- Core - http://oval.mitre.org/XMLSchema/oval-results-5
+- Common - http://oval.mitre.org/XMLSchema/oval-common-5
+
+@defgroup XCCDF
+
+Extensible Configuration Checklist Description Format.
+
+Supported version: 1.2 and lower
+
+@defgroup XCCDF_POLICY
+
+Policy interface to Extensible Configuration Checklist Description Format. 
+Purpose of this layer is to separate the transport syntax of the XCCDF XML 
+from the processes of evaluating and scoring the policy content comprised 
+by the XCCDF documents. XCCDF Policy model performs the loading, evaluation 
+and scoring tasks of XCCDF.
+
+*/
+

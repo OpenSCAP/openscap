@@ -1,0 +1,358 @@
+= Writing and running tests for OpenSCAP
+
+This document should help you with writing and running tests for your pull
+requests. It is recommended to add a new test if a new functionality is added
+or if a code that is not covered by any test is updated. Another recommendation
+is to add your test in a separate commit.
+
+All the tests reside in the link:../../tests[tests] directory. It has multiple
+subdirectories which should represent various parts of the OpenSCAP library and
+its utilities. When you contribute to some part of the OpenSCAP project you
+should put a test for your contribution into the corresponding subdirectory
+in the link:../../tests[tests] directory. Use your best judgement when deciding
+where to put the test for your pull request and if you are not sure don't be
+afraid to ask in the pull request, someone will definitely help you with that.
+
+NOTE: OpenSCAP project uses the **CMake** buildsystem which has built-in
+testing support through the
+link:https://gitlab.kitware.com/cmake/community/wikis/doc/ctest/Testing-With-CTest[CTest]
+testing tool.
+
+
+== Preparing test environment and running tests
+To run a specific test or all tests you first need to compile the OpenSCAP
+library and then install additional packages required for testing. See the
+*Building OpenSCAP on Linux* section in the link:../developer/developer.adoc[OpenSCAP Developer Manual]
+for more details.
+
+For platform-focused validation, prefer CTest labels over ad-hoc test lists.
+For example, after a successful non-Linux build you can run:
+
+----
+$ ctest -L macos
+$ ctest -L freebsd
+----
+
+For a containerized Linux full-suite run, make sure a local SMTP listener and a
+session D-Bus are available before invoking CTest, otherwise MITRE, `fwupd`,
+and `systemd` coverage may be skipped or fail for environmental reasons:
+
+----
+$ postfix start
+$ dbus-run-session -- ctest --output-on-failure
+----
+
+
+== Writing a new test
+In this guide we will use an example to describe the process of writing a test
+for the OpenSCAP project. Let's suppose you want to write a new test for
+the Script Check Engine (SCE) to test its basic functionality. SCE allows you
+to define your own scripts (usually written in Bash or Python) to extend XCCDF
+rule checking capabilities. Custom check scripts can be referenced from
+an XCCDF rule using `<check-content-ref>` element, for example:
+----
+<check system="http://open-scap.org/page/SCE">
+    <check-content-ref href="YOUR_BASH_SCRIPT.sh"/>
+</check>
+----
+
+
+=== Deciding where to put a new test
+In our example, we are testing the SCE module, therefore we will look for
+its subdirectory in the link:../../tests[tests] directory and we will find it
+at the following link: link:../../tests/sce[tests/sce]. We will add our new test
+into this subdirectory.
+
+
+==== Scenario A: There is a suitable directory for my new test
+This will happen most of the times. As stated above in our example we will place
+our test into the link:../../tests/sce[tests/sce] directory.
+
+
+==== Scenario B: There is no suitable directory for my new test
+This might happen if your test covers a part of the OpenSCAP which has no tests
+at all. In this case you would need to add a new directory with suitable name
+into the link:../../tests[tests] directory structure and create/update
+`CMakeLists.txt` files.
+
+To have an example also for this scenario, let's suppose we want to add the
+`foo` subdirectory into the link:../../tests[tests] directory. We need to:
+
+. Create the `foo` subdirectory in the link:../../tests[tests] directory.
+. Use the link:https://cmake.org/cmake/help/latest/command/add_subdirectory.html[add_subdirectory]
+  command from the link:../../tests/CMakeLists.txt[tests/CMakeLists.txt]
+  to add the `foo` subdirectory to the CMake buildsystem.
+. Create `CMakeLists.txt` inside the `tests/foo` directory and use the
+  `add_oscap_test` function (defined in the
+  link:../../tests/CMakeLists.txt[tests/CMakeLists.txt]) to add all your test
+  scripts from the `foo` directory.
+
+Please see the
+link:https://gitlab.kitware.com/cmake/community/wikis/doc/ctest/Testing-With-CTest[
+CTest documentation] for more details.
+
+
+=== Common test library
+When writing tests for OpenSCAP you should use the common test library which is
+located at link:../../tests/test_common.sh.in[tests/test_common.sh.in].
+
+NOTE: The `cmake` command will generate the `tests/test_common.sh` file from
+the link:../../tests/test_common.sh.in[tests/test_common.sh.in] adding
+configuration specific settings.
+
+You will need to source the `tests/test_common.sh` in your test scripts to use
+the functions which it provides:
+[source,bash]
+----
+#!/usr/bin/env bash
+
+set -o pipefail
+
+. $builddir/tests/test_common.sh
+
+test1
+test2
+...
+----
+
+NOTE: The `$builddir` variable contains the path to the top level of the build
+tree. It is defined in the link:../../tests/CMakeLists.txt[tests/CMakeLists.txt]
+as `builddir=${CMAKE_BINARY_DIR}`.
+
+
+==== Global variables exported by test library
+Always use `$OSCAP` variable instead of the plain `oscap` in your tests when
+calling the `oscap` command line tool. This is because tests might be run with
+`CUSTOM_OSCAP` variable.
+
+You can use `$XMLDIFF` in your tests which will call the
+link:../../tests/xmldiff.pl[tests/xmldiff.pl] script.
+
+It is also possible to do XPath queries using `$XPATH` variable, the usage is:
+[source,bash]
+----
+$XPATH FILE 'QUERY'
+----
+
+
+==== Best practices when writing bash tests
+It is always good to set `pipefail` option for all your test scripts so you
+accidentally don't lose non-zero exit statuses of commands in a pipeline:
+[source,bash]
+----
+set -o pipefail
+----
+
+The next option you can consider is `errexit` which exits your script
+immediately if a command exits with a non-zero status. You might want to use
+this option if tests are somehow dependent and it doesn't make sense to continue
+testing after one test fails.
+[source,bash]
+----
+set -e
+----
+
+Also consider splitting the tests up into several separate bash scripts if
+you test many things at once; long running "all.sh" test should be avoided
+if possible, as when these fail it is harder to debug than having more,
+smaller tests. However, make sure these independent tests don't have hidden
+dependencies: often we'll run the test suite in parallel, meaning in-order
+execution of different test scripts cannot be ensured. (However, order
+order inside the test script is guaranteed per bash's rules).
+
+Lastly, make sure your tests are architecture, distribution, and operating
+system independent. Try to make your tests dependent on local file contents,
+not system file contents, and make them independent of listening ports and
+installed software as much as possible.
+
+==== test_init function
+This function does nothing. Logging is done by the CTest and the log from
+testing can be found at `build/Testing/Temporary/LastTest.log`.
+
+
+==== test_run function
+The function is responsible for executing a test script file or a function and
+logging its result into the log file.
+[source,bash]
+----
+test_run "DESCRIPTION" TEST_FUNCTION|$srcdir/TEST_SCRIPT_FILE ARG [ARG...]
+----
+
+NOTE: The `$srcdir` variable contains the path to the directory with the test
+script. It is defined in the link:../../tests/CMakeLists.txt[tests/CMakeLists.txt]
+as `srcdir=${CMAKE_CURRENT_SOURCE_DIR}`. The reason is backward compatibility
+as originally tests were executed by the GNU automake.
+
+The `test_run` function reports the following results into the log file:
+
+* *PASS* when script/function returns *0*,
+* *FAIL* when script/function returns *1*,
+* *SKIP* when script/function returns *255*,
+* *WARN* when script/function returns none of the above exit statuses.
+
+The result of every test executed by the `test_run` function will be reported
+in the log file in a following way:
+[source,bash]
+----
+TEST: DESCRIPTION
+<test stdout + stderr output>
+RESULT: PASS/FAIL/SKIP/WARN
+----
+
+
+==== test_exit function
+The function is responsible for cleaning-up the testing environment. You can
+call it without arguments or with one argument -- a script/function which will
+do additional clean-up tasks.
+[source,bash]
+----
+test_exit [CLEAN_SCRIPT|CLEAN_FUNCTION]
+----
+
+
+==== require function
+Checks if requirements are in the `$PATH`, use it as follows:
+[source,bash]
+----
+require 'program' || return 255
+----
+
+
+==== probecheck function
+Checks if probe exists, use it as follows:
+[source,bash]
+----
+probecheck 'probe' || return 255
+----
+
+
+==== verify_results function
+Verifies that there is the `COUNT` number of results of selected OVAL `TYPE` in
+a `RESULTS_FILE`:
+[source,bash]
+----
+verify_results TYPE CONTENT_FILE RESULTS_FILE COUNT
+
+verify_results "def" test_probe_foo.xml results.xml 13
+----
+
+The function extracts the actual test/definition result, and compares it with the respective test/definition comment.
+For example, if the test contains `comment="true"`, the test passes only if result of the respective test is `true`,
+if `comment="false"`, a `false` result is expected.
+If the comment is missing or it has other value, it is assumed that the result should be neither `true` nor `false`.
+
+NOTE: This function expects that the OVAL `TYPE` is numbered from `1` to `COUNT`
+in the `RESULTS_FILE`.
+`TYPE` is typically `def` or `tst` for definitions and tests respectively.
+
+
+==== assert_exists function
+Does an XPath query to a file specified in the `$result` variable and checks if
+number of results matches with an expected number specified as an argument:
+[source,bash]
+----
+result="relative_path_to_file"
+assert_exists EXPECTED_NUMBER_OF_RESULTS XPATH_QUERY_STRING
+----
+
+For example, let's say you want to check that in the `results.xml` file the
+result of the rule `xccdf_com.example.www_rule_test` is fail:
+[source,bash]
+----
+result="./results.xml"
+my_rule_="xccdf_com.example.www_rule_test"
+assert_exists 1 "//rule-result[@idref=\"$my_rule\"]/result[text()=\"fail\"]"
+----
+
+
+=== Adding test files
+Now, as we know where a new test should go and what functions and capabilities
+are provided by the common test library, we can add test files which will
+contain test scripts and content required for testing.
+
+To sum up, we are adding a tests to check the basic functionality of the Script
+Check Engine (SCE) and we have decided that the test will go into the
+link:../../tests/sce[tests/sce] directory.
+
+We will add the link:../../tests/sce/test_sce.sh[tests/sce/test_sce.sh]
+script which will contain our test and
+link:../../tests/sce/sce_xccdf.xml[tests/sce/sce_xccdf.xml], an XML file with
+XCCDF rules which are referencing various check scripts (grep the
+`check-content-ref` element to see the referenced files). All the referenced
+check script files are set to always pass and the
+link:../../tests/sce/test_sce.sh[tests/sce/test_sce.sh] script will perform
+evaluation of the link:../../tests/sce/sce_xccdf.xml[tests/sce/sce_xccdf.xml]
+XCCDF document file and it will check that all rule results are `pass`.
+
+
+=== Plugging your new test into the test library
+You need to plug your test into the test library so it will be run automatically
+everytime `make test` is run. To do this, you need to add your test script
+into the `CMakeLists.txt`. The `CMakeLists.txt` which you need to modify is
+located in the same directory as your test script.
+
+We will demonstrate this on our example with the SCE test. We have prepared our
+test script, the XML document file with custom rules and various check scripts
+for testing. We placed all our test files into the
+link:../../tests/sce[tests/sce] directory. Now we will modify the
+link:../../tests/sce/CMakeLists.txt[tests/sce/CMakeLists.txt] and we will add
+our test script file using the `add_oscap_test` function which will make sure
+that our test will be executed by the `make test`:
+----
+if(ENABLE_SCE)
+	...
+	*add_oscap_test("test_sce.sh")*
+	...
+endif()
+----
+
+
+=== Running your new test
+To run your new test you first need to compile the OpenSCAP library. See the
+*Building OpenSCAP on Linux* section in the link:../developer/developer.adoc[OpenSCAP Developer Manual]
+for more details.
+Also you don't need to run all the tests using `make test`, you can run only
+the specific test(s). To do so, you need to be in the build directory and
+run `ctest -R` from there, for example:
+[source,bash]
+----
+$ cd build/
+$ ctest -R sce/test_sce.sh
+$ less Testing/Temporary/LastTest.log
+----
+
+Results from testing will be printed on the stdout and detailed log file with
+your test results can be found in the `Testing/Temporary/LastTest.log` file.
+
+== Running the MITRE tests
+
+The MITRE tests (in `tests/mitre`) are functionality tests for several
+key probes.
+
+There are several reasons for putting these tests behind an `ENABLE_MITRE`
+CMake flag: they cannot be run in parallel as they race to create and
+delete temporary support files; they require port 25 to be open and
+listening (`mitre/test_mitre_linux_probes.sh`); there are outdated assumptions
+which need to be gated around operating system version checks; and a number of
+probes had to be disabled because they're not supported (e.g., SQL and LDAP
+checks, etc.).
+
+To run only the MITRE tests, please make sure you've installed and started a
+SMTP server that is listening on `127.0.0.1:25`, and that you're running on a
+RPM-based distribution. Then:
+
+----
+$ cd build/
+$ cmake -DENABLE_MITRE=TRUE ..
+$ make
+$ ctest --output-on-failure -R mitre
+----
+
+To run the containerized MITRE tests (which installs a SMTP server and tests
+it):
+
+----
+$ cd openscap/
+$ docker build --tag openscap_mitre_tests:latest -f Dockerfiles/mitre_tests .
+$ docker run openscap_mitre_tests:latest
+----

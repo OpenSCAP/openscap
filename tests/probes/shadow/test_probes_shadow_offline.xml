@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+
+      <generator>
+            <oval:product_name>shadow</oval:product_name>
+            <oval:product_version>1.0</oval:product_version>
+            <oval:schema_version>5.4</oval:schema_version>
+            <oval:timestamp>2008-03-31T00:00:00-00:00</oval:timestamp>
+      </generator>
+
+  <definitions>
+
+    <definition class="compliance" version="1" id="oval:1:def:1">  <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria>
+        <criteria operator="AND">
+          <criterion test_ref="oval:1:tst:1"/>
+        </criteria>
+      </criteria>
+    </definition>
+
+  </definitions>
+
+  <tests>
+
+    <shadow_test version="1" id="oval:1:tst:1" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:1:obj:1"/>
+      <state state_ref="oval:1:ste:1"/>
+    </shadow_test>
+  </tests>
+
+  <objects>
+    <shadow_object version="1" id="oval:1:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>root</username>
+    </shadow_object>
+  </objects>
+
+  <states>
+    <shadow_state version="1" id="oval:1:ste:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <username>root</username>
+      <password>!locked</password>
+      <chg_lst datatype="int">-1</chg_lst>
+      <chg_allow datatype="int">0</chg_allow>
+      <chg_req datatype="int">99999</chg_req>
+      <exp_warn datatype="int">7</exp_warn>
+      <exp_inact datatype="int">-1</exp_inact>
+      <exp_date datatype="int">-1</exp_date>
+    </shadow_state>
+  </states>
+
+</oval_definitions>

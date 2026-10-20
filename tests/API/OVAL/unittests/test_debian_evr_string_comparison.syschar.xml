@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_system_characteristics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix" xmlns:ind-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" xmlns:lin-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux" xmlns:win-sys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows" xmlns="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5 oval-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent independent-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix unix-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux linux-system-characteristics-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:product_name>cpe:/a:open-scap:oscap</oval:product_name>
+    <oval:product_version>1</oval:product_version>
+    <oval:schema_version>5.11.1</oval:schema_version>
+    <oval:timestamp>2022-12-19T16:39:11</oval:timestamp>
+  </generator>
+  <system_info>
+    <os_name>Linux</os_name>
+    <os_version>#59-Ubuntu SMP Mon Oct 17 18:53:30 UTC 2022</os_version>
+    <architecture>x86_64</architecture>
+    <primary_host_name>you.know.it</primary_host_name>
+    <interfaces>
+      <interface>
+        <interface_name>lo</interface_name>
+        <ip_address>127.0.0.1</ip_address>
+        <mac_address>00:00:00:00:00:00</mac_address>
+      </interface>
+    </interfaces>
+  </system_info>
+  <collected_objects>
+    <object id="oval:com.ubuntu.jammy:obj:544710000000" version="1" flag="complete">
+      <variable_value variable_id="oval:com.ubuntu.jammy:var:544710000000">logrotate</variable_value>
+      <reference item_ref="101854166"/>
+    </object>
+  </collected_objects>
+  <system_data>
+    <lin-sys:dpkginfo_item id="101854166" status="exists">
+      <lin-sys:name>logrotate</lin-sys:name>
+      <lin-sys:arch>amd64</lin-sys:arch>
+      <lin-sys:epoch>0</lin-sys:epoch>
+      <lin-sys:release>2ubuntu1.1</lin-sys:release>
+      <lin-sys:version>3.18.0</lin-sys:version>
+      <lin-sys:evr datatype="debian_evr_string">0:3.18.0-2ubuntu1.1</lin-sys:evr>
+    </lin-sys:dpkginfo_item>
+  </system_data>
+</oval_system_characteristics>

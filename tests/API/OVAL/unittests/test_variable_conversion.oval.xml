@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<oval-def:oval_definitions xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <oval-def:generator>
+    <oval:product_name>combine_ovals.py from SCAP Security Guide</oval:product_name>
+    <oval:product_version>ssg: [0, 1, 58], python: 3.9.6</oval:product_version>
+    <oval:schema_version>5.11</oval:schema_version>
+    <oval:timestamp>2021-09-17T07:13:13</oval:timestamp>
+  </oval-def:generator>
+  <oval-def:definitions>
+    <oval-def:definition class="compliance" id="oval:ssg-accounts_passwords_pam_faillock_unlock_time:def:1" version="2">
+      <oval-def:metadata>
+        <oval-def:title>Set Lockout Time for Failed Password Attempts</oval-def:title>
+        <oval-def:affected family="unix">
+          <oval-def:platform>Fedora</oval-def:platform>
+        </oval-def:affected>
+        <oval-def:description>The unlock time after number of failed logins should be set correctly.</oval-def:description>
+        <oval-def:reference ref_id="accounts_passwords_pam_faillock_unlock_time" source="ssg"/>
+      </oval-def:metadata>
+      <oval-def:criteria operator="OR">
+        <oval-def:criteria comment="When ext var unlock_time is zero, all configs must be zero or never">
+          <oval-def:criterion comment="Is ext var unlock time zero?" test_ref="oval:ssg-test_var_faillock_unlock_time_is_never:tst:1"/>
+          <oval-def:criterion comment="Test if config is zero or never" test_ref="oval:ssg-test_accounts_passwords_pam_faillock_unlock_time_is_never:tst:1"/>
+        </oval-def:criteria>
+        <oval-def:criteria comment="When ext var unlock_time is not zero, configs should be zero or never, or greater than or equal the external variable">
+          <oval-def:criterion comment="Is ext var unlock time different than zero?" test_ref="oval:ssg-test_var_faillock_unlock_time_is_never:tst:1" negate="true"/>
+          <oval-def:criterion comment="Test if config is greater than or equals the ext var unlock time" test_ref="oval:ssg-test_accounts_passwords_pam_faillock_unlock_time_greater_or_equal_ext_var:tst:1"/>
+        </oval-def:criteria>
+      </oval-def:criteria>
+    </oval-def:definition>
+  </oval-def:definitions>
+  <oval-def:tests>
+    <ind:textfilecontent54_test check="all" check_existence="all_exist" comment="Check if unlock time is never, or greater than or equal external variable" id="oval:ssg-test_accounts_passwords_pam_faillock_unlock_time_greater_or_equal_ext_var:tst:1" state_operator="OR" version="3">
+      <ind:object object_ref="oval:ssg-object_accounts_passwords_pam_faillock_unlock_time:obj:1"/>
+      <ind:state state_ref="oval:ssg-state_accounts_passwords_pam_unlock_time_greater_or_equal_than_ext_var:ste:1"/>
+      <ind:state state_ref="oval:ssg-state_accounts_passwords_pam_unlock_time_is_never:ste:1"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" check_existence="all_exist" comment="Check if unlock time is never" id="oval:ssg-test_accounts_passwords_pam_faillock_unlock_time_is_never:tst:1" version="3">
+      <ind:object object_ref="oval:ssg-object_accounts_passwords_pam_faillock_unlock_time:obj:1"/>
+      <ind:state state_ref="oval:ssg-state_accounts_passwords_pam_unlock_time_is_never:ste:1"/>
+    </ind:textfilecontent54_test>
+    <ind:variable_test id="oval:ssg-test_var_faillock_unlock_time_is_never:tst:1" version="1" check="all" comment="Check if external variable unlock time is never">
+      <ind:object object_ref="oval:ssg-object_var_faillock_unlock_time:obj:1"/>
+      <ind:state state_ref="oval:ssg-state_var_faillock_unlock_time_is_never:ste:1"/>
+    </ind:variable_test>
+  </oval-def:tests>
+  <oval-def:objects>
+    <ind:textfilecontent54_object id="oval:ssg-object_accounts_passwords_pam_faillock_unlock_time:obj:1" version="2">
+      <oval-def:set>
+        <oval-def:object_reference>oval:ssg-object_accounts_passwords_pam_faillock_unlock_time_system-auth:obj:1</oval-def:object_reference>
+        <oval-def:object_reference>oval:ssg-object_accounts_passwords_pam_faillock_unlock_time_password-auth:obj:1</oval-def:object_reference>
+      </oval-def:set>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg-object_accounts_passwords_pam_faillock_unlock_time_system-auth:obj:1" version="2">
+      <oval-def:set>
+        <oval-def:object_reference>oval:ssg-object_accounts_passwords_pam_faillock_preauth_unlock_time_system-auth:obj:1</oval-def:object_reference>
+        <oval-def:object_reference>oval:ssg-object_accounts_passwords_pam_faillock_authfail_unlock_time_system-auth:obj:1</oval-def:object_reference>
+      </oval-def:set>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg-object_accounts_passwords_pam_faillock_unlock_time_password-auth:obj:1" version="2">
+      <oval-def:set>
+        <oval-def:object_reference>oval:ssg-object_accounts_passwords_pam_faillock_preauth_unlock_time_password-auth:obj:1</oval-def:object_reference>
+        <oval-def:object_reference>oval:ssg-object_accounts_passwords_pam_faillock_authfail_unlock_time_password-auth:obj:1</oval-def:object_reference>
+      </oval-def:set>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg-object_accounts_passwords_pam_faillock_preauth_unlock_time_system-auth:obj:1" version="2">
+      <ind:filepath>/etc/pam.d/system-auth</ind:filepath>
+      <ind:pattern operation="pattern match">^\s*auth\s+(?:(?:required))\s+pam_faillock\.so\s+preauth.*unlock_time=(\w*).*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg-object_accounts_passwords_pam_faillock_authfail_unlock_time_system-auth:obj:1" version="2">
+      <ind:filepath>/etc/pam.d/system-auth</ind:filepath>
+      <ind:pattern operation="pattern match">^\s*auth\s+(?:(?:sufficient)|(?:\[default=die\]))\s+pam_faillock\.so\s+authfail.*unlock_time=(\w*).*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg-object_accounts_passwords_pam_faillock_authfail_unlock_time_password-auth:obj:1" version="2">
+      <ind:filepath>/tmp/test_variable_conversion.txt</ind:filepath>
+      <ind:pattern operation="pattern match">^\s*auth\s+(?:(?:sufficient)|(?:\[default=die\]))\s+pam_faillock\.so\s+authfail.*unlock_time=(\w*).*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg-object_accounts_passwords_pam_faillock_preauth_unlock_time_password-auth:obj:1" version="2">
+      <ind:filepath>/tmp/test_variable_conversion.txt</ind:filepath>
+      <ind:pattern operation="pattern match">^\s*auth\s+(?:(?:required))\s+pam_faillock\.so\s+preauth.*unlock_time=(\w*).*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:variable_object id="oval:ssg-object_var_faillock_unlock_time:obj:1" version="1">
+      <ind:var_ref>oval:ssg-var_accounts_passwords_pam_faillock_unlock_time:var:1</ind:var_ref>
+    </ind:variable_object>
+  </oval-def:objects>
+  <oval-def:states>
+    <ind:textfilecontent54_state id="oval:ssg-state_accounts_passwords_pam_unlock_time_greater_or_equal_than_ext_var:ste:1" version="2">
+      <ind:subexpression datatype="int" operation="greater than or equal" var_ref="oval:ssg-var_accounts_passwords_pam_faillock_unlock_time:var:1"/>
+    </ind:textfilecontent54_state>
+    <ind:textfilecontent54_state id="oval:ssg-state_accounts_passwords_pam_unlock_time_is_never:ste:1" version="1">
+      <ind:subexpression datatype="string" operation="pattern match">^0$|^never$</ind:subexpression>
+    </ind:textfilecontent54_state>
+    <ind:variable_state id="oval:ssg-state_var_faillock_unlock_time_is_never:ste:1" version="1">
+      <ind:value datatype="int" operation="equals">0</ind:value>
+    </ind:variable_state>
+  </oval-def:states>
+  <oval-def:variables>
+    <oval-def:constant_variable comment="lockout time for failed password attempts" datatype="int" id="oval:ssg-var_accounts_passwords_pam_faillock_unlock_time:var:1" version="2">
+    <oval-def:value>0</oval-def:value>
+    </oval-def:constant_variable>
+  </oval-def:variables>
+</oval-def:oval_definitions>

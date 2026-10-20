@@ -1,0 +1,30 @@
+<oval_definitions xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+    <generator>
+      <oval:product_name>My hands</oval:product_name>
+      <oval:product_version>1.0</oval:product_version>
+      <oval:schema_version>5.11</oval:schema_version>
+      <oval:timestamp>2015-05-21T11:48:00+01:00</oval:timestamp>
+    </generator>
+    <definitions>
+      <definition id="oval:x:def:1" version="1" class="compliance">
+        <metadata>
+          <title>Test</title>
+          <description>Collect info about process 1</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:1" comment="Test"/>
+        </criteria>
+      </definition>
+    </definitions>
+    <tests>
+      <unix-def:process58_test id="oval:x:tst:1" version="1" check="all" comment="Test.">
+        <unix-def:object object_ref="oval:x:obj:1"/>
+      </unix-def:process58_test>
+    </tests>
+    <objects>
+      <unix-def:process58_object id="oval:x:obj:1" version="1">
+        <unix-def:command_line operation="pattern match">.*</unix-def:command_line>
+        <unix-def:pid datatype="int">1</unix-def:pid>
+      </unix-def:process58_object>
+    </objects>
+</oval_definitions>
