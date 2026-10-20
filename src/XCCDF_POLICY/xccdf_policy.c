@@ -2208,6 +2208,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 			oscap_seterr(OSCAP_EFAMILY_XCCDF,
 				"Rule '%s' not found in selected profile.", rule_id);
 			oscap_htable_iterator_free(rit);
+			xccdf_result_free(result);
 			return NULL;
 		}
 	}
