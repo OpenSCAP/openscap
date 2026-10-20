@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:schema_version>5.11.1</oval:schema_version>
+    <oval:timestamp>2026-10-20T00:00:00+00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+    <!-- Definition 1: Tests empty family_state with default AND operator -->
+    <definition class="compliance" version="1" id="oval:x:def:1">
+      <metadata>
+        <title>Empty state evaluation test</title>
+        <description>Verify that a state with no entities evaluates to true</description>
+        <affected family="unix">
+          <platform>all</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:1" comment="family_test with empty state evaluates to true"/>
+      </criteria>
+    </definition>
+
+    <!-- Definition 2: Tests empty family_state with explicit OR operator -->
+    <definition class="compliance" version="1" id="oval:x:def:2">
+      <metadata>
+        <title>Empty state with OR operator test</title>
+        <description>Verify that an empty state with operator OR evaluates to true</description>
+        <affected family="unix">
+          <platform>all</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:2" comment="family_test with empty OR state evaluates to true"/>
+      </criteria>
+    </definition>
+
+    <!-- Definition 3: Extended definition (applicability check) pattern used by Ubuntu USN -->
+    <definition class="compliance" version="1" id="oval:x:def:3">
+      <metadata>
+        <title>Applicability check with empty state</title>
+        <description>Verify extend_definition using inventory definition with empty state</description>
+        <affected family="unix">
+          <platform>all</platform>
+        </affected>
+      </metadata>
+      <criteria operator="AND">
+        <extend_definition definition_ref="oval:x:def:1" comment="platform inventory is true"/>
+        <criterion test_ref="oval:x:tst:1" comment="additional check is true"/>
+      </criteria>
+    </definition>
+
+    <!-- Definition 4: Non-existent item must still evaluate to false even with empty state -->
+    <definition class="compliance" version="1" id="oval:x:def:4">
+      <metadata>
+        <title>Empty state with non-existent object</title>
+        <description>Verify that non-existent object still fails check_existence</description>
+        <affected family="unix">
+          <platform>all</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:3" comment="non-existent file test evaluates to false"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+    <ind-def:family_test id="oval:x:tst:1" version="1" check="all" check_existence="at_least_one_exists" comment="family test with empty state">
+      <ind-def:object object_ref="oval:x:obj:1"/>
+      <ind-def:state state_ref="oval:x:ste:1"/>
+    </ind-def:family_test>
+
+    <ind-def:family_test id="oval:x:tst:2" version="1" check="all" check_existence="at_least_one_exists" comment="family test with empty OR state">
+      <ind-def:object object_ref="oval:x:obj:1"/>
+      <ind-def:state state_ref="oval:x:ste:2"/>
+    </ind-def:family_test>
+
+    <unix-def:file_test id="oval:x:tst:3" version="1" check="all" check_existence="at_least_one_exists" comment="non-existent file test with empty state">
+      <unix-def:object object_ref="oval:x:obj:2"/>
+      <unix-def:state state_ref="oval:x:ste:3"/>
+    </unix-def:file_test>
+  </tests>
+
+  <objects>
+    <ind-def:family_object id="oval:x:obj:1" version="1" comment="family object"/>
+    <unix-def:file_object id="oval:x:obj:2" version="1" comment="non-existent file">
+      <unix-def:filepath>/openscap_nonexistent_test_file_path_xyz</unix-def:filepath>
+    </unix-def:file_object>
+  </objects>
+
+  <states>
+    <!-- State 1: empty state with default AND operator -->
+    <ind-def:family_state id="oval:x:ste:1" version="1"/>
+
+    <!-- State 2: empty state with explicit OR operator -->
+    <ind-def:family_state id="oval:x:ste:2" version="1" operator="OR"/>
+
+    <!-- State 3: empty file_state -->
+    <unix-def:file_state id="oval:x:ste:3" version="1"/>
+  </states>
+</oval_definitions>

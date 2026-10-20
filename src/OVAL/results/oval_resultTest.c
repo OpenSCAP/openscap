@@ -564,6 +564,17 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 	ores_clear(&ste_ores);
 
 	state_contents_itr = oval_state_get_contents(state);
+	if (!oval_state_content_iterator_has_more(state_contents_itr)) {
+		/* An OVAL state with no entities imposes no constraints;
+		 * any item satisfies it (evaluates to true). */
+		oval_state_content_iterator_free(state_contents_itr);
+		result = OVAL_RESULT_TRUE;
+		dI("State '%s' has no entities. Item '%s' satisfies state with result %s.",
+		   oval_state_get_id(state), oval_sysitem_get_id(cur_sysitem),
+		   oval_result_get_text(result));
+		return result;
+	}
+
 	while (oval_state_content_iterator_has_more(state_contents_itr)) {
 		struct oval_state_content *content;
 		struct oval_entity *state_entity;
