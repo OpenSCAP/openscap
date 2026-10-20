@@ -159,3 +159,7 @@ set_tests_properties(
      "API/XCCDF/unittests/test_remediation_xml_comments.sh"
      PROPERTIES RESOURCE_LOCK test_file_lock
 )
+
+if(PYTHONINTERP_FOUND)
+	set_tests_properties("API/XCCDF/unittests/all_python.sh" PROPERTIES RESOURCE_LOCK test_file_lock)
+endif()
