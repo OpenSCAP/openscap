@@ -195,9 +195,11 @@ pathfix.py -i %{__python3} -p -n $RPM_BUILD_ROOT%{_bindir}/scap-as-rpm
 %exclude %{_bindir}/oscap
 %exclude %{_bindir}/oscap-docker
 %exclude %{_bindir}/oscap-chroot
+%exclude %{_bindir}/oscap-run-sce-script
 
 %files engine-sce
 %{_libdir}/libopenscap_sce.so.*
+%{_bindir}/oscap-run-sce-script
 
 %files containers
 %{_bindir}/oscap-docker
