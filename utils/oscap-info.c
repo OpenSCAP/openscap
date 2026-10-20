@@ -756,6 +756,7 @@ static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_ite
 		printf("Title\r\t\033[1m%s\033[0;0m\n", title);
 		free((char *)title);
 	}
+
 	char *description = xccdf_policy_get_readable_item_description(policy, item, NULL);
 	if (strlen(description) > 0) {
 		char *indented_description = oscap_indent(description, 8);
@@ -763,6 +764,7 @@ static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_ite
 		free(indented_description);
 		}
 	free(description);
+
 	char *rationale = xccdf_policy_get_readable_item_rationale(policy, item, NULL);
 	if (strlen(rationale) > 0) {
 		char *indented_rationale = oscap_indent(rationale, 8);
@@ -770,6 +772,7 @@ static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_ite
 		free(indented_rationale);
 	}
 	free(rationale);
+
 	struct oscap_stringlist *warnings = xccdf_rule_get_warnings_strings((struct xccdf_rule *) item);
 	struct oscap_string_iterator *warnings_it = oscap_stringlist_get_strings(warnings);
 	while (oscap_string_iterator_has_more(warnings_it)) {
@@ -780,6 +783,37 @@ static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_ite
 	}
 	oscap_string_iterator_free(warnings_it);
 	oscap_stringlist_free(warnings);
+
+	// fixtext
+	struct xccdf_fixtext_iterator *fixtexts_it = xccdf_rule_get_fixtexts((struct xccdf_rule *) item);
+	while (xccdf_fixtext_iterator_has_more(fixtexts_it)){
+		struct xccdf_fixtext *next = xccdf_fixtext_iterator_next(fixtexts_it);
+		struct oscap_text *oscap_fixtext = xccdf_fixtext_get_text(next);
+
+		const char *plain_fixtext = oscap_text_get_plaintext(oscap_fixtext);
+		char *indented_fixtext = oscap_indent(plain_fixtext, 8);
+		printf("Fixtext\n%s\n", indented_fixtext);
+		free(indented_fixtext);
+
+	}
+	// TODO: you need to have some free(asdf) stuff here
+	xccdf_fixtext_iterator_free(fixtexts_it);
+	
+	struct xccdf_check_iterator *checks_it = xccdf_rule_get_checks((struct xccdf_rule *) item);
+	while (xccdf_check_iterator_has_more(checks_it)){
+		struct xccdf_check *next = xccdf_check_iterator_next(checks_it);
+		const char *oscap_check_content = xccdf_check_get_content(next);
+
+		// const char *plain_content = oscap_text_get_plaintext(oscap_check_content);
+		char *indented_content = oscap_indent(oscap_check_content, 8);
+		printf("Check\n%s\n", indented_content);
+		free(indented_content);
+
+	}
+	xccdf_check_iterator_free(checks_it);
+
+
+
 }
 
 static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
@@ -825,6 +859,62 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 	}
 }
 
+/**
+// you need to modify this function, its yours
+static void app_info_single_ds_rule_info() {
+
+	const char *prefix = "\t\t";
+	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
+	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
+
+	while (oscap_string_iterator_has_more(checklist_it)) {
+		const char * id = oscap_string_iterator_next(checklist_it);
+
+		
+		struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
+		if (xccdf_source == NULL) {
+			oscap_string_iterator_free(checklist_it);
+			ds_stream_index_iterator_free(sds_it);
+			ds_sds_session_free(session);
+			return OSCAP_ERROR;
+		}
+
+		if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
+			struct xccdf_benchmark* bench = xccdf_benchmark_import_source(xccdf_source);
+			if(!bench) {
+				oscap_string_iterator_free(checklist_it);
+				ds_stream_index_iterator_free(sds_it);
+				ds_sds_session_free(session);
+				return OSCAP_ERROR;
+			}
+			// get the rule id, then call
+
+			if (rule matched in checklist) {
+				// static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_item *item) {
+				_my_print_rule_details()
+				// but you need to modify this function to not use policies
+			}
+
+
+			
+
+			_print_xccdf_benchmark(bench, prefix, action->references); // TODO this is where your print function will be
+			// bench is freed as a side-effect of the function above
+		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+			_print_xccdf_tailoring(xccdf_source, prefix, 0);
+		}
+		ds_sds_session_reset(session);
+	}
+	oscap_string_iterator_free(checklist_it);
+	return OSCAP_OK;
+
+	
+
+
+
+}
+**/
+
 static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
 {
 	int return_value;
@@ -832,6 +922,8 @@ static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds
 		return_value = app_info_single_ds_profiles_only(sds_it, session, action);
 	} else if (action->profile) {
 		return_value = app_info_single_ds_one_profile(sds_it, session, action);
+	// } else if (action->rule_id){
+	// 	return value = app_info_single_ds_rule_info(sds_it, session, action);
 	} else {
 		return_value = app_info_single_ds_all(sds_it, session, action);
 	}
