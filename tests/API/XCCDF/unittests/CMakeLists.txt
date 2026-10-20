@@ -114,3 +114,7 @@ add_oscap_test("test_reference.sh")
 add_oscap_test("test_remediation_bootc.sh")
 add_oscap_test("openscap_2289_regression.sh")
 add_oscap_test("test_null_ptr_regression.sh")
+
+if(PYTHONINTERP_FOUND)
+	set_tests_properties("API/XCCDF/unittests/all_python.sh" PROPERTIES RESOURCE_LOCK test_file_lock)
+endif()
