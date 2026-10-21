@@ -54,7 +54,7 @@
 #include <libxml/xpathInternals.h>
 
 #include <string.h>
-#include <fcntl.h>
+#include <errno.h>
 #ifdef OS_WINDOWS
 #include <io.h>
 #else
@@ -63,10 +63,6 @@
 
 #ifndef MAXPATHLEN
 #   define MAXPATHLEN 1024
-#endif
-
-#ifndef O_NOFOLLOW
-#define O_NOFOLLOW 0
 #endif
 
 static const char* datastream_ns_uri = "http://scap.nist.gov/schema/scap/source/1.2";
@@ -164,47 +160,42 @@ xmlNodePtr lookup_component_in_collection(xmlNodePtr root, const char *component
 	return component;
 }
 
-static int ds_sds_dump_component_sce(const xmlNode *script_node, const char *component_id, const char *filename)
+static int ds_write_sce(int fd, void *data)
 {
-	if (script_node) {
-		if (oscap_acquire_ensure_parent_dir(filename) < 0) {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Error while creating script parent directory for file '%s' of (id='%s')", filename, component_id);
+	xmlChar *contents = xmlNodeGetContent(data);
+	if (contents == NULL)
+		return -1;
+	const char *cursor = (const char *)contents;
+	size_t remaining = strlen(cursor);
+	while (remaining > 0) {
+		ssize_t written = write(fd, cursor, remaining);
+		if (written < 0 && errno == EINTR)
+			continue;
+		if (written <= 0) {
+			xmlFree(contents);
 			return -1;
 		}
-		// TODO: should we check whether the component is extended?
-		int fd;
-		xmlChar* text_contents = xmlNodeGetContent(script_node);
-		if ((fd = open(filename, O_CREAT | O_TRUNC | O_NOFOLLOW | O_WRONLY, 0700)) < 0) {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Error while creating script component (id='%s') to file '%s'.", component_id, filename);
-			xmlFree(text_contents);
-			return -1;
-		}
-		FILE* output_file = fdopen(fd, "w");
-		if (output_file == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'.", component_id, filename);
-			xmlFree(text_contents);
-			close(fd);
-			return -1;
-		}
-		// TODO: error checking, fprintf should return strlen((const char*)text_contents)
-		fprintf(output_file, "%s", text_contents ? (char*)text_contents : "");
-#ifndef OS_WINDOWS
-		// NB: This code is for SCE scripts
-		if (fchmod(fd, 0700) != 0) {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);
-		}
-#endif
-
-		dD("Successfully dumped script component (id='%s') to file '%s'.", component_id, filename);
-		fclose(output_file);
-		xmlFree(text_contents);
-		return 0;
+		cursor += written;
+		remaining -= written;
 	}
-	else {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error while dumping script component (id='%s') to file '%s'. "
-			"The script element was empty!", component_id, filename);
+#ifndef OS_WINDOWS
+	if (fchmod(fd, 0700) != 0) {
+		xmlFree(contents);
 		return -1;
 	}
+#endif
+	xmlFree(contents);
+	return 0;
+}
+
+static int ds_sds_dump_component_sce(const xmlNode *script_node, const char *component_id,
+		const char *target_dir, const char *relative_path)
+{
+	if (script_node == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Script component (id='%s') has no contents.", component_id);
+		return -1;
+	}
+	return ds_write_file(target_dir, relative_path, 0700, ds_write_sce, (void *)script_node);
 }
 
 /**
@@ -231,12 +222,13 @@ static struct oscap_source *load_referenced_source(const struct ds_sds_session *
 
 static int ds_sds_register_sce(struct ds_sds_session *session, xmlNodePtr component_inner_root, const char* component_id, const char* target_filename_dirname, const char* relative_filepath)
 {
-	// the cast is safe to do because we are using the GNU basename, it doesn't
-	// modify the string
-	char *file_basename = oscap_basename((char*)relative_filepath);
-	char *sce_filename = oscap_sprintf("%s/%s/%s",ds_sds_session_get_target_dir(session), target_filename_dirname, file_basename);
+	char *path_copy = oscap_strdup(relative_filepath);
+	char *file_basename = oscap_basename(path_copy);
+	char *sce_filename = oscap_sprintf("%s/%s", target_filename_dirname, file_basename);
 	free(file_basename);
-	const int ret = ds_sds_dump_component_sce(component_inner_root->children, component_id, sce_filename);
+	free(path_copy);
+	const int ret = ds_sds_dump_component_sce(component_inner_root->children, component_id,
+			ds_sds_session_get_target_dir(session), sce_filename);
 	free(sce_filename);
 	return ret;
 }
@@ -366,7 +358,7 @@ static char *compose_target_filename_dirname(const char *relative_filepath, cons
 	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
 	char* file_reldir = oscap_dirname(filename_cpy);
 
-	char* target_filename_dirname = oscap_sprintf("%s/%s",sub_dir, file_reldir);
+	char* target_filename_dirname = oscap_sprintf("%s/%s", sub_dir, file_reldir);
 	free(file_reldir);
 	free(filename_cpy);
 
@@ -616,6 +608,10 @@ static int _ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct 
 
 int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
 {
+	if (!ds_path_is_valid_filename(relative_filepath)) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid component path '%s'.", relative_filepath ? relative_filepath : "(null)");
+		return -1;
+	}
 	return _ds_sds_dump_component_ref_as(component_ref, session, sub_dir, relative_filepath, 0);
 }
 
