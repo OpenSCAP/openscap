@@ -1,0 +1,12 @@
+add_oscap_test_executable(test_ds_sds_path_traversal
+                         "test_ds_sds_path_traversal.c"
+                         ${CMAKE_SOURCE_DIR}/src/common/list.c
+                         ${CMAKE_SOURCE_DIR}/src/common/oscap_string.c
+                         ${CMAKE_SOURCE_DIR}/src/common/util.c
+                         ${CMAKE_SOURCE_DIR}/src/common/err_queue.c
+                         ${CMAKE_SOURCE_DIR}/src/common/error.c
+                         ${CMAKE_SOURCE_DIR}/src/common/oscap_buffer.c
+                         ${CMAKE_SOURCE_DIR}/src/common/oscap_acquire.c
+                         ${CMAKE_SOURCE_DIR}/src/DS/ds_common.c
+)
+add_oscap_test("all.sh")
