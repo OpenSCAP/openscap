@@ -97,6 +97,13 @@ OSCAP_IGETINS_GEN(cpe_check, cpe_item, checks, check)
 OSCAP_IGETINS(oscap_text, cpe_item, titles, title)
 OSCAP_ITERATOR_REMOVE_F(cpe_reference) OSCAP_ITERATOR_REMOVE_F(cpe_check)
 
+const char *cpe_item_get_cpe23_name(const struct cpe_item *item)
+{
+	if (item == NULL || item->cpe23_item == NULL)
+		return NULL;
+	return cpe23_item_get_name(item->cpe23_item);
+}
+
 struct cpe_notes {				///< representation of <notes> element
 	char *lang;				///< xml:lang attribute
 	struct oscap_list *notes;		///< list of inner <note> elements
