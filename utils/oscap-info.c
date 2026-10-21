@@ -749,29 +749,44 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	return OSCAP_OK;
 }
 
-static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_item *item) {
+static void _info_print_rule_details(struct xccdf_item *item) {
 
-	char *title = xccdf_policy_get_readable_item_title(policy, item, NULL);
-	if (strlen(title) > 0) {
-		printf("Title\r\t\033[1m%s\033[0;0m\n", title);
-		free((char *)title);
-	}
-
-	char *description = xccdf_policy_get_readable_item_description(policy, item, NULL);
-	if (strlen(description) > 0) {
-		char *indented_description = oscap_indent(description, 8);
-		printf("Description\n%s\n", indented_description);
-		free(indented_description);
+	struct oscap_text_iterator *title_it = xccdf_item_get_title(item);
+	struct oscap_text *oscap_text_title = oscap_textlist_get_preferred_text(title_it, NULL);
+	if (oscap_text_title !=NULL) {
+		const char *title = oscap_text_get_text(oscap_text_title);
+		if (title != NULL && strlen(title) > 0) {
+			printf("Title\r\t\033[1m%s\033[0;0m\n", title);
 		}
-	free(description);
-
-	char *rationale = xccdf_policy_get_readable_item_rationale(policy, item, NULL);
-	if (strlen(rationale) > 0) {
-		char *indented_rationale = oscap_indent(rationale, 8);
-		printf("Rationale\n%s\n", indented_rationale);
-		free(indented_rationale);
 	}
-	free(rationale);
+	oscap_text_iterator_free(title_it);
+
+
+	struct oscap_text_iterator *description_it = xccdf_item_get_description(item);
+	struct oscap_text *oscap_description = oscap_textlist_get_preferred_text(description_it, NULL);
+
+	if (oscap_description !=NULL) {
+		const char *description = oscap_text_get_text(oscap_description);
+		if (description != NULL && strlen(description) > 0) {
+			char *indented_description = oscap_indent(description, 8);
+			printf("Description\n%s\n", indented_description);
+			free(indented_description);
+			}
+		}
+	oscap_text_iterator_free(description_it);
+	
+	struct oscap_text_iterator *rat_it = xccdf_item_get_rationale(item);
+	struct oscap_text *oscap_rationale = oscap_textlist_get_preferred_text(rat_it, NULL);
+
+	if (oscap_rationale != NULL) {
+		const char *rationale = oscap_text_get_text(oscap_rationale);
+		if (rationale != NULL && strlen(rationale) > 0) {
+			char *indented_rationale = oscap_indent(rationale, 8);
+			printf("Rationale\n%s\n", indented_rationale);
+			free(indented_rationale);
+		}
+	}
+	oscap_text_iterator_free(rat_it);
 
 	struct oscap_stringlist *warnings = xccdf_rule_get_warnings_strings((struct xccdf_rule *) item);
 	struct oscap_string_iterator *warnings_it = oscap_stringlist_get_strings(warnings);
@@ -784,7 +799,6 @@ static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_ite
 	oscap_string_iterator_free(warnings_it);
 	oscap_stringlist_free(warnings);
 
-	// fixtext
 	struct xccdf_fixtext_iterator *fixtexts_it = xccdf_rule_get_fixtexts((struct xccdf_rule *) item);
 	while (xccdf_fixtext_iterator_has_more(fixtexts_it)){
 		struct xccdf_fixtext *next = xccdf_fixtext_iterator_next(fixtexts_it);
@@ -796,7 +810,6 @@ static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_ite
 		free(indented_fixtext);
 
 	}
-	// TODO: you need to have some free(asdf) stuff here
 	xccdf_fixtext_iterator_free(fixtexts_it);
 	
 	struct xccdf_check_iterator *checks_it = xccdf_rule_get_checks((struct xccdf_rule *) item);
@@ -811,8 +824,6 @@ static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_ite
 
 	}
 	xccdf_check_iterator_free(checks_it);
-
-
 
 }
 
@@ -841,15 +852,9 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 		}
 	
 	} else if (action->rule_id) {
-		
-		struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench); //create policy model
-		char str[] = "(all)";
-		char *all_id = str; // this is the policy id needed to select all rules and create a policy with all rules
-		struct xccdf_policy *policy = xccdf_policy_model_get_policy_by_id(policy_model, all_id); // create a policy with all rules
-		const struct xccdf_item *rule_i_want = xccdf_benchmark_get_item(bench, action->rule_id);
-		_my_print_rule_details(policy, (struct xccdf_item *) rule_i_want);
+		const struct xccdf_item *rule_item = xccdf_benchmark_get_item(bench, action->rule_id);
+		_info_print_rule_details((struct xccdf_item *) rule_item);
 		xccdf_benchmark_free(bench);
-
 	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		print_time(action->file);
