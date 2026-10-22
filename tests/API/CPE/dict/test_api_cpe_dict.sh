@@ -113,6 +113,18 @@ function test_api_cpe_dict_import_official_v23(){
 	rm $out
 }
 
+function test_api_cpe_dict_match_cpe23(){
+	set -e -o pipefail
+	# Match CPE 2.3 formatted string against official CPE 2.3 dictionary
+	./test_api_cpe_dict --match $srcdir/official-cpe-dictionary_v2.3.xml "UTF-8" \
+		"cpe:2.3:a:1024cms:1024_cms:0.7:*:*:*:*:*:*:*"
+
+	# Match CPE 2.3 formatted string against official CPE 2.2 dictionary
+	./test_api_cpe_dict --match $srcdir/official-cpe-dictionary_v2.2.xml "UTF-8" \
+		"cpe:2.3:a:acronis:backup_%26_recovery_agent:10.0.11639:*:*:*:*:*:*:*"
+	return 0
+}
+
 # Testing.
 
 test_init
@@ -132,6 +144,7 @@ if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_api_cpe_dict_import_utf8_xml" test_api_cpe_dict_import_utf8_xml
     test_run "test_api_cpe_dict_import_official_v22" test_api_cpe_dict_import_official_v22
     test_run "test_api_cpe_dict_import_official_v23" test_api_cpe_dict_import_official_v23
+    test_run "test_api_cpe_dict_match_cpe23" test_api_cpe_dict_match_cpe23
 fi
 
 test_exit

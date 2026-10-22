@@ -28,6 +28,7 @@ test_init "test_api_xccdf_applicability.log"
 
 test_run "test_api_xccdf_applicability_cpe_applicable_rule" test_api_xccdf_cpe_eval applicable-rule-xccdf.xml cpe-dict.xml 0
 test_run "test_api_xccdf_applicability_cpe_applicable_benchmark" test_api_xccdf_cpe_eval applicable-benchmark-xccdf.xml cpe-dict.xml 0
+test_run "test_api_xccdf_applicability_cpe23_applicable_benchmark" test_api_xccdf_cpe_eval cpe23-applicable-benchmark-xccdf.xml cpe-dict.xml 0
 test_run "test_api_xccdf_applicability_cpe_nonexistant_platforms_rule" test_api_xccdf_cpe_eval nonexistant-platforms-rule-xccdf.xml cpe-dict.xml 1
 test_run "test_api_xccdf_applicability_cpe2_applicable_embedded_rule_with_cpe_dict" test_api_xccdf_cpe_eval cpe2-applicable-rule-embedded-xccdf-combined.xml cpe-dict.xml 0
 test_run "test_api_xccdf_applicability_cpe2_not_applicable_embedded_rule_with_cpe_dict" test_api_xccdf_cpe_eval cpe2-notapplicable-rule-embedded-xccdf-combined.xml cpe-dict.xml 1

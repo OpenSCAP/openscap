@@ -55,5 +55,12 @@ int cpe23_item_export(const struct cpe23_item *item, xmlTextWriterPtr writer);
  */
 void cpe23_item_free(struct cpe23_item *item);
 
+/**
+ * Get name attribute of cpe23-item representation
+ * @param item cpe23-item
+ * @return name string or NULL
+ */
+const char *cpe23_item_get_name(const struct cpe23_item *item);
+
 
 #endif

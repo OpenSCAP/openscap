@@ -114,6 +114,13 @@ void cpe_generator_export(const struct cpe_generator *generator, xmlTextWriterPt
 void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int base_version);
 
 /**
+ * Gets the CPE 2.3 formatted string name from cpe_item if available
+ * @param item CPE item
+ * @return CPE 2.3 string or NULL
+ */
+const char *cpe_item_get_cpe23_name(const struct cpe_item *item);
+
+/**
  * Exporting function for CPE vendor
  * @param vendor CPE vendor structure
  * @param writer xmlTextWriterPtr representing XML model
