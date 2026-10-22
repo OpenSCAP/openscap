@@ -1,3 +1,13 @@
+openscap-1.3.16                                                 2026-10-22
+- Vulnerability fix
+  - CVE-2026-85518: Fix path traversal when dumping SDS components
+- Maintenance, bug fix
+  - Lock test_file for all_python.sh
+  - Serialize the filehash DoS tests
+  - Free the TestResult of an evaluation that names an unknown rule
+  - Evaluate OVAL state with no entities as true
+  - Ship oscap-run-sce-script with the SCE engine
+
 openscap-1.3.15                                                 2026-10-12
 - New features
   - Add yescrypt support to encrypt_method in shadow probe
