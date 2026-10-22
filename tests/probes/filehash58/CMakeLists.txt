@@ -1,5 +1,6 @@
 if(ENABLE_PROBES_INDEPENDENT)
 	add_oscap_test("test_probes_filehash58.sh")
 	add_oscap_test("test_probes_filehash58_dos.sh")
+	set_tests_properties("probes/filehash58/test_probes_filehash58_dos.sh" PROPERTIES RESOURCE_LOCK oscap_test_dos_files)
 	add_oscap_test("rhbz1959570_segfault.sh")
 endif()

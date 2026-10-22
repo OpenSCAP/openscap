@@ -1,4 +1,5 @@
 if(OPENSCAP_PROBE_INDEPENDENT_FILEHASH)
 	add_oscap_test("test_probes_filehash.sh")
 	add_oscap_test("test_probes_filehash_dos.sh")
+	set_tests_properties("probes/filehash/test_probes_filehash_dos.sh" PROPERTIES RESOURCE_LOCK oscap_test_dos_files)
 endif()
