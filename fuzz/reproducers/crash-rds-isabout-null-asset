@@ -1,0 +1,7 @@
+<arf:asset-report-collection xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1" xmlns:core="http://scap.nist.gov/schema/reporting-core/1.1">
+<arf:assets><arf:asset id="a"/></arf:assets>
+<arf:reports><arf:report id="r"><arf:content/></arf:report></arf:reports>
+<core:relationships xmlns:arfvocab="http://scap.nist.gov/specification/arf/vocabulary/relationships/1.0#">
+<core:relationship type="arfvocab:isAbout" subject="r"><core:ref>b</core:ref></core:relationship>
+</core:relationships>
+</arf:asset-report-collection>
