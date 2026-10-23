@@ -34,6 +34,7 @@ int test_oscap_path_startswith(void);
 int test_oscap_strrm(void);
 int test_oscap_indent(void);
 int test_oscap_remove_excess_whitespace(void);
+int test_oscap_expand_ipv6(void);
 
 int test_oscap_path_startswith()
 {
@@ -168,6 +169,36 @@ int test_oscap_remove_excess_whitespace()
 	return 0;
 }
 
+int test_oscap_expand_ipv6()
+{
+	const char *cases[][2] = {
+		{ "::1", "0:0:0:0:0:0:0:1" },
+		{ "::", "0:0:0:0:0:0:0:0" },
+		{ "2001:db8::1", "2001:db8:0:0:0:0:0:1" },
+		{ "2001:db8:1::", "2001:db8:1:0:0:0:0:0" },
+		{ "2001:DB8:1::", "2001:db8:1:0:0:0:0:0" },
+		{ "2001:db8::00ff", "2001:db8:0:0:0:0:0:ff" },
+		{ "2001:db8::ff00:42:8329", "2001:db8:0:0:0:ff00:42:8329" },
+		{ "2001:db8::192.0.2.1", "2001:db8:0:0:0:0:c000:201" },
+		{ "2001:db8:0000:0000:0000:0000:198.51.100.200",
+		  "2001:db8:0:0:0:0:c633:64c8" },
+		{ "2001:db8:1:2:3:4:5:6", "2001:db8:1:2:3:4:5:6" },
+		{ "fe80::1%eth0", "fe80::1%eth0" },
+		{ "fe80::1:", "fe80::1:" },
+		{ "00:11:22:33:44:55", "00:11:22:33:44:55" },
+	};
+
+	for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
+		char *result = oscap_expand_ipv6(cases[i][0]);
+		int mismatch = strcmp(result, cases[i][1]);
+		free(result);
+		if (mismatch != 0)
+			return (int)i + 1;
+	}
+
+	return 0;
+}
+
 int main (int argc, char *argv[])
 {
 	int retval = 0;
@@ -180,6 +211,7 @@ int main (int argc, char *argv[])
 		return retval;
 	if ((retval = test_oscap_remove_excess_whitespace()) != 0)
 		return retval;
+	retval = test_oscap_expand_ipv6();
 
 	return retval;
 }
