@@ -816,15 +816,15 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 	while (xccdf_check_iterator_has_more(checks_it)){
 		struct xccdf_check *next = xccdf_check_iterator_next(checks_it);
 		const char *oscap_check_content = xccdf_check_get_content(next);
-
+		
 		// const char *plain_content = oscap_text_get_plaintext(oscap_check_content);
 		char *indented_content = oscap_indent(oscap_check_content, 8);
-		printf("Check\n%s\n", indented_content);
-		free(indented_content);
-
+		if (indented_content != NULL && strlen(indented_content) > 0) {
+			printf("Check\n%s\n", indented_content);
+			free(indented_content);
+		}
 	}
 	xccdf_check_iterator_free(checks_it);
-
 }
 
 static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
@@ -853,7 +853,11 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 	
 	} else if (action->rule_id) {
 		const struct xccdf_item *rule_item = xccdf_benchmark_get_item(bench, action->rule_id);
-		_info_print_rule_details((struct xccdf_item *) rule_item);
+		if (rule_item != NULL){
+			_info_print_rule_details((struct xccdf_item *) rule_item);
+		} else {
+			printf("Input \n");
+		}
 		xccdf_benchmark_free(bench);
 	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
@@ -864,18 +868,20 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 	}
 }
 
-/**
+
 // you need to modify this function, its yours
-static void app_info_single_ds_rule_info() {
+static int app_info_single_ds_rule_detail(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action) {
 
 	const char *prefix = "\t\t";
 	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
 	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
 
-	while (oscap_string_iterator_has_more(checklist_it)) {
+	int flag = 0;
+
+	while (oscap_string_iterator_has_more(checklist_it)) {	
 		const char * id = oscap_string_iterator_next(checklist_it);
 
-		
+
 		struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
 		if (xccdf_source == NULL) {
 			oscap_string_iterator_free(checklist_it);
@@ -893,22 +899,20 @@ static void app_info_single_ds_rule_info() {
 				return OSCAP_ERROR;
 			}
 			// get the rule id, then call
-
-			if (rule matched in checklist) {
-				// static void _my_print_rule_details(struct xccdf_policy *policy, struct xccdf_item *item) {
-				_my_print_rule_details()
-				// but you need to modify this function to not use policies
+			const struct xccdf_item *rule_item = xccdf_benchmark_get_item(bench, action->rule_id);
+			if (rule_item != NULL) {
+				flag = 1;
+				_info_print_rule_details((struct xccdf_item *) rule_item);
+				break;
 			}
-
-
-			
-
-			_print_xccdf_benchmark(bench, prefix, action->references); // TODO this is where your print function will be
-			// bench is freed as a side-effect of the function above
+			xccdf_benchmark_free(bench);
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			_print_xccdf_tailoring(xccdf_source, prefix, 0);
 		}
 		ds_sds_session_reset(session);
+	}
+	if (flag == 0){
+		printf("No rule with that ID found in the checklists\n");
 	}
 	oscap_string_iterator_free(checklist_it);
 	return OSCAP_OK;
@@ -918,7 +922,6 @@ static void app_info_single_ds_rule_info() {
 
 
 }
-**/
 
 static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
 {
@@ -927,8 +930,8 @@ static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds
 		return_value = app_info_single_ds_profiles_only(sds_it, session, action);
 	} else if (action->profile) {
 		return_value = app_info_single_ds_one_profile(sds_it, session, action);
-	// } else if (action->rule_id){
-	// 	return value = app_info_single_ds_rule_info(sds_it, session, action);
+	} else if (action->rule_id){
+		return_value = app_info_single_ds_rule_detail(sds_it, session, action);
 	} else {
 		return_value = app_info_single_ds_all(sds_it, session, action);
 	}
