@@ -856,7 +856,7 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 		if (rule_item != NULL){
 			_info_print_rule_details((struct xccdf_item *) rule_item);
 		} else {
-			printf("Input \n");
+			printf("Failure: Rule \'%s\' not found in the input file.\n", action->rule_id);
 		}
 		xccdf_benchmark_free(bench);
 	} else {
@@ -912,7 +912,8 @@ static int app_info_single_ds_rule_detail(struct ds_stream_index_iterator* sds_i
 		ds_sds_session_reset(session);
 	}
 	if (flag == 0){
-		printf("No rule with that ID found in the checklists\n");
+		printf("Failure: Rule \'%s\' not found in the input file.\n", action->rule_id);
+		return OSCAP_FAIL;
 	}
 	oscap_string_iterator_free(checklist_it);
 	return OSCAP_OK;
