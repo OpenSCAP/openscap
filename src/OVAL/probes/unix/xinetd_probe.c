@@ -172,6 +172,23 @@ typedef struct {
 
 #define XICFG_STRANS_MAXKEYLEN 256
 
+/*
+ * Build the (name, protocol) key used to index the service-translation
+ * tree (xiconf->ttree). The registration and lookup paths must produce
+ * identical keys, so both go through this builder rather than open-coding
+ * the concatenation. The write is bounded by snprintf(); a return of -1
+ * means the (name + protocol) pair did not fit buf and the caller should
+ * skip the operation rather than work with a truncated key. Returns the
+ * key length on success.
+ */
+static int xiconf_strans_key(char *buf, size_t bufsize, const char *name, const char *prot)
+{
+	int len = snprintf(buf, bufsize, "%s%s", name, prot);
+	if (len < 0 || (size_t)len >= bufsize)
+		return -1;
+	return len;
+}
+
 typedef struct {
 	int             fd;    /**< file descriptor */
 	char           *cpath; /**< path to the configuration file */
@@ -406,30 +423,32 @@ static xiconf_service_t *xiconf_service_new(void)
 
 static void xiconf_service_free(xiconf_service_t *service)
 {
-        if (service == NULL)
-                return;
-
 #define NONNULL_FREE(p) if (service->p != NULL) free(service->p)
 
-        if (service->id != service->name)
-                NONNULL_FREE(id);
+	/* Walk the ->next chain iteratively. Services that share an id are
+	 * linked through ->next, and a long chain (easy to produce from a
+	 * crafted config) would overflow the stack if freed recursively. */
+	while (service != NULL) {
+		xiconf_service_t *next = service->next;
 
-        NONNULL_FREE(name);
-        NONNULL_FREE(type);
-        NONNULL_FREE(flags);
-        NONNULL_FREE(socket_type);
-        NONNULL_FREE(protocol);
-        NONNULL_FREE(user);
-        NONNULL_FREE(server);
-        NONNULL_FREE(server_args);
-        NONNULL_FREE(only_from);
-        NONNULL_FREE(no_access);
+		if (service->id != service->name)
+			NONNULL_FREE(id);
 
-	if (service->next != NULL) {
-		xiconf_service_free(service->next);
+		NONNULL_FREE(name);
+		NONNULL_FREE(type);
+		NONNULL_FREE(flags);
+		NONNULL_FREE(socket_type);
+		NONNULL_FREE(protocol);
+		NONNULL_FREE(user);
+		NONNULL_FREE(server);
+		NONNULL_FREE(server_args);
+		NONNULL_FREE(only_from);
+		NONNULL_FREE(no_access);
+
+		free(service);
+		service = next;
 	}
-
-	free(service);
+#undef NONNULL_FREE
 }
 
 static void xiconf_stree_free_cb(struct rbt_str_node *n)
@@ -590,6 +609,161 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 #define tmpbuf_get(size) (((sizeof __tmpbuf)/sizeof(char))<(size)?malloc(sizeof(char)*(size)):__tmpbuf)
 #define tmpbuf_free(ptr) do { if ((ptr) != __tmpbuf) free(ptr); (ptr) = NULL; } while(0)
 
+/*
+ * Expand an "includedir DIR" directive: queue every regular config file in
+ * dirpath (skipping editor backups and dotted names) onto xiconf. Errors are
+ * logged and the offending entry skipped; the overall parse is never aborted.
+ *
+ * Split out of xiconf_parse_include() to keep both the include handling and
+ * the directory scan at a readable nesting depth.
+ */
+static void xiconf_parse_includedir(xiconf_t *xiconf, const xiconf_file_t *xifile,
+                                    const char *dirpath)
+{
+	DIR           *dirfp;
+	struct dirent *dent = NULL;
+	char           pathbuf[PATH_MAX+1];
+	size_t         incllen;
+
+	dD("includedir open: %s", dirpath);
+	dirfp = opendir (dirpath);
+
+	if (dirfp == NULL) {
+		dW("Can't open includedir: %s; %d, %s.", dirpath, errno, strerror (errno));
+		return;
+	}
+
+	incllen = strlen(dirpath);
+
+	/* Reject an over-long directory argument up front: we must fit
+	 * dirpath + '/' + an entry name + NUL in the fixed pathbuf, so
+	 * copying it unbounded would overflow the stack buffer. */
+	if (incllen >= PATH_MAX) {
+		dE("Length of the includedir argument is out of range: len=%zu, max=%zu",
+		   incllen, (size_t)PATH_MAX);
+		closedir(dirfp);
+		return;
+	}
+	memcpy(pathbuf, dirpath, incllen + 1);
+
+	if (incllen == 0 || pathbuf[incllen - 1] != PATH_SEPARATOR) {
+		pathbuf[incllen++] =  '/';
+		pathbuf[incllen  ] = '\0';
+	}
+
+	for (;;) {
+		errno = 0;
+		dent = readdir (dirfp);
+		if (dent == NULL) {
+			if (errno)
+				dW("Can't read directory: %s; %d, %s.", dirpath, errno, strerror (errno));
+			break;
+		}
+
+		if (fnmatch ("*~",  dent->d_name, FNM_PATHNAME) == 0 ||
+		    fnmatch ("*.*", dent->d_name, FNM_PATHNAME) == 0)
+		{
+			dD("Skipping: %s", dent->d_name);
+			continue;
+		}
+
+		/* Append the directory entry name to the '/'-terminated prefix
+		 * with a bounded write; snprintf() reports via its return value
+		 * when the entry would not fit pathbuf, in which case we skip it
+		 * instead of overflowing the buffer. */
+		int entry_len = snprintf(pathbuf + incllen,
+		                         sizeof(pathbuf) - incllen,
+		                         "%s", dent->d_name);
+		if (entry_len < 0 || (size_t)entry_len >= sizeof(pathbuf) - incllen) {
+			dW("includedir entry path too long, skipping: %s", dent->d_name);
+			continue;
+		}
+
+		xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1);
+	}
+
+	dD("includedir close: %s", dirpath);
+	closedir(dirfp);
+}
+
+/*
+ * Handle an "include FILE" / "includedir DIR" directive found on the
+ * current line and queue the referenced file(s) onto xiconf. The keyword
+ * has already been NUL-terminated at its first space; buffer/bufidx/l_size
+ * describe the line. Errors (missing argument, unreadable directory, depth
+ * limit reached, over-long path) are logged and the directive skipped --
+ * they never abort the overall parse. The caller owns and frees buffer.
+ *
+ * Split out of xiconf_parse() so the include handling stays at a readable
+ * nesting depth.
+ */
+static void xiconf_parse_include(xiconf_t *xiconf, const xiconf_file_t *xifile,
+                                 char *buffer, size_t bufidx, size_t l_size,
+                                 unsigned int max_depth)
+{
+#define XICONF_INCTYPE_FILE 0
+#define XICONF_INCTYPE_DIR  1
+	int            inctype = -1;
+	const char    *inclarg;
+	char           pathbuf[PATH_MAX+1];
+
+	if (strncmp("nclude", buffer + bufidx + 1, 6) != 0)
+		return;
+	switch (buffer[bufidx+1+6]) {
+	case '\0':
+		inctype = XICONF_INCTYPE_FILE;
+		break;
+	case  'd':
+		if (buffer[bufidx+1+6+1] ==  'i' &&
+		    buffer[bufidx+1+6+2] ==  'r' &&
+		    buffer[bufidx+1+6+3] == '\0')
+		{
+			inctype = XICONF_INCTYPE_DIR;
+		}
+		break;
+	}
+
+	/*
+	 * Get the include(dir) argument. The keyword was NUL-terminated where
+	 * its trailing space used to be, so skip past it (its real length --
+	 * "include" vs "includedir") and the inserted NUL to reach the
+	 * argument, staying within the line buffer.
+	 */
+	bufidx += (inctype == XICONF_INCTYPE_DIR)
+	          ? strlen("includedir") : strlen("include");
+	while (bufidx < l_size && isspace(buffer[bufidx]))
+		++bufidx;
+	buffer[l_size] = '\0';
+
+	if (bufidx + 1 > l_size) {
+		dW("Found include directive without an argument!");
+		return;
+	}
+	inclarg = buffer + bufidx + 1;
+
+	if (*inclarg == '\0') {
+		dW("Found include directive without an argument!");
+		return;
+	}
+
+	if (xifile->depth + 1 > max_depth) {
+		dE("include depth limit reached: %u", max_depth);
+		return;
+	}
+
+	if (inctype == XICONF_INCTYPE_FILE) {
+		strncpy (pathbuf, inclarg, sizeof(pathbuf)-1);
+		dD("includefile: %s", pathbuf);
+		xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1);
+		return;
+	}
+
+	if (inctype == XICONF_INCTYPE_DIR)
+		xiconf_parse_includedir(xiconf, xifile, inclarg);
+#undef XICONF_INCTYPE_FILE
+#undef XICONF_INCTYPE_DIR
+}
+
 xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 {
 	xiconf_t      *xiconf;
@@ -634,8 +808,13 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 			l_pend = strchr(l_pbeg, '\n');
 
 			if (l_pend == NULL) {
-				l_pend = l_pbeg + xifile->inlen;
-				l_size = xifile->inlen;
+				/* No newline before the end of the buffer: the
+				 * last line runs to EOF. Its length is the number
+				 * of bytes remaining from the current offset, not
+				 * the whole file length (inmem is NUL-terminated
+				 * at inlen). */
+				l_size = xifile->inlen - xifile->inoff;
+				l_pend = l_pbeg + l_size;
 			} else
 				l_size = (size_t)(l_pend - l_pbeg);
 
@@ -650,7 +829,17 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 			bufidx = 0;
 			memcpy (buffer, l_pbeg, l_size);
 			buffer[l_size] = ' ';
-			*strchr(buffer,  ' ') = '\0';
+			/* Terminate the keyword at the first whitespace. The
+			 * sentinel space written above guarantees strchr() finds
+			 * one -- unless the copied line contains an embedded NUL
+			 * byte (possible with arbitrary file content), in which
+			 * case the buffer is already NUL-terminated there and
+			 * strchr() returns NULL. Guard against that. */
+			{
+				char *sp = strchr(buffer, ' ');
+				if (sp != NULL)
+					*sp = '\0';
+			}
 
 			/* skip whitespaces before the keyword */
 			while(isspace(buffer[bufidx])) ++bufidx;
@@ -676,7 +865,16 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 						return (NULL);
 					}
 
-					*strchr(buffer + bufidx, ' ') = '\0';
+					/* Terminate the service name at the next space.
+					 * The sentinel space appended to buffer normally
+					 * guarantees one exists; an embedded NUL in binary
+					 * file content can make strchr() return NULL, in
+					 * which case the name is already NUL-terminated. */
+					{
+						char *sp = strchr(buffer + bufidx, ' ');
+						if (sp != NULL)
+							*sp = '\0';
+					}
 
 					if (xiconf_parse_section (xiconf, xifile, XICONF_SECTION_SERVICE, buffer + bufidx) != 0) {
 						tmpbuf_free(buffer);
@@ -700,118 +898,8 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 				/* blank line */
 				break;
 			case 'i':
-			{
-#define XICONF_INCTYPE_FILE 0
-#define XICONF_INCTYPE_DIR  1
-				int            inctype = -1;
-				char          *inclarg;
-				char           pathbuf[PATH_MAX+1];
-				size_t         incllen;
-
-				incllen = strlen (buffer + bufidx);
-
-				if (strncmp("nclude", buffer + bufidx + 1, 6) != 0)
-					break;
-				switch (buffer[bufidx+1+6]) {
-				case '\0':
-					inctype = XICONF_INCTYPE_FILE;
-					break;
-				case  'd':
-					if (buffer[bufidx+1+6+1] ==  'i' &&
-					    buffer[bufidx+1+6+2] ==  'r' &&
-					    buffer[bufidx+1+6+3] == '\0')
-					{
-						inctype = XICONF_INCTYPE_DIR;
-					}
-					break;
-				}
-
-				/*
-				 * Get the include(dir) argument
-				 */
-				bufidx += strlen("includedir");
-				while(isspace(buffer[bufidx])) ++bufidx;
-				inclarg = buffer + bufidx + 1;
-				buffer[l_size] = '\0';
-
-				if (*inclarg == '\0') {
-					dW("Found includedir directive without an argument!");
-					break;
-				}
-
-				if (xifile->depth + 1 > max_depth) {
-					dE("include depth limit reached: %u", max_depth);
-					break;
-				}
-
-				switch (inctype) {
-				case XICONF_INCTYPE_FILE:
-					strncpy (pathbuf, inclarg, sizeof(pathbuf)-1);
-
-					dD("includefile: %s", pathbuf);
-
-					if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0) {
-						tmpbuf_free(buffer);
-						continue;
-					}
-					else
-						break;
-				case XICONF_INCTYPE_DIR:
-				{
-					DIR           *dirfp;
-					struct dirent *dent = NULL;
-
-					dD("includedir open: %s", inclarg);
-					dirfp = opendir (inclarg);
-
-					if (dirfp == NULL) {
-						dW("Can't open includedir: %s; %d, %s.", inclarg, errno, strerror (errno));
-						break;
-					}
-
-					strcpy (pathbuf, inclarg);
-					incllen = strlen(inclarg);
-
-					if (pathbuf[incllen - 1] != PATH_SEPARATOR) {
-						if (incllen < PATH_MAX) {
-							pathbuf[incllen++] =  '/';
-							pathbuf[incllen  ] = '\0';
-						} else {
-							dE("Length of the includedir argument is out of range: len=%zu, max=%zu",
-							   incllen, PATH_MAX);
-							closedir(dirfp);
-							break;
-						}
-					}
-
-					for (;;) {
-						errno = 0;
-						dent = readdir (dirfp);
-						if (dent == NULL) {
-							if (errno)
-								dW("Can't read directory: %s; %d, %s.", inclarg, errno, strerror (errno));
-							break;
-						}
-
-						if (fnmatch ("*~",  dent->d_name, FNM_PATHNAME) == 0 ||
-						    fnmatch ("*.*", dent->d_name, FNM_PATHNAME) == 0)
-						{
-							dD("Skipping: %s", dent->d_name);
-							continue;
-						}
-
-						strcpy(pathbuf + incllen, dent->d_name);
-
-						if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0)
-							continue;
-					}
-
-					dD("includedir close: %s", inclarg);
-					closedir(dirfp);
-					break;
-				}}
+				xiconf_parse_include(xiconf, xifile, buffer, bufidx, l_size, max_depth);
 				break;
-			}
 			default:
 				dE("Don't know how to parse the line: %s", buffer);
 				tmpbuf_free(buffer);
@@ -854,18 +942,212 @@ static int xiconf_service_merge_defaults(xiconf_service_t *dst, xiconf_service_t
 	return (0);
 }
 
-int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char *name)
+/*
+ * Register a parsed service in the (name, protocol) -> id translation tree
+ * (xiconf->ttree). A service that lacks a name or protocol, or whose key does
+ * not fit the fixed key buffer, is skipped -- that is not an error. Returns 0
+ * on success or skip, -1 on an allocation/insertion failure.
+ *
+ * Split out of xiconf_parse_section() to keep the registration logic at a
+ * readable nesting depth.
+ */
+static int xiconf_strans_register(xiconf_t *xiconf, xiconf_service_t *scur)
 {
-	xiconf_service_t *snew, *scur;
-	char *buffer;
-	register size_t bufidx, keyidx;
-	char  *l_pbeg;
-	char  *l_pend;
-	size_t l_size;
-	char *key, *op, *opval;
+	xiconf_strans_t *st = NULL;
+	char             st_key[XICFG_STRANS_MAXKEYLEN+1];
+
+	/* We need both a name and a protocol, and the two together must fit the
+	 * fixed key buffer. A service section may legitimately omit the protocol,
+	 * in which case we just skip registration. (xiconf_getservice() builds
+	 * the lookup key the same way.) */
+	if (scur->name == NULL || scur->protocol == NULL ||
+	    xiconf_strans_key(st_key, sizeof(st_key), scur->name, scur->protocol) < 0) {
+		dW("Skipping (name, protocol) translation for service '%s'",
+		   scur->name ? scur->name : "");
+		return 0;
+	}
+
+	rbt_str_get(xiconf->ttree, st_key, (void *)&st);
+
+	if (st == NULL) {
+		dD("new strans record: k=%s", st_key);
+
+		st = malloc(sizeof(xiconf_strans_t));
+		st->cnt = 1;
+		st->srv = malloc (sizeof (xiconf_service_t *));
+		st->srv[0] = scur;
+
+		if (rbt_str_add (xiconf->ttree, strdup(st_key), st) != 0) {
+			dE("Can't add strans record (k=%s) into the strans tree (%p)",
+			   st_key, xiconf->ttree);
+			return (-1);
+		}
+		return 0;
+	}
+
+	dD("adding new strans record to an exiting one: k=%s, cnt=%u+1",
+	   st_key, st->cnt);
+
+	void *new_srv = realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
+	if (new_srv == NULL) {
+		dE("Failed to re-allocate memory for st->srv");
+		return (-1);
+	}
+	st->srv = new_srv;
+	st->srv[st->cnt - 1] = scur;
+
+	return 0;
+}
+
+/* Result of parsing one line of a section body. */
+#define XICONF_LINE_OK     0  /* line consumed; continue with the next one */
+#define XICONF_LINE_END    1  /* closing '}' reached; the section is done   */
+#define XICONF_LINE_ERROR (-1) /* malformed line; abort the section parse   */
+
+/*
+ * Parse a single section-body line held in buffer (a "<keyword> <op> <value>"
+ * item, a comment, a blank line, or the closing '}') and apply it to snew or
+ * xiconf. l_pend points just past the line in the original in-memory file.
+ * Returns one of XICONF_LINE_*.
+ *
+ * Split out of xiconf_parse_section() so the per-line handling uses ordinary
+ * returns instead of goto-based control flow.
+ */
+static int xiconf_parse_section_line(xiconf_t *xiconf, int type,
+                                     xiconf_service_t *snew,
+                                     char *buffer, const char *l_pend)
+{
+	size_t bufidx = 0;
+	size_t keyidx;
+	char  *key;
+	char  *op;
+	char  *opval;
 	void **opvar;
 	int (*opfun)(void *, char *);
 	struct xiconf_attr *xiattr;
+	int    ret = XICONF_LINE_OK;
+
+	/* skip whitespaces in the line buffer */
+	while (isspace(buffer[bufidx])) ++bufidx;
+
+	/*
+	 * now there should be a attribute name, comment
+	 * or the end-of-line.
+	 */
+	key = strdup(buffer + bufidx);
+	if (key == NULL)
+		exit(ENOMEM);
+
+	for (keyidx = 0; ! isspace(key[keyidx]) && key[keyidx]; keyidx++);
+	/* Remember whether the keyword is actually followed by whitespace
+	 * (i.e. by a value). If the loop stopped on key's own NUL terminator
+	 * instead, there is no value byte after it and stepping past the
+	 * terminator would read out of bounds. */
+	bool key_has_value = (key[keyidx] != '\0');
+	key[keyidx] = '\0';
+
+	switch (*key) {
+	case  '#':
+	case '\0':
+		/* skip this line */
+		break;
+	case  '}':
+		/* end of section reached */
+		++bufidx;
+
+		while (isspace(buffer[bufidx]))
+			++bufidx;
+		ret = (buffer[bufidx] != '\0') ? XICONF_LINE_ERROR : XICONF_LINE_END;
+		break;
+	default:
+		/* Step past the keyword's terminator only when a value follows;
+		 * otherwise point op at the empty string so the scan below does
+		 * not read past the end of key. */
+		op  = key_has_value ? key + keyidx + 1 : key + keyidx;
+
+		while (isspace(*op)) ++op;
+
+		if (op == l_pend) {
+			ret = XICONF_LINE_ERROR;
+			break;
+		}
+
+		xiattr = oscap_bfind(xiattr_table, XIATTR_TABLE_COUNT, sizeof(struct xiconf_attr), key, &xiattr_cmp);
+
+		if (xiattr == NULL) {
+			dW("Unknown keyword: %s", key);
+#if XICFG_PARSER_IGNORE_UNKNOWN != 1
+			ret = XICONF_LINE_ERROR;
+#endif
+			break;
+		}
+
+		if (!(type & xiattr->sections)) {
+			dW("Don't know how to handle attribute %s in this sections type (%d)",
+			   key, type);
+#if XICFG_PARSER_IGNORE_INVSECT != 1
+			ret = XICONF_LINE_ERROR;
+#endif
+			break;
+		}
+
+		switch (xiattr->pass_arg) {
+		case XIATTR_OPARG_LOCAL:
+			opvar = (void *)xiattr_ptr(snew, xiattr->offset);
+			dD("local opvar");
+			break;
+		case XIATTR_OPARG_GLOBAL:
+			opvar = (void *)xiconf;
+			dD("global opvar");
+			break;
+		default:
+			abort ();
+		}
+
+		if (*op == '=') {
+			opfun = xiattr->op_assign;
+			opval = op + 1;
+
+			dD("assign(%p): var=%s (at %p+%zu = %p), val=%s",
+			   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
+
+		} else if (*op == '+' && *(op+1) == '=') {
+			opfun = xiattr->op_insert;
+			opval = op + 2;
+
+			dD("insert(%p): var=%s (at %p+%zu = %p), val=%s",
+			   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
+
+		} else if (*op == '-' && *(op+1) == '=') {
+			opfun = xiattr->op_remove;
+			opval = op + 2;
+
+			dD("remove(%p): var=%s (at %p+%zu = %p), val=%s",
+			   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
+		} else {
+			ret = XICONF_LINE_ERROR;
+			break;
+		}
+
+		while (*opval && isspace(*opval)) ++opval;
+		if (opfun == NULL)
+			break;
+		if (opfun(opvar, opval) != 0)
+			ret = XICONF_LINE_ERROR;
+	}
+
+	free(key);
+	return ret;
+}
+
+int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char *name)
+{
+	xiconf_service_t *snew, *scur;
+	char  *buffer = NULL;
+	char  *l_pbeg;
+	char  *l_pend;
+	size_t l_size;
+	int    line_ret;
 	tmpbuf_def(128);
 
 	if (type == XICONF_SECTION_DEFAULTS && xiconf->defaults != NULL) {
@@ -875,6 +1157,12 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 		dE("Don't know how to handle anonymous service sections!");
 		return (-1);
 	}
+
+	/* The caller may have advanced inoff to (or past) the end of the
+	 * in-memory file -- e.g. a 'service NAME' keyword on the very last line
+	 * with no section body. Bail out instead of reading past inmem. */
+	if (xifile->inoff >= xifile->inlen)
+		return (-1);
 
 	/*
 	 * Find the left brace. Only the left brace, whitespace
@@ -902,7 +1190,9 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 	snew = xiconf_service_new();
 	snew->name = strdup(name);
 
-	for (;;) {
+	/* Stop at end-of-buffer: a section that is never closed with '}' must
+	 * not read past the in-memory copy of the file. */
+	while (xifile->inoff < xifile->inlen) {
 		/*
 		 * Find out the line boundaries.
 		 */
@@ -910,8 +1200,11 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 		l_pend = strchr(l_pbeg, '\n');
 
 		if (l_pend == NULL) {
-			l_pend = l_pbeg + xifile->inlen;
-			l_size = xifile->inlen;
+			/* See xiconf_parse(): a line that runs to EOF is only
+			 * as long as the bytes remaining from the current
+			 * offset, not the whole file. */
+			l_size = xifile->inlen - xifile->inoff;
+			l_pend = l_pbeg + l_size;
 		} else
 			l_size = (size_t)(l_pend - l_pbeg);
 
@@ -923,127 +1216,22 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 		 * newlines, etc.)
 		 */
 		buffer = tmpbuf_get(l_size + 1);
-		bufidx = 0;
-
 		memcpy (buffer, l_pbeg, l_size);
-
 		buffer[l_size] = '\0';
 
-		/* skip whitespaces in the line buffer */
-		while(isspace(buffer[bufidx])) ++bufidx;
+		line_ret = xiconf_parse_section_line(xiconf, type, snew, buffer, l_pend);
 
-		/*
-		 * now there should be a attribute name, comment
-		 * or the end-of-line.
-		 */
-		key = strdup(buffer + bufidx);
-		if (key == NULL)
-			exit(ENOMEM);
+		tmpbuf_free(buffer);
+		buffer = NULL;
 
-		for (keyidx = 0; ! isspace(key[keyidx]) && key[keyidx]; keyidx++);
-		key[keyidx] = '\0';
-
-		switch (*key) {
-		case  '#':
-		case '\0':
-			/* skip this line */
-			break;
-		case  '}':
-			/* end of section reached */
-			++bufidx;
-
-			while(isspace(buffer[bufidx]))
-				++bufidx;
-			if (buffer[bufidx] != '\0')
-				goto fail;
-
-			goto finish_section;
-		default:
-			op  = key + strlen(key) + 1;
-
-			while(isspace(*op)) ++op;
-
-			if (op == l_pend)
-				goto fail;
-
-			xiattr = oscap_bfind(xiattr_table, XIATTR_TABLE_COUNT, sizeof(struct xiconf_attr), key, &xiattr_cmp);
-
-			if (xiattr == NULL) {
-				dW("Unknown keyword: %s", key);
-#if XICFG_PARSER_IGNORE_UNKNOWN != 1
-				goto fail;
-#else
-				break;
-#endif
-			}
-
-			if (!(type & xiattr->sections)) {
-				dW("Don't know how to handle attribute %s in this sections type (%d)",
-				   key, type);
-#if XICFG_PARSER_IGNORE_INVSECT != 1
-				goto fail;
-#else
-				break;
-#endif
-			}
-
-			switch (xiattr->pass_arg) {
-			case XIATTR_OPARG_LOCAL:
-				opvar = (void *)xiattr_ptr(snew, xiattr->offset);
-				dD("local opvar");
-				break;
-			case XIATTR_OPARG_GLOBAL:
-				opvar = (void *)xiconf;
-				dD("global opvar");
-				break;
-			default:
-				abort ();
-			}
-
-			if (*op == '=') {
-				opfun = xiattr->op_assign;
-				opval = op + 1;
-
-				dD("assign(%p): var=%s (at %p+%zu = %p), val=%s",
-				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
-
-			} else if (*op == '+' && *(op+1) == '=') {
-				opfun = xiattr->op_insert;
-				opval = op + 2;
-
-				dD("insert(%p): var=%s (at %p+%zu = %p), val=%s",
-				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
-
-			} else if (*op == '-' && *(op+1) == '=') {
-				opfun = xiattr->op_remove;
-				opval = op + 2;
-
-				dD("remove(%p): var=%s (at %p+%zu = %p), val=%s",
-				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
-			} else
-				goto fail;
-
-			while (*opval && isspace(*opval)) ++opval;
-			if (opfun == NULL)
-				break;
-			if (opfun(opvar, opval) != 0)
-				goto fail;
+		if (line_ret == XICONF_LINE_ERROR) {
+			/* Malformed line: abandon the partially-built service. */
+			free(snew->name);
+			free(snew);
+			return (-1);
 		}
-
-		tmpbuf_free(buffer);
-		free(key);
-		key = NULL;
-	}
-
-finish_section:
-	if (buffer != NULL) {
-		dW("Line buffer not freed; freeing now...");
-		tmpbuf_free(buffer);
-	}
-
-	if (key != NULL) {
-		dW("key not freed; freeing now...");
-		free(key);
+		if (line_ret == XICONF_LINE_END)
+			break;
 	}
 
 	switch (type) {
@@ -1052,9 +1240,6 @@ finish_section:
 		break;
 	case XICONF_SECTION_SERVICE:
 	{
-		xiconf_strans_t *st;
-		char   st_key[XICFG_STRANS_MAXKEYLEN+1];
-
 		if (snew->id == NULL)
 			snew->id = snew->name;
 
@@ -1132,45 +1317,21 @@ finish_section:
 			if (!type_enum_match) {
 				dE("The value of the type setting does not match"
 				   " any of the allowed values by OVAL: %s", scur->type);
-				scur->type = "";
+				/* Replace with an owned empty string: scur->type was
+				 * strdup()'d and is free()'d by xiconf_service_free(),
+				 * so it must not be set to a string literal (that would
+				 * be an invalid free) and the old value must be freed
+				 * to avoid a leak. */
+				free(scur->type);
+				scur->type = strdup("");
 			}
 		}
 		/*
 		 * Add entry to the ttree for (name, protocol) -> (id) translation
 		 * (in case it's not already there)
 		 */
-		st = NULL;
-		strcpy(st_key, scur->name);
-		strcat(st_key, scur->protocol);
-
-		rbt_str_get(xiconf->ttree, st_key, (void *)&st);
-
-		if (st == NULL) {
-			dD("new strans record: k=%s", st_key);
-
-			st = malloc(sizeof(xiconf_strans_t));
-			st->cnt = 1;
-			st->srv = malloc (sizeof (xiconf_service_t *));
-			st->srv[0] = scur;
-
-			if (rbt_str_add (xiconf->ttree, strdup(st_key), st) != 0) {
-				dE("Can't add strans record (k=%s) into the strans tree (%p)",
-				   st_key, xiconf->ttree);
-				return (-1);
-			}
-		} else {
-			dD("adding new strans record to an exiting one: k=%s, cnt=%u+1",
-			   st_key, st->cnt);
-
-			void *new_srv = realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
-			if (new_srv == NULL) {
-				dE("Failed to re-allocate memory for st->srv");
-				return (-1);
-			} else {
-				st->srv = new_srv;
-				st->srv[st->cnt - 1] = scur;
-			}
-		}
+		if (xiconf_strans_register(xiconf, scur) != 0)
+			return (-1);
 
 		/*
 		 * Merge the service entry with defaults so as to fill all unset attributes
@@ -1191,20 +1352,6 @@ finish_section:
 	}
 
 	return (0);
-fail:
-	tmpbuf_free(buffer);
-	if (key) {
-		dW("fail: key not freed; freeing now...");
-		free(key);
-	}
-
-	if (snew->name) {
-		dW("fail: snew->name not freed; freeing now...");
-		free(snew->name);
-	}
-	free(snew);
-
-	return (-1);
 }
 
 xiconf_strans_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot)
@@ -1219,11 +1366,10 @@ xiconf_strans_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot)
 	if (name == NULL || prot == NULL)
 		return (NULL);
 
-	if (strlen(name) + strlen(prot) > XICFG_STRANS_MAXKEYLEN)
+	/* Build the key the same way the registration path does; a key that
+	 * doesn't fit can't have been registered, so there's nothing to find. */
+	if (xiconf_strans_key(strans_key, sizeof(strans_key), name, prot) < 0)
 		return (NULL);
-
-	strcpy(strans_key, name);
-	strcat(strans_key, prot);
 
 	rbt_str_get(xiconf->ttree, strans_key, (void *)&strans);
 
@@ -1342,6 +1488,9 @@ int op_assign_str(void *var, char *val)
 			dE("Error stripping white space from string '%s'", val);
 			return (-1);
 		}
+		/* Free any previously assigned value so that an attribute
+		 * repeated within a section does not leak the earlier string. */
+		free(*((char **)(var)));
 		*((char **)(var)) = strndup(val, (strend-val+1));
 		return (0);
 	} else
