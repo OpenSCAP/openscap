@@ -756,7 +756,7 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 	if (oscap_text_title !=NULL) {
 		const char *title = oscap_text_get_text(oscap_text_title);
 		if (title != NULL && strlen(title) > 0) {
-			printf("Title\r\t\033[1m%s\033[0;0m\n", title);
+			printf("Title\r\t\033[36m%s\033[0;0m\n", title);
 		}
 	}
 	oscap_text_iterator_free(title_it);
@@ -769,7 +769,7 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 		const char *description = oscap_text_get_text(oscap_description);
 		if (description != NULL && strlen(description) > 0) {
 			char *indented_description = oscap_indent(description, 8);
-			printf("Description\n%s\n", indented_description);
+			printf("\033[1mDescription\033[0;0m\n-----------\n%s\n", indented_description);
 			free(indented_description);
 			}
 		}
@@ -782,7 +782,7 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 		const char *rationale = oscap_text_get_text(oscap_rationale);
 		if (rationale != NULL && strlen(rationale) > 0) {
 			char *indented_rationale = oscap_indent(rationale, 8);
-			printf("Rationale\n%s\n", indented_rationale);
+			printf("\033[1mRationale\033[0;0m\n---------\n%s\n", indented_rationale);
 			free(indented_rationale);
 		}
 	}
@@ -793,7 +793,7 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 	while (oscap_string_iterator_has_more(warnings_it)) {
 		const char *warning = oscap_string_iterator_next(warnings_it);
 		char *indented_warning = oscap_indent(warning, 8);
-		printf("Warning\n%s\n", indented_warning);
+		printf("\033[1mWarnings\033[0;0m\n--------\n%s\n", indented_warning);
 		free(indented_warning);
 	}
 	oscap_string_iterator_free(warnings_it);
@@ -806,7 +806,7 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 
 		const char *plain_fixtext = oscap_text_get_plaintext(oscap_fixtext);
 		char *indented_fixtext = oscap_indent(plain_fixtext, 8);
-		printf("Fixtext\n%s\n", indented_fixtext);
+		printf("\033[1mFixtext\033[0;0m\n-------\n%s\n", indented_fixtext);
 		free(indented_fixtext);
 
 	}
@@ -820,7 +820,7 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 		// const char *plain_content = oscap_text_get_plaintext(oscap_check_content);
 		char *indented_content = oscap_indent(oscap_check_content, 8);
 		if (indented_content != NULL && strlen(indented_content) > 0) {
-			printf("Check\n%s\n", indented_content);
+			printf("\033[1mCheck\033[0;0m\n-----\n%s\n", indented_content);
 			free(indented_content);
 		}
 	}
