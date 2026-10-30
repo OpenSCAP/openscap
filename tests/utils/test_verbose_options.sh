@@ -32,4 +32,11 @@ grep -q "I: oscap: Identified document type: Benchmark" "$verblofile"
 $OSCAP xccdf eval  --verbose INFO --profile default --results "$results" --verbose-log-file "$verblofile" "$xccdf" >/dev/null 2>/dev/null
 grep -q "I: oscap: Identified document type: Benchmark" "$verblofile"
 
+# A regular file cannot be used as the parent directory of the log file.
+status=0
+$OSCAP info --verbose INFO --verbose-log-file "$verblofile/log" "$xccdf" >"$results" 2>"$stderr" || status=$?
+test "$status" -eq 1
+test ! -s "$results"
+grep -Fq "Failed to open file $verblofile/log:" "$stderr"
+
 rm -f "$results" "$stderr" "$verblofile"
