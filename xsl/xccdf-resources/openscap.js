@@ -194,22 +194,8 @@ function sortGroups(groups, key)
 	return groups.sort();
     default:
         return groups.sort(function(a, b){
-            var a_parts = a.split(/[.()-]/);
-            var b_parts = b.split(/[.()-]/);
-            var result = 0;
-            var min_length = Math.min(a_parts.length, b_parts.length);
-            var number = /^[1-9][0-9]*$/;
-            for (i = 0; i < min_length && result == 0; i++) {
-                if (a_parts[i].match(number) == null || a_parts[i].match(number) == null) {
-                    result = a_parts[i].localeCompare(b_parts[i]);
-                } else {
-                    result = parseInt(a_parts[i]) - parseInt(b_parts[i]);
-                }
-            }
-            if (result == 0) {
-                result = a_parts.length - b_parts.length;
-            }
-            return result;
+            // Break numeric ties consistently, including references with leading zeros.
+            return a.localeCompare(b, undefined, {numeric: true}) || a.localeCompare(b);
         });
     }
 }
