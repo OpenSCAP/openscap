@@ -73,7 +73,7 @@ struct oscap_module OSCAP_INFO_MODULE = {
 		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
 		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
 		"   --verbose-log-file <file>     - Write verbose information into file.\n"
-		"   --rule <rule_id>              - Print rule details",
+		"   --rule <rule_id>              - Print rule details.",
     .opt_parser = getopt_info,
     .func = app_info
 };
@@ -749,41 +749,53 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	return OSCAP_OK;
 }
 
-static void _info_print_rule_details(struct xccdf_item *item) {
+
+static const char* _severity_to_string(xccdf_level_t severity){
+
+	switch (severity) {
+		case XCCDF_LOW:
+			return "Low";
+		case XCCDF_MEDIUM:
+			return "Medium";
+		case XCCDF_HIGH:	
+			return "High";
+		default:
+			return "unknown";
+	}
+}
+
+static void _info_print_rule_details(const struct xccdf_item *item) {
 
 	struct oscap_text_iterator *title_it = xccdf_item_get_title(item);
 	struct oscap_text *oscap_text_title = oscap_textlist_get_preferred_text(title_it, NULL);
 	if (oscap_text_title !=NULL) {
 		const char *title = oscap_text_get_text(oscap_text_title);
 		if (title != NULL && strlen(title) > 0) {
-			printf("Title\r\t\033[36m%s\033[0;0m\n", title);
+			printf("%-10s\033[1m%s\033[0;0m\n", "Title", title);
 		}
 	}
 	oscap_text_iterator_free(title_it);
 
+	xccdf_level_t severity = xccdf_rule_get_severity( (struct xccdf_rule *) item);
+	const char *string_severity = _severity_to_string(severity);
+	printf("%-10s\033[1m%s\033[0;0m\n", "Severity", string_severity);
 
 	struct oscap_text_iterator *description_it = xccdf_item_get_description(item);
 	struct oscap_text *oscap_description = oscap_textlist_get_preferred_text(description_it, NULL);
-
 	if (oscap_description !=NULL) {
 		const char *description = oscap_text_get_text(oscap_description);
 		if (description != NULL && strlen(description) > 0) {
-			char *indented_description = oscap_indent(description, 8);
-			printf("\033[1mDescription\033[0;0m\n-----------\n%s\n", indented_description);
-			free(indented_description);
+			printf("\n\033[1mDescription\033[0;0m\n-----------\n%s\n", description);
 			}
 		}
 	oscap_text_iterator_free(description_it);
 	
 	struct oscap_text_iterator *rat_it = xccdf_item_get_rationale(item);
 	struct oscap_text *oscap_rationale = oscap_textlist_get_preferred_text(rat_it, NULL);
-
 	if (oscap_rationale != NULL) {
 		const char *rationale = oscap_text_get_text(oscap_rationale);
 		if (rationale != NULL && strlen(rationale) > 0) {
-			char *indented_rationale = oscap_indent(rationale, 8);
-			printf("\033[1mRationale\033[0;0m\n---------\n%s\n", indented_rationale);
-			free(indented_rationale);
+			printf("\n\033[1mRationale\033[0;0m\n---------\n%s\n", rationale);
 		}
 	}
 	oscap_text_iterator_free(rat_it);
@@ -792,9 +804,7 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 	struct oscap_string_iterator *warnings_it = oscap_stringlist_get_strings(warnings);
 	while (oscap_string_iterator_has_more(warnings_it)) {
 		const char *warning = oscap_string_iterator_next(warnings_it);
-		char *indented_warning = oscap_indent(warning, 8);
-		printf("\033[1mWarnings\033[0;0m\n--------\n%s\n", indented_warning);
-		free(indented_warning);
+		printf("\n\033[1mWarnings\033[0;0m\n--------\n%s\n", warning);
 	}
 	oscap_string_iterator_free(warnings_it);
 	oscap_stringlist_free(warnings);
@@ -805,9 +815,7 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 		struct oscap_text *oscap_fixtext = xccdf_fixtext_get_text(next);
 
 		const char *plain_fixtext = oscap_text_get_plaintext(oscap_fixtext);
-		char *indented_fixtext = oscap_indent(plain_fixtext, 8);
-		printf("\033[1mFixtext\033[0;0m\n-------\n%s\n", indented_fixtext);
-		free(indented_fixtext);
+		printf("\n\033[1mFixtext\033[0;0m\n-------\n%s\n", plain_fixtext);
 
 	}
 	xccdf_fixtext_iterator_free(fixtexts_it);
@@ -818,10 +826,8 @@ static void _info_print_rule_details(struct xccdf_item *item) {
 		const char *oscap_check_content = xccdf_check_get_content(next);
 		
 		// const char *plain_content = oscap_text_get_plaintext(oscap_check_content);
-		char *indented_content = oscap_indent(oscap_check_content, 8);
-		if (indented_content != NULL && strlen(indented_content) > 0) {
-			printf("\033[1mCheck\033[0;0m\n-----\n%s\n", indented_content);
-			free(indented_content);
+		if (oscap_check_content != NULL && strlen(oscap_check_content) > 0) {
+			printf("\n\033[1mCheck\033[0;0m\n-----\n%s\n", oscap_check_content);
 		}
 	}
 	xccdf_check_iterator_free(checks_it);
@@ -854,7 +860,7 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 	} else if (action->rule_id) {
 		const struct xccdf_item *rule_item = xccdf_benchmark_get_item(bench, action->rule_id);
 		if (rule_item != NULL){
-			_info_print_rule_details((struct xccdf_item *) rule_item);
+			_info_print_rule_details(rule_item);
 		} else {
 			printf("Failure: Rule \'%s\' not found in the input file.\n", action->rule_id);
 		}
@@ -902,7 +908,7 @@ static int app_info_single_ds_rule_detail(struct ds_stream_index_iterator* sds_i
 			const struct xccdf_item *rule_item = xccdf_benchmark_get_item(bench, action->rule_id);
 			if (rule_item != NULL) {
 				flag = 1;
-				_info_print_rule_details((struct xccdf_item *) rule_item);
+				_info_print_rule_details(rule_item);
 				break;
 			}
 			xccdf_benchmark_free(bench);
