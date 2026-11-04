@@ -223,7 +223,7 @@ keyword in the commit message. Now you can delete your `fix_455` branch:
 
 [source,bash]
 ----
-# detele the fix_455 branch locally
+# delete the fix_455 branch locally
 $ git branch -d fix_455
 # optionally also delete the fix_455 branch from your remote forked repository
 $ git push origin --delete fix_455
