@@ -851,7 +851,7 @@ char* ds_sds_mangle_filepath(const char* filepath)
 
 	// the string will grow 2x the size in the worst case (every char is /)
 	// TODO: We can do better than this by counting the slashes
-	char* ret = malloc(strlen(filepath) * sizeof(char) * 2);
+	char* ret = malloc((strlen(filepath) * sizeof(char) * 2) + 1);
 
 	const char* src_it = filepath;
 	char* dst_it = ret;
