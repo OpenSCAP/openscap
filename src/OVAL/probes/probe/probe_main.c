@@ -154,6 +154,9 @@ static void probe_common_main_cleanup(void *arg)
 	}
 	dD("probe_input_handler thread has joined with status %ld", (long) status);
 
+	/* The worker threads use the SEAP descriptor and the caches until they end. */
+	probe_worker_wait(probe);
+
 	probe_fini_function_t fini_function = probe_table_get_fini_function(probe->subtype);
 	if (fini_function != NULL) {
 		fini_function(probe->probe_arg);
@@ -162,6 +165,8 @@ static void probe_common_main_cleanup(void *arg)
 	probe_rcache_free(probe->rcache);
 	probe_icache_free(probe->icache);
 	rbt_i32_free(probe->workers);
+	pthread_cond_destroy(&probe->workers_cond);
+	pthread_mutex_destroy(&probe->workers_mutex);
 	SEAP_CTX_free(probe->SEAP_ctx);
 	free(probe->option);
 
@@ -244,6 +249,9 @@ void *probe_common_main(void *arg)
 	 * Create input handler (detached)
 	 */
         probe.workers   = rbt_i32_new();
+	pthread_mutex_init(&probe.workers_mutex, NULL);
+	pthread_cond_init(&probe.workers_cond, NULL);
+	probe.workers_running = 0;
 
 	probe_init_function_t init_function = probe_table_get_init_function(probe.subtype);
 	if (init_function != NULL) {
