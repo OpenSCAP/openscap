@@ -833,7 +833,7 @@ static void _info_print_rule_details(const struct xccdf_item *item) {
 	xccdf_check_iterator_free(checks_it);
 }
 
-static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
+static int app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
 {
 	if (action->show_profiles_only) {
 		_print_single_benchmark_profiles_only(bench);
@@ -863,6 +863,7 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 			_info_print_rule_details(rule_item);
 		} else {
 			printf("Failure: Rule \'%s\' not found in the input file.\n", action->rule_id);
+			return OSCAP_FAIL;
 		}
 		xccdf_benchmark_free(bench);
 	} else {
@@ -872,6 +873,7 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 		_print_single_benchmark_all(bench, "");
 		// bench is freed as a side-effect of the function above
 	}
+	return OSCAP_OK;
 }
 
 
@@ -1056,8 +1058,9 @@ static int app_info(const struct oscap_action *action)
 		struct xccdf_benchmark* bench = xccdf_benchmark_import_source(source);
 		if(!bench)
 			goto cleanup;
-		app_info_single_benchmark(bench, action, source);
-		// bench is freed as a side-effect of the function above
+		if (app_info_single_benchmark(bench, action, source) == OSCAP_FAIL)
+			// bench is freed as a side-effect of the function above
+			goto cleanup;
 	}
 	break;
 	case OSCAP_DOCUMENT_CPE_LANGUAGE: {
