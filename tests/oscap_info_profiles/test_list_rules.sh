@@ -96,3 +96,62 @@ grep -q "$ oscap info $temp_dir/$tailoring_sds_nf" "$stderr"
 rm -rf "$temp_dir"
 
 rm -f $stdout $stderr
+
+# --profiles must produce only ID:title rows for standalone tailoring files.
+stdout=$(mktemp -t info_profiles.out.XXXXXX)
+stderr=$(mktemp -t info_profiles.err.XXXXXX)
+tailoring=$(mktemp -t info_profiles.xml.XXXXXX)
+expected=$(mktemp -t info_profiles.expected.XXXXXX)
+trap 'rm -f "$stdout" "$stderr" "$tailoring" "$expected"' EXIT
+
+$OSCAP info --profiles "$srcdir/test_tailoring_file.xml" >"$stdout" 2>"$stderr"
+[ ! -s "$stderr" ]
+printf '%s\n' 'xccdf_com.example.www_profile_P1_tailored:Tailored P1' >"$expected"
+diff -u "$expected" "$stdout"
+
+# An unavailable benchmark must not prevent listing locally defined profiles.
+cat >"$tailoring" <<'XML'
+<Tailoring xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_com.example.www_tailoring_profiles">
+  <benchmark href="missing-benchmark.xml"/>
+  <version>1.0</version>
+  <Profile id="xccdf_com.example.www_profile_first" extends="xccdf_com.example.www_profile_base">
+    <title>First
+profile</title>
+  </Profile>
+  <Profile id="xccdf_com.example.www_profile_untitled" extends="xccdf_com.example.www_profile_base"/>
+  <Profile id="xccdf_com.example.www_profile_abstract" abstract="true"><title>Abstract profile</title></Profile>
+</Tailoring>
+XML
+$OSCAP info --profiles "$tailoring" >"$stdout" 2>"$stderr"
+[ ! -s "$stderr" ]
+cat >"$expected" <<'ROWS'
+xccdf_com.example.www_profile_first:Firstprofile
+xccdf_com.example.www_profile_untitled:
+xccdf_com.example.www_profile_abstract:Abstract profile
+ROWS
+diff -u "$expected" "$stdout"
+
+# Normal info retains its document header, benchmark hint and verbose profiles.
+$OSCAP info "$tailoring" >"$stdout" 2>"$stderr"
+[ ! -s "$stderr" ]
+grep -Fx 'Document type: XCCDF Tailoring' "$stdout"
+grep -Fx 'Benchmark Hint: missing-benchmark.xml' "$stdout"
+grep -Fx 'Profiles:' "$stdout"
+
+# SDS tailoring profiles use the same terse output without a benchmark hint.
+$OSCAP info --profiles "$srcdir/test_reference_ds_with_tailoring.xml" >"$stdout" 2>"$stderr"
+[ ! -s "$stderr" ]
+! grep -q 'Benchmark Hint:' "$stdout"
+grep -Fx 'xccdf_com.example.www_profile_P1_tailored:Tailored P1' "$stdout"
+! grep -vE '^xccdf_[^:]+:.*$' "$stdout"
+
+# Tailoring without local profiles has an empty terse listing, not headers.
+cat >"$tailoring" <<'XML'
+<Tailoring xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_com.example.www_tailoring_empty">
+  <benchmark href="missing-benchmark.xml"/>
+  <version>1.0</version>
+</Tailoring>
+XML
+$OSCAP info --profiles "$tailoring" >"$stdout" 2>"$stderr"
+[ ! -s "$stderr" ]
+[ ! -s "$stdout" ]
