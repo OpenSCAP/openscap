@@ -188,6 +188,20 @@ static int get_systemd_units(DBusConnection *conn, const char *method, bool unit
 
 		_DBusBasicValue value;
 		dbus_message_iter_get_basic(&unit_full_path_and_name, &value);
+		if (!unit_files) {
+			/* Known units can include unresolved dependencies. Do not collect
+			 * dummy properties for names with no corresponding unit. */
+			DBusMessageIter load_state = unit_full_path_and_name;
+			if (!dbus_message_iter_next(&load_state) || !dbus_message_iter_next(&load_state)
+					|| dbus_message_iter_get_arg_type(&load_state) != DBUS_TYPE_STRING)
+				goto cleanup;
+			_DBusBasicValue state;
+			dbus_message_iter_get_basic(&load_state, &state);
+			if (strcmp(state.str, "not-found") == 0) {
+				dbus_message_iter_next(&unit_iter);
+				continue;
+			}
+		}
 		/* ListUnitFiles returns paths, whereas ListUnits returns unit names.
 		 * Never turn a template into a different, nonexistent unit by removing
 		 * its @. Actual instances are returned by ListUnits or have their own
