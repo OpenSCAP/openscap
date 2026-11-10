@@ -431,6 +431,9 @@ bool oscap_ptr_cmp(void *node1, void *node2);
  * Asset Identification specification requires fully expanded IPv6 addresses.
  * Despite this being greatly discouraged by RFC 5952 we have to comply and
  * expand given IPv6, otherwise the resulting AI content would be invalid.
+ *
+ * @return newly allocated expanded address, or a copy of input if it is not
+ * an IPv6 address or has a %zone suffix
  */
 char *oscap_expand_ipv6(const char *input);
 
