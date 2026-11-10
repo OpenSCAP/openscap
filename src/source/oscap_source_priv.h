@@ -60,12 +60,31 @@ struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filep
 
 /**
  * Get an xmlTextReader assigned with this resource. The reader needs to be
- * disposed by caller.
+ * disposed by caller. This variant walks over the in-memory DOM (loading
+ * it first if necessary).
  * @memberof oscap_source
  * @param source Resource to read the content
  * @returns xmlTextReader structure to read the content
  */
 xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source);
+
+/**
+ * Get an xmlTextReader that parses the content as it reads, without a DOM:
+ * from the file of a file source, from the buffer of a memory source. A
+ * source whose DOM is loaded is walked, as by oscap_source_get_xmlTextReader,
+ * and so is a bzip2 source, whose DOM gets loaded. An executable script,
+ * such as an SCE check, gives NULL, as oscap_source_get_xmlDoc skips it.
+ * The reader needs to be disposed by caller.
+ *
+ * Callers that read the content once, from start to end, should prefer it
+ * to oscap_source_get_xmlTextReader, which keeps the DOM for the lifetime of
+ * the source.
+ *
+ * @memberof oscap_source
+ * @param source Resource to read the content
+ * @returns xmlTextReader structure to read the content
+ */
+xmlTextReader *oscap_source_get_streaming_xmlTextReader(struct oscap_source *source);
 
 /**
  * Get a DOM representation of this resource. The document ins still owned

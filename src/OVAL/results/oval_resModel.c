@@ -200,7 +200,7 @@ int oval_results_model_import_source(struct oval_results_model *model, struct os
 
 	/* setup context */
 	struct oval_parser_context context;
-	context.reader = oscap_source_get_xmlTextReader(source);
+	context.reader = oscap_source_get_streaming_xmlTextReader(source);
 	if (context.reader == NULL) {
 		return -1;
 	}
