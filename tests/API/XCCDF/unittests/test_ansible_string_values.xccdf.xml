@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_com.example.www_benchmark_ansible_strings">
+  <status>incomplete</status>
+  <title>Ansible string substitution</title>
+  <description>Tagged string values retain their literal contents.</description>
+  <version>1.0</version>
+  <Value id="xccdf_com.example.www_value_pipe" type="string"><title>pipe</title><value>|/bin/false</value></Value>
+  <Value id="xccdf_com.example.www_value_folded" type="string"><title>folded</title><value>&gt;/bin/false</value></Value>
+  <Value id="xccdf_com.example.www_value_quotes" type="string"><title>quotes</title><value>"quoted" and 'single'</value></Value>
+  <Value id="xccdf_com.example.www_value_backslash" type="string"><title>backslash</title><value>\d+\path</value></Value>
+  <Value id="xccdf_com.example.www_value_comment" type="string"><title>comment</title><value>a # b</value></Value>
+  <Value id="xccdf_com.example.www_value_mapping" type="string"><title>mapping</title><value>a: b</value></Value>
+  <Value id="xccdf_com.example.www_value_spaces" type="string"><title>spaces</title><value>  padded  </value></Value>
+  <Value id="xccdf_com.example.www_value_multiline" type="string"><title>multiline</title><value>first
+second
+</value></Value>
+  <Value id="xccdf_com.example.www_value_tab" type="string"><title>tab</title><value>a&#9;b</value></Value>
+  <Value id="xccdf_com.example.www_value_cr" type="string"><title>cr</title><value>a&#13;b</value></Value>
+  <Value id="xccdf_com.example.www_value_bool" type="string"><title>bool</title><value>true</value></Value>
+  <Value id="xccdf_com.example.www_value_number" type="string"><title>number</title><value>0123</value></Value>
+  <Value id="xccdf_com.example.www_value_unicode" type="string"><title>unicode</title><value>héllo 世界</value></Value>
+  <Value id="xccdf_com.example.www_value_linebreaks" type="string"><title>Unicode line breaks</title><value>&#x85;&#x2028;&#x2029;</value></Value>
+  <Rule id="xccdf_com.example.www_rule_strings" selected="true">
+    <title>Generate Ansible string variables</title>
+    <fix system="urn:xccdf:fix:script:ansible">- name: XCCDF Value pipe # promote to variable
+  set_fact:
+    pipe: !!str <sub idref="xccdf_com.example.www_value_pipe"/>
+  tags:
+    - always
+- name: XCCDF Value folded # promote to variable
+  set_fact:
+    folded: !!str <sub idref="xccdf_com.example.www_value_folded"/>
+  tags:
+    - always
+- name: XCCDF Value quotes # promote to variable
+  set_fact:
+    quotes: !!str <sub idref="xccdf_com.example.www_value_quotes"/>
+  tags:
+    - always
+- name: XCCDF Value backslash # promote to variable
+  set_fact:
+    backslash: !!str <sub idref="xccdf_com.example.www_value_backslash"/>
+  tags:
+    - always
+- name: XCCDF Value comment # promote to variable
+  set_fact:
+    comment: !!str <sub idref="xccdf_com.example.www_value_comment"/>
+  tags:
+    - always
+- name: XCCDF Value mapping # promote to variable
+  set_fact:
+    mapping: !!str <sub idref="xccdf_com.example.www_value_mapping"/>
+  tags:
+    - always
+- name: XCCDF Value spaces # promote to variable
+  set_fact:
+    spaces: !!str <sub idref="xccdf_com.example.www_value_spaces"/>
+  tags:
+    - always
+- name: XCCDF Value multiline # promote to variable
+  set_fact:
+    multiline: !!str <sub idref="xccdf_com.example.www_value_multiline"/>
+  tags:
+    - always
+- name: XCCDF Value tab # promote to variable
+  set_fact:
+    tab: !!str <sub idref="xccdf_com.example.www_value_tab"/>
+  tags:
+    - always
+- name: XCCDF Value cr # promote to variable
+  set_fact:
+    cr: !!str <sub idref="xccdf_com.example.www_value_cr"/>
+  tags:
+    - always
+- name: XCCDF Value bool # promote to variable
+  set_fact:
+    bool: !!str <sub idref="xccdf_com.example.www_value_bool"/>
+  tags:
+    - always
+- name: XCCDF Value number # promote to variable
+  set_fact:
+    number: !!str <sub idref="xccdf_com.example.www_value_number"/>
+  tags:
+    - always
+- name: XCCDF Value unicode # promote to variable
+  set_fact:
+    unicode: !!str <sub idref="xccdf_com.example.www_value_unicode"/>
+  tags:
+    - always
+- name: XCCDF Value linebreaks # promote to variable
+  set_fact:
+    linebreaks: !!str <sub idref="xccdf_com.example.www_value_linebreaks"/>
+  tags:
+    - always
+- name: XCCDF Value already_quoted # promote to variable
+  set_fact:
+    already_quoted: "<sub idref="xccdf_com.example.www_value_pipe"/>"
+  tags:
+    - always
+- name: XCCDF Value numeric # promote to variable
+  set_fact:
+    numeric: 42
+  tags:
+    - always
+- name: Keep block scalars
+  debug:
+    msg: |-
+      literal block
+    tag_text: "example: !!str <sub idref="xccdf_com.example.www_value_bool"/>"
+</fix>
+    <fix system="urn:xccdf:fix:script:sh">value=!!str <sub idref="xccdf_com.example.www_value_pipe"/>
+</fix>
+  </Rule>
+</Benchmark>
