@@ -184,7 +184,7 @@ static void _print_xccdf_profile_terse(const struct xccdf_profile *prof, const c
 	_remove_occurence_of_character_from_string(cleaned_profile_id, '\n');
 	printf("%s:%s\n",
 		cleaned_profile_id,
-		profile_title);
+		profile_title != NULL ? profile_title : "");
 	free(profile_title);
 }
 
@@ -314,7 +314,8 @@ static inline void _print_xccdf_tailoring_header(struct xccdf_tailoring *tailori
 static inline void _print_xccdf_tailoring(struct oscap_source *source, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
 {
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, NULL);
-	_print_xccdf_tailoring_header(tailoring, prefix);
+	if (prefix != NULL)
+		_print_xccdf_tailoring_header(tailoring, prefix);
 
 	struct xccdf_profile_iterator *prof_it = xccdf_tailoring_get_profiles(tailoring);
 	_print_xccdf_profiles(prof_it, prefix, print_one_profile);
@@ -1023,6 +1024,8 @@ static int app_info(const struct oscap_action *action)
 			}
 			xccdf_policy_model_free(policy_model);
 			oscap_source_free(bench_source);
+		} else if (action->show_profiles_only) {
+			_print_xccdf_tailoring(source, NULL, _print_xccdf_profile_terse);
 		} else {
 			printf("Document type: XCCDF Tailoring\n");
 			print_time(action->file);
