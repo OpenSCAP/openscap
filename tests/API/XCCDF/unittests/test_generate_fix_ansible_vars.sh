@@ -56,3 +56,18 @@ diff -u $srcdir/$golden_tailored $playbook >$out
 
 
 rm $playbook $out
+
+# Check literal string substitutions, including YAML metacharacters.
+name=test_ansible_string_values
+playbook=$(mktemp -t "${name}.yml.XXXXXX")
+stderr=$(mktemp -t "${name}.err.XXXXXX")
+trap 'rm -f "$playbook" "$stderr"' EXIT
+
+$OSCAP xccdf generate fix --fix-type ansible "$srcdir/$name.xccdf.xml" >"$playbook" 2>"$stderr"
+[ ! -s "$stderr" ]
+sed '/^#/d; /^$/d' "$playbook" | diff -u "$srcdir/$name.playbook.yml" -
+
+# The same substitution in a shell fix must stay literal, without YAML quoting.
+$OSCAP xccdf generate fix --fix-type bash "$srcdir/$name.xccdf.xml" >"$playbook" 2>"$stderr"
+[ ! -s "$stderr" ]
+grep -Fx 'value=!!str |/bin/false' "$playbook"
