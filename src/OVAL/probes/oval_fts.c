@@ -127,6 +127,26 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 		ofts_ent->file = NULL;
 	}
 
+#if !defined(OS_WINDOWS)
+	/*
+	 * fts follows a symbolic link from the real root, so a link whose
+	 * target lies in the prefix alone looks dangling. Classify such an
+	 * entry by its target in the prefix.
+	 */
+	if (ofts->prefix != NULL && fts_ent->fts_info == FTS_SLNONE) {
+		char *target = oscap_path_in_root(ofts->prefix, fts_ent->fts_path + shift, true);
+		struct stat st;
+
+		if (target != NULL && stat(target, &st) == 0) {
+			if (S_ISREG(st.st_mode))
+				ofts_ent->fts_info = FTS_F;
+			else if (S_ISDIR(st.st_mode))
+				ofts_ent->fts_info = FTS_D;
+		}
+		free(target);
+	}
+#endif
+
 #if defined(OSCAP_FTS_DEBUG)
 	dD("New OVAL_FTSENT: file: '%s', path: '%s'.", ofts_ent->file, ofts_ent->path);
 #endif

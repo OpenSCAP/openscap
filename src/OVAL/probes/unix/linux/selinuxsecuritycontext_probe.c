@@ -268,7 +268,11 @@ static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, con
 
 	pbuf[plen+flen] = '\0';
 
-	char *path_with_prefix = oscap_path_join(prefix, pbuf);
+	char *path_with_prefix = oscap_path_in_root(prefix, pbuf, true);
+	if (path_with_prefix == NULL) {
+		dD("Cannot resolve %s in the probe root: errno=%d, %s.", pbuf, errno, strerror(errno));
+		return 0;
+	}
 	if (access(path_with_prefix, F_OK) == -1 ) {
 		dD("File does not exists anymore (could happen to /dev/fd/X)");
 		free(path_with_prefix);

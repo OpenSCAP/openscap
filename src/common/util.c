@@ -45,8 +45,10 @@
 #include <stdlib.h>
 #include <windows.h>
 #else
+#include <errno.h>
 #include <libgen.h>
 #include <strings.h>
+#include <unistd.h>
 #endif
 
 #define PATH_SEPARATOR '/'
@@ -380,12 +382,97 @@ char *oscap_path_join(const char *path1, const char *path2)
 }
 
 #ifndef OS_WINDOWS
+/* The limit of symbolic links in one resolution, as on Linux. */
+#define MAX_SYMLINKS 40
+
+char *oscap_path_in_root(const char *root, const char *path, bool follow)
+{
+	char out[PATH_MAX], rest[PATH_MAX], full[PATH_MAX], target[PATH_MAX];
+	size_t rootlen, outlen = 0, len;
+	int links = 0;
+	char *p, *end;
+	bool last;
+
+	if (root == NULL)
+		return oscap_strdup(path);
+	rootlen = strlen(root);
+	while (rootlen > 0 && root[rootlen - 1] == PATH_SEPARATOR)
+		rootlen--;
+	if (snprintf(rest, sizeof(rest), "%s", path) >= (int)sizeof(rest))
+		goto toolong;
+	out[0] = '\0';
+	p = rest;
+	for (;;) {
+		while (*p == PATH_SEPARATOR)
+			p++;
+		if (*p == '\0')
+			break;
+		end = strchr(p, PATH_SEPARATOR);
+		len = end != NULL ? (size_t)(end - p) : strlen(p);
+		end = p + len;
+		last = end[strspn(end, "/")] == '\0';
+		if (len == 1 && p[0] == '.') {
+			p = end;
+			continue;
+		}
+		if (len == 2 && p[0] == '.' && p[1] == '.') {
+			while (outlen > 0 && out[outlen - 1] != PATH_SEPARATOR)
+				outlen--;
+			if (outlen > 0)
+				outlen--;
+			out[outlen] = '\0';
+			p = end;
+			continue;
+		}
+		if (outlen + 1 + len >= sizeof(out))
+			goto toolong;
+		out[outlen] = PATH_SEPARATOR;
+		memcpy(out + outlen + 1, p, len);
+		out[outlen + 1 + len] = '\0';
+		if (last && !follow && *end == '\0') {
+			outlen += 1 + len;
+			break;
+		}
+		if (snprintf(full, sizeof(full), "%.*s%s", (int)rootlen, root, out) >= (int)sizeof(full))
+			goto toolong;
+		/* readlink fails with EINVAL for a file that is not a link */
+		ssize_t n = readlink(full, target, sizeof(target) - 1);
+		if (n >= 0 && ++links > MAX_SYMLINKS) {
+			errno = ELOOP;
+			return NULL;
+		}
+		if (n < 0) {
+			/* Not a symbolic link, or one that cannot be read:
+			   keep the component as it is. */
+			outlen += 1 + len;
+			p = end;
+			continue;
+		}
+		target[n] = '\0';
+		/* The target replaces the component, relative to the
+		   directory resolved so far, or to root when absolute. */
+		if (target[0] == PATH_SEPARATOR)
+			outlen = 0;
+		out[outlen] = '\0';
+		if (strlen(target) + strlen(end) >= sizeof(rest))
+			goto toolong;
+		memmove(rest + strlen(target), end, strlen(end) + 1);
+		memcpy(rest, target, strlen(target));
+		p = rest;
+	}
+	return oscap_sprintf("%.*s%s", (int)rootlen, root, outlen > 0 ? out : "/");
+
+toolong:
+	errno = ENAMETOOLONG;
+	return NULL;
+}
+
 FILE *oscap_fopen_with_prefix(const char *prefix, const char *path)
 {
 	FILE *fp;
 	if (prefix != NULL) {
-		char *path_with_prefix = oscap_sprintf("%s%s", prefix, path);
-		fp = fopen(path_with_prefix, "r");
+		char *path_with_prefix = oscap_path_in_root(prefix, path, true);
+		fp = path_with_prefix != NULL ? fopen(path_with_prefix, "r") : NULL;
 		free(path_with_prefix);
 	} else {
 		fp = fopen(path, "r");

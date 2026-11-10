@@ -167,8 +167,8 @@ static int filehash58_cb(const char *prefix, const char *p, const char *f, const
 	if (prefix == NULL) {
 		fd = open(pbuf, O_RDONLY | O_NONBLOCK);
 	} else {
-		char *path_with_prefix = oscap_path_join(prefix, pbuf);
-		fd = open(path_with_prefix, O_RDONLY | O_NONBLOCK);
+		char *path_with_prefix = oscap_path_in_root(prefix, pbuf, true);
+		fd = path_with_prefix != NULL ? open(path_with_prefix, O_RDONLY | O_NONBLOCK) : -1;
 		free(path_with_prefix);
 	}
 

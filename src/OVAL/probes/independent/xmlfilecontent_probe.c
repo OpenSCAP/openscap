@@ -177,8 +177,8 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	if (prefix == NULL) {
 		doc = xmlParseFile(whole_path);
 	} else {
-		char *path_with_prefix = oscap_path_join(prefix, whole_path);
-		doc = xmlParseFile(path_with_prefix);
+		char *path_with_prefix = oscap_path_in_root(prefix, whole_path, true);
+		doc = path_with_prefix != NULL ? xmlParseFile(path_with_prefix) : NULL;
 		free(path_with_prefix);
 	}
 

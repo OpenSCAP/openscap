@@ -262,6 +262,30 @@ int patition_probe_offline_mode_supported(void)
         return PROBE_OFFLINE_OWN;
 }
 
+#if defined(OS_LINUX)
+/*
+ * open_mounts opens the mount table at path. Under a probe root it opens
+ * the mounts of the init process of the root when the root has them, and
+ * puts their path in path: MTAB_PATH lists the mounts of the reading
+ * process, which for a probe in a container are those of the container.
+ */
+static int open_mounts(const char *prefix, char *path)
+{
+        if (prefix != NULL) {
+                char init_path[PATH_MAX];
+                int fd;
+
+                snprintf(init_path, PATH_MAX, "%s/proc/1/mounts", prefix);
+                fd = open(init_path, O_RDONLY);
+                if (fd >= 0 || errno != ENOENT) {
+                        snprintf(path, PATH_MAX, "%s", init_path);
+                        return fd;
+                }
+        }
+        return open(path, O_RDONLY);
+}
+#endif
+
 int partition_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         int probe_ret = 0;
@@ -278,7 +302,7 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         int   mnt_fd;
         struct statfs stfs;
 
-        mnt_fd = open(mnt_path, O_RDONLY);
+        mnt_fd = open_mounts(prefix, mnt_path);
 
         if (mnt_fd < 0) {
                 if (!prefix)
