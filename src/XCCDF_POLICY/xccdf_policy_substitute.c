@@ -25,6 +25,7 @@
 #include <libxml/tree.h>
 
 #include "util.h"
+#include "oscap_buffer.h"
 #include "xml_iterate.h"
 #include "debug_priv.h"
 #include "_error.h"
@@ -36,6 +37,7 @@
 struct _xccdf_text_substitution_data {
 	struct xccdf_policy *policy;
 	struct xccdf_rule_result *rule_result;
+	bool ansible;
 	enum {
 		_TAILORING_TYPE = 1,
 		_DOCUMENT_GENERATION_TYPE = 2,
@@ -48,6 +50,58 @@ struct _xccdf_text_substitution_data {
 static bool _xhtml_is_supported_namespace(xmlNs *ns)
 {
 	return ns != NULL && oscap_streq((const char *) ns->href, (const char *) XCCDF_XHTML_NAMESPACE);
+}
+
+/* Quote a standalone, explicitly tagged Ansible string before interpolation.
+ * At this point we can distinguish literal XCCDF data from YAML syntax supplied
+ * by the template. Quoting afterwards would confuse values containing quotes
+ * with templates that already quote their substitutions.
+ */
+static char *_ansible_quote_string(xmlNode *node, const char *value)
+{
+	if (node->prev == NULL || node->prev->type != XML_TEXT_NODE)
+		return NULL;
+	const char *prefix = (const char *) node->prev->content;
+	const char *line = strrchr(prefix, '\n');
+	line = line == NULL ? prefix : line + 1;
+	while (*line == ' ' || *line == '\t')
+		line++;
+	/* Restrict this to a mapping value, not text inside a quoted scalar. */
+	while ((*line >= 'a' && *line <= 'z') || (*line >= 'A' && *line <= 'Z') ||
+			(*line >= '0' && *line <= '9') || *line == '_')
+		line++;
+	if (strcmp(line, ": !!str ") != 0)
+		return NULL;
+	if (node->next != NULL && (node->next->type != XML_TEXT_NODE ||
+			(node->next->content[0] != '\n' && node->next->content[0] != '\0')))
+		return NULL;
+
+	struct oscap_buffer *quoted = oscap_buffer_new();
+	oscap_buffer_append_string(quoted, "\"");
+	for (const char *c = value; *c != '\0'; c++) {
+		/* YAML treats these UTF-8 characters as line breaks even in quotes. */
+		if ((unsigned char)c[0] == 0xc2 && (unsigned char)c[1] == 0x85) {
+			oscap_buffer_append_string(quoted, "\\N");
+			c++;
+			continue;
+		}
+		if ((unsigned char)c[0] == 0xe2 && (unsigned char)c[1] == 0x80 &&
+				((unsigned char)c[2] == 0xa8 || (unsigned char)c[2] == 0xa9)) {
+			oscap_buffer_append_string(quoted, (unsigned char)c[2] == 0xa8 ? "\\L" : "\\P");
+			c += 2;
+			continue;
+		}
+		switch (*c) {
+		case '"': oscap_buffer_append_string(quoted, "\\\""); break;
+		case '\\': oscap_buffer_append_string(quoted, "\\\\"); break;
+		case '\n': oscap_buffer_append_string(quoted, "\\n"); break;
+		case '\r': oscap_buffer_append_string(quoted, "\\r"); break;
+		case '\t': oscap_buffer_append_string(quoted, "\\t"); break;
+		default: oscap_buffer_append_binary_data(quoted, c, 1);
+		}
+	}
+	oscap_buffer_append_string(quoted, "\"");
+	return oscap_buffer_bequeath(quoted);
 }
 
 static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
@@ -109,7 +163,9 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 		}
 		free(sub_idref);
 
-		xmlNode *new_node = xmlNewText(BAD_CAST result);
+		char *quoted = data->ansible ? _ansible_quote_string(*node, result) : NULL;
+		xmlNode *new_node = xmlNewText(BAD_CAST (quoted != NULL ? quoted : result));
+		free(quoted);
 		xmlReplaceNode(*node, new_node);
 		xmlFreeNode(*node);
 		*node = new_node;
@@ -198,6 +254,7 @@ int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xc
 	data.policy = policy;
 	data.processing_type = _DOCUMENT_GENERATION_TYPE | _ASSESSMENT_TYPE;
 	data.rule_result = rule_result;
+	data.ansible = oscap_streq(xccdf_fix_get_system(fix), "urn:xccdf:fix:script:ansible");
 
 	char *result = NULL;
 	int res = xml_iterate_dfs(xccdf_fix_get_content(fix), &result, _xccdf_text_substitution_cb, &data);
@@ -211,6 +268,7 @@ char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy) {
 	struct _xccdf_text_substitution_data data;
 	data.policy = policy;
 	data.rule_result = NULL;
+	data.ansible = false;
 	/* We cannot anticipate processing type. But <title>'s are least probable. */
 	data.processing_type = _DOCUMENT_GENERATION_TYPE | _ASSESSMENT_TYPE;
 

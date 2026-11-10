@@ -1,0 +1,25 @@
+---
+- hosts: all
+  vars:
+    pipe: !!str "|/bin/false"
+    folded: !!str ">/bin/false"
+    quotes: !!str "\"quoted\" and 'single'"
+    backslash: !!str "\\d+\\path"
+    comment: !!str "a # b"
+    mapping: !!str "a: b"
+    spaces: !!str "  padded  "
+    multiline: !!str "first\nsecond\n"
+    tab: !!str "a\tb"
+    cr: !!str "a\rb"
+    bool: !!str "true"
+    number: !!str "0123"
+    unicode: !!str "héllo 世界"
+    linebreaks: !!str "\N\L\P"
+    already_quoted: "|/bin/false"
+    numeric: 42
+  tasks:
+    - name: Keep block scalars
+      debug:
+        msg: |-
+          literal block
+        tag_text: "example: !!str true"
