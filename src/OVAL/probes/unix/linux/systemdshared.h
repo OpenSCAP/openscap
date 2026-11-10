@@ -37,7 +37,9 @@
 
 #include <libgen.h>
 #include <stdio.h>
+#include <string.h>
 #include "common/debug_priv.h"
+#include "common/list.h"
 #include "oscap_helpers.h"
 #include "oval_dbus.h"
 
@@ -116,7 +118,8 @@ cleanup:
 	return ret;
 }
 
-static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char *, void *), void *cbarg)
+static int get_systemd_units(DBusConnection *conn, const char *method, bool unit_files,
+		struct oscap_htable *seen, int(*callback)(const char *, void *), void *cbarg)
 {
 	DBusMessage *msg = NULL;
 	DBusPendingCall *pending = NULL;
@@ -126,7 +129,7 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 		"org.freedesktop.systemd1",
 		"/org/freedesktop/systemd1",
 		"org.freedesktop.systemd1.Manager",
-		"ListUnitFiles"
+		method
 	);
 	if (msg == NULL) {
 		dD("Failed to create dbus_message via dbus_message_new_method_call!");
@@ -169,7 +172,7 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 	}
 
 	dbus_message_iter_recurse(&args, &unit_iter);
-	do {
+	while (dbus_message_iter_get_arg_type(&unit_iter) != DBUS_TYPE_INVALID) {
 		if (dbus_message_iter_get_arg_type(&unit_iter) != DBUS_TYPE_STRUCT) {
 			dD("Expected unit struct as elements in returned array. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&unit_iter)));
 			goto cleanup;
@@ -185,15 +188,26 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 
 		_DBusBasicValue value;
 		dbus_message_iter_get_basic(&unit_full_path_and_name, &value);
-		char *unit_name_s = oscap_strdup(basename(value.str));
-		oscap_strrm(unit_name_s, "@");
-		int cbret = callback(unit_name_s, cbarg);
-		free(unit_name_s);
-		if (cbret != 0) {
-			goto cleanup;
+		/* ListUnitFiles returns paths, whereas ListUnits returns unit names.
+		 * Never turn a template into a different, nonexistent unit by removing
+		 * its @. Actual instances are returned by ListUnits or have their own
+		 * unit file (for example, an enabled instance symlink).
+		 */
+		char *unit_path = oscap_strdup(value.str);
+		const char *unit_name = unit_files ? basename(unit_path) : unit_path;
+		const char *instance = strchr(unit_name, '@');
+		bool is_template = instance != NULL && instance[1] == '.';
+		if (!is_template && oscap_htable_get(seen, unit_name) == NULL) {
+			oscap_htable_add(seen, unit_name, (void *) true);
+			int cbret = callback(unit_name, cbarg);
+			if (cbret != 0) {
+				free(unit_path);
+				goto cleanup;
+			}
 		}
+		free(unit_path);
+		dbus_message_iter_next(&unit_iter);
 	}
-	while (dbus_message_iter_next(&unit_iter));
 
 	dbus_message_unref(msg); msg = NULL;
 
@@ -206,6 +220,18 @@ cleanup:
 	if (msg != NULL)
 		dbus_message_unref(msg);
 
+	return ret;
+}
+
+static int get_all_systemd_units(DBusConnection *conn, int(*callback)(const char *, void *), void *cbarg)
+{
+	struct oscap_htable *seen = oscap_htable_new();
+	/* Keep installed units even when disabled and not currently loaded. Add
+	 * loaded units to include template instances and transient units too. */
+	int ret = get_systemd_units(conn, "ListUnitFiles", true, seen, callback, cbarg);
+	if (ret == 0)
+		ret = get_systemd_units(conn, "ListUnits", false, seen, callback, cbarg);
+	oscap_htable_free(seen, NULL);
 	return ret;
 }
 
