@@ -38,7 +38,8 @@ function test_probes_partition {
         assert_exists 1 '/oval_results/results/system/tests/test[@result="true"][@test_id="oval:1:tst:1"]'
         verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF 1
     else
-        assert_exists 1 '/oval_results/results/system/tests/test[@result="false"][@test_id="oval:1:tst:1"]'
+        # A root without a mount table, such as a disk image, is not applicable.
+        assert_exists 1 '/oval_results/results/system/tests/test[@result="not applicable"][@test_id="oval:1:tst:1"]'
     fi
 
     grep -Ei "(W: |E: )" $stderr && ret_val=1 && echo "There is an error and/or a warning in the output!"
