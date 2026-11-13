@@ -82,37 +82,36 @@ void SEAP_desc_free(SEAP_desc_t *dsc);
 
 static inline int SEAP_desc_trylock (pthread_mutex_t *m)
 {
-        switch (pthread_mutex_trylock (m)) {
+        int ret = pthread_mutex_trylock (m);
+        switch (ret) {
         case 0:
                 return (1);
         case EBUSY:
                 return (0);
-        case EINVAL:
-                errno = EINVAL;
-                /* FALLTHROUGH */
         default:
+                errno = ret;
                 return (-1);
         }
 }
 
 static inline int SEAP_desc_lock (pthread_mutex_t *m)
 {
-        switch (pthread_mutex_lock (m)) {
-        case 0:
-                return (1);
-        default:
+        int ret = pthread_mutex_lock (m);
+        if (ret != 0) {
+                errno = ret;
                 return (-1);
         }
+        return (1);
 }
 
 static inline int SEAP_desc_unlock (pthread_mutex_t *m)
 {
-        switch (pthread_mutex_unlock (m)) {
-        case 0:
-                return (1);
-        default:
+        int ret = pthread_mutex_unlock (m);
+        if (ret != 0) {
+                errno = ret;
                 return (-1);
         }
+        return (1);
 }
 
 #define DESC_TRYRLOCK(d) SEAP_desc_trylock (&((d)->r_lock))

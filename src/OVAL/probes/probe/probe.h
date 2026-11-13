@@ -69,6 +69,9 @@ typedef struct {
 	pthread_barrier_t *th_barrier;
 
         rbt_t    *workers;
+	pthread_mutex_t workers_mutex; /**< guards workers_running */
+	pthread_cond_t  workers_cond;  /**< signaled when a worker thread ends */
+	uint32_t  workers_running;     /**< worker threads that have yet to end */
         uint32_t  max_threads;
         uint32_t  max_chdepth;
 
