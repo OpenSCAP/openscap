@@ -80,6 +80,25 @@ void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file)
 
 }
 
+static bool _cpe_item_matches(struct cpe_item *item, struct cpe_name *cpe)
+{
+	struct cpe_name *name = cpe_item_get_name(item);
+	if (name != NULL && (cpe_name_match_one(name, cpe) || cpe_name_match_one(cpe, name)))
+		return true;
+
+	const char *cpe23_str = cpe_item_get_cpe23_name(item);
+	if (cpe23_str == NULL)
+		return false;
+
+	bool matched = false;
+	struct cpe_name *cpe23_name = cpe_name_new(cpe23_str);
+	if (cpe23_name != NULL) {
+		matched = (cpe_name_match_one(cpe23_name, cpe) || cpe_name_match_one(cpe, cpe23_name));
+		cpe_name_free(cpe23_name);
+	}
+	return matched;
+}
+
 bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict)
 {
 	// FIXME: We could match faster by matching per component and storing all
@@ -97,9 +116,7 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict)
 	bool ret = false;
 	while (cpe_item_iterator_has_more(items)) {
 		struct cpe_item* item = cpe_item_iterator_next(items);
-		struct cpe_name* name = cpe_item_get_name(item);
-
-		if (cpe_name_match_one(name, cpe)) {
+		if (_cpe_item_matches(item, cpe)) {
 			ret = true;
 			break;
 		}
@@ -128,9 +145,7 @@ bool cpe_name_applicable_dict(struct cpe_name *cpe, struct cpe_dict_model *dict,
 	bool ret = false;
 	while (cpe_item_iterator_has_more(items)) {
 		struct cpe_item* item = cpe_item_iterator_next(items);
-		struct cpe_name* name = cpe_item_get_name(item);
-
-		if (cpe_name_match_one(cpe, name) && cpe_item_is_applicable(item, cb, usr)) {
+		if (_cpe_item_matches(item, cpe) && cpe_item_is_applicable(item, cb, usr)) {
 			ret = true;
 			break;
 		}
