@@ -1,0 +1,1 @@
+add_oscap_test("test_rule_detail.sh")
