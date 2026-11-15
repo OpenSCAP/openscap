@@ -20,7 +20,7 @@
  *      Peter Vrabec  <pvrabec@redhat.com>
  */
 
- #ifdef HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
@@ -424,7 +424,7 @@ static void _print_vars_for_profile(struct xccdf_policy_model *policy_model, con
 	if (policy == NULL) {
 		return;
 	}
-	const struct xccdf_profile *profile = xccdf_policy_get_profile(policy);	
+	const struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
 	if (profile == NULL) {
 		return;
 	}
@@ -749,7 +749,6 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	return OSCAP_OK;
 }
 
-
 static const char* _severity_to_string(xccdf_level_t severity){
 
 	switch (severity) {
@@ -813,7 +812,6 @@ static void _info_print_rule_details(const struct xccdf_item *item) {
 	while (xccdf_fixtext_iterator_has_more(fixtexts_it)){
 		struct xccdf_fixtext *next = xccdf_fixtext_iterator_next(fixtexts_it);
 		struct oscap_text *oscap_fixtext = xccdf_fixtext_get_text(next);
-
 		const char *plain_fixtext = oscap_text_get_plaintext(oscap_fixtext);
 		printf("\n\033[1mFixtext\033[0;0m\n-------\n%s\n", plain_fixtext);
 
@@ -824,8 +822,6 @@ static void _info_print_rule_details(const struct xccdf_item *item) {
 	while (xccdf_check_iterator_has_more(checks_it)){
 		struct xccdf_check *next = xccdf_check_iterator_next(checks_it);
 		const char *oscap_check_content = xccdf_check_get_content(next);
-		
-		// const char *plain_content = oscap_text_get_plaintext(oscap_check_content);
 		if (oscap_check_content != NULL && strlen(oscap_check_content) > 0) {
 			printf("\n\033[1mCheck\033[0;0m\n-----\n%s\n", oscap_check_content);
 		}
@@ -876,8 +872,6 @@ static int app_info_single_benchmark(struct xccdf_benchmark *bench, const struct
 	return OSCAP_OK;
 }
 
-
-// you need to modify this function, its yours
 static int app_info_single_ds_rule_detail(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action) {
 
 	const char *prefix = "\t\t";
@@ -906,7 +900,7 @@ static int app_info_single_ds_rule_detail(struct ds_stream_index_iterator* sds_i
 				ds_sds_session_free(session);
 				return OSCAP_ERROR;
 			}
-			// get the rule id, then call
+
 			const struct xccdf_item *rule_item = xccdf_benchmark_get_item(bench, action->rule_id);
 			if (rule_item != NULL) {
 				flag = 1;
@@ -925,11 +919,6 @@ static int app_info_single_ds_rule_detail(struct ds_stream_index_iterator* sds_i
 	}
 	oscap_string_iterator_free(checklist_it);
 	return OSCAP_OK;
-
-	
-
-
-
 }
 
 static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
@@ -1210,7 +1199,7 @@ static int app_info(const struct oscap_action *action)
 cleanup:
 	oscap_source_free(source);
 	oscap_print_error();
-	
+
 	return result;
 }
 
