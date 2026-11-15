@@ -969,9 +969,12 @@ static int app_info_sds(struct oscap_source *source, const struct oscap_action *
 	}
 	/* iterate over streams */
 	struct ds_stream_index_iterator* sds_it = ds_sds_index_get_streams(sds);
+	int exit_code;
 	while (ds_stream_index_iterator_has_more(sds_it)) {
-		if (app_info_single_ds(sds_it, session, action) == OSCAP_ERROR)
-			return OSCAP_ERROR;
+		exit_code = app_info_single_ds(sds_it, session, action);
+		if (exit_code != OSCAP_OK) {
+			return exit_code;
+		}
 	}
 	ds_stream_index_iterator_free(sds_it);
 	ds_sds_session_free(session);
@@ -1058,9 +1061,11 @@ static int app_info(const struct oscap_action *action)
 		struct xccdf_benchmark* bench = xccdf_benchmark_import_source(source);
 		if(!bench)
 			goto cleanup;
-		if (app_info_single_benchmark(bench, action, source) == OSCAP_FAIL)
+		if (app_info_single_benchmark(bench, action, source) == OSCAP_FAIL) {
 			// bench is freed as a side-effect of the function above
+			result = OSCAP_FAIL;
 			goto cleanup;
+		}
 	}
 	break;
 	case OSCAP_DOCUMENT_CPE_LANGUAGE: {
@@ -1083,8 +1088,10 @@ static int app_info(const struct oscap_action *action)
 	}
 	break;
 	case OSCAP_DOCUMENT_SDS: {
-		if (app_info_sds(source, action) == OSCAP_ERROR)
+		result = app_info_sds(source, action);
+		if (result == OSCAP_ERROR || result == OSCAP_FAIL) {
 			goto cleanup;
+		}
 	}
 	break;
 	case OSCAP_DOCUMENT_ARF: {
@@ -1203,7 +1210,7 @@ static int app_info(const struct oscap_action *action)
 cleanup:
 	oscap_source_free(source);
 	oscap_print_error();
-
+	
 	return result;
 }
 

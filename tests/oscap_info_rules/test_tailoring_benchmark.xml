@@ -64,7 +64,7 @@
       <check-content-ref href="variable.oval.xml" name="oval:x:def:1"/>
     </check>
   </Rule>
-  <Rule selected="true" id="xccdf_com.example.www_rule_R6">
+  <Rule selected="true" id="xccdf_com.example.www_rule_R6" severity="high">
     <title>Rule R6</title>
     <description>This is a rule description</description>
     <warning>This is a rule warning</warning>
