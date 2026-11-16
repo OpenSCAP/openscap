@@ -21,10 +21,10 @@ set -e -o pipefail
 
 test_init
 
-rpm_prepare_offline
+rpm_prepare_offline_own
 
 test_run "rpminfo probe test (offline)" test_probes_rpminfo foo foobar
 
-rpm_cleanup_offline
+rpm_cleanup_offline_own
 
 test_exit
