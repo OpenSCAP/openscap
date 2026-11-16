@@ -72,7 +72,8 @@ struct oscap_module OSCAP_INFO_MODULE = {
 		"   --references                  - Show references available in the input benchmark\n"
 		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
 		"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
-		"   --verbose-log-file <file>     - Write verbose information into file.\n",
+		"   --verbose-log-file <file>     - Write verbose information into file.\n"
+		"   --rule <rule_id>              - Print rule details.",
     .opt_parser = getopt_info,
     .func = app_info
 };
@@ -748,7 +749,87 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	return OSCAP_OK;
 }
 
-static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
+static const char* _severity_to_string(xccdf_level_t severity){
+
+	switch (severity) {
+		case XCCDF_LOW:
+			return "Low";
+		case XCCDF_MEDIUM:
+			return "Medium";
+		case XCCDF_HIGH:	
+			return "High";
+		default:
+			return "unknown";
+	}
+}
+
+static void _info_print_rule_details(const struct xccdf_item *item) {
+
+	struct oscap_text_iterator *title_it = xccdf_item_get_title(item);
+	struct oscap_text *oscap_text_title = oscap_textlist_get_preferred_text(title_it, NULL);
+	if (oscap_text_title !=NULL) {
+		const char *title = oscap_text_get_text(oscap_text_title);
+		if (title != NULL && strlen(title) > 0) {
+			printf("%-10s\033[1m%s\033[0;0m\n", "Title", title);
+		}
+	}
+	oscap_text_iterator_free(title_it);
+
+	xccdf_level_t severity = xccdf_rule_get_severity( (const struct xccdf_rule *) item);
+	const char *string_severity = _severity_to_string(severity);
+	printf("%-10s\033[1m%s\033[0;0m\n", "Severity", string_severity);
+
+	struct oscap_text_iterator *description_it = xccdf_item_get_description(item);
+	struct oscap_text *oscap_description = oscap_textlist_get_preferred_text(description_it, NULL);
+	if (oscap_description !=NULL) {
+		const char *description = oscap_text_get_text(oscap_description);
+		if (description != NULL && strlen(description) > 0) {
+			printf("\n\033[1mDescription\033[0;0m\n-----------\n%s\n", description);
+			}
+		}
+	oscap_text_iterator_free(description_it);
+	
+	struct oscap_text_iterator *rat_it = xccdf_item_get_rationale(item);
+	struct oscap_text *oscap_rationale = oscap_textlist_get_preferred_text(rat_it, NULL);
+	if (oscap_rationale != NULL) {
+		const char *rationale = oscap_text_get_text(oscap_rationale);
+		if (rationale != NULL && strlen(rationale) > 0) {
+			printf("\n\033[1mRationale\033[0;0m\n---------\n%s\n", rationale);
+		}
+	}
+	oscap_text_iterator_free(rat_it);
+
+	struct oscap_stringlist *warnings = xccdf_rule_get_warnings_strings((struct xccdf_rule *) item);
+	struct oscap_string_iterator *warnings_it = oscap_stringlist_get_strings(warnings);
+	while (oscap_string_iterator_has_more(warnings_it)) {
+		const char *warning = oscap_string_iterator_next(warnings_it);
+		printf("\n\033[1mWarnings\033[0;0m\n--------\n%s\n", warning);
+	}
+	oscap_string_iterator_free(warnings_it);
+	oscap_stringlist_free(warnings);
+
+	struct xccdf_fixtext_iterator *fixtexts_it = xccdf_rule_get_fixtexts((const struct xccdf_rule *) item);
+	while (xccdf_fixtext_iterator_has_more(fixtexts_it)){
+		struct xccdf_fixtext *next = xccdf_fixtext_iterator_next(fixtexts_it);
+		struct oscap_text *oscap_fixtext = xccdf_fixtext_get_text(next);
+		const char *plain_fixtext = oscap_text_get_plaintext(oscap_fixtext);
+		printf("\n\033[1mFixtext\033[0;0m\n-------\n%s\n", plain_fixtext);
+
+	}
+	xccdf_fixtext_iterator_free(fixtexts_it);
+	
+	struct xccdf_check_iterator *checks_it = xccdf_rule_get_checks((const struct xccdf_rule *) item);
+	while (xccdf_check_iterator_has_more(checks_it)){
+		struct xccdf_check *next = xccdf_check_iterator_next(checks_it);
+		const char *oscap_check_content = xccdf_check_get_content(next);
+		if (oscap_check_content != NULL && strlen(oscap_check_content) > 0) {
+			printf("\n\033[1mCheck\033[0;0m\n-----\n%s\n", oscap_check_content);
+		}
+	}
+	xccdf_check_iterator_free(checks_it);
+}
+
+static int app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
 {
 	if (action->show_profiles_only) {
 		_print_single_benchmark_profiles_only(bench);
@@ -771,6 +852,16 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 		} else {
 			xccdf_benchmark_free(bench);
 		}
+	
+	} else if (action->rule_id) {
+		const struct xccdf_item *rule_item = xccdf_benchmark_get_item(bench, action->rule_id);
+		if (rule_item != NULL){
+			_info_print_rule_details(rule_item);
+		} else {
+			printf("Failure: Rule \'%s\' not found in the input file.\n", action->rule_id);
+			return OSCAP_FAIL;
+		}
+		xccdf_benchmark_free(bench);
 	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		print_time(action->file);
@@ -778,6 +869,56 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 		_print_single_benchmark_all(bench, "");
 		// bench is freed as a side-effect of the function above
 	}
+	return OSCAP_OK;
+}
+
+static int app_info_single_ds_rule_detail(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action) {
+
+	const char *prefix = "\t\t";
+	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
+	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
+
+	int flag = 0;
+
+	while (oscap_string_iterator_has_more(checklist_it)) {	
+		const char * id = oscap_string_iterator_next(checklist_it);
+
+
+		struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
+		if (xccdf_source == NULL) {
+			oscap_string_iterator_free(checklist_it);
+			ds_stream_index_iterator_free(sds_it);
+			ds_sds_session_free(session);
+			return OSCAP_ERROR;
+		}
+
+		if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
+			struct xccdf_benchmark* bench = xccdf_benchmark_import_source(xccdf_source);
+			if(!bench) {
+				oscap_string_iterator_free(checklist_it);
+				ds_stream_index_iterator_free(sds_it);
+				ds_sds_session_free(session);
+				return OSCAP_ERROR;
+			}
+
+			const struct xccdf_item *rule_item = xccdf_benchmark_get_item(bench, action->rule_id);
+			if (rule_item != NULL) {
+				flag = 1;
+				_info_print_rule_details(rule_item);
+				break;
+			}
+			xccdf_benchmark_free(bench);
+		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+			_print_xccdf_tailoring(xccdf_source, prefix, 0);
+		}
+		ds_sds_session_reset(session);
+	}
+	if (flag == 0){
+		printf("Failure: Rule \'%s\' not found in the input file.\n", action->rule_id);
+		return OSCAP_FAIL;
+	}
+	oscap_string_iterator_free(checklist_it);
+	return OSCAP_OK;
 }
 
 static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
@@ -787,6 +928,8 @@ static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds
 		return_value = app_info_single_ds_profiles_only(sds_it, session, action);
 	} else if (action->profile) {
 		return_value = app_info_single_ds_one_profile(sds_it, session, action);
+	} else if (action->rule_id){
+		return_value = app_info_single_ds_rule_detail(sds_it, session, action);
 	} else {
 		return_value = app_info_single_ds_all(sds_it, session, action);
 	}
@@ -815,9 +958,12 @@ static int app_info_sds(struct oscap_source *source, const struct oscap_action *
 	}
 	/* iterate over streams */
 	struct ds_stream_index_iterator* sds_it = ds_sds_index_get_streams(sds);
+	int exit_code;
 	while (ds_stream_index_iterator_has_more(sds_it)) {
-		if (app_info_single_ds(sds_it, session, action) == OSCAP_ERROR)
-			return OSCAP_ERROR;
+		exit_code = app_info_single_ds(sds_it, session, action);
+		if (exit_code != OSCAP_OK) {
+			return exit_code;
+		}
 	}
 	ds_stream_index_iterator_free(sds_it);
 	ds_sds_session_free(session);
@@ -904,8 +1050,11 @@ static int app_info(const struct oscap_action *action)
 		struct xccdf_benchmark* bench = xccdf_benchmark_import_source(source);
 		if(!bench)
 			goto cleanup;
-		app_info_single_benchmark(bench, action, source);
-		// bench is freed as a side-effect of the function above
+		if (app_info_single_benchmark(bench, action, source) == OSCAP_FAIL) {
+			// bench is freed as a side-effect of the function above
+			result = OSCAP_FAIL;
+			goto cleanup;
+		}
 	}
 	break;
 	case OSCAP_DOCUMENT_CPE_LANGUAGE: {
@@ -928,8 +1077,10 @@ static int app_info(const struct oscap_action *action)
 	}
 	break;
 	case OSCAP_DOCUMENT_SDS: {
-		if (app_info_sds(source, action) == OSCAP_ERROR)
+		result = app_info_sds(source, action);
+		if (result == OSCAP_ERROR || result == OSCAP_FAIL) {
 			goto cleanup;
+		}
 	}
 	break;
 	case OSCAP_DOCUMENT_ARF: {
@@ -1066,6 +1217,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 		OSCAP_INFO_OPT_REFERENCES,
 		OSCAP_INFO_OPT_VERBOSE,
 		OSCAP_INFO_OPT_VERBOSE_LOG_FILE,
+		OSCAP_INFO_OPT_PRINT_RULE
 	};
 	/* Command-options */
 	const struct option long_options[] = {
@@ -1078,6 +1230,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 		{"references", no_argument, 0, OSCAP_INFO_OPT_REFERENCES},
 		{"verbose", required_argument, NULL, OSCAP_INFO_OPT_VERBOSE},
 		{"verbose-log-file", required_argument, NULL, OSCAP_INFO_OPT_VERBOSE_LOG_FILE},
+		{"rule", required_argument, NULL, OSCAP_INFO_OPT_PRINT_RULE},
 		// end
 		{0, 0, 0, 0}
 	};
@@ -1113,6 +1266,9 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 			case OSCAP_INFO_OPT_VERBOSE_LOG_FILE:
 				action->f_verbose_log = optarg;
 				break;
+			case OSCAP_INFO_OPT_PRINT_RULE:
+				action->rule_id = optarg;
+				break;	
 			default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
