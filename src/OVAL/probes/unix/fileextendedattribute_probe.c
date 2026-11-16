@@ -239,7 +239,10 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		return 0;
 	}
 
-	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
+	char *st_path_with_prefix = oscap_path_in_root(prefix, st_path, false);
+	if (st_path_with_prefix == NULL) {
+		goto exit;
+	}
 	do {
 		/* estimate the size of the buffer */
 		xattr_count = llistxattr(st_path_with_prefix, NULL, 0);

@@ -329,7 +329,11 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		return 0;
 	}
 
-	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
+	char *st_path_with_prefix = oscap_path_in_root(prefix, st_path, false);
+	if (st_path_with_prefix == NULL) {
+		dD("Cannot resolve %s in the probe root: errno=%u, %s.", st_path, errno, strerror(errno));
+		return 0;
+	}
 	if (lstat(st_path_with_prefix, &st) == -1) {
                 dD("lstat failed when processing %s: errno=%u, %s.", st_path, errno, strerror (errno));
 		/*

@@ -151,8 +151,8 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	if (probe_path_is_blocked(whole_path, blocked_paths)) {
 		goto cleanup;
 	}
-	whole_path_with_prefix = oscap_path_join(prefix, whole_path);
-	fd = open(whole_path_with_prefix, O_RDONLY | O_NONBLOCK);
+	whole_path_with_prefix = oscap_path_in_root(prefix, whole_path, true);
+	fd = whole_path_with_prefix != NULL ? open(whole_path_with_prefix, O_RDONLY | O_NONBLOCK) : -1;
 	if (fd == -1) {
 		if (errno == ENOENT || errno == EACCES || errno == ENOTDIR
 		    || errno == ENAMETOOLONG || errno == ELOOP)

@@ -411,6 +411,24 @@ char *oscap_generate_random_string(size_t len, char *charset);
  */
 char *oscap_path_join(const char *path1, const char *path2);
 
+#ifndef OS_WINDOWS
+/**
+ * Find the file that a path names when another directory is the root.
+ * Symbolic links resolve inside root, an absolute target from root
+ * itself, and ".." stops at root. A component that does not exist or
+ * is not a symbolic link is kept as it is.
+ * Caller is responsible for freeing the returned pointer.
+ * @param root the root directory, or NULL for the real root
+ * @param path an absolute path in root
+ * @param follow whether a symbolic link in the last component resolves
+ * too, as for stat(2), or stays, as for lstat(2), which also resolves it
+ * when the path ends in a slash
+ * @return the path of the file from the real root, or NULL with errno
+ * set to ELOOP or ENAMETOOLONG
+ */
+char *oscap_path_in_root(const char *root, const char *path, bool follow);
+#endif
+
 /// In a list of key-value pairs (odd indicies are keys, even values), find a value for given key
 const char *oscap_strlist_find_value(char ** const kvalues, const char *key);
 /// Right trim @a ch characters (modifies its first argument!)
