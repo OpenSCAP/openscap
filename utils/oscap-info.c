@@ -775,7 +775,7 @@ static void _info_print_rule_details(const struct xccdf_item *item) {
 	}
 	oscap_text_iterator_free(title_it);
 
-	xccdf_level_t severity = xccdf_rule_get_severity( (struct xccdf_rule *) item);
+	xccdf_level_t severity = xccdf_rule_get_severity( (const struct xccdf_rule *) item);
 	const char *string_severity = _severity_to_string(severity);
 	printf("%-10s\033[1m%s\033[0;0m\n", "Severity", string_severity);
 
@@ -808,7 +808,7 @@ static void _info_print_rule_details(const struct xccdf_item *item) {
 	oscap_string_iterator_free(warnings_it);
 	oscap_stringlist_free(warnings);
 
-	struct xccdf_fixtext_iterator *fixtexts_it = xccdf_rule_get_fixtexts((struct xccdf_rule *) item);
+	struct xccdf_fixtext_iterator *fixtexts_it = xccdf_rule_get_fixtexts((const struct xccdf_rule *) item);
 	while (xccdf_fixtext_iterator_has_more(fixtexts_it)){
 		struct xccdf_fixtext *next = xccdf_fixtext_iterator_next(fixtexts_it);
 		struct oscap_text *oscap_fixtext = xccdf_fixtext_get_text(next);
@@ -818,7 +818,7 @@ static void _info_print_rule_details(const struct xccdf_item *item) {
 	}
 	xccdf_fixtext_iterator_free(fixtexts_it);
 	
-	struct xccdf_check_iterator *checks_it = xccdf_rule_get_checks((struct xccdf_rule *) item);
+	struct xccdf_check_iterator *checks_it = xccdf_rule_get_checks((const struct xccdf_rule *) item);
 	while (xccdf_check_iterator_has_more(checks_it)){
 		struct xccdf_check *next = xccdf_check_iterator_next(checks_it);
 		const char *oscap_check_content = xccdf_check_get_content(next);
