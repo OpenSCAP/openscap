@@ -999,6 +999,8 @@ static void _add_blocked_paths(struct oscap_list *bpaths)
 #else
 	char **paths = oscap_split(envar, ":");
 	for (int i = 0; paths[i]; ++i) {
+		if (paths[i][0] == '\0')
+			continue;
 		oscap_list_add(bpaths, strdup(paths[i]));
 	}
 	free(envar);
