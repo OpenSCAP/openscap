@@ -47,5 +47,24 @@ assert_exists 1 '/oval_results/results/system/definitions/definition[@definition
 assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:x:obj:8" and @flag="does not exist"]'
 assert_exists 0 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:filepath[text()="/tmp/oscap_test_skip_paths/b/test.xml"]'
 assert_exists 0 '/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:xmlfilecontent_item/ind-sys:filepath[text()="/tmp/oscap_test_skip_paths/c/test.xml"]'
+
+# Empty entries must not block any paths, just like an unset variable.
+for ignore_paths in unset '' ':'; do
+    if [ "$ignore_paths" = unset ]; then
+        unset OSCAP_PROBE_IGNORE_PATHS
+    else
+        export OSCAP_PROBE_IGNORE_PATHS="$ignore_paths"
+    fi
+    $OSCAP oval eval --results $result "$srcdir/test_skip_paths.xml"
+    assert_exists 8 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@flag="complete"]'
+    assert_exists 2 '/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:file_item'
+done
+
+# Empty entries around real paths must not change which paths are blocked.
+export OSCAP_PROBE_IGNORE_PATHS=":$root/n::$root/c:$root/b:"
+$OSCAP oval eval --results $result "$srcdir/test_skip_paths.xml"
+assert_exists 8 '/oval_results/results/system/definitions/definition[@result="true"]'
+assert_exists 4 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@flag="complete"]'
+assert_exists 4 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@flag="does not exist"]'
 rm -f $result
 rm -rf "$root"
