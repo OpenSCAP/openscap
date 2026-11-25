@@ -406,14 +406,14 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 	yaml_parser_t parser;
 	yaml_parser_initialize(&parser);
 
-	char *filepath_with_prefix = oscap_path_join(prefix, filepath);
+	char *filepath_with_prefix = oscap_path_in_root(prefix, filepath, true);
 	struct stat st;
 
-	tmp_fd = open(filepath_with_prefix, O_RDONLY | O_NONBLOCK);
+	tmp_fd = filepath_with_prefix != NULL ? open(filepath_with_prefix, O_RDONLY | O_NONBLOCK) : -1;
 	if (tmp_fd == -1) {
 		if (errno != ENOENT && errno != EACCES && errno != ENOTDIR
 		    && errno != ENAMETOOLONG && errno != ELOOP)
-			result_error("Unable to open file '%s': %s", filepath_with_prefix, strerror(errno));
+			result_error("Unable to open file '%s': %s", filepath, strerror(errno));
 		goto cleanup;
 	}
 	if (fstat(tmp_fd, &st) == -1
@@ -422,7 +422,7 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 		goto cleanup;
 	yaml_file = fdopen(tmp_fd, "r");
 	if (yaml_file == NULL) {
-		result_error("Unable to open file '%s': %s", filepath_with_prefix, strerror(errno));
+		result_error("Unable to open file '%s': %s", filepath, strerror(errno));
 		goto cleanup;
 	}
 	tmp_fd = -1;

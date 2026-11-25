@@ -29,11 +29,20 @@
 #include <string.h>
 #include "common/util.h"
 #include "common/public/oscap_helpers.h"
+#ifndef OS_WINDOWS
+#include <errno.h>
+#include <limits.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
 
 int test_oscap_path_startswith(void);
 int test_oscap_strrm(void);
 int test_oscap_indent(void);
 int test_oscap_remove_excess_whitespace(void);
+#ifndef OS_WINDOWS
+int test_oscap_path_in_root(void);
+#endif
 
 int test_oscap_path_startswith()
 {
@@ -168,6 +177,102 @@ int test_oscap_remove_excess_whitespace()
 	return 0;
 }
 
+#ifndef OS_WINDOWS
+/* The root of test_oscap_path_in_root, and its links. */
+static const char *const in_root_dirs[] = {"etc", "etc/authselect", "etc/pam.d"};
+static const char *const in_root_file = "etc/authselect/system-auth";
+static const char *const in_root_links[][2] = {
+	{"etc/pam.d/system-auth", "/etc/authselect/system-auth"},
+	{"etc/pam.d/missing-auth", "/missing/../etc/authselect/system-auth"},
+	{"etc/dirlink", "/etc/authselect"},
+};
+
+static const struct {
+	const char *path;
+	bool follow;
+	const char *want;	/* result under the root, or NULL */
+	int err;		/* errno when want is NULL */
+} in_root_tests[] = {
+	{"/etc/pam.d/system-auth", true, "/etc/authselect/system-auth", 0},
+	{"/../etc/./pam.d/../authselect", true, "/etc/authselect", 0},
+	{"/etc/pam.d/missing-auth", true, NULL, ENOENT},
+	{"/missing/../etc/authselect", true, NULL, ENOENT},
+	{"/etc/authselect/system-auth/../system-auth", true, NULL, ENOTDIR},
+	{"/etc/authselect/system-auth/.", true, NULL, ENOTDIR},
+	{"/etc/dirlink", false, "/etc/dirlink", 0},
+	{"/etc/dirlink/", false, "/etc/authselect/", 0},
+	{"/etc/pam.d/system-auth/", false, "/etc/authselect/system-auth/", 0},
+};
+
+int test_oscap_path_in_root()
+{
+	const size_t ndirs = sizeof(in_root_dirs) / sizeof(in_root_dirs[0]);
+	const size_t nlinks = sizeof(in_root_links) / sizeof(in_root_links[0]);
+	const size_t ntests = sizeof(in_root_tests) / sizeof(in_root_tests[0]);
+	char root[] = "path_in_root.XXXXXX", path[PATH_MAX], want[PATH_MAX];
+	struct stat st;
+	char *got;
+	size_t i;
+	int ret = 0;
+	FILE *f;
+
+	if (mkdtemp(root) == NULL)
+		return 1;
+	for (i = 0; ret == 0 && i < ndirs; i++) {
+		snprintf(path, sizeof(path), "%s/%s", root, in_root_dirs[i]);
+		if (mkdir(path, 0700) == -1)
+			ret = 2;
+	}
+	snprintf(path, sizeof(path), "%s/%s", root, in_root_file);
+	if (ret == 0 && ((f = fopen(path, "w")) == NULL || fclose(f) != 0))
+		ret = 3;
+	for (i = 0; ret == 0 && i < nlinks; i++) {
+		snprintf(path, sizeof(path), "%s/%s", root, in_root_links[i][0]);
+		if (symlink(in_root_links[i][1], path) == -1)
+			ret = 4;
+	}
+
+	for (i = 0; ret == 0 && i < ntests; i++) {
+		errno = 0;
+		got = oscap_path_in_root(root, in_root_tests[i].path, in_root_tests[i].follow);
+		if (in_root_tests[i].want == NULL) {
+			if (got != NULL || errno != in_root_tests[i].err) {
+				fprintf(stderr, "oscap_path_in_root(%s, %d) = %s, errno %d, want NULL, errno %d\n",
+					in_root_tests[i].path, in_root_tests[i].follow, got != NULL ? got : "NULL", errno, in_root_tests[i].err);
+				ret = 10 + (int)i;
+			}
+		} else {
+			snprintf(want, sizeof(want), "%s%s", root, in_root_tests[i].want);
+			if (got == NULL || strcmp(got, want) != 0) {
+				fprintf(stderr, "oscap_path_in_root(%s, %d) = %s, errno %d, want %s\n",
+					in_root_tests[i].path, in_root_tests[i].follow, got != NULL ? got : "NULL", errno, want);
+				ret = 10 + (int)i;
+			}
+		}
+		free(got);
+	}
+
+	/* A stat of a file with a trailing slash fails, as outside a root. */
+	got = oscap_path_in_root(root, "/etc/pam.d/system-auth/", false);
+	if (ret == 0 && (got == NULL || stat(got, &st) != -1 || errno != ENOTDIR))
+		ret = 5;
+	free(got);
+
+	for (i = nlinks; i > 0; i--) {
+		snprintf(path, sizeof(path), "%s/%s", root, in_root_links[i - 1][0]);
+		unlink(path);
+	}
+	snprintf(path, sizeof(path), "%s/%s", root, in_root_file);
+	unlink(path);
+	for (i = ndirs; i > 0; i--) {
+		snprintf(path, sizeof(path), "%s/%s", root, in_root_dirs[i - 1]);
+		rmdir(path);
+	}
+	rmdir(root);
+	return ret;
+}
+#endif
+
 int main (int argc, char *argv[])
 {
 	int retval = 0;
@@ -180,6 +285,10 @@ int main (int argc, char *argv[])
 		return retval;
 	if ((retval = test_oscap_remove_excess_whitespace()) != 0)
 		return retval;
+#ifndef OS_WINDOWS
+	if ((retval = test_oscap_path_in_root()) != 0)
+		return retval;
+#endif
 
 	return retval;
 }
