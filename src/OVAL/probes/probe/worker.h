@@ -48,6 +48,9 @@ typedef struct {
 } probe_pwpair_t;
 
 probe_worker_t *probe_worker_new(void);
+void probe_worker_start(probe_t *probe);
+void probe_worker_end(probe_t *probe);
+void probe_worker_wait(probe_t *probe);
 void *probe_worker_runfn(void *arg);
 SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret);
 

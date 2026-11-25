@@ -180,9 +180,11 @@ void *probe_input_handler(void *arg)
 					} else {
 						/* OK */
 
+						probe_worker_start(probe);
 						if (pthread_create(&pair->pth->tid, &pth_attr, &probe_worker_runfn, pair))
 						{
 							dE("Cannot start a new worker thread: %d, %s.", errno, strerror(errno));
+							probe_worker_end(probe);
 
 							if (rbt_i32_del(probe->workers, pair->pth->sid, NULL) != 0)
 								dE("rbt_i32_del: failed to remove worker thread (ID=%u)", pair->pth->sid);

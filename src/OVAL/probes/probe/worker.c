@@ -79,10 +79,42 @@ static void pthread_pair_cleanup_handler(void *arg)
 	SEAP_replyerr(pair->probe->SEAP_ctx, pair->probe->sd, pair->pth->msg, -100);
 }
 
+/*
+ * The library may close the probe as soon as a worker thread has sent its
+ * reply, while the worker still unlocks the SEAP descriptor and frees its
+ * message. probe_worker_start counts a worker thread before it starts,
+ * probe_worker_end is the last use of the probe by the thread, and
+ * probe_worker_wait, called by probe_common_main_cleanup before it frees
+ * the SEAP context and the caches, returns when every worker has ended.
+ */
+void probe_worker_start(probe_t *probe)
+{
+	pthread_mutex_lock(&probe->workers_mutex);
+	probe->workers_running++;
+	pthread_mutex_unlock(&probe->workers_mutex);
+}
+
+void probe_worker_end(probe_t *probe)
+{
+	pthread_mutex_lock(&probe->workers_mutex);
+	probe->workers_running--;
+	pthread_cond_broadcast(&probe->workers_cond);
+	pthread_mutex_unlock(&probe->workers_mutex);
+}
+
+void probe_worker_wait(probe_t *probe)
+{
+	pthread_mutex_lock(&probe->workers_mutex);
+	while (probe->workers_running > 0)
+		pthread_cond_wait(&probe->workers_cond, &probe->workers_mutex);
+	pthread_mutex_unlock(&probe->workers_mutex);
+}
+
 void *probe_worker_runfn(void *arg)
 {
 	dD("probe_worker_runfn has started");
 	probe_pwpair_t *pair = (probe_pwpair_t *)arg;
+	probe_t *probe = pair->probe;
 
 	SEXP_t *probe_res, *obj, *oid;
 	int     probe_ret;
@@ -120,6 +152,7 @@ void *probe_worker_runfn(void *arg)
                 SEAP_msg_free(pair->pth->msg);
                 SEXP_free(probe_res);
                 free(pair);
+		probe_worker_end(probe);
 
 		dD("probe_worker_runfn has finished");
                 return (NULL);
@@ -187,6 +220,7 @@ void *probe_worker_runfn(void *arg)
 	pthread_detach(pthread_self());
 
 	pthread_cleanup_pop(0);
+	probe_worker_end(probe);
 
 	dD("probe_worker_runfn has finished");
 	return (NULL);
