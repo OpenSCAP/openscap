@@ -22,6 +22,8 @@
 #ifndef __DPKGINFO_HELPER__
 #define __DPKGINFO_HELPER__
 
+#include <stddef.h>
+
 struct dpkginfo_reply_t {
         char *name;
         char *arch;
@@ -32,7 +34,9 @@ struct dpkginfo_reply_t {
 };
 
 struct dpkginfo_reply_t * dpkginfo_get_by_name(const char *name, int *err);
+struct dpkginfo_reply_t *dpkginfo_get_all(size_t *reply_count, int *err);
 
 void dpkginfo_free_reply(struct dpkginfo_reply_t *reply);
+void dpkginfo_free_replies(struct dpkginfo_reply_t *replies, size_t reply_count);
 
 #endif /* __DPKGINFO_HELPER__ */
