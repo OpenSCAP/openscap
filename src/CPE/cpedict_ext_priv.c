@@ -317,3 +317,8 @@ void cpe23_item_free(struct cpe23_item *item)
 
 OSCAP_IGETINS_GEN(cpe_ext_deprecatedby, cpe_ext_deprecation, deprecatedbys, deprecatedby);
 OSCAP_IGETINS_GEN(cpe_ext_deprecation, cpe23_item, deprecations, deprecation);
+
+const char *cpe23_item_get_name(const struct cpe23_item *item)
+{
+	return item ? item->name : NULL;
+}

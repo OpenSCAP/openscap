@@ -111,19 +111,6 @@ static const char *cpe_get_field(const struct cpe_name *cpe, int idx);
 static const char *as_str(const char *str);
 static bool cpe_set_field(struct cpe_name *cpe, int idx, const char *newval);
 
-static int cpe_fields_num(const struct cpe_name *cpe)
-{
-	__attribute__nonnull__(cpe);
-
-	if (cpe == NULL)
-		return 0;
-	int maxnum = 0;
-	int i;
-	for (i = 0; i < CPE_TOTAL_FIELDNUM; ++i)
-		if (cpe_get_field(cpe, i))
-			maxnum = i + 1;
-	return maxnum;
-}
 
 static const char *cpe_get_field(const struct cpe_name *cpe, int idx)
 {
@@ -524,20 +511,38 @@ static char *cpe_pack_extended_attributes(const struct cpe_name *cpe)
 	return ret;
 }
 
-bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * against)
+bool cpe_name_match_one(const struct cpe_name *cpe, const struct cpe_name *against)
 {
-
-	int i;
 	if (cpe == NULL || against == NULL)
 		return false;
 
-	int cpefn = cpe_fields_num(cpe);
-	if (cpe_fields_num(against) < cpefn)
-		return false;
+	for (int i = 0; i < CPE_TOTAL_FIELDNUM; ++i) {
+		const char *f1 = cpe_get_field(cpe, i);
+		const char *f2 = cpe_get_field(against, i);
 
-	for (i = 0; i < cpefn; ++i) {
-		const char *cpefield = cpe_get_field(cpe, i);
-		if (cpefield && oscap_strcasecmp(cpefield, as_str(cpe_get_field(against, i))) != 0)
+		bool f1_empty = (f1 == NULL || *f1 == '\0');
+		bool f2_empty = (f2 == NULL || *f2 == '\0');
+		bool f1_wild = (f1 != NULL && strcmp(f1, "*") == 0);
+		bool f2_wild = (f2 != NULL && strcmp(f2, "*") == 0);
+
+		if (f1_empty && f2_empty)
+			continue;
+
+		if (f1_wild || f2_wild)
+			continue;
+
+		if (f1_empty) {
+			/* In CPE 2.2 URI, omitted attributes on the source pattern are wildcards */
+			if (cpe_name_get_format(cpe) == CPE_FORMAT_URI)
+				continue;
+			return false;
+		}
+
+		if (f2_empty) {
+			return false;
+		}
+
+		if (oscap_strcasecmp(f1, f2) != 0)
 			return false;
 	}
 
