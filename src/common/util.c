@@ -43,10 +43,14 @@
 
 #ifdef OS_WINDOWS
 #include <stdlib.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
 #else
+#include <arpa/inet.h>
 #include <libgen.h>
 #include <strings.h>
+#include <sys/socket.h>
 #endif
 
 #define PATH_SEPARATOR '/'
@@ -200,67 +204,20 @@ void oscap_strtoupper(char *str)
 
 char *oscap_expand_ipv6(const char *input)
 {
-	// we have to do a double pass because we need to know the number of
-	// specified components, :: will fill up to a total of 8 if encountered
+	unsigned char b[16];
 
-	const char* input_it = input;
-	unsigned short component_count = 1; // fencepost, we start with 1
-	while (*input_it) {
-		if (*input_it == ':') {
-			// don't count ::1 as 2 components
-			if (input_it != input)
-				component_count++;
+	/*
+	 * glibc rejects a %zone; macOS inet_pton drops it, writing the
+	 * interface index into the second group of link-local addresses.
+	 */
+	if (strchr(input, '%') != NULL || inet_pton(AF_INET6, input, b) != 1)
+		return oscap_strdup(input);
 
-			// the next character is either a part of a component or another ':'
-			// in any case we don't want to count it
-			input_it++;
-		}
-
-		input_it++;
-	}
-
-	// IPv6 is at most eight 4-tuples of [0-9a-f] with 7 separators, plus \0
-	char* ret = malloc(8 * 4 * sizeof(char) + 7 + 1);
-	char* output_it = ret;
-
-	input_it = input;
-	while (*input_it) {
-		// signifies that we have finished writing a component this iteration
-		bool closed_component = false;
-
-		if (*input_it == ':') {
-			const char next = *(input_it + 1 * sizeof(char));
-			if (next == ':') {
-				// skip one extra char to skip over the whole ::
-				input_it++;
-
-				for (unsigned short i = component_count; i < 8; ++i) {
-					// don't add leading separators
-					if (output_it != ret)
-						*output_it++ = ':';
-
-					*output_it++ = '0';
-					closed_component = true;
-				}
-			}
-			else {
-				closed_component = true;
-			}
-		}
-		else {
-			*output_it++ = *input_it;
-		}
-
-		input_it++;
-
-		// if this was not the last char of the input add a separator
-		if (closed_component && *input_it)
-			*output_it++ = ':';
-	}
-
-	*output_it = '\0';
-
-	return ret;
+	return oscap_sprintf("%x:%x:%x:%x:%x:%x:%x:%x",
+		b[0] * 256u + b[1], b[2] * 256u + b[3],
+		b[4] * 256u + b[5], b[6] * 256u + b[7],
+		b[8] * 256u + b[9], b[10] * 256u + b[11],
+		b[12] * 256u + b[13], b[14] * 256u + b[15]);
 }
 
 char *oscap_realpath(const char *path, char *resolved_path)
