@@ -262,7 +262,7 @@ static int collect_variable(char *buffer, size_t env_name_size, int pid, SEXP_t 
 static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 {
 	int err = 1, pid, fd;
-	bool empty;
+	bool empty, listed = false;
 	SEXP_t *item, *pid_sexp;
 	DIR *d;
 	struct dirent *d_entry;
@@ -294,6 +294,10 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	snprintf(path, PATH_MAX, "%s/proc", prefix ? prefix : "");
 	d = opendir(path);
 	if (d == NULL) {
+		if (errno == ENOENT) {
+			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
+			return 0;
+		}
 		dE("Can't read %s/proc: errno=%d, %s.", prefix ? prefix : "", errno, strerror(errno));
 		return PROBE_EACCESS;
 	}
@@ -308,6 +312,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	while ((d_entry = readdir(d))) {
 		if (strspn(d_entry->d_name, "0123456789") != strlen(d_entry->d_name))
 			continue;
+		listed = true;
 
 		pid = atoi(d_entry->d_name);
 		pid_sexp = SEXP_number_newi_32(pid);
@@ -388,6 +393,14 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	}
 	closedir(d);
 	free(buffer);
+	/*
+	 * A root without /proc, or with an empty one, as the mount point of a
+	 * disk image, has no process to read.
+	 */
+	if (!listed) {
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
+		return 0;
+	}
 	if (err) {
 		SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
 				"Can't find process with requested PID.");

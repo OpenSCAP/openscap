@@ -281,6 +281,11 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         mnt_fd = open(mnt_path, O_RDONLY);
 
         if (mnt_fd < 0) {
+                if (errno == ENOENT) {
+                        /* a root without a mount table, as a disk image */
+                        probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
+                        return 0;
+                }
                 if (!prefix)
                         dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
                 return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
@@ -306,6 +311,10 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         mnt_fp = fopen(mnt_path, "r");
 
         if (mnt_fp == NULL) {
+                if (errno == ENOENT) {
+                        probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
+                        return 0;
+                }
                 if (!prefix)
                         dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
                 return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
