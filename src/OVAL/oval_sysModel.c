@@ -235,7 +235,7 @@ int oval_syschar_model_import_source(struct oval_syschar_model *model, struct os
 	int ret = 0;
 	/* setup context */
         struct oval_parser_context context;
-        context.reader = oscap_source_get_xmlTextReader(source);
+        context.reader = oscap_source_get_streaming_xmlTextReader(source);
 	if (context.reader == NULL) {
 		return -1;
 	}
